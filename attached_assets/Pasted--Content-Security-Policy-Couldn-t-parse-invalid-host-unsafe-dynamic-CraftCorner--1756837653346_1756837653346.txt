@@ -1,0 +1,119 @@
+
+Content-Security-Policy: Couldn’t parse invalid host 'unsafe-dynamic' CraftCorner
+
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      _app-2331d9d50139ae64.js:38:5277
+[LaunchDarkly] LaunchDarkly client initialized _app-2331d9d50139ae64.js:38:5277
+Partitioned cookie or storage access was provided to “https://js.stripe.com/v3/controller-with-preconnect-25b0c1b66bc0163d570ef555d265e428.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%22acdf72ea-d05d-4664-8340-b682aca19e7f%22%2C%22assignments%22%3A%7B%22elements_phone_numbers_library%22%3A%22treatment%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=acdf72ea-d05d-4664-8340-b682aca19e7f&stripeObjId=sobj-5a334d6d-d0cb-439a-bcfa-7ef6bfe8a313&firstStripeInstanceCreatedLatency=3&controllerCount=1&isCheckout=false&stripeJsLoadTime=1756834478853&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=b068c375-50c9-48e0-8320-969f73fb7059310e3a&mids[sid]=a45ff7fe-f062-4acf-b3b2-6052c6d04e9bb5a190&referrer=https%3A%2F%2Freplit.com%2F%40bonniesicaranza%2FCraftCorner&controllerId=__privateStripeController0291” because it is loaded in the third-party context and dynamic state partitioning is enabled.
+controller-with-preconnect-f7436de9cbdccaabf7bd6713441cebca.js:1:183346
+Content-Security-Policy warnings 4
+Ignoring unsupported entryTypes: longtask. recaptcha__en.js:242:219
+Partitioned cookie or storage access was provided to “https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=2sJvksnKlEApLvJt2btz_q7n&size=invisible&anchor-ms=20000&execute-ms=15000&cb=hk9x6q5oomd3” because it is loaded in the third-party context and dynamic state partitioning is enabled.
+recaptcha__en.js:380:288
+Cookie warnings 4
+Cookie warnings 12
+Partitioned cookie or storage access was provided to “https://analytics.tiktok.com/i18n/pixel/events.js?sdkid=D004GE3C77U8PIVDSDJG&lib=ttq” because it is loaded in the third-party context and dynamic state partitioning is enabled.
+
+Partitioned cookie or storage access was provided to “https://www.googletagmanager.com/static/service_worker/5840/sw_iframe.html?origin=https%3A%2F%2Freplit.com” because it is loaded in the third-party context and dynamic state partitioning is enabled.
+sw_iframe.html:15:769
+Partitioned cookie or storage access was provided to “https://m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F%40bonniesicaranza%2FCraftCorner&title=CraftCorner%20-%20Replit&referrer=&muid=b068c375-50c9-48e0-8320-969f73fb7059310e3a&sid=a45ff7fe-f062-4acf-b3b2-6052c6d04e9bb5a190&version=6&preview=false&__shared_params__[version]=acacia” because it is loaded in the third-party context and dynamic state partitioning is enabled.
+out-4.5.44.js:1:39660
+Cookie warnings 4
+MouseEvent.mozInputSource is deprecated. Use PointerEvent.pointerType instead. _app-2331d9d50139ae64.js:9:4854
+Ignoring unsupported entryTypes: layout-shift. _app-2331d9d50139ae64.js:9:191427
+Ignoring unsupported entryTypes: longtask. _app-2331d9d50139ae64.js:9:191517
+Error in parsing value for ‘font-size’.  Declaration dropped. ~:90:56
+Unknown descriptor ‘font-feature-settings: '"ss15"';’ in @font-face rule.  Skipped to next declaration. login:81:30
+Unknown property ‘-moz-box-shadow’.  Declaration dropped. styles__ltr.css:1:49169
+Expected ‘none’, URL, or filter function but found ‘progid’.  Error in parsing value for ‘filter’.  Declaration dropped. styles__ltr.css:1:51319
+Error in parsing value for ‘text-decoration’.  Declaration dropped. abe12dc207fb31c0.css:1:8270
+Error in parsing value for ‘text-decoration’.  Declaration dropped. abe12dc207fb31c0.css:1:8392
+Error in parsing value for ‘text-decoration’.  Declaration dropped. abe12dc207fb31c0.css:1:8518
+Error in parsing value for ‘text-decoration’.  Declaration dropped. abe12dc207fb31c0.css:1:8644
+Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. CraftCorner:1:3204
+Error in parsing value for ‘-moz-text-size-adjust’.  Declaration dropped. CraftCorner:1:3231
+Unknown property ‘text-size-adjust’.  Declaration dropped. CraftCorner:1:3279
+Error in parsing value for ‘text-wrap’.  Declaration dropped. CraftCorner:1:11574
+Unknown property ‘-moz-text-decoration-color’.  Declaration dropped. CraftCorner:1:15595
+Error in parsing value for ‘text-wrap’.  Declaration dropped. CraftCorner:1:19262
+Error in parsing value for ‘text-wrap’.  Declaration dropped. CraftCorner:1:32572
+Error in parsing value for ‘text-wrap’.  Declaration dropped. CraftCorner:1:43146
+Error in parsing value for ‘transition-duration’.  Declaration dropped. CraftCorner:1:63120
+Unknown pseudo-class or pseudo-element ‘-ms-input-placeholder’.  Ruleset ignored due to bad selector. CraftCorner:1:66813
+Error in parsing value for ‘grid-template-rows’.  Declaration dropped. CraftCorner:1:68753
+Error in parsing value for ‘scrollbar-width’.  Declaration dropped. CraftCorner:1:21543
+Error in parsing value for ‘-webkit-text-size-adjust’.  Declaration dropped. ~:1:6271
+Error in parsing value for ‘-moz-text-size-adjust’.  Declaration dropped. ~:1:6298
+Unknown property ‘text-size-adjust’.  Declaration dropped. ~:1:6346
+Ruleset ignored due to bad selector. ~:1:15720
+Ruleset ignored due to bad selector. ~:1:17312
+Error in parsing value for ‘-webkit-box-align’.  Declaration dropped. ~:1:212
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/css/abe12dc207fb31c0.css
+Source Map URL: abe12dc207fb31c0.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: 52b0e228eb545ddc.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: f44bcba28a23339c.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: 52b0e228eb545ddc.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: f44bcba28a23339c.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/css/abe12dc207fb31c0.css
+Source Map URL: abe12dc207fb31c0.css.map
+
+This site appears to use a scroll-linked positioning effect. This may not work well with asynchronous panning; see https://firefox-source-docs.mozilla.org/performance/scroll-linked_effects.html for further details and to join the discussion on related tools and features! CraftCorner
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: 52b0e228eb545ddc.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://replit.com/@bonniesicaranza/CraftCorner
+Source Map URL: f44bcba28a23339c.css.map
+
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/css/abe12dc207fb31c0.css
+Source Map URL: abe12dc207fb31c0.css.map
+
+​
+

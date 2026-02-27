@@ -1,0 +1,10 @@
+workflows:
+  "mental-health-app":
+    name: "Mental Health App"
+    command: "tsx server/index.ts"
+    restartPolicy: "on-exit"
+    env:
+      PORT: "3000"
+
+run: "npx tsx server/index.ts"
+entrypoint: "server/index.ts"

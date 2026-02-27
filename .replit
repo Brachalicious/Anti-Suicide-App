@@ -1,0 +1,25 @@
+modules = ["nodejs-20", "python-3.11"]
+
+[nix]
+channel = "stable-25_05"
+packages = ["imagemagick", "zip"]
+
+[[ports]]
+localPort = 3000
+externalPort = 80
+
+[[ports]]
+localPort = 5000
+externalPort = 5000
+
+[[ports]]
+localPort = 5173
+externalPort = 5173
+
+[agent]
+integrations = ["javascript_openai_ai_integrations:2.0.0"]
+
+[deployment]
+deploymentTarget = "cloudrun"
+publicDir = "public"
+run = ["sh", "-c", "npx tsx server/index.ts"]

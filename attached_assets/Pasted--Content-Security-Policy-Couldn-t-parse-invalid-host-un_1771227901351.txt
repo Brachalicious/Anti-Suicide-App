@@ -1,0 +1,101 @@
+
+Content-Security-Policy: Couldn’t parse invalid host 'unsafe-dynamic' ~
+[Coframe] Replit Enterprise watcher loaded f791f70f6e37cb44.js:14:6052
+
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      f791f70f6e37cb44.js:14:6052
+Download the Apollo DevTools for a better development experience: https://addons.mozilla.org/en-US/firefox/addon/apollo-developer-tools/ f791f70f6e37cb44.js:14:6052
+DD_RUM is already initialized. b2e7fcc56d8591dd.js:2:107713
+
+      /////////////////////
+   ///////////////////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////        Curious and driven?
+  ///////////////@@@@@@@///////        Work with us!
+  ///////////////@@@@@@@///////
+  ///////////////@@@@@@@///////        https://join.replit.com/hack.with.us
+  ////////@@@@@@@//////////////
+  ////////@@@@@@@//////////////
+  ////////@@@@@@#//////////////
+   ///////////////////////////
+      /////////////////////
+      f791f70f6e37cb44.js:14:6052
+  WARN  [Statsig] Creating multiple Statsig clients with the same SDK key can lead to unexpected behavior. Multi-instance support requires different SDK keys. f791f70f6e37cb44.js:14:6052
+Uncaught Error: Minified React error #418; visit https://reactjs.org/docs/error-decoder.html?invariant=418 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    NextJS 7
+5 9954129c7dd6dc22.js:2:50290
+Uncaught Error: Minified React error #423; visit https://reactjs.org/docs/error-decoder.html?invariant=423 for the full message or use the non-minified dev environment for full errors and additional helpful warnings.
+    NextJS 7
+9954129c7dd6dc22.js:2:124563
+[ai-chat] Creating connection with chat proxy enabled f791f70f6e37cb44.js:14:6052
+[LaunchDarkly] LaunchDarkly client initialized f791f70f6e37cb44.js:14:6052
+mozOrientation is deprecated. Use orientation.type instead. api.js:4:46547
+onmozorientationchange is deprecated. Use orientation.onchange instead. api.js:4:46547
+Partitioned cookie or storage access was provided to “https://js.stripe.com/v3/controller-with-preconnect-be8e11a47b21d9dba6efe2921cb1e8cb.html#__shared_params__[version]=acacia&__shared_params__[light_experiment_assignments]=%7B%22token%22%3A%2263d18ad1-2fc4-4ac2-b432-3dfb9af33edd%22%2C%22assignments%22%3A%7B%22elements_generic_skeleton_loader_v4%22%3A%22control%22%7D%7D&apiKey=pk_live_515YpNsJAmnYVOvfnsBqRdATWS6SzbNAslOz1z2tujdKuvRMDAwWMeFXp6dJL1YKRrQjB0WAp0UDGwlFYL7hxw7Fc00QkfxBFsL&apiVersion=2025-01-27.acacia&stripeJsId=63d18ad1-2fc4-4ac2-b432-3dfb9af33edd&stripeObjId=sobj-16b9795e-a053-441a-846f-21402c2584ee&firstStripeInstanceCreatedLatency=1&controllerCount=1&isCheckout=false&stripeJsLoadTime=1771227806630&manualBrowserDeprecationRollout=false&mids[guid]=NA&mids[muid]=ed15edcf-9825-4948-83af-6fbc01cbb78eebd613&mids[sid]=6a8304d8-f83a-47ec-a7e4-bc06bd59c9af95fa69&referrer=https%3A%2F%2Freplit.com%2F~&controllerId=__privateStripeController1331” because it is loaded in the third-party context and dynamic state partitioning is enabled. controller-with-preconnect-fea92dbcfb456d56cabf64f6c42939fe.js:1:158971
+Content-Security-Policy warnings 4
+Ignoring unsupported entryTypes: longtask. recaptcha__en.js:438:326
+Cookie warnings 9
+Partitioned cookie or storage access was provided to “<URL>” because it is loaded in the third-party context and dynamic state partitioning is enabled. 3
+Partitioned cookie or storage access was provided to “https://www.google.com/recaptcha/enterprise/anchor?ar=1&k=6LdqhwwoAAAAAFPdw8jCuvY3PaHQItGj3RzOS4fW&co=aHR0cHM6Ly9yZXBsaXQuY29tOjQ0Mw..&hl=en&v=vUgXt_KV952_-5BB2jjloYzl&size=invisible&anchor-ms=20000&execute-ms=30000&cb=rs38f0q5a0xa” because it is loaded in the third-party context and dynamic state partitioning is enabled. recaptcha__en.js:778:399
+WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER. recaptcha__en.js:240:384
+Cookie warnings 2
+Partitioned cookie or storage access was provided to “https://www.googletagmanager.com/static/service_worker/6240/sw_iframe.html?origin=https%3A%2F%2Freplit.com” because it is loaded in the third-party context and dynamic state partitioning is enabled. sw_iframe.html:15:758
+Partitioned cookie or storage access was provided to “https://m.stripe.network/inner.html#url=https%3A%2F%2Freplit.com%2F~&title=Home%20-%20Replit&referrer=&muid=ed15edcf-9825-4948-83af-6fbc01cbb78eebd613&sid=6a8304d8-f83a-47ec-a7e4-bc06bd59c9af95fa69&version=6&preview=false&__shared_params__[version]=acacia” because it is loaded in the third-party context and dynamic state partitioning is enabled. out-4.5.45.js:1:39660
+Cookie warnings 3
+[ai-chat] Creating connection with chat proxy enabled f791f70f6e37cb44.js:14:6052
+Ignoring unsupported entryTypes: layout-shift. b2e7fcc56d8591dd.js:2:142064
+Ignoring unsupported entryTypes: longtask. b2e7fcc56d8591dd.js:2:142154
+WEBGL_debug_renderer_info is deprecated in Firefox and will be removed. Please use RENDERER. recaptcha__en.js:240:384
+stallwart: failed ping 1 stallwart.build.js:1:882
+stallwart: failed ping 2 stallwart.build.js:1:882
+stallwart: failed ping 3 stallwart.build.js:1:882
+stallwart: failed ping 4 stallwart.build.js:1:882
+stallwart: failed ping 5 stallwart.build.js:1:882
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-regular.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-italic.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-500.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-500italic.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-600.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ibm-plex-sans-v8-latin-600italic.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+The resource at “https://replit.com/public/fonts/ABCDiatypePlusVariable-Regular.woff2” preloaded with link preload was not used within a few seconds. Make sure all attributes of the preload tag are set correctly. CraftCorner
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/chunks/b106e4f5fd29ac96.css
+Source Map URL: d44fc0ca4ffcea01.css.map
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/chunks/b34068ced9203a53.css
+Source Map URL: cb386297330f232c.css.map
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/chunks/734f48b226bb38e7.css
+Source Map URL: 48298cf8245411d7.css.map
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/chunks/1fb287437b1bb513.css
+Source Map URL: a1e17f1323d6b287.css.map
+Source map error: Error: request failed with status 404
+Stack in the worker:networkRequest@resource://devtools/client/shared/source-map-loader/utils/network-request.js:43:9
+
+Resource URL: https://cdn.replit.com/_next/static/chunks/f067901c6a60eff5.css
+Source Map URL: 2d933b1c51acd733.css.map
+
+​
+

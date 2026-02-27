@@ -1,0 +1,126 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Mental health app colors - calming and supportive */
+    --background: 250 100% 98%;
+    --foreground: 224 18% 15%;
+    --card: 250 100% 96%;
+    --card-foreground: 224 18% 15%;
+    --popover: 250 100% 98%;
+    --popover-foreground: 224 18% 15%;
+    --primary: 210 75% 60%;
+    --primary-foreground: 255 100% 100%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 18% 15%;
+    --muted: 220 14% 96%;
+    --muted-foreground: 224 14% 45%;
+    --accent: 210 40% 98%;
+    --accent-foreground: 224 18% 15%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 255 100% 100%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 210 75% 60%;
+    --radius: 0.5rem;
+    
+    /* Crisis/Emergency color */
+    --crisis: 25 95% 53%;
+    --crisis-foreground: 255 100% 100%;
+    
+    /* Support/Safe color */
+    --support: 120 60% 45%;
+    --support-foreground: 255 100% 100%;
+    
+    /* Mood tracking colors */
+    --mood-excellent: 120 60% 50%;
+    --mood-good: 90 60% 50%;
+    --mood-okay: 60 60% 50%;
+    --mood-poor: 30 80% 50%;
+    --mood-terrible: 0 80% 50%;
+  }
+
+  .dark {
+    --background: 224 20% 8%;
+    --foreground: 210 40% 95%;
+    --card: 224 20% 10%;
+    --card-foreground: 210 40% 95%;
+    --popover: 224 20% 8%;
+    --popover-foreground: 210 40% 95%;
+    --primary: 210 75% 65%;
+    --primary-foreground: 224 20% 8%;
+    --secondary: 224 12% 15%;
+    --secondary-foreground: 210 40% 95%;
+    --muted: 224 12% 15%;
+    --muted-foreground: 224 14% 65%;
+    --accent: 224 12% 15%;
+    --accent-foreground: 210 40% 95%;
+    --destructive: 0 62% 50%;
+    --destructive-foreground: 255 100% 100%;
+    --border: 224 12% 20%;
+    --input: 224 12% 20%;
+    --ring: 210 75% 65%;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+  
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-semibold tracking-tight;
+  }
+  
+  h1 {
+    @apply text-4xl;
+  }
+  
+  h2 {
+    @apply text-3xl;
+  }
+  
+  h3 {
+    @apply text-2xl;
+  }
+  
+  /* Mental health specific styles */
+  .crisis-banner {
+    @apply bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 text-red-900 dark:text-red-100;
+  }
+  
+  .support-card {
+    @apply bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 text-green-900 dark:text-green-100;
+  }
+  
+  .mood-scale {
+    @apply flex justify-between items-center space-x-2;
+  }
+  
+  .mood-button {
+    @apply w-12 h-12 rounded-full border-2 transition-all duration-200 hover:scale-110 focus:scale-110 focus:outline-none focus:ring-2 focus:ring-primary;
+  }
+  
+  .breathing-animation {
+    animation: breathe 4s ease-in-out infinite;
+  }
+  
+  @keyframes breathe {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+  
+  .fade-in {
+    animation: fadeIn 0.5s ease-in-out;
+  }
+  
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+}
