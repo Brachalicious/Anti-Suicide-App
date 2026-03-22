@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express from "express";
 import path from "path";
 import { fileURLToPath } from "url";
@@ -28,9 +29,12 @@ app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
 });
 
-app.use(createRouter(storage));
+const router = createRouter(storage);
+console.log("Router created, mounting API routes...");
+app.use(router);
 
 app.use((req, res) => {
+  console.log("Catch-all route hit for:", req.path);
   res.sendFile(path.resolve(__dirname, "..", "index.html"));
 });
 

@@ -112,7 +112,7 @@ export default function VirtualParent() {
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
-      <Card className="mb-6 bg-gradient-to-r from-pink-50 to-purple-50 dark:from-pink-950/20 dark:to-purple-950/20 border-pink-200 dark:border-pink-800">
+  <Card className="mb-6 bg-gradient-to-r from-pink-50 to-green-50 dark:from-pink-950/20 dark:to-green-950/20 border-pink-200 dark:border-pink-800">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
             <span className="text-3xl">{parentEmoji}</span>
@@ -192,7 +192,7 @@ export default function VirtualParent() {
                   className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
                 >
                   {msg.role === "assistant" && (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center text-white text-lg shrink-0">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-green-400 flex items-center justify-center text-white text-lg shrink-0">
                       {parentEmoji}
                     </div>
                   )}
@@ -215,7 +215,7 @@ export default function VirtualParent() {
 
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                 <div className="flex gap-3 justify-start">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-purple-400 flex items-center justify-center text-white text-lg shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-green-400 flex items-center justify-center text-white text-lg shrink-0">
                     {parentEmoji}
                   </div>
                   <div className="bg-muted p-4 rounded-2xl rounded-bl-md">

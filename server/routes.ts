@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { z } from "zod";
 import OpenAI from "openai";
+import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { IStorage } from "./storage";
 import {
   insertMoodEntrySchema,
@@ -11,6 +12,18 @@ import {
 } from "../shared/schema.js";
 
 let openai: OpenAI | null = null;
+let gemini: GoogleGenerativeAI | null = null;
+
+function getGemini(): GoogleGenerativeAI {
+  const apiKey = process.env.GEMINI_API_KEY;
+  if (!apiKey) {
+    throw new Error("Missing GEMINI_API_KEY");
+  }
+  if (!gemini) {
+    gemini = new GoogleGenerativeAI(apiKey);
+  }
+  return gemini;
+}
 
 function getOpenAI(): OpenAI {
   const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
@@ -341,14 +354,25 @@ export function createRouter(storage: IStorage): Router {
     }
   });
 
+  // Test route
+  router.get("/api/test", (req, res) => {
+    console.log("Test route hit!");
+    res.json({ status: "ok", geminiKeyExists: !!process.env.GEMINI_API_KEY });
+  });
+
   // Virtual Parent Chat - Supportive AI parental figure
   router.post("/api/virtual-parent/chat", async (req, res) => {
     try {
+      console.log("Virtual Parent chat request received");
+      console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
+      
       const { message, parentType = "mommy", conversationHistory = [] } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
       }
+      
+      console.log("Message:", message, "Parent type:", parentType);
 
       const parentPersonalities: Record<string, { name: string; tone: string; style: string }> = {
         mommy: {
@@ -399,18 +423,41 @@ Important guidelines:
       res.setHeader("Cache-Control", "no-cache");
       res.setHeader("Connection", "keep-alive");
 
-  const stream = await getOpenAI().chat.completions.create({
-        model: "gpt-4o-mini",
-        messages,
-        stream: true,
-        max_tokens: 500,
-        temperature: 0.8,
+      // Use Gemini API
+      const genAI = getGemini();
+      // Use gemini-2.5-flash (latest stable model)
+      const model = genAI.getGenerativeModel({ 
+        model: "gemini-2.5-flash",
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.8,
+        },
       });
 
+      // Build conversation history for Gemini
+      const chatHistory = conversationHistory.map((msg: { role: string; content: string }) => ({
+        role: msg.role === "assistant" ? "model" : "user",
+        parts: [{ text: msg.content }],
+      }));
+
+      const chat = model.startChat({
+        history: chatHistory,
+        generationConfig: {
+          maxOutputTokens: 500,
+          temperature: 0.8,
+        },
+      });
+
+      // Send message with system prompt prepended to first message
+      const fullMessage = conversationHistory.length === 0 
+        ? `${systemPrompt}\n\nUser: ${message}`
+        : message;
+
+      const result = await chat.sendMessageStream(fullMessage);
       let fullResponse = "";
 
-      for await (const chunk of stream) {
-        const content = chunk.choices[0]?.delta?.content || "";
+      for await (const chunk of result.stream) {
+        const content = chunk.text();
         if (content) {
           fullResponse += content;
           res.write(`data: ${JSON.stringify({ content })}\n\n`);
@@ -420,12 +467,18 @@ Important guidelines:
       res.write(`data: ${JSON.stringify({ done: true, fullResponse })}\n\n`);
       res.end();
     } catch (error) {
-      console.error("Virtual parent chat error:", error);
+      console.error("=== Virtual parent chat error ===");
+      console.error("Error:", error);
+      console.error("Error message:", error instanceof Error ? error.message : String(error));
+      console.error("Stack:", error instanceof Error ? error.stack : "No stack");
       if (res.headersSent) {
         res.write(`data: ${JSON.stringify({ error: "Failed to get response" })}\n\n`);
         res.end();
       } else {
-        res.status(500).json({ error: "Failed to process virtual parent chat" });
+        res.status(500).json({ 
+          error: "Failed to process virtual parent chat",
+          details: error instanceof Error ? error.message : String(error)
+        });
       }
     }
   });

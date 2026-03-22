@@ -42,7 +42,7 @@ export default function Dashboard() {
       description: "Guided exercises and coping strategies",
       icon: Activity,
       href: "/wellness",
-      className: "bg-purple-50 dark:bg-purple-950 border-purple-200 dark:border-purple-800 hover:bg-purple-100 dark:hover:bg-purple-900"
+  className: "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900"
     },
     {
       title: "Safety Plan",
