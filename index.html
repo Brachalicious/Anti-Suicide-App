@@ -2335,7 +2335,48 @@
         document.addEventListener('DOMContentLoaded', function() { updateHeartButtons(); });
 
         function startBreathing() {
-            alert('Breathing Exercise:\n\n1. Breathe in slowly for 4 counts\n2. Hold your breath for 7 counts\n3. Exhale slowly for 8 counts\n4. Repeat 3-4 times\n\nThis helps activate your body\'s relaxation response.');
+            const techniques = `Choose a Breathing Technique:
+
+1️⃣ 4-7-8 Breathing (Relaxation)
+   • Breathe in for 4 counts
+   • Hold for 7 counts
+   • Exhale for 8 counts
+   • Repeat 3-4 times
+
+2️⃣ Box/Square Breathing (Calm Focus)
+   • Breathe in for 4 counts
+   • Hold for 4 counts
+   • Exhale for 4 counts
+   • Hold for 4 counts
+   • Repeat 4-5 times
+
+3️⃣ 5-5 Breathing (Quick Calm)
+   • Breathe in for 5 counts
+   • Exhale for 5 counts
+   • Repeat 5-10 times
+
+4️⃣ Triangle Breathing (Anxiety Relief)
+   • Breathe in for 3 counts
+   • Hold for 3 counts
+   • Exhale for 3 counts
+   • Repeat 5-7 times
+
+5️⃣ Diaphragmatic Breathing (Deep Relaxation)
+   • Place hand on belly
+   • Breathe deeply into belly for 5 counts
+   • Exhale slowly for 5 counts
+   • Feel belly rise and fall
+   • Repeat 5-10 times
+
+6️⃣ Alternate Nostril (Balance & Calm)
+   • Close right nostril, inhale left (4 counts)
+   • Close both, hold (4 counts)
+   • Close left nostril, exhale right (4 counts)
+   • Repeat 3-5 times each side
+
+Choose what feels right for you today! 💚`;
+            
+            alert(techniques);
         }
 
         function showContacts() {
@@ -3926,14 +3967,15 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-        // TODO: Replace with your Firebase config from Firebase Console
+        // Firebase configuration
         const firebaseConfig = {
-            apiKey: "YOUR_FIREBASE_API_KEY",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-            appId: "YOUR_APP_ID"
+            apiKey: "AIzaSyBbVt6AmWRi61VHZVF12ernzt8nJR0uaDM",
+            authDomain: "antisuicideapp.firebaseapp.com",
+            projectId: "antisuicideapp",
+            storageBucket: "antisuicideapp.firebasestorage.app",
+            messagingSenderId: "149935134747",
+            appId: "1:149935134747:web:8fa44fcb4205d9e47d00be",
+            measurementId: "G-1DZLJNRS3D"
         };
 
         // Initialize Firebase
