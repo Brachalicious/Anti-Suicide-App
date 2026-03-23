@@ -254,6 +254,23 @@
         .btn-emergency:hover {
             background: #15803d;
         }
+        .breathing-option {
+            background: linear-gradient(135deg, #15803d, #22c55e);
+            color: white;
+            border: 2px solid #22c55e;
+            padding: 20px;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+            width: 100%;
+            text-align: center;
+        }
+        .breathing-option:hover {
+            background: linear-gradient(135deg, #22c55e, #15803d);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(34,197,94,0.4);
+        }
         .section-title {
             color: #1f2937;
             font-size: 24px;
@@ -788,6 +805,61 @@
                     </div>
                 </div>
 
+                <!-- Breathing Techniques Overlay -->
+                <div id="breathingOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; flex-direction:column; padding:30px; overflow-y:auto;">
+                    <button onclick="closeBreathingOverlay()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer; z-index:10000;">&times;</button>
+                    
+                    <!-- Technique Selection Screen -->
+                    <div id="breathingSelection" style="max-width:600px; width:100%; text-align:center;">
+                        <h2 style="color:white; font-size:28px; font-weight:700; margin-bottom:12px;">🧘 Choose Your Breathing Technique</h2>
+                        <p style="color:#9ca3af; font-size:15px; margin-bottom:30px;">Select what feels right for you today</p>
+                        
+                        <div style="display:grid; gap:12px; margin-bottom:20px;">
+                            <button class="breathing-option" onclick="startGuidedBreathing('478')">
+                                <div style="font-size:24px; margin-bottom:8px;">1️⃣ 4-7-8 Breathing</div>
+                                <div style="font-size:14px; color:#9ca3af;">Deep relaxation • Great for sleep</div>
+                            </button>
+                            
+                            <button class="breathing-option" onclick="startGuidedBreathing('box')">
+                                <div style="font-size:24px; margin-bottom:8px;">2️⃣ Box/Square Breathing</div>
+                                <div style="font-size:14px; color:#9ca3af;">Calm focus • Navy SEAL technique</div>
+                            </button>
+                            
+                            <button class="breathing-option" onclick="startGuidedBreathing('55')">
+                                <div style="font-size:24px; margin-bottom:8px;">3️⃣ 5-5 Breathing</div>
+                                <div style="font-size:14px; color:#9ca3af;">Quick calm • Simple & effective</div>
+                            </button>
+                            
+                            <button class="breathing-option" onclick="startGuidedBreathing('triangle')">
+                                <div style="font-size:24px; margin-bottom:8px;">4️⃣ Triangle Breathing</div>
+                                <div style="font-size:14px; color:#9ca3af;">Anxiety relief • Gentle & balanced</div>
+                            </button>
+                            
+                            <button class="breathing-option" onclick="startGuidedBreathing('diaphragmatic')">
+                                <div style="font-size:24px; margin-bottom:8px;">5️⃣ Diaphragmatic Breathing</div>
+                                <div style="font-size:14px; color:#9ca3af;">Deep relaxation • Belly breathing</div>
+                            </button>
+                            
+                            <button class="breathing-option" onclick="startGuidedBreathing('alternate')">
+                                <div style="font-size:24px; margin-bottom:8px;">6️⃣ Alternate Nostril</div>
+                                <div style="font-size:14px; color:#9ca3af;">Balance & calm • Yogic practice</div>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Guided Breathing Exercise Screen -->
+                    <div id="breathingGuide" style="display:none; max-width:500px; width:100%; text-align:center;">
+                        <div id="breathingCircle" style="width:200px; height:200px; border-radius:50%; background: radial-gradient(circle, #22c55e, #15803d); margin: 0 auto 30px; display:flex; align-items:center; justify-content:center; transition: all 1s ease-in-out; box-shadow: 0 0 60px rgba(34,197,94,0.6);">
+                            <span id="breathingText" style="color:white; font-size:24px; font-weight:700;">Breathe In</span>
+                        </div>
+                        <h2 id="breathingTitle" style="color:white; font-size:26px; font-weight:700; margin-bottom:16px;">4-7-8 Breathing</h2>
+                        <p id="breathingInstruction" style="color:#d1d5db; font-size:17px; line-height:1.7; margin-bottom:24px;">Follow the circle and the prompts</p>
+                        <div id="breathingCounter" style="color:#22c55e; font-size:48px; font-weight:700; margin-bottom:24px;">4</div>
+                        <button onclick="stopGuidedBreathing()" style="background:#374151; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; margin-right:12px;">⏸️ Pause</button>
+                        <button onclick="closeBreathingOverlay()" style="background:#22c55e; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer;">✓ Done</button>
+                    </div>
+                </div>
+
                 <div class="card">
                     <h2 class="section-title">Daily Check-in</h2>
                     <p>How are you feeling today? Pick an emoji:</p>
@@ -864,7 +936,7 @@
 
                 <div class="card">
                     <h2 class="section-title">Quick Support Tools</h2>
-                    <button class="btn" onclick="startBreathing()" style="background:#22c55e;">🧘 Breathing Exercise</button>
+                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
                     <button class="btn" onclick="showContacts()" style="background:#16a34a;">📱 Emergency Contacts</button>
                     <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
                     <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
@@ -2334,49 +2406,147 @@
 
         document.addEventListener('DOMContentLoaded', function() { updateHeartButtons(); });
 
-        function startBreathing() {
-            const techniques = `Choose a Breathing Technique:
+        function showBreathingTechniques() {
+            document.getElementById('breathingOverlay').style.display = 'flex';
+            document.getElementById('breathingSelection').style.display = 'block';
+            document.getElementById('breathingGuide').style.display = 'none';
+            document.body.style.overflow = 'hidden';
+        }
 
-1️⃣ 4-7-8 Breathing (Relaxation)
-   • Breathe in for 4 counts
-   • Hold for 7 counts
-   • Exhale for 8 counts
-   • Repeat 3-4 times
+        let breathingInterval = null;
+        let breathingCycleCount = 0;
 
-2️⃣ Box/Square Breathing (Calm Focus)
-   • Breathe in for 4 counts
-   • Hold for 4 counts
-   • Exhale for 4 counts
-   • Hold for 4 counts
-   • Repeat 4-5 times
-
-3️⃣ 5-5 Breathing (Quick Calm)
-   • Breathe in for 5 counts
-   • Exhale for 5 counts
-   • Repeat 5-10 times
-
-4️⃣ Triangle Breathing (Anxiety Relief)
-   • Breathe in for 3 counts
-   • Hold for 3 counts
-   • Exhale for 3 counts
-   • Repeat 5-7 times
-
-5️⃣ Diaphragmatic Breathing (Deep Relaxation)
-   • Place hand on belly
-   • Breathe deeply into belly for 5 counts
-   • Exhale slowly for 5 counts
-   • Feel belly rise and fall
-   • Repeat 5-10 times
-
-6️⃣ Alternate Nostril (Balance & Calm)
-   • Close right nostril, inhale left (4 counts)
-   • Close both, hold (4 counts)
-   • Close left nostril, exhale right (4 counts)
-   • Repeat 3-5 times each side
-
-Choose what feels right for you today! 💚`;
+        function startGuidedBreathing(technique) {
+            // Hide selection, show guide
+            document.getElementById('breathingSelection').style.display = 'none';
+            document.getElementById('breathingGuide').style.display = 'block';
             
-            alert(techniques);
+            const circle = document.getElementById('breathingCircle');
+            const text = document.getElementById('breathingText');
+            const counter = document.getElementById('breathingCounter');
+            const title = document.getElementById('breathingTitle');
+            const instruction = document.getElementById('breathingInstruction');
+            
+            // Stop any existing breathing exercise
+            if (breathingInterval) clearInterval(breathingInterval);
+            breathingCycleCount = 0;
+            
+            // Define technique parameters
+            const techniques = {
+                '478': {
+                    name: '4-7-8 Breathing',
+                    description: 'Deep relaxation • Great for sleep and anxiety',
+                    steps: [
+                        { phase: 'inhale', duration: 4, text: 'Breathe In', scale: 1.5 },
+                        { phase: 'hold', duration: 7, text: 'Hold', scale: 1.5 },
+                        { phase: 'exhale', duration: 8, text: 'Breathe Out', scale: 1 }
+                    ]
+                },
+                'box': {
+                    name: 'Box/Square Breathing',
+                    description: 'Navy SEAL technique for calm focus',
+                    steps: [
+                        { phase: 'inhale', duration: 4, text: 'Breathe In', scale: 1.5 },
+                        { phase: 'hold', duration: 4, text: 'Hold', scale: 1.5 },
+                        { phase: 'exhale', duration: 4, text: 'Breathe Out', scale: 1 },
+                        { phase: 'hold', duration: 4, text: 'Hold', scale: 1 }
+                    ]
+                },
+                '55': {
+                    name: '5-5 Breathing',
+                    description: 'Simple and effective for quick calm',
+                    steps: [
+                        { phase: 'inhale', duration: 5, text: 'Breathe In', scale: 1.5 },
+                        { phase: 'exhale', duration: 5, text: 'Breathe Out', scale: 1 }
+                    ]
+                },
+                'triangle': {
+                    name: 'Triangle Breathing',
+                    description: 'Gentle and balanced for anxiety relief',
+                    steps: [
+                        { phase: 'inhale', duration: 3, text: 'Breathe In', scale: 1.4 },
+                        { phase: 'hold', duration: 3, text: 'Hold', scale: 1.4 },
+                        { phase: 'exhale', duration: 3, text: 'Breathe Out', scale: 1 }
+                    ]
+                },
+                'diaphragmatic': {
+                    name: 'Diaphragmatic Breathing',
+                    description: 'Deep belly breathing for full relaxation',
+                    steps: [
+                        { phase: 'inhale', duration: 5, text: 'Breathe Deep Into Belly', scale: 1.5 },
+                        { phase: 'exhale', duration: 5, text: 'Slowly Release', scale: 1 }
+                    ]
+                },
+                'alternate': {
+                    name: 'Alternate Nostril',
+                    description: 'Yogic practice for balance and calm',
+                    steps: [
+                        { phase: 'inhale', duration: 4, text: 'Inhale Left Nostril', scale: 1.4 },
+                        { phase: 'hold', duration: 4, text: 'Hold Both', scale: 1.4 },
+                        { phase: 'exhale', duration: 4, text: 'Exhale Right Nostril', scale: 1 },
+                        { phase: 'inhale', duration: 4, text: 'Inhale Right Nostril', scale: 1.4 },
+                        { phase: 'hold', duration: 4, text: 'Hold Both', scale: 1.4 },
+                        { phase: 'exhale', duration: 4, text: 'Exhale Left Nostril', scale: 1 }
+                    ]
+                }
+            };
+            
+            const selectedTechnique = techniques[technique];
+            title.textContent = selectedTechnique.name;
+            instruction.textContent = selectedTechnique.description;
+            
+            let currentStep = 0;
+            
+            function runStep() {
+                const step = selectedTechnique.steps[currentStep];
+                const duration = step.duration;
+                
+                // Update display
+                text.textContent = step.text;
+                circle.style.transform = `scale(${step.scale})`;
+                circle.style.boxShadow = step.phase === 'inhale' ? '0 0 80px rgba(34,197,94,0.8)' : '0 0 40px rgba(34,197,94,0.4)';
+                
+                // Countdown
+                let count = duration;
+                counter.textContent = count;
+                
+                const countInterval = setInterval(() => {
+                    count--;
+                    if (count > 0) {
+                        counter.textContent = count;
+                    } else {
+                        clearInterval(countInterval);
+                    }
+                }, 1000);
+                
+                // Move to next step
+                setTimeout(() => {
+                    currentStep++;
+                    if (currentStep >= selectedTechnique.steps.length) {
+                        currentStep = 0;
+                        breathingCycleCount++;
+                    }
+                    runStep();
+                }, duration * 1000);
+            }
+            
+            runStep();
+        }
+
+        function stopGuidedBreathing() {
+            if (breathingInterval) {
+                clearInterval(breathingInterval);
+                breathingInterval = null;
+            }
+            // Return to selection
+            document.getElementById('breathingGuide').style.display = 'none';
+            document.getElementById('breathingSelection').style.display = 'block';
+        }
+
+        function closeBreathingOverlay() {
+            stopGuidedBreathing();
+            document.getElementById('breathingOverlay').style.display = 'none';
+            document.body.style.overflow = 'auto';
         }
 
         function showContacts() {
