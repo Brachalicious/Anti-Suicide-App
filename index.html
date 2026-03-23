@@ -733,7 +733,7 @@
                         If you're in immediate danger or having thoughts of harming yourself:
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn btn-emergency" onclick="window.open('tel:911')" style="background: #dc2626;">🚨 Call 911</button>
+                        <button class="btn btn-emergency" onclick="window.open('tel:718-387-1750')" style="background: #f97316;">🚑 Hatzoloh</button>
                         <button class="btn btn-emergency" onclick="window.open('tel:988')" style="background: #22c55e;">📞 Call 988</button>
                         <button class="btn btn-emergency" onclick="window.open('sms:741741&body=HOME')" style="background: #3b82f6;">💬 Text 741741</button>
                     </div>
@@ -1238,7 +1238,17 @@
                 </div>
 
                 <div class="collapse-header" onclick="toggleCollapse(this)">
-                    <span>💙 After an Attempt</span>
+                    <span>�️ Safety Planning</span>
+                    <span class="arrow">▼</span>
+                </div>
+                <div class="collapse-body">
+                    <button class="btn" onclick="showContacts()">📱 Emergency Contacts</button>
+                    <button class="btn" onclick="showSafetyPlan()">🛡️ My Safety Plan</button>
+                    <button class="btn" onclick="showCoping()">🛠️ Coping Strategies</button>
+                </div>
+
+                <div class="collapse-header" onclick="toggleCollapse(this)">
+                    <span>�💙 After an Attempt</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div class="collapse-body">
@@ -1276,16 +1286,6 @@
                     </div>
                     <button class="btn" onclick="window.open('https://afsp.org/after-an-attempt/', '_blank')">Visit AFSP — After an Attempt</button>
                     <button class="btn" style="margin-top: 8px;" onclick="window.open('https://afsp.org/find-a-mental-health-professional/', '_blank')">Find a Mental Health Professional (AFSP)</button>
-                </div>
-
-                <div class="collapse-header" onclick="toggleCollapse(this)">
-                    <span>🛡️ Safety Planning</span>
-                    <span class="arrow">▼</span>
-                </div>
-                <div class="collapse-body">
-                    <button class="btn" onclick="showContacts()">📱 Emergency Contacts</button>
-                    <button class="btn" onclick="showSafetyPlan()">🛡️ My Safety Plan</button>
-                    <button class="btn" onclick="showCoping()">🛠️ Coping Strategies</button>
                 </div>
             </div>
         </div>
