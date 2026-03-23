@@ -5,8 +5,10 @@
 Add these in: Site Settings → Environment Variables
 
 ### Required:
-1. **GEMINI_API_KEY** = `AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g`
-   - Your Google Gemini API key for Virtual Parent chat
+1. **GEMINI_API_KEY** = `[Your API key from .env file]`
+   - ⚠️ **NEVER commit this to GitHub!**
+   - Get your key from Google AI Studio: https://makersuite.google.com/app/apikey
+   - Keep it in your `.env` file (already in .gitignore)
 
 ### For Google Authentication (To Be Added):
 2. **GOOGLE_CLIENT_ID** = `your_google_client_id_here`

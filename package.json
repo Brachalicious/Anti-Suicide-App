@@ -29,6 +29,7 @@
     "drizzle-orm": "^0.45.1",
     "drizzle-zod": "^0.8.3",
     "express": "^5.1.0",
+    "firebase": "^12.11.0",
     "lucide-react": "^0.536.0",
     "openai": "^6.16.0",
     "p-limit": "^7.2.0",

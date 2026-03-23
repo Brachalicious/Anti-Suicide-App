@@ -560,6 +560,25 @@
             </div>
             <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px;">Suicide Prevention App</div>
         </div>
+
+        <!-- Firebase Auth Section -->
+        <div id="auth-container" style="text-align: center; margin: 16px 0; padding: 12px; background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius: 12px; border: 2px solid #22c55e;">
+            <div id="logged-out-view">
+                <p style="color: #15803d; margin-bottom: 8px; font-weight: 600;">Sign in to save your progress</p>
+                <button id="google-signin-btn" style="background: white; color: #15803d; border: 2px solid #22c55e; border-radius: 8px; padding: 10px 20px; font-size: 14px; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; gap: 8px; transition: all 0.3s;" onmouseover="this.style.background='#f0fdf4'" onmouseout="this.style.background='white'">
+                    <svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M16.51 8H8.98v3h4.3c-.18 1-.74 1.48-1.6 2.04v2.01h2.6a7.8 7.8 0 0 0 2.38-5.88c0-.57-.05-.66-.15-1.18z"/><path fill="#34A853" d="M8.98 17c2.16 0 3.97-.72 5.3-1.94l-2.6-2a4.8 4.8 0 0 1-7.18-2.54H1.83v2.07A8 8 0 0 0 8.98 17z"/><path fill="#FBBC05" d="M4.5 10.52a4.8 4.8 0 0 1 0-3.04V5.41H1.83a8 8 0 0 0 0 7.18l2.67-2.07z"/><path fill="#EA4335" d="M8.98 4.18c1.17 0 2.23.4 3.06 1.2l2.3-2.3A8 8 0 0 0 1.83 5.4L4.5 7.49a4.77 4.77 0 0 1 4.48-3.3z"/></svg>
+                    Sign in with Google
+                </button>
+            </div>
+            <div id="logged-in-view" style="display: none;">
+                <div style="display: flex; align-items: center; justify-content: center; gap: 12px; flex-wrap: wrap;">
+                    <img id="user-photo" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #22c55e;" />
+                    <span id="user-name" style="color: #15803d; font-weight: 600;"></span>
+                    <button id="signout-btn" style="background: #15803d; color: white; border: none; border-radius: 8px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#166534'" onmouseout="this.style.background='#15803d'">Sign Out</button>
+                </div>
+                <div style="font-size: 11px; color: #16a34a; margin-top: 4px;">✓ Your data is being saved</div>
+            </div>
+        </div>
         
         <div class="crisis-banner">
             🚨 IN CRISIS? Call 988 (Suicide Lifeline) or Text HOME to 741741 NOW 🚨
@@ -3899,6 +3918,160 @@
             console.log('Mental Health Support App loaded successfully');
             console.log('Crisis resources: 988 Suicide Lifeline, Crisis Text Line');
         });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+
+        // TODO: Replace with your Firebase config from Firebase Console
+        const firebaseConfig = {
+            apiKey: "YOUR_FIREBASE_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const googleProvider = new GoogleAuthProvider();
+
+        let currentUser = null;
+
+        // Sign in with Google
+        document.getElementById('google-signin-btn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, googleProvider);
+                console.log('User signed in:', result.user.displayName);
+            } catch (error) {
+                console.error('Error signing in:', error);
+                alert('Error signing in. Please try again.');
+            }
+        });
+
+        // Sign out
+        document.getElementById('signout-btn').addEventListener('click', async () => {
+            try {
+                await signOut(auth);
+                console.log('User signed out');
+            } catch (error) {
+                console.error('Error signing out:', error);
+            }
+        });
+
+        // Listen for auth state changes
+        onAuthStateChanged(auth, async (user) => {
+            currentUser = user;
+            
+            if (user) {
+                // User is signed in
+                document.getElementById('logged-out-view').style.display = 'none';
+                document.getElementById('logged-in-view').style.display = 'block';
+                document.getElementById('user-name').textContent = user.displayName;
+                document.getElementById('user-photo').src = user.photoURL;
+                
+                // Load user data from Firestore
+                await loadUserData(user.uid);
+                
+                // Set up real-time listener for user data
+                const userRef = doc(db, 'users', user.uid);
+                onSnapshot(userRef, (docSnap) => {
+                    if (docSnap.exists()) {
+                        const data = docSnap.data();
+                        // Restore user data
+                        if (data.diaryEntries) {
+                            localStorage.setItem('diaryEntries', JSON.stringify(data.diaryEntries));
+                            const entriesContainer = document.getElementById('diaryEntriesContainer');
+                            if (entriesContainer) renderDiaryEntries();
+                        }
+                        if (data.moodLog) {
+                            localStorage.setItem('moodLog', JSON.stringify(data.moodLog));
+                        }
+                        if (data.safetyPlan) {
+                            localStorage.setItem('safetyPlan', JSON.stringify(data.safetyPlan));
+                        }
+                        if (data.adoptedPet) {
+                            localStorage.setItem('adoptedPet', JSON.stringify(data.adoptedPet));
+                            adoptedPet = data.adoptedPet;
+                        }
+                    }
+                });
+            } else {
+                // User is signed out
+                document.getElementById('logged-out-view').style.display = 'block';
+                document.getElementById('logged-in-view').style.display = 'none';
+            }
+        });
+
+        // Load user data from Firestore
+        async function loadUserData(userId) {
+            try {
+                const userRef = doc(db, 'users', userId);
+                const docSnap = await getDoc(userRef);
+                
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    console.log('Loaded user data from Firebase');
+                    
+                    // Restore localStorage from Firestore
+                    if (data.diaryEntries) {
+                        localStorage.setItem('diaryEntries', JSON.stringify(data.diaryEntries));
+                        renderDiaryEntries();
+                    }
+                    if (data.moodLog) {
+                        localStorage.setItem('moodLog', JSON.stringify(data.moodLog));
+                    }
+                    if (data.safetyPlan) {
+                        localStorage.setItem('safetyPlan', JSON.stringify(data.safetyPlan));
+                    }
+                    if (data.adoptedPet) {
+                        localStorage.setItem('adoptedPet', JSON.stringify(data.adoptedPet));
+                        adoptedPet = data.adoptedPet;
+                    }
+                } else {
+                    // First time user - save current localStorage to Firestore
+                    await saveUserData(userId);
+                }
+            } catch (error) {
+                console.error('Error loading user data:', error);
+            }
+        }
+
+        // Save user data to Firestore
+        async function saveUserData(userId) {
+            if (!userId) return;
+            
+            try {
+                const userRef = doc(db, 'users', userId);
+                const data = {
+                    diaryEntries: JSON.parse(localStorage.getItem('diaryEntries') || '[]'),
+                    moodLog: JSON.parse(localStorage.getItem('moodLog') || '[]'),
+                    safetyPlan: JSON.parse(localStorage.getItem('safetyPlan') || 'null'),
+                    adoptedPet: JSON.parse(localStorage.getItem('adoptedPet') || 'null'),
+                    lastUpdated: new Date().toISOString()
+                };
+                
+                await setDoc(userRef, data, { merge: true });
+                console.log('User data saved to Firebase');
+            } catch (error) {
+                console.error('Error saving user data:', error);
+            }
+        }
+
+        // Auto-save user data when localStorage changes
+        const originalSetItem = localStorage.setItem;
+        localStorage.setItem = function(key, value) {
+            originalSetItem.apply(this, arguments);
+            if (currentUser && ['diaryEntries', 'moodLog', 'safetyPlan', 'adoptedPet'].includes(key)) {
+                saveUserData(currentUser.uid);
+            }
+        };
     </script>
 </body>
 </html>
