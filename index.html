@@ -535,6 +535,21 @@
             0% { transform: scale(0.5); opacity: 1; }
             100% { transform: scale(2); opacity: 0; }
         }
+
+        @keyframes puppyWag {
+            0%, 100% { transform: rotate(-3deg); }
+            50% { transform: rotate(3deg); }
+        }
+
+        @keyframes puppyBounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+
+        .puppy-emoji {
+            display: inline-block;
+            animation: puppyWag 0.5s infinite ease-in-out, puppyBounce 0.6s infinite ease-in-out;
+        }
     </style>
 </head>
 <body>
@@ -583,10 +598,40 @@
                         <div class="label">Virtual Daddy</div>
                         <div class="desc">Supportive, protective, encouraging</div>
                     </div>
-                    <div class="parent-option pet-option" onclick="openPetStore()">
-                        <div class="emoji">🐾</div>
-                        <div class="label">Pet Store</div>
-                        <div class="desc">Adopt a loyal companion</div>
+                    <div class="parent-option" onclick="openBuddyPanel()">
+                        <div class="emoji">🤗</div>
+                        <div class="label">Buddy</div>
+                        <div class="desc">Choose your friend companion</div>
+                    </div>
+                </div>
+
+                <div id="buddy-panel" style="display: none; margin-bottom: 16px;">
+                    <div style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); border-radius: 16px; padding: 16px; border: 3px solid #22c55e;">
+                        <h3 style="text-align: center; color: #15803d; font-size: 20px; margin-bottom: 4px;">🤗 Choose Your Buddy</h3>
+                        <p style="text-align: center; color: #16a34a; font-size: 13px; margin-bottom: 14px;">Pick a friend who gets you!</p>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                            <div onclick="selectBuddy('male-friend')" style="padding: 16px; background: white; border: 2px solid #86efac; border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#22c55e'; this.style.transform='scale(1.05)'" onmouseout="this.style.borderColor='#86efac'; this.style.transform='scale(1)'">
+                                <div style="font-size: 40px; margin-bottom: 8px;">👨</div>
+                                <div style="font-weight: 700; color: #15803d; margin-bottom: 4px;">Male Friend</div>
+                                <div style="font-size: 12px; color: #16a34a;">Supportive guy friend</div>
+                            </div>
+                            <div onclick="selectBuddy('female-friend')" style="padding: 16px; background: white; border: 2px solid #86efac; border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#22c55e'; this.style.transform='scale(1.05)'" onmouseout="this.style.borderColor='#86efac'; this.style.transform='scale(1)'">
+                                <div style="font-size: 40px; margin-bottom: 8px;">🙋‍♀️</div>
+                                <div style="font-weight: 700; color: #15803d; margin-bottom: 4px;">Female Friend</div>
+                                <div style="font-size: 12px; color: #16a34a;">Your bestie</div>
+                            </div>
+                            <div onclick="selectBuddy('puppy')" style="padding: 16px; background: white; border: 2px solid #86efac; border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#22c55e'; this.style.transform='scale(1.05)'" onmouseout="this.style.borderColor='#86efac'; this.style.transform='scale(1)'">
+                                <div style="font-size: 40px; margin-bottom: 8px;" class="puppy-emoji">🐶</div>
+                                <div style="font-weight: 700; color: #15803d; margin-bottom: 4px;">Puppy</div>
+                                <div style="font-size: 12px; color: #16a34a;">Four-legged friend</div>
+                            </div>
+                            <div onclick="openPetStoreFromBuddy()" style="padding: 16px; background: white; border: 2px solid #86efac; border-radius: 12px; cursor: pointer; text-align: center; transition: all 0.3s;" onmouseover="this.style.borderColor='#22c55e'; this.style.transform='scale(1.05)'" onmouseout="this.style.borderColor='#86efac'; this.style.transform='scale(1)'">
+                                <div style="font-size: 40px; margin-bottom: 8px;">🐾</div>
+                                <div style="font-weight: 700; color: #15803d; margin-bottom: 4px;">Pet Store</div>
+                                <div style="font-size: 12px; color: #16a34a;">More furry friends</div>
+                            </div>
+                        </div>
+                        <button onclick="closeBuddyPanel()" style="margin-top: 12px; width: 100%; padding: 8px; background: #15803d; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 14px; font-weight: 600;">Close</button>
                     </div>
                 </div>
 
@@ -1547,6 +1592,24 @@
                 emoji: "👨‍👧",
                 fallback: "Hey champ, something went wrong on my end. But remember, I'm always proud of you, and if you need to talk to someone right now, you can always call 988. I believe in you, kiddo. 💪"
             },
+            "male-friend": {
+                welcome: "Hey man! What's up? I'm here for you — no judgment, just support. 🙋‍♂️",
+                placeholder: "What's on your mind, bro?",
+                emoji: "🙋‍♂️",
+                fallback: "Yo, I'm having tech issues right now, but you can always hit me up. If you need someone to talk to ASAP, call 988. I got your back, dude. 💪"
+            },
+            "female-friend": {
+                welcome: "Hey girl! I'm so glad you're here. 🙋‍♀️ What's going on? Let's talk about it!",
+                placeholder: "What's happening, bestie?",
+                emoji: "🙋‍♀️",
+                fallback: "Oh no, I'm having connection issues! But I'm always here for you, hun. If you need immediate support, please reach out to 988. Love you, bestie! 💕"
+            },
+            puppy: {
+                welcome: "*wags tail super fast* 🐶 WOOF WOOF! Hi hi hi! I'm SO excited to see you! *jumps around happily* Tell me everything! I'll listen with my whole heart!",
+                placeholder: "What do you want to share with your puppy?",
+                emoji: "🐶",
+                fallback: "*whimpers and puts paw on your hand* 🐶 I'm having trouble right now, but I'm still right here with you! If you need someone, call 988. You're the best human ever! *wags tail*"
+            },
             pet: {
                 welcome: "*wags tail excitedly and nuzzles up to you* 🐾 Woof! I'm so happy to see you! I'm here to be your loyal companion. Tell me anything — I'll always listen and love you no matter what!",
                 placeholder: "Talk to your furry friend...",
@@ -1571,6 +1634,53 @@
         ];
 
         let adoptedPet = JSON.parse(localStorage.getItem('adoptedPet') || 'null');
+
+        function openBuddyPanel() {
+            document.getElementById('buddy-panel').style.display = 'block';
+        }
+
+        function closeBuddyPanel() {
+            document.getElementById('buddy-panel').style.display = 'none';
+        }
+
+        function selectBuddy(type) {
+            closeBuddyPanel();
+            
+            // Manually trigger selectParent UI update
+            const buddyOption = document.querySelector('.parent-option[onclick*="openBuddyPanel"]');
+            if (buddyOption) {
+                const options = document.querySelectorAll('.parent-option');
+                options.forEach(opt => opt.classList.remove('selected'));
+                buddyOption.classList.add('selected');
+            }
+            
+            selectedParent = type;
+            const parent = parentMessages[type];
+            document.getElementById('welcomeMessage').textContent = parent.welcome;
+            document.getElementById('parentChatInput').placeholder = parent.placeholder;
+            document.querySelector('.chat-avatar.parent').textContent = parent.emoji;
+            
+            // Play bark sound if puppy is selected
+            if (type === 'puppy') {
+                playPuppyBark();
+                setTimeout(() => playPuppyBark(), 200);
+            }
+            
+            // Clear chat history
+            parentChatHistory = [];
+            const chatContainer = document.getElementById('chatContainer');
+            chatContainer.innerHTML = `
+                <div class="chat-message assistant">
+                    <div class="chat-avatar parent">${parent.emoji}</div>
+                    <div class="chat-bubble" id="welcomeMessage">${parent.welcome}</div>
+                </div>
+            `;
+        }
+
+        function openPetStoreFromBuddy() {
+            closeBuddyPanel();
+            openPetStore();
+        }
 
         function openPetStore() {
             const panel = document.getElementById('pet-store-panel');
@@ -1640,6 +1750,48 @@
                 </div>
             `;
             document.getElementById('parentChatInput').placeholder = parent.placeholder;
+        }
+
+        function playPuppyBark() {
+            try {
+                const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+                const duration = 0.15;
+                const bufferSize = audioContext.sampleRate * duration;
+                const buffer = audioContext.createBuffer(1, bufferSize, audioContext.sampleRate);
+                const data = buffer.getChannelData(0);
+                
+                // Generate noise
+                for (let i = 0; i < bufferSize; i++) {
+                    data[i] = Math.random() * 2 - 1;
+                }
+                
+                // Create source
+                const source = audioContext.createBufferSource();
+                source.buffer = buffer;
+                
+                // Create filter for bark-like sound
+                const filter = audioContext.createBiquadFilter();
+                filter.type = 'bandpass';
+                filter.frequency.value = 800;
+                filter.Q.value = 2;
+                
+                // Create gain for envelope
+                const gainNode = audioContext.createGain();
+                gainNode.gain.setValueAtTime(0, audioContext.currentTime);
+                gainNode.gain.linearRampToValueAtTime(0.3, audioContext.currentTime + 0.01);
+                gainNode.gain.exponentialRampToValueAtTime(0.01, audioContext.currentTime + duration);
+                
+                // Connect nodes
+                source.connect(filter);
+                filter.connect(gainNode);
+                gainNode.connect(audioContext.destination);
+                
+                // Play
+                source.start();
+                source.stop(audioContext.currentTime + duration);
+            } catch (e) {
+                console.log('Audio not available');
+            }
         }
 
         (function initAdoptedPet() {
