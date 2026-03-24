@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>MysticMinded - Mental Health Support & Crisis Prevention</title>
+    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
+    <link rel="icon" type="image/png" href="/public/favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -958,6 +960,9 @@
                         <button onclick="startScreamCircle()" style="background: white; color: #7c3aed; border: none; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
                             🎤 Start Screaming
                         </button>
+                        <p style="color: rgba(255,255,255,0.6); font-size: 11px; margin-top: 12px; font-style: italic;">
+                            ⚠️ Requires Chrome or Edge browser for microphone features
+                        </p>
                     </div>
                     
                     <div id="stopOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; flex-direction:column; padding:30px; text-align:center; overflow-y:auto;">
@@ -4681,6 +4686,140 @@
                 saveUserData(currentUser.uid);
             }
         };
+    </script>
+
+    <!-- Footer with Privacy & Terms -->
+    <div style="background:#065f46; color:white; text-align:center; padding:30px 20px; margin-top:60px; border-top:3px solid #22c55e;">
+        <div style="max-width:1200px; margin:0 auto;">
+            <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
+                <strong>MysticMinded</strong> is a mental health support platform for the Jewish community. 
+                If you're in crisis, please call 988 or contact your local emergency services immediately.
+            </p>
+            <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0;">
+                <button onclick="showPrivacyPolicy()" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px;">
+                    Privacy Policy
+                </button>
+                <button onclick="showTermsOfService()" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px;">
+                    Terms of Service
+                </button>
+            </div>
+            <p style="font-size:12px; opacity:0.7; margin-top:16px;">
+                &copy; 2026 MysticMinded. Not a substitute for professional medical advice, diagnosis, or treatment.
+            </p>
+        </div>
+    </div>
+
+    <!-- Privacy Policy Modal -->
+    <div id="privacyModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; overflow-y:auto; padding:40px 20px;">
+        <div style="max-width:800px; margin:0 auto; background:white; border-radius:16px; padding:40px; position:relative;">
+            <button onclick="closePrivacyPolicy()" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:32px; cursor:pointer; color:#666;">&times;</button>
+            <h2 style="color:#16a34a; margin-bottom:20px;">Privacy Policy</h2>
+            <div style="color:#333; line-height:1.8; font-size:14px;">
+                <p><strong>Last Updated: March 24, 2026</strong></p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Information We Collect</h3>
+                <p>We collect information you provide when you create an account, track your mood, write diary entries, or use any features of our app. This may include:</p>
+                <ul style="margin-left:20px; margin-top:8px;">
+                    <li>Account information (email address)</li>
+                    <li>Mood tracking data</li>
+                    <li>Safety plan information</li>
+                    <li>Diary entries</li>
+                    <li>Affirmations you save</li>
+                </ul>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">How We Use Your Information</h3>
+                <p>Your information is used solely to provide you with mental health support features. We:</p>
+                <ul style="margin-left:20px; margin-top:8px;">
+                    <li>Store your data securely using Firebase</li>
+                    <li>Never sell or share your personal information with third parties</li>
+                    <li>Use AI (Google Gemini) to provide supportive responses in the Virtual Parent feature</li>
+                    <li>Keep your data private and confidential</li>
+                </ul>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Data Security</h3>
+                <p>We use industry-standard security measures including Firebase Authentication and Firestore security rules to protect your data. However, no system is 100% secure.</p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Your Rights</h3>
+                <p>You can delete your account and all associated data at any time by contacting us.</p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Crisis Situations</h3>
+                <p>If we believe you're in imminent danger, we may contact emergency services on your behalf.</p>
+                
+                <p style="margin-top:24px;"><strong>Contact:</strong> For privacy questions, email: privacy@mysticminded.com</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Terms of Service Modal -->
+    <div id="termsModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.9); z-index:10000; overflow-y:auto; padding:40px 20px;">
+        <div style="max-width:800px; margin:0 auto; background:white; border-radius:16px; padding:40px; position:relative;">
+            <button onclick="closeTermsOfService()" style="position:absolute; top:20px; right:20px; background:none; border:none; font-size:32px; cursor:pointer; color:#666;">&times;</button>
+            <h2 style="color:#16a34a; margin-bottom:20px;">Terms of Service</h2>
+            <div style="color:#333; line-height:1.8; font-size:14px;">
+                <p><strong>Last Updated: March 24, 2026</strong></p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Acceptance of Terms</h3>
+                <p>By using MysticMinded, you agree to these Terms of Service. If you don't agree, please don't use the app.</p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">NOT A SUBSTITUTE FOR PROFESSIONAL CARE</h3>
+                <p><strong>IMPORTANT:</strong> MysticMinded is NOT a substitute for professional mental health care, medical advice, diagnosis, or treatment. This app provides support tools and resources, but it is NOT therapy or counseling.</p>
+                <ul style="margin-left:20px; margin-top:8px;">
+                    <li>Always seek professional help for mental health concerns</li>
+                    <li>In a crisis, call 988, 911, or your local emergency services</li>
+                    <li>Do not delay seeking professional help because of this app</li>
+                </ul>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Limitations of AI Features</h3>
+                <p>The Virtual Parent feature uses AI (Google Gemini) to provide supportive responses. AI has limitations:</p>
+                <ul style="margin-left:20px; margin-top:8px;">
+                    <li>AI cannot replace human judgment or professional care</li>
+                    <li>Responses may not always be appropriate or accurate</li>
+                    <li>AI does not have real understanding or emotions</li>
+                </ul>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">User Responsibilities</h3>
+                <p>You agree to:</p>
+                <ul style="margin-left:20px; margin-top:8px;">
+                    <li>Use the app responsibly and in good faith</li>
+                    <li>Not use the app for illegal purposes</li>
+                    <li>Seek professional help when needed</li>
+                    <li>Keep your account information secure</li>
+                </ul>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Disclaimer of Warranties</h3>
+                <p>MysticMinded is provided "as is" without warranties of any kind. We do not guarantee that the app will always be available, error-free, or meet your needs.</p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Limitation of Liability</h3>
+                <p>To the fullest extent permitted by law, MysticMinded and its creators are not liable for any damages arising from your use of the app.</p>
+                
+                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Age Requirement</h3>
+                <p>You must be at least 13 years old to use this app. If you're under 18, please use with parental guidance.</p>
+                
+                <p style="margin-top:24px;"><strong>Contact:</strong> For questions about these terms, email: legal@mysticminded.com</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showPrivacyPolicy() {
+            document.getElementById('privacyModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePrivacyPolicy() {
+            document.getElementById('privacyModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
+        
+        function showTermsOfService() {
+            document.getElementById('termsModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closeTermsOfService() {
+            document.getElementById('termsModal').style.display = 'none';
+            document.body.style.overflow = '';
+        }
     </script>
 </body>
 </html>
