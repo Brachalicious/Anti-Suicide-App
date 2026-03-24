@@ -1,20 +1,11 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
-
+  command = "echo 'No build needed - serving static HTML'"
+  publish = "."
+  
 [build.environment]
   NODE_VERSION = "20"
-
-[[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions/server/:splat"
-  status = 200
 
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-[functions]
-  node_bundler = "esbuild"
