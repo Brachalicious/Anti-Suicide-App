@@ -3,3 +3,6 @@ node_modules
 .local/
 .upm/
 .env
+
+# Local Netlify folder
+.netlify

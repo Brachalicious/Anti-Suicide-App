@@ -573,7 +573,7 @@
     <div class="container">
         <div style="text-align: center; padding: 16px 0 8px;">
             <div style="margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;">
-                <img src="/my%20logo%20updated.svg" alt="MysticMinded Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px; filter: sepia(0.55) saturate(0.85) hue-rotate(20deg) brightness(0.95);" />
+                <img src="/my%20logo%20updated.svg" alt="MysticMinded Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px;" />
             </div>
             <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px;">Suicide Prevention App</div>
         </div>
@@ -876,6 +876,34 @@
             </div>
         </div>
 
+        <!-- Scream Circle Overlay -->
+        <div id="screamCircleOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; flex-direction:column; padding:30px; text-align:center;">
+            <button onclick="closeScreamCircle()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer;">&times;</button>
+            <div style="max-width:500px;">
+                <h2 style="color:#e9d5ff; font-size:28px; font-weight:700; margin-bottom:16px;">🎤 Scream at the Circle</h2>
+                <p style="color:#c4b5fd; font-size:16px; margin-bottom:30px;">Let it ALL out. The circle is listening and will respond...</p>
+                
+                <div id="screamCircle" style="width:250px; height:250px; border-radius:50%; background: radial-gradient(circle, #7c3aed, #6d28d9); margin: 0 auto 30px; display:flex; align-items:center; justify-content:center; transition: all 0.3s; box-shadow: 0 0 60px rgba(124, 58, 237, 0.8);">
+                    <span id="screamCircleText" style="color:white; font-size:32px; font-weight:700;">🎤</span>
+                </div>
+                
+                <button id="screamStartBtn" onclick="startListening()" style="background:#7c3aed; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.5);">
+                    🎤 Start Screaming
+                </button>
+                <button id="screamStopBtn" onclick="stopListening()" style="display:none; background:#ef4444; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px;">
+                    ⏹️ Stop
+                </button>
+                
+                <div id="screamTranscript" style="margin-top:24px; padding:20px; background:rgba(124, 58, 237, 0.15); border:2px solid #7c3aed; border-radius:12px; color:#c4b5fd; font-size:14px; line-height:1.6; min-height:80px; max-height:150px; overflow-y:auto; display:none; text-align:left;">
+                    <div style="color:#e9d5ff; font-weight:600; margin-bottom:8px;">📝 What you're saying:</div>
+                    <div id="transcriptText" style="font-style:italic;"></div>
+                </div>
+                
+                <div id="screamResponse" style="margin-top:16px; padding:20px; background:rgba(124, 58, 237, 0.3); border:2px solid #a855f7; border-radius:12px; color:#e9d5ff; font-size:16px; line-height:1.6; min-height:60px; display:none; font-weight:600;"></div>
+                <div id="screamVolume" style="margin-top:16px; color:#c4b5fd; font-size:14px;"></div>
+            </div>
+        </div>
+
         <div id="dashboard" class="section">
             <div class="grid">
                 <div class="card">
@@ -919,6 +947,19 @@
                         </div>
                         <div style="text-align: center; margin-top: 10px; color: #6b7280; font-size: 14px; font-weight: 500; line-height: 1.5;">Hit the STOP button if you are in crisis but <strong>not</strong> in immediate danger and are wanting to try to self-regulate</div>
                     </div>
+                    
+                    <!-- Scream at the Circle -->
+                    <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #7c3aed, #6d28d9); border-radius: 16px; text-align: center; border: 2px solid #8b5cf6; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.4);">
+                        <div style="font-size: 48px; margin-bottom: 12px;">🎤</div>
+                        <h3 style="color: white; font-size: 20px; font-weight: 700; margin-bottom: 8px;">Scream at the Circle</h3>
+                        <p style="color: #e9d5ff; font-size: 14px; margin-bottom: 16px; line-height: 1.6;">
+                            The circle will absorb and respond! Let it all out - scream, yell, cry. The circle hears you!!!
+                        </p>
+                        <button onclick="startScreamCircle()" style="background: white; color: #7c3aed; border: none; padding: 14px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(255, 255, 255, 0.3); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            🎤 Start Screaming
+                        </button>
+                    </div>
+                    
                     <div id="stopOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.92); z-index:9999; justify-content:center; align-items:center; flex-direction:column; padding:30px; text-align:center; overflow-y:auto;">
                         <button onclick="closeStopOverlay()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer; z-index:10000;">&times;</button>
                         <div id="stopGuideContent" style="max-width:500px; margin:auto; padding-top: 40px;">
@@ -1106,6 +1147,14 @@
                     <span class="arrow">▼</span>
                 </div>
                 <div class="collapse-body open">
+                    <div class="hotline" style="text-align: center; border: 3px solid #f59e0b; background: linear-gradient(135deg, #422006, #713f12); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);">
+                        <h3 style="color: #fbbf24; font-size: 22px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);">the.helpline</h3>
+                        <p style="color: #fcd34d; font-size: 14px; margin-bottom: 8px; font-weight: 600;">100% Anonymous | 24/7 | 365</p>
+                        <p style="color: #e2e8f0; margin-bottom: 8px;">Never Struggle Alone. Frum religious people answer the phones.</p>
+                        <p style="color: #e2e8f0; font-size: 13px; margin-bottom: 8px;">בהצלחה תרבותית</p>
+                        <div class="phone" style="color: #fbbf24; font-size: 28px; margin: 12px 0; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);">📞 929.801.2301</div>
+                        <button class="btn btn-emergency" onclick="window.open('tel:929-801-2301')" style="background: #f59e0b; color: #422006; font-weight: 700; font-size: 16px;">Call the.helpline Now</button>
+                    </div>
                     <div class="hotline">
                         <h3>988 Suicide & Crisis Lifeline</h3>
                         <div class="phone">📞 Call or Text 988</div>
@@ -1208,6 +1257,14 @@
                         <button class="btn btn-emergency" onclick="window.open('tel:646-517-0222')" style="background: #3b82f6; color: white; font-weight: 700; margin-top: 12px;">Call Amudim</button>
                         <button class="btn" style="background: transparent; border: 2px solid #60a5fa; color: #60a5fa; font-weight: 600; margin-top: 8px;" onclick="window.open('https://amudim.org/', '_blank')">Visit amudim.org</button>
                     </div>
+                    <div class="hotline" style="text-align: center; border: 2px solid #ec4899; background: linear-gradient(135deg, #831843, #9f1239);">
+                        <h3 style="color: #f9a8d4; font-size: 20px;">Neshamos Helpline</h3>
+                        <p style="color: #fbbf24; font-size: 13px; margin-bottom: 8px;">Suicide Awareness & Support</p>
+                        <p style="color: #e2e8f0;">Neshamos provides suicide awareness, prevention resources, and emotional support for individuals and families in the Jewish community.</p>
+                        <div class="phone" style="color: #f9a8d4; font-size: 22px; margin: 12px 0;">📞 646-580-9842</div>
+                        <button class="btn btn-emergency" onclick="window.open('tel:646-580-9842')" style="background: #ec4899; color: white; font-weight: 700; margin-top: 12px;">Call Neshamos Helpline</button>
+                        <button class="btn" style="background: transparent; border: 2px solid #f9a8d4; color: #f9a8d4; font-weight: 600; margin-top: 8px;" onclick="window.open('https://neshamos.org/suicide-awareness/', '_blank')">Visit neshamos.org</button>
+                    </div>
                 </div>
 
                 <div class="collapse-header" onclick="toggleCollapse(this)">
@@ -1256,13 +1313,11 @@
                 </div>
 
                 <div class="collapse-header" onclick="toggleCollapse(this)">
-                    <span>�️ Safety Planning</span>
+                    <span>🛡️ Safety Planning</span>
                     <span class="arrow">▼</span>
                 </div>
                 <div class="collapse-body">
-                    <button class="btn" onclick="showContacts()">📱 Emergency Contacts</button>
-                    <button class="btn" onclick="showSafetyPlan()">🛡️ My Safety Plan</button>
-                    <button class="btn" onclick="showCoping()">🛠️ Coping Strategies</button>
+                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
                 </div>
 
                 <div class="collapse-header" onclick="toggleCollapse(this)">
@@ -1424,26 +1479,9 @@
                         <p style="font-size:14px; color:#d1fae5; margin-bottom:12px;">✨ Your safety plan is automatically saved as you fill it out</p>
                         <p style="font-size:16px; color:#fff; font-weight:600;">You got this. You are not alone. 💚</p>
                     </div>
-                </div>
-            </div>
-        </div>
-                        <textarea id="safety-professional-notes" placeholder="Add professional supports..." style="width:100%; min-height:70px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="updateSafetyNotes('professional')"></textarea>
-                    </div>
 
-                    <div style="background: rgba(15,23,42,0.7); border:1px solid #334155; border-radius:16px; padding:18px;">
-                        <h3 style="margin-bottom:8px; color:#f9a8d4;">🏡 Safer Environment</h3>
-                        <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Move to shared space', this)">Move to shared space</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Remove sharp objects', this)">Remove sharp objects</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Give meds to someone', this)">Give meds to someone</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Open windows', this)">Open windows</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Light a candle', this)">Light a candle</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Go to a safe place', this)">Go to a safe place</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Ask someone to stay', this)">Ask someone to stay</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('safer','Lock away weapons', this)">Lock away weapons</button>
-                        </div>
-                        <div id="safety-safer-summary" style="font-size:13px; color:#fbcfe8; margin-bottom:8px;"></div>
-                        <textarea id="safety-safer-notes" placeholder="Add ways to make your space safer..." style="width:100%; min-height:70px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="updateSafetyNotes('safer')"></textarea>
+                    <div style="text-align:center; margin-top:20px;">
+                        <button onclick="saveSafetyPlanData()" style="background:#22c55e; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow: 0 4px 12px rgba(34,197,94,0.4);">💾 Save Safety Plan</button>
                     </div>
                 </div>
             </div>
@@ -1760,18 +1798,22 @@
                 <div class="hotline">
                     <h3>Understanding Depression</h3>
                     <p>Depression is more than just feeling sad. It's a real medical condition that affects how you think, feel, and handle daily activities. It is treatable, and most people who receive treatment get better.</p>
+                    <button class="btn" style="margin-top: 8px;" onclick="window.open('https://www.nimh.nih.gov/health/topics/depression', '_blank')">Learn More About Depression</button>
                 </div>
                 <div class="hotline">
                     <h3>Anxiety & Stress Management</h3>
                     <p>Anxiety is a normal reaction to stress, but when it becomes excessive, it may be a disorder. Learning to manage stress through healthy coping mechanisms can make a significant difference.</p>
+                    <button class="btn" style="margin-top: 8px;" onclick="window.open('https://www.nimh.nih.gov/health/topics/anxiety-disorders', '_blank')">Learn More About Anxiety</button>
                 </div>
                 <div class="hotline">
                     <h3>Building Resilience</h3>
                     <p>Resilience is the ability to bounce back from setbacks. It can be developed through strong relationships, self-care, finding purpose, embracing healthy thoughts, and seeking help when needed.</p>
+                    <button class="btn" style="margin-top: 8px;" onclick="window.open('https://www.apa.org/topics/resilience', '_blank')">Learn More About Building Resilience</button>
                 </div>
                 <div class="hotline">
                     <h3>Self-Care Practices</h3>
                     <p>Regular exercise, adequate sleep, healthy eating, staying connected with loved ones, and setting healthy boundaries are all essential parts of maintaining good mental health.</p>
+                    <button class="btn" style="margin-top: 8px;" onclick="window.open('https://www.mentalhealth.gov/basics/what-is-mental-health/self-care', '_blank')">Learn More About Self-Care</button>
                 </div>
             </div>
             <div class="card">
@@ -2250,6 +2292,8 @@
             { verse: "It's okay to not be okay.", message: "Healing isn't linear, and asking for help is a sign of wisdom, not weakness. Some days will be harder than others, and that's perfectly normal. Give yourself permission to feel what you feel without judgment. Reaching out for support takes more courage than suffering in silence." },
             { verse: "You matter. Your life has value. The world is better with you in it.", message: "Even when the darkness tells you otherwise, your presence makes a difference in ways you may never fully see. The people whose lives you've touched, the smiles you've shared, the love you've given — all of it matters. You are woven into the fabric of this world in a way that no one else can replicate." },
             { verse: "This feeling will pass.", message: "You have gotten through difficult times before, and you can get through this too. Emotions — even the most overwhelming ones — are temporary. They rise and they fall like waves. Hold on through this wave, because calmer waters are ahead. You've proven your resilience before, and you will prove it again." },
+            { verse: "Gam Ze Yavor (גם זה יעבור) — This too shall pass.", message: "This ancient Jewish wisdom reminds us that all things — good and bad — are temporary. The intense pain you feel right now will not last forever. Like the seasons, life moves in cycles. Winter always gives way to spring. Hold on through this dark season, knowing that change is coming. Gam ze yavor — this too shall pass." },
+            { verse: "\"For you created my inmost being; you knit me together in my mother's womb. I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well.\" (Psalm 139:13-14)", message: "Before you took your first breath, G‑d was already crafting you with intention, love, and infinite care. You are not an accident. You are not a mistake. You were knit together with purpose — every fiber of your being designed with wonder. You are fearfully and wonderfully made. Your existence is not just valuable; it is miraculous." },
             { verse: "Taking care of your mental health is just as important as taking care of your physical health.", message: "You deserve support and care. There is no shame in prioritizing your well-being. Just as you would see a doctor for a broken bone, seeking help for your mental health is an act of self-love and strength. You deserve to feel better, and help is available." },
             { verse: "Progress isn't always visible, but every small step forward matters.", message: "Be patient and gentle with yourself. Some days, progress looks like getting out of bed. Other days, it looks like making a phone call or eating a meal. No step is too small to count. You are moving forward even when it doesn't feel like it, and every tiny effort adds up to something beautiful." },
             { verse: "You don't have to face this alone.", message: "There are people who care about you and want to help. Whether it's a friend, a family member, a counselor, or a stranger on a helpline — someone out there is ready to listen without judgment. Letting someone in isn't a burden to them; it's a gift. You deserve connection and support." }
@@ -2767,6 +2811,14 @@
             document.body.style.overflow = '';
         }
 
+        function saveSafetyPlanData() {
+            // Force save all current data
+            persistSafetyPlan();
+            
+            // Show confirmation
+            alert('✅ Safety Plan Saved!\n\nYour safety plan has been saved to this device. All your selections and notes are secure.');
+        }
+
         function initSafetyPlan() {
             const saved = JSON.parse(localStorage.getItem('safetyPlanData') || 'null');
             if (saved) {
@@ -3143,6 +3195,171 @@
             circle.style.display = 'flex';
             circle.style.transform = 'scale(1)';
             circle.style.boxShadow = '0 0 40px rgba(34,197,94,0.4)';
+        }
+
+        // Scream Circle Functions
+        let circleScreamRecognition = null;
+        let circleScreamListening = false;
+        let circleScreamResponseTimer = null;
+
+        function startScreamCircle() {
+            const overlay = document.getElementById('screamCircleOverlay');
+            overlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeScreamCircle() {
+            const overlay = document.getElementById('screamCircleOverlay');
+            overlay.style.display = 'none';
+            document.body.style.overflow = '';
+            if (circleScreamRecognition) {
+                circleScreamRecognition.stop();
+                circleScreamListening = false;
+            }
+            document.getElementById('screamStartBtn').style.display = 'inline-block';
+            document.getElementById('screamStopBtn').style.display = 'none';
+            document.getElementById('screamResponse').style.display = 'none';
+            document.getElementById('screamTranscript').style.display = 'none';
+            document.getElementById('transcriptText').innerHTML = '';
+            document.getElementById('screamVolume').textContent = '';
+            document.getElementById('screamCircleText').textContent = '🎤';
+            const circle = document.getElementById('screamCircle');
+            circle.style.transform = 'scale(1)';
+            circle.style.background = 'radial-gradient(circle, #7c3aed, #6d28d9)';
+            circle.style.boxShadow = '0 0 60px rgba(124, 58, 237, 0.8)';
+        }
+
+        function startListening() {
+            if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
+                alert('Speech recognition is not supported in your browser. Try Chrome or Edge!');
+                return;
+            }
+
+            const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            circleScreamRecognition = new SpeechRecognition();
+            circleScreamRecognition.continuous = true;
+            circleScreamRecognition.interimResults = true;
+
+            document.getElementById('screamStartBtn').style.display = 'none';
+            document.getElementById('screamStopBtn').style.display = 'inline-block';
+            document.getElementById('screamCircleText').textContent = '🔴 LISTENING';
+            document.getElementById('screamTranscript').style.display = 'block';
+            document.getElementById('transcriptText').textContent = 'Listening...';
+            circleScreamListening = true;
+
+            let fullTranscript = '';
+            let lastResponseTime = 0;
+
+            const responses = [
+                "I hear you. Your pain is real, and it's okay to feel this way. Let it all out.",
+                "You're incredibly strong for expressing this. Your feelings are valid. Keep going.",
+                "I'm here with you. I'm absorbing every word, every emotion. You're not alone in this.",
+                "Release it all. The circle is holding space for everything you're feeling.",
+                "You're so brave for letting this out. There's no judgment here—only support.",
+                "I feel the weight of what you're carrying. Your anger, your pain—it's all valid. Let it flow.",
+                "The circle is glowing with your energy. You're being truly heard right now.",
+                "Every word you speak matters. Keep releasing. I'm right here holding it all.",
+                "Your feelings are powerful and real. The circle honors every part of your experience.",
+                "You're not too much. You can scream as loud as you need. I can handle all of it.",
+                "I see your struggle. You're doing amazing by expressing this instead of holding it in.",
+                "The weight you're carrying is heavy. But you don't have to carry it alone anymore.",
+                "Your voice deserves to be heard. Keep speaking your truth. I'm listening with my whole being.",
+                "This darkness you feel is real, but so is the light that's coming. Let it all out.",
+                "You're safe here. The circle is absorbing your pain so you can find some relief."
+            ];
+
+            circleScreamRecognition.onresult = (event) => {
+                const circle = document.getElementById('screamCircle');
+                const responseDiv = document.getElementById('screamResponse');
+                const transcriptDiv = document.getElementById('transcriptText');
+                
+                // Get the transcript
+                let interimTranscript = '';
+                let finalTranscript = '';
+                
+                for (let i = event.resultIndex; i < event.results.length; i++) {
+                    const transcript = event.results[i][0].transcript;
+                    if (event.results[i].isFinal) {
+                        finalTranscript += transcript + ' ';
+                    } else {
+                        interimTranscript += transcript;
+                    }
+                }
+                
+                if (finalTranscript) {
+                    fullTranscript += finalTranscript;
+                }
+                
+                // Show transcript
+                const displayText = fullTranscript + (interimTranscript ? '<span style="color:#a78bfa;">' + interimTranscript + '</span>' : '');
+                transcriptDiv.innerHTML = displayText || 'Listening...';
+                
+                // Scroll to bottom of transcript
+                document.getElementById('screamTranscript').scrollTop = document.getElementById('screamTranscript').scrollHeight;
+                
+                // Animate circle
+                const scale = 1 + (Math.random() * 0.5);
+                circle.style.transform = `scale(${scale})`;
+                circle.style.boxShadow = `0 0 ${60 + Math.random() * 40}px rgba(124, 58, 237, ${0.8 + Math.random() * 0.2})`;
+                
+                // Show volume indicator
+                document.getElementById('screamVolume').textContent = '🌊 The circle is absorbing your energy...';
+                
+                // Show supportive response periodically (every 5 seconds max)
+                const now = Date.now();
+                if (finalTranscript && (now - lastResponseTime > 5000)) {
+                    lastResponseTime = now;
+                    
+                    // Clear any existing response timer
+                    if (circleScreamResponseTimer) clearTimeout(circleScreamResponseTimer);
+                    
+                    // Show response after a pause
+                    circleScreamResponseTimer = setTimeout(() => {
+                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
+                        responseDiv.textContent = randomResponse;
+                        responseDiv.style.display = 'block';
+                        circle.style.transform = 'scale(1.2)';
+                        circle.style.background = 'radial-gradient(circle, #a855f7, #7c3aed)';
+                    }, 800);
+                }
+                
+                setTimeout(() => {
+                    circle.style.transform = 'scale(1)';
+                    circle.style.background = 'radial-gradient(circle, #7c3aed, #6d28d9)';
+                }, 1500);
+            };
+
+            circleScreamRecognition.onerror = (event) => {
+                console.error('Speech recognition error:', event.error);
+                if (event.error === 'not-allowed') {
+                    alert('Microphone access was denied. Please allow microphone access in your browser settings and try again.');
+                }
+            };
+
+            circleScreamRecognition.start();
+        }
+
+        function stopListening() {
+            if (circleScreamRecognition) {
+                circleScreamRecognition.stop();
+                circleScreamListening = false;
+            }
+            document.getElementById('screamStartBtn').style.display = 'inline-block';
+            document.getElementById('screamStopBtn').style.display = 'none';
+            document.getElementById('screamCircleText').textContent = '💚';
+            
+            const responseDiv = document.getElementById('screamResponse');
+            responseDiv.textContent = '✨ You did beautifully. You let it out. The circle has absorbed everything you shared. Take a deep breath—you are safe, you are heard, and you are not alone. 💚';
+            responseDiv.style.display = 'block';
+            responseDiv.style.background = 'rgba(34, 197, 94, 0.2)';
+            responseDiv.style.borderColor = '#22c55e';
+            
+            document.getElementById('screamVolume').textContent = '';
+            
+            const circle = document.getElementById('screamCircle');
+            circle.style.transform = 'scale(1)';
+            circle.style.background = 'radial-gradient(circle, #22c55e, #16a34a)';
+            circle.style.boxShadow = '0 0 60px rgba(34, 197, 94, 0.8)';
         }
 
         function initScreamExperience() {
