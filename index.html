@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MysticMinded - Mental Health Support & Crisis Prevention</title>
+    <title>MysticMinded³³ - Mental Health Support & Crisis Prevention</title>
     <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
     <link rel="icon" type="image/png" href="/public/favicon.svg">
     <style>
@@ -508,6 +508,10 @@
         }
         .reminder-box strong { color: #1e40af; }
     .crisis-link { color: #16a34a; font-weight: 600; }
+        .crisis-tools {
+            overflow-y: auto;
+            max-height: 80vh; /* Adjust the height as needed */
+        }
         .collapse-header {
             display: flex; align-items: center; justify-content: space-between;
             padding: 16px; cursor: pointer; border-radius: 12px;
@@ -575,7 +579,7 @@
     <div class="container">
         <div style="text-align: center; padding: 16px 0 8px;">
             <div style="margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;">
-                <img src="/my%20logo%20updated.svg" alt="MysticMinded Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px;" />
+                <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px;" />
             </div>
             <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px;">Suicide Prevention App</div>
         </div>
@@ -594,6 +598,7 @@
                     <img id="user-photo" style="width: 32px; height: 32px; border-radius: 50%; border: 2px solid #22c55e;" />
                     <span id="user-name" style="color: #15803d; font-weight: 600;"></span>
                     <button id="signout-btn" style="background: #15803d; color: white; border: none; border-radius: 8px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#166534'" onmouseout="this.style.background='#15803d'">Sign Out</button>
+                    <button id="delete-account-btn" onclick="deleteUserAccount()" style="background: #dc2626; color: white; border: none; border-radius: 8px; padding: 6px 16px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.3s;" onmouseover="this.style.background='#b91c1c'" onmouseout="this.style.background='#dc2626'">Delete Account</button>
                 </div>
                 <div style="font-size: 11px; color: #16a34a; margin-top: 4px;">✓ Your data is being saved</div>
             </div>
@@ -615,6 +620,10 @@
             <button class="nav-item" onclick="showSection('affirmation-book')">📖 My Affirmation Book</button>
             <button class="nav-item" onclick="showSection('release')">🔥 Release & Let Go</button>
             <button class="nav-item" onclick="showSection('resources')">Resources</button>
+            <button class="nav-item" onclick="showSection('hope-wall')">💚 Wall of Hope</button>
+            <button class="nav-item" onclick="showSection('music')">🎵 My Music</button>
+            <button class="nav-item" onclick="showSection('contact')">📞 Contact Us / Support</button>
+            <button class="nav-item" onclick="showSection('account')">⚙️ Account Settings</button>
         </nav>
 
         <!-- Crisis Skills Section -->
@@ -622,7 +631,7 @@
             <div class="card">
                 <h2 class="section-title">🛟 Crisis Skills</h2>
                 <p style="color: #6b7280; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
-                    These are evidence-based techniques used in DBT (Dialectical Behavior Therapy) and crisis intervention. 
+                    These are evidence-based techniques used in crisis intervention. 
                     They work by changing your body chemistry, interrupting emotional spirals, and bringing you back to the present moment.
                 </p>
                 
@@ -735,7 +744,7 @@
                         If you're in immediate danger or having thoughts of harming yourself:
                     </div>
                     <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center;">
-                        <button class="btn btn-emergency" onclick="window.open('tel:718-387-1750')" style="background: #f97316;">🚑 Hatzoloh</button>
+                        <button class="btn btn-emergency" onclick="window.open('tel:718-230-1000')" style="background: #f97316;">🚑 Hatzoloh</button>
                         <button class="btn btn-emergency" onclick="window.open('tel:988')" style="background: #22c55e;">📞 Call 988</button>
                         <button class="btn btn-emergency" onclick="window.open('sms:741741&body=HOME')" style="background: #3b82f6;">💬 Text 741741</button>
                     </div>
@@ -1022,8 +1031,8 @@
                     
                     <!-- Guided Breathing Exercise Screen -->
                     <div id="breathingGuide" style="display:none; max-width:500px; width:100%; text-align:center;">
-                        <div id="breathingCircle" style="width:200px; height:200px; border-radius:50%; background: radial-gradient(circle, #22c55e, #15803d); margin: 0 auto 30px; display:flex; align-items:center; justify-content:center; transition: all 1s ease-in-out; box-shadow: 0 0 60px rgba(34,197,94,0.6);">
-                            <span id="breathingText" style="color:white; font-size:24px; font-weight:700;">Breathe In</span>
+                        <div id="breathingCircle" style="width:150px; height:150px; border-radius:50%; background: radial-gradient(circle, #22c55e, #15803d); margin: 0 auto 30px; display:flex; align-items:center; justify-content:center; transition: all 1s ease-in-out; box-shadow: 0 0 60px rgba(34,197,94,0.6);">
+                            <span id="breathingText" style="color:white; font-size:20px; font-weight:700;">Breathe In</span>
                         </div>
                         <h2 id="breathingTitle" style="color:white; font-size:26px; font-weight:700; margin-bottom:16px;">4-7-8 Breathing</h2>
                         <p id="breathingInstruction" style="color:#d1d5db; font-size:17px; line-height:1.7; margin-bottom:24px;">Follow the circle and the prompts</p>
@@ -1485,7 +1494,16 @@
                     </div>
 
                     <div style="text-align:center; margin-top:20px;">
-                        <button onclick="saveSafetyPlanData()" style="background:#22c55e; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow: 0 4px 12px rgba(34,197,94,0.4);">💾 Save Safety Plan</button>
+                        <button onclick="saveSafetyPlanData()" style="background:#22c55e; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow: 0 4px 12px rgba(34,197,94,0.4); margin-bottom:12px;">💾 Save Safety Plan</button>
+                        
+                        <div style="margin-top:16px;">
+                            <p style="font-size:14px; color:#d1d5db; margin-bottom:8px;">Share your safety plan:</p>
+                            <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+                                <button onclick="shareViaEmail()" style="background:#3b82f6; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">📧 Email</button>
+                                <button onclick="shareViaSMS()" style="background:#8b5cf6; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">💬 Text</button>
+                                <button onclick="shareViaWhatsApp()" style="background:#25d366; color:white; border:none; padding:10px 20px; border-radius:10px; font-size:14px; font-weight:600; cursor:pointer;">📱 WhatsApp</button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1574,6 +1592,18 @@
                     <div id="diary-photo-preview" style="margin-top: 8px; display: none; text-align: center;">
                         <img id="diary-photo-preview-img" style="max-width: 200px; max-height: 200px; border-radius: 10px; border: 3px solid #c4a87c;">
                         <button onclick="clearDiaryPhoto()" style="display: block; margin: 6px auto 0; background: none; border: none; color: #c0392b; cursor: pointer; font-size: 13px; font-family: 'Georgia', serif;">Remove Photo</button>
+                    </div>
+                </div>
+
+                <div style="margin: 12px 0;">
+                    <label style="display: block; margin-bottom: 6px; font-weight: 600; color: #5d4037; font-family: 'Georgia', serif; font-size: 14px;">🎤 Voice Note (optional):</label>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <button id="diary-record-btn" onclick="toggleDiaryRecording()" style="padding: 10px 20px; background: #22c55e; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: 'Georgia', serif;">🎤 Start Recording</button>
+                        <span id="diary-recording-time" style="display: none; color: #c0392b; font-weight: 600; font-family: 'Georgia', serif;">0:00</span>
+                    </div>
+                    <div id="diary-audio-preview" style="margin-top: 8px; display: none;">
+                        <audio id="diary-audio-player" controls style="width: 100%; max-width: 300px;"></audio>
+                        <button onclick="clearDiaryAudio()" style="display: block; margin: 6px 0 0; background: none; border: none; color: #c0392b; cursor: pointer; font-size: 13px; font-family: 'Georgia', serif;">Remove Voice Note</button>
                     </div>
                 </div>
 
@@ -1883,9 +1913,307 @@
                 </div>
                 <div class="hotline">
                     <h3>Achieve Behavioral Health — IOP</h3>
-                    <p>A one-of-a-kind Intensive Outpatient Program for women in the Jewish community. Whether post-hospitalization, to prevent hospitalization, or when standard therapy is not enough — Achieve's IOP includes individual and group therapy, family therapy, DBT coaching, CBT groups, and support services.</p>
+                    <p>A one-of-a-kind Intensive Outpatient Program for women in the Jewish community. Whether post-hospitalization, to prevent hospitalization, or when standard therapy is not enough — Achieve's IOP includes individual and group therapy, family therapy, skills coaching, and support services.</p>
                     <p style="font-size: 13px; margin-top: 6px;">After one year, participants have shown significant reduction in hospitalizations, improvement in overall function, and increase in employment rates.</p>
                     <button class="btn" onclick="window.open('https://achievebh.org/iop/', '_blank')">Visit Achieve Behavioral Health</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Contact Us / Support Section -->
+        <div id="contact" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">📞 Contact Us / Support</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
+                        We're here to help! If you have questions, feedback, or need technical support for this app, please reach out to us.
+                    </p>
+                    
+                    <div class="hotline" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e;">
+                        <h3 style="color: #16a34a;">📧 Email Support</h3>
+                        <p style="margin: 12px 0;">For general inquiries, feedback, or support:</p>
+                        <div class="phone" style="color: #16a34a; font-size: 18px;">mysticminded33@gmail.com</div>
+                        <button class="btn" style="background: #22c55e; margin-top: 12px;" onclick="window.open('mailto:mysticminded33@gmail.com?subject=MysticMinded³³ Support Request', '_blank')">
+                            Send Us an Email
+                        </button>
+                    </div>
+
+                    <div class="hotline">
+                        <h3>💬 What We Can Help With</h3>
+                        <ul style="margin-left: 20px; margin-top: 12px; color: #6b7280; line-height: 1.8;">
+                            <li>Technical issues or bugs</li>
+                            <li>Questions about features</li>
+                            <li>Feedback and suggestions</li>
+                            <li>Account or login problems</li>
+                            <li>Privacy or data concerns</li>
+                            <li>General inquiries</li>
+                        </ul>
+                    </div>
+
+                    <div class="hotline" style="background: #fef3c7; border: 2px solid #fbbf24;">
+                        <h3 style="color: #d97706;">⚠️ In Crisis? Contact 988</h3>
+                        <p style="margin-top: 8px;">
+                            <strong>Please note:</strong> This email is for app support only, not for mental health emergencies. 
+                            If you're in crisis or need immediate help, please call <strong>988</strong> (Suicide & Crisis Lifeline) 
+                            or <strong>Hatzoloh</strong> for emergency services.
+                        </p>
+                        <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 16px;">
+                            <button class="btn btn-emergency" onclick="window.open('tel:988')" style="background: #22c55e;">📞 Call 988</button>
+                            <button class="btn btn-emergency" onclick="window.open('tel:718-230-1000')" style="background: #f97316;">🚑 Hatzoloh</button>
+                            <button class="btn btn-emergency" onclick="window.open('sms:741741&body=HOME')" style="background: #3b82f6;">💬 Text 741741</button>
+                        </div>
+                        <p style="margin-top: 16px; font-size: 13px; color: #92400e; font-style: italic; line-height: 1.6;">
+                            <strong>Note from ברכה (Bracha):</strong> I have deliberately not included 911 on this platform. I do not feel the police department 
+                            is adequately trained in handling mental health crises the way organizations like 988, Hatzoloh (718-230-1000), and other crisis lines are. 
+                            I strongly suggest calling <strong>Hatzoloh (718-230-1000)</strong> over 911 any day for mental health emergencies.
+                        </p>
+                    </div>
+
+                    <div class="hotline">
+                        <h3>🙏 About MysticMinded³³</h3>
+                        <p style="margin-top: 8px; line-height: 1.8;">
+                            MysticMinded³³—which will be publicly released soon—was founded on my 33rd birthday as a deeply personal mission. 
+                            It is a spiritually-based platform rooted in Kabbalistic teachings, with a growing network of websites, channels, 
+                            apps, and resources.
+                        </p>
+                        <p style="margin-top: 12px; line-height: 1.8;">
+                            I'm ברכה (Bracha), the founder, and my drive to support mental health and suicidal crisis comes from my own lifelong battle 
+                            with these struggles since childhood. This work is clearly a part—but not the whole sum—of my mission.
+                        </p>
+                        <p style="margin-top: 12px; line-height: 1.8;">
+                            I see people as <strong>mind, body, and soul</strong>—all intertwined. This platform focuses on the <em>mind</em>, 
+                            while my other work nurtures the <em>soul</em>. Together, they create holistic support for healing and growth.
+                        </p>
+                        <p style="margin-top: 12px; line-height: 1.8;">
+                            This platform provides crisis resources, mood tracking, safety planning, and emotional support tools—all free and confidential 
+                            for the Jewish community. The full MysticMinded³³ site will be available to the public soon.
+                        </p>
+                        <p style="margin-top: 12px; font-style: italic; color: #6b7280;">
+                            "You are not alone. You are loved. You matter."
+                        </p>
+                        <p style="margin-top: 16px; text-align: right; font-size: 18px; color: #16a34a;">
+                            ברכה 💚
+                        </p>
+                    </div>
+
+                    <div class="hotline">
+                        <h3>📱 Follow Us (Coming Soon!)</h3>
+                        <p>Stay updated with new features, resources, and mental health tips.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Music Player Section -->
+        <div id="music" class="section hidden">
+            <div class="grid">
+                <div class="card" style="background: #0a0a0a; border: 2px solid #00ff41; border-radius: 16px; font-family: 'Courier New', monospace;">
+
+                    <!-- Retro header -->
+                    <div style="text-align:center; margin-bottom: 24px;">
+                        <div style="font-size: 28px; font-weight: 900; color: #00ff41; text-shadow: 0 0 10px #00ff41, 0 0 20px #00ff41; letter-spacing: 4px;">🎵 MY MUSIC</div>
+                        <div style="color: #00cc33; font-size: 12px; letter-spacing: 3px; margin-top: 4px;">── SUPPORTIVE SONGS PLAYER ──</div>
+                    </div>
+
+                    <!-- YouTube / audio player -->
+                    <div style="background: #0d0d0d; border: 2px solid #00ff41; border-radius: 12px; padding: 16px; margin-bottom: 24px; box-shadow: 0 0 15px #00ff4133;">
+                        <div style="color: #00ff41; font-size: 13px; letter-spacing: 2px; margin-bottom: 10px;">▶ NOW PLAYING</div>
+                        <div id="ytPlayerWrap" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000; display:none;">
+                            <iframe id="ytFrame" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                        </div>
+                        <div id="ytPlaceholder" style="background:#111; border-radius:8px; height:60px; display:flex; align-items:center; justify-content:center; color:#00cc33; font-size:13px; letter-spacing:1px;">
+                            ── paste a YouTube link below to play ──
+                        </div>
+                        <audio id="mainMusicPlayer" controls style="width:100%; margin-top:12px; display:none; accent-color:#00ff41;"></audio>
+                        <div id="nowPlayingTitle" style="color:#00ff41; font-size:13px; margin-top:10px; text-align:center; letter-spacing:1px;"></div>
+                    </div>
+
+                    <!-- Add song controls -->
+                    <div style="background:#0d0d0d; border:2px solid #00cc33; border-radius:12px; padding:16px; margin-bottom:24px;">
+                        <div style="color:#00ff41; font-size:13px; letter-spacing:2px; margin-bottom:14px;">+ ADD A SONG</div>
+
+                        <!-- YouTube link input -->
+                        <div style="margin-bottom:14px;">
+                            <label style="color:#00cc33; font-size:12px; display:block; margin-bottom:6px; letter-spacing:1px;">PASTE YOUTUBE LINK:</label>
+                            <div style="display:flex; gap:8px;">
+                                <input type="url" id="ytLinkInput" placeholder="https://www.youtube.com/watch?v=..."
+                                    style="flex:1; background:#000; border:1px solid #00ff41; border-radius:6px; padding:9px 12px; color:#00ff41; font-size:13px; font-family:'Courier New',monospace; outline:none;">
+                                <button onclick="saveYouTubeSong()"
+                                    style="background:#00ff41; color:#000; border:none; border-radius:6px; padding:9px 14px; font-weight:900; font-family:'Courier New',monospace; cursor:pointer; letter-spacing:1px; font-size:13px; white-space:nowrap;">
+                                    💾 SAVE
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- OR upload file -->
+                        <div style="color:#005500; font-size:11px; text-align:center; letter-spacing:2px; margin: 10px 0;">── OR UPLOAD A FILE ──</div>
+                        <div style="display:flex; gap:8px; align-items:center;">
+                            <input type="file" id="musicFileInput" accept="audio/*"
+                                style="flex:1; background:#000; border:1px solid #00cc33; border-radius:6px; padding:8px; color:#00cc33; font-size:12px; font-family:'Courier New',monospace;">
+                            <button onclick="saveMusicTrack()"
+                                style="background:#00cc33; color:#000; border:none; border-radius:6px; padding:9px 14px; font-weight:900; font-family:'Courier New',monospace; cursor:pointer; letter-spacing:1px; font-size:13px; white-space:nowrap;">
+                                💾 SAVE
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Saved playlist -->
+                    <div>
+                        <div style="color:#00ff41; font-size:13px; letter-spacing:2px; margin-bottom:12px;">♬ MY PLAYLIST</div>
+                        <div id="savedMusicList" style="display:flex; flex-direction:column; gap:8px;">
+                            <p id="noSongsMsg" style="color:#005500; font-style:italic; text-align:center; font-size:13px; padding:12px;">── no songs saved yet ──</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Account Settings Section -->
+        <div id="account" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">⚙️ Account Settings</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
+                        Manage your display name, preferences, and account data. All data is stored locally on your device.
+                    </p>
+
+                    <!-- Display Name -->
+                    <div class="hotline" style="margin-bottom: 20px;">
+                        <h3>👤 Display Name</h3>
+                        <p style="margin: 8px 0 12px; color: #6b7280; font-size: 14px;">This name appears throughout the app to personalise your experience.</p>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <input type="text" id="displayNameInput" placeholder="Enter your name..." maxlength="40"
+                                style="flex:1; padding:10px 14px; border:2px solid #22c55e; border-radius:8px; font-size:15px; outline:none;">
+                            <button onclick="saveDisplayName()"
+                                style="background:#22c55e; color:#000; border:none; border-radius:8px; padding:10px 18px; font-weight:700; cursor:pointer; font-size:14px; white-space:nowrap;">
+                                💾 Save
+                            </button>
+                        </div>
+                        <p id="displayNameMsg" style="color:#22c55e; font-size:13px; margin-top:8px; display:none;">✅ Name saved!</p>
+                    </div>
+
+                    <!-- App Preferences -->
+                    <div class="hotline" style="margin-bottom: 20px;">
+                        <h3>🎨 Preferences</h3>
+                        <div style="margin-top: 12px; display:flex; flex-direction:column; gap:12px;">
+                            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px;">
+                                <input type="checkbox" id="prefSoundEffects" onchange="savePref('soundEffects', this.checked)"
+                                    style="width:18px; height:18px; accent-color:#22c55e; cursor:pointer;">
+                                🔊 Enable sound effects
+                            </label>
+                            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px;">
+                                <input type="checkbox" id="prefDailyReminder" onchange="savePref('dailyReminder', this.checked)"
+                                    style="width:18px; height:18px; accent-color:#22c55e; cursor:pointer;">
+                                🔔 Show daily affirmation reminder
+                            </label>
+                            <label style="display:flex; align-items:center; gap:12px; cursor:pointer; font-size:15px;">
+                                <input type="checkbox" id="prefAnimations" onchange="savePref('animations', this.checked)"
+                                    style="width:18px; height:18px; accent-color:#22c55e; cursor:pointer;">
+                                ✨ Enable animations
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- Export Data -->
+                    <div class="hotline" style="margin-bottom: 20px;">
+                        <h3>📤 Export My Data</h3>
+                        <p style="margin: 8px 0 12px; color: #6b7280; font-size: 14px;">Download a copy of all your diary entries, affirmations, safety plan, and settings as a JSON file.</p>
+                        <button onclick="exportAccountData()"
+                            style="background:#3b82f6; color:white; border:none; border-radius:8px; padding:11px 20px; font-weight:700; cursor:pointer; font-size:14px; width:100%;">
+                            📥 Download My Data
+                        </button>
+                    </div>
+
+                    <!-- Clear All Data -->
+                    <div class="hotline" style="border: 2px solid #f97316; margin-bottom: 20px;">
+                        <h3 style="color:#f97316;">🧹 Clear All Data</h3>
+                        <p style="margin: 8px 0 12px; color: #6b7280; font-size: 14px;">Wipe all diary entries, affirmations, safety plan data, songs, and settings from this device. This cannot be undone.</p>
+                        <button onclick="clearAllData()"
+                            style="background:#f97316; color:white; border:none; border-radius:8px; padding:11px 20px; font-weight:700; cursor:pointer; font-size:14px; width:100%;">
+                            🧹 Clear All My Data
+                        </button>
+                    </div>
+
+                    <!-- Delete Account -->
+                    <div class="hotline" style="border: 2px solid #ef4444; background: #fff1f1;">
+                        <h3 style="color:#ef4444;">🗑️ Delete Account</h3>
+                        <p style="margin: 8px 0 4px; color: #6b7280; font-size: 14px;">This will permanently erase <strong>all</strong> your data from this device — diary, affirmations, safety plan, songs, and settings.</p>
+                        <p style="margin-bottom: 14px; color: #ef4444; font-size: 13px; font-weight: 600;">⚠️ This action cannot be undone.</p>
+                        <div style="margin-bottom: 12px;">
+                            <label style="display:block; font-size:14px; font-weight:600; margin-bottom:6px;">Type <strong>DELETE</strong> to confirm:</label>
+                            <input type="text" id="deleteConfirmInput" placeholder="Type DELETE here..."
+                                style="width:100%; padding:10px 14px; border:2px solid #ef4444; border-radius:8px; font-size:15px; outline:none; box-sizing:border-box;">
+                        </div>
+                        <button onclick="deleteAccount()"
+                            style="background:#ef4444; color:white; border:none; border-radius:8px; padding:11px 20px; font-weight:700; cursor:pointer; font-size:14px; width:100%;">
+                            🗑️ Permanently Delete My Account
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <!-- Wall of Hope Section -->
+        <div id="hope-wall" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">💚 Wall of Hope</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
+                        Share your story of resilience, words of encouragement, meaningful quotes, or anything that brings hope. 
+                        Your words might be exactly what someone needs to hear today. This wall is shared across all users—together, we lift each other up.
+                    </p>
+
+                    <!-- Share Hope Form -->
+                    <div class="hotline" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); border: 2px solid #22c55e;">
+                        <h3 style="color: #16a34a;">✨ Share Your Message of Hope</h3>
+                        <p style="margin: 12px 0; color: #15803d;">Your words can save a life. Share encouragement, resilience, a quote, a song, or an image.</p>
+                        
+                        <div style="margin-top: 16px;">
+                            <label style="display: block; font-weight: 600; color: #16a34a; margin-bottom: 8px;">Your Name (or "Anonymous"):</label>
+                            <input type="text" id="hopeAuthor" placeholder="Your name or 'Anonymous'" style="width: 100%; padding: 10px; border: 2px solid #22c55e; border-radius: 8px; font-size: 14px; margin-bottom: 12px; box-sizing:border-box;">
+                            
+                            <!-- Post type selector -->
+                            <label style="display: block; font-weight: 600; color: #16a34a; margin-bottom: 8px;">What are you sharing?</label>
+                            <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:14px;">
+                                <button type="button" onclick="setHopeType('message')" id="hopeTypeMessage" style="flex:1; min-width:80px; padding:8px; border:2px solid #22c55e; border-radius:8px; background:#22c55e; color:#fff; font-weight:700; cursor:pointer; font-size:13px;">💬 Message</button>
+                                <button type="button" onclick="setHopeType('quote')" id="hopeTypeQuote" style="flex:1; min-width:80px; padding:8px; border:2px solid #22c55e; border-radius:8px; background:#fff; color:#16a34a; font-weight:700; cursor:pointer; font-size:13px;">📜 Quote</button>
+                                <button type="button" onclick="setHopeType('song')" id="hopeTypeSong" style="flex:1; min-width:80px; padding:8px; border:2px solid #22c55e; border-radius:8px; background:#fff; color:#16a34a; font-weight:700; cursor:pointer; font-size:13px;">🎵 Song</button>
+                                <button type="button" onclick="setHopeType('image')" id="hopeTypeImage" style="flex:1; min-width:80px; padding:8px; border:2px solid #22c55e; border-radius:8px; background:#fff; color:#16a34a; font-weight:700; cursor:pointer; font-size:13px;">🖼️ Image</button>
+                            </div>
+
+                            <label style="display: block; font-weight: 600; color: #16a34a; margin-bottom: 8px;" id="hopeMessageLabel">Your Message:</label>
+                            <textarea id="hopeMessage" placeholder="Share your story, a quote, encouragement, or anything that brings hope..." style="width: 100%; min-height: 120px; padding: 10px; border: 2px solid #22c55e; border-radius: 8px; font-size: 14px; resize: vertical; box-sizing:border-box;"></textarea>
+
+                            <!-- Song link (shown only for song type) -->
+                            <div id="hopeSongRow" style="display:none; margin-top:10px;">
+                                <label style="display: block; font-weight: 600; color: #16a34a; margin-bottom: 6px;">YouTube or Song Link:</label>
+                                <input type="url" id="hopeSongLink" placeholder="https://www.youtube.com/watch?v=..." style="width:100%; padding:10px; border:2px solid #22c55e; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                            </div>
+
+                            <!-- Image upload (shown only for image type) -->
+                            <div id="hopeImageRow" style="display:none; margin-top:10px;">
+                                <label style="display: block; font-weight: 600; color: #16a34a; margin-bottom: 6px;">Upload Image:</label>
+                                <input type="file" id="hopeImageInput" accept="image/*" style="width:100%; padding:8px; border:2px solid #22c55e; border-radius:8px; font-size:14px; box-sizing:border-box;">
+                                <img id="hopeImagePreview" style="display:none; margin-top:10px; width:100%; max-height:200px; object-fit:contain; border-radius:8px; border:1px solid #22c55e;">
+                            </div>
+
+                            <button onclick="shareHopeMessage()" class="btn" style="background: #22c55e; margin-top: 16px; width: 100%;">
+                                💚 Share to Wall of Hope
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Messages Display -->
+                    <div style="margin-top: 32px;">
+                        <h3 style="color: #16a34a; margin-bottom: 16px;">🌟 Messages from Our Community</h3>
+                        <div id="hopeMessages" style="display: flex; flex-direction: column; gap: 16px;">
+                            <p style="color: #6b7280; font-style: italic; text-align: center; padding: 20px;">
+                                Loading messages of hope...
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -2291,19 +2619,11 @@
             { verse: "\"A righteous man falls down seven times and gets up.\" – King Solomon (Proverbs 24:16)", message: "Falling is not failure — staying down is. Every time you get back up, you prove your resilience. It doesn't matter how many times life knocks you down. What matters is that you rise again. And you will rise again. You always have." },
             { verse: "\"Gam zu l'tova. This too is for the good.\" – Nachum Ish Gamzu (Talmud, Taanit 21a)", message: "Even in the pain, even in the confusion, even when nothing makes sense — there is a hidden good waiting to be revealed. You may not see it now, and that's okay. Trust that your suffering is not meaningless. Something beautiful can grow from even the hardest ground." },
             { verse: "\"I have greatly hoped for the L-rd, and He extended His ear to me and heard my cry. And He drew me up out of the roaring pit, from the thick mire, and He set my feet upon a rock, He established my steps. He put a new song into my mouth, a praise to our G‑d, so that many may see and fear, and trust in the L-rd.\" (Psalms 40:2-4)", message: "No matter how deep the pit feels, no matter how stuck you are in the mud of despair — G‑d hears your cry. He is reaching down to pull you out, to set your feet on solid ground again. And when you emerge, you will have a new song in your heart. Your pain will become your testimony, and your struggle will inspire others to trust and hope." },
-            { verse: "You are stronger than you think, braver than you feel, and more loved than you know.", message: "Every moment you choose to stay is a victory worth celebrating. You may not feel strong right now, but look at everything you've already survived. That took real courage — courage that lives inside you even when you can't feel it. You are loved more deeply than words can express." },
-            { verse: "Your feelings are valid, your struggles are real, but so is your strength.", message: "You have survived every difficult day so far, and that's a 100% success rate. Don't dismiss what you're going through, but also don't forget what you've already overcome. Your track record of getting through hard times is perfect. You are still here, and that matters." },
-            { verse: "It's okay to not be okay.", message: "Healing isn't linear, and asking for help is a sign of wisdom, not weakness. Some days will be harder than others, and that's perfectly normal. Give yourself permission to feel what you feel without judgment. Reaching out for support takes more courage than suffering in silence." },
-            { verse: "You matter. Your life has value. The world is better with you in it.", message: "Even when the darkness tells you otherwise, your presence makes a difference in ways you may never fully see. The people whose lives you've touched, the smiles you've shared, the love you've given — all of it matters. You are woven into the fabric of this world in a way that no one else can replicate." },
-            { verse: "This feeling will pass.", message: "You have gotten through difficult times before, and you can get through this too. Emotions — even the most overwhelming ones — are temporary. They rise and they fall like waves. Hold on through this wave, because calmer waters are ahead. You've proven your resilience before, and you will prove it again." },
             { verse: "Gam Ze Yavor (גם זה יעבור) — This too shall pass.", message: "This ancient Jewish wisdom reminds us that all things — good and bad — are temporary. The intense pain you feel right now will not last forever. Like the seasons, life moves in cycles. Winter always gives way to spring. Hold on through this dark season, knowing that change is coming. Gam ze yavor — this too shall pass." },
             { verse: "\"For you created my inmost being; you knit me together in my mother's womb. I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well.\" (Psalm 139:13-14)", message: "Before you took your first breath, G‑d was already crafting you with intention, love, and infinite care. You are not an accident. You are not a mistake. You were knit together with purpose — every fiber of your being designed with wonder. You are fearfully and wonderfully made. Your existence is not just valuable; it is miraculous." },
             { verse: "Elokai Neshama (אלוקי נשמה) — My G‑d, the soul You placed within me", message: "\"Elokai, neshama shenatata bi tehorah hi — My G‑d, the soul You placed within me is pure.\" Every morning we recite this blessing, acknowledging that our soul is pure, given by G‑d Himself. No matter what you've been through, no matter what you've done, your neshamah — your divine soul — remains pure and sacred. You are inherently holy and beloved." },
             { verse: "Birkat Kohanim (ברכת כהנים) — Yevarechicha Hashem V'yishmerecha", message: "\"May Hashem bless you and guard you. May Hashem illuminate His face toward you and be gracious to you. May Hashem turn His face toward you and grant you peace.\" (Numbers 6:24-26) This priestly blessing is a prayer of protection, grace, and peace. Even in your darkest moment, Hashem's face is turned toward you with love. You are blessed, guarded, and deserving of divine peace." },
-            { verse: "B'sheim Hashem Elokei Yisrael (בשם ה' אלוקי ישראל) — In the name of Hashem, G‑d of Israel", message: "\"B'sheim Hashem Elokei Yisrael, mimini Michael, u'mismoli Gavriel...\" Before we sleep, we invoke the angels of protection: Michael on our right, Gabriel on our left, Uriel before us, Raphael behind us, and the Shechinah above. You are surrounded by divine protection at all times. You are not alone. The angels and the Divine Presence are with you, guarding you with infinite love." },
-            { verse: "Taking care of your mental health is just as important as taking care of your physical health.", message: "You deserve support and care. There is no shame in prioritizing your well-being. Just as you would see a doctor for a broken bone, seeking help for your mental health is an act of self-love and strength. You deserve to feel better, and help is available." },
-            { verse: "Progress isn't always visible, but every small step forward matters.", message: "Be patient and gentle with yourself. Some days, progress looks like getting out of bed. Other days, it looks like making a phone call or eating a meal. No step is too small to count. You are moving forward even when it doesn't feel like it, and every tiny effort adds up to something beautiful." },
-            { verse: "You don't have to face this alone.", message: "There are people who care about you and want to help. Whether it's a friend, a family member, a counselor, or a stranger on a helpline — someone out there is ready to listen without judgment. Letting someone in isn't a burden to them; it's a gift. You deserve connection and support." }
+            { verse: "B'sheim Hashem Elokei Yisrael (בשם ה' אלוקי ישראל) — In the name of Hashem, G‑d of Israel", message: "\"B'sheim Hashem Elokei Yisrael, mimini Michael, u'mismoli Gavriel, u'milfanai Uriel, u'mei achorai Refael, v'al roshi Shechinas Kel.\" Before we sleep, we invoke the angels of protection: Michael on our right, Gabriel on our left, Uriel before us, Raphael behind us, and the Shechinah (Divine Presence) above our heads. You are surrounded by divine protection at all times. You are not alone. The angels and the Divine Presence are with you, guarding you with infinite love." }
         ];
 
         const moodEmojis = ['😭','😢','😞','😔','😐','🙂','😊','😄','😁','🤩'];
@@ -2374,6 +2694,11 @@
         }
 
         let diaryPhotoData = null;
+        let diaryAudioData = null;
+        let diaryMediaRecorder = null;
+        let diaryAudioChunks = [];
+        let diaryRecordingInterval = null;
+        let diaryRecordingSeconds = 0;
 
         function previewDiaryPhoto(event) {
             const file = event.target.files[0];
@@ -2391,6 +2716,80 @@
             diaryPhotoData = null;
             document.getElementById('diary-photo-preview').style.display = 'none';
             document.getElementById('diary-photo-upload').value = '';
+        }
+
+        async function toggleDiaryRecording() {
+            const btn = document.getElementById('diary-record-btn');
+            const timeDisplay = document.getElementById('diary-recording-time');
+            
+            if (!diaryMediaRecorder || diaryMediaRecorder.state === 'inactive') {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    diaryMediaRecorder = new MediaRecorder(stream);
+                    diaryAudioChunks = [];
+                    
+                    diaryMediaRecorder.ondataavailable = (event) => {
+                        diaryAudioChunks.push(event.data);
+                    };
+                    
+                    diaryMediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(diaryAudioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            diaryAudioData = e.target.result;
+                            const audioPlayer = document.getElementById('diary-audio-player');
+                            audioPlayer.src = diaryAudioData;
+                            document.getElementById('diary-audio-preview').style.display = 'block';
+                        };
+                        reader.readAsDataURL(audioBlob);
+                        
+                        // Stop all tracks
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+                    
+                    diaryMediaRecorder.start();
+                    btn.textContent = '⏹️ Stop Recording';
+                    btn.style.background = '#ef4444';
+                    timeDisplay.style.display = 'inline';
+                    diaryRecordingSeconds = 0;
+                    
+                    diaryRecordingInterval = setInterval(() => {
+                        diaryRecordingSeconds++;
+                        const mins = Math.floor(diaryRecordingSeconds / 60);
+                        const secs = diaryRecordingSeconds % 60;
+                        timeDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    }, 1000);
+                    
+                } catch (err) {
+                    alert('Unable to access microphone. Please check your browser permissions.');
+                    console.error('Microphone access error:', err);
+                }
+            } else {
+                // Stop recording
+                diaryMediaRecorder.stop();
+                btn.textContent = '🎤 Start Recording';
+                btn.style.background = '#22c55e';
+                timeDisplay.style.display = 'none';
+                clearInterval(diaryRecordingInterval);
+            }
+        }
+
+        function clearDiaryAudio() {
+            diaryAudioData = null;
+            document.getElementById('diary-audio-preview').style.display = 'none';
+            document.getElementById('diary-audio-player').src = '';
+            
+            // Reset recording state
+            if (diaryMediaRecorder && diaryMediaRecorder.state === 'recording') {
+                diaryMediaRecorder.stop();
+            }
+            const btn = document.getElementById('diary-record-btn');
+            btn.textContent = '🎤 Start Recording';
+            btn.style.background = '#22c55e';
+            document.getElementById('diary-recording-time').style.display = 'none';
+            clearInterval(diaryRecordingInterval);
+            diaryRecordingSeconds = 0;
         }
 
         function getDiaryEntries() {
@@ -2422,7 +2821,8 @@
                 feelings: feelings,
                 note: notes,
                 gif: gif || null,
-                photo: diaryPhotoData || null
+                photo: diaryPhotoData || null,
+                audio: diaryAudioData || null
             };
 
             const entries = getDiaryEntries();
@@ -2438,6 +2838,7 @@
             clearFeelings('mood-feeling-tags');
             clearGif('mood');
             clearDiaryPhoto();
+            clearDiaryAudio();
             currentMood = null;
             const now2 = new Date();
             document.getElementById('diary-date').value = now2.toISOString().split('T')[0];
@@ -2826,6 +3227,98 @@
             alert('✅ Safety Plan Saved!\n\nYour safety plan has been saved to this device. All your selections and notes are secure.');
         }
 
+        function shareSafetyPlan() {
+            // Build safety plan text
+            let planText = "🛡️ MY SAFETY PLAN\n\n";
+            
+            // Step 1: Warning Signs
+            planText += "1️⃣ WARNING SIGNS\n";
+            if (safetyPlanNotes['warning-signs']) {
+                planText += safetyPlanNotes['warning-signs'] + "\n";
+            }
+            if (safetyPlanSelections['warning-signs'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['warning-signs']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            // Step 2: Internal Coping
+            planText += "2️⃣ INTERNAL COPING STRATEGIES\n";
+            if (safetyPlanNotes['internal-coping']) {
+                planText += safetyPlanNotes['internal-coping'] + "\n";
+            }
+            if (safetyPlanSelections['internal-coping'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['internal-coping']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            // Step 3: People & Places
+            planText += "3️⃣ PEOPLE & PLACES FOR DISTRACTION\n";
+            if (safetyPlanNotes['people-places']) {
+                planText += safetyPlanNotes['people-places'] + "\n";
+            }
+            if (safetyPlanSelections['people-places'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['people-places']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            // Step 4: Support People
+            planText += "4️⃣ PEOPLE TO ASK FOR HELP\n";
+            if (safetyPlanNotes['support-people']) {
+                planText += safetyPlanNotes['support-people'] + "\n";
+            }
+            if (safetyPlanSelections['support-people'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['support-people']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            // Step 5: Professionals
+            planText += "5️⃣ PROFESSIONALS & AGENCIES\n";
+            if (safetyPlanNotes['professionals']) {
+                planText += safetyPlanNotes['professionals'] + "\n";
+            }
+            if (safetyPlanSelections['professionals'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['professionals']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            // Step 6: Safe Environment
+            planText += "6️⃣ MAKING MY ENVIRONMENT SAFE\n";
+            if (safetyPlanNotes['safe-environment']) {
+                planText += safetyPlanNotes['safe-environment'] + "\n";
+            }
+            if (safetyPlanSelections['safe-environment'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['safe-environment']).join(", ") + "\n";
+            }
+            planText += "\n";
+            
+            planText += "---\n";
+            planText += "📞 988 Suicide & Crisis Lifeline: 988\n";
+            planText += "🚑 Hatzoloh: 718-230-1000\n";
+            planText += "💬 Crisis Text Line: Text HOME to 741741\n";
+            planText += "\n💚 You are not alone. You matter.";
+            
+            return planText;
+        }
+
+        function shareViaEmail() {
+            const planText = shareSafetyPlan();
+            const subject = "My Safety Plan";
+            const body = encodeURIComponent(planText);
+            window.open(`mailto:?subject=${subject}&body=${body}`);
+        }
+
+        function shareViaSMS() {
+            const planText = shareSafetyPlan();
+            const body = encodeURIComponent(planText);
+            window.open(`sms:?body=${body}`);
+        }
+
+        function shareViaWhatsApp() {
+            const planText = shareSafetyPlan();
+            const text = encodeURIComponent(planText);
+            window.open(`https://wa.me/?text=${text}`);
+        }
+
         function initSafetyPlan() {
             const saved = JSON.parse(localStorage.getItem('safetyPlanData') || 'null');
             if (saved) {
@@ -2954,7 +3447,7 @@
                 showBreath: false
             },
             talk: {
-                title: "Talk to MysticMinded Bot",
+                title: "Talk to MysticMinded³³ Bot",
                 message: "If you want to talk, I'm here. Use the chat to share what's on your mind.",
                 steps: "Open the chat and start with: <strong>\"I'm feeling overwhelmed\"</strong> or <strong>\"I need someone to listen\"</strong>.",
                 showBreath: false
@@ -2971,7 +3464,7 @@
                     + "<button class=\"btn\" style=\"background:#0ea5e9; color:white; font-weight:600;\" onclick=\"selectStopAction('vent')\">🗣️ Vent</button>"
                     + "<button class=\"btn\" style=\"background:#22c55e; color:white; font-weight:600;\" onclick=\"selectStopAction('scream')\">😱 Scream</button>"
                     + "<button class=\"btn\" style=\"background:#8b5cf6; color:white; font-weight:600;\" onclick=\"selectStopAction('cry')\">😭 Cry</button>"
-                    + "<button class=\"btn\" style=\"background:#10b981; color:white; font-weight:600;\" onclick=\"selectStopAction('talk')\">💬 Talk to MysticMinded Bot</button>"
+                    + "<button class=\"btn\" style=\"background:#10b981; color:white; font-weight:600;\" onclick=\"selectStopAction('talk')\">💬 Talk to MysticMinded³³ Bot</button>"
                     + "</div>",
                 hideButton: true,
                 showBreath: false
@@ -4538,8 +5031,8 @@
     <!-- Firebase SDK -->
     <script type="module">
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
-        import { getFirestore, doc, setDoc, getDoc, onSnapshot } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, deleteUser } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getFirestore, doc, setDoc, getDoc, onSnapshot, deleteDoc, collection, addDoc, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         // Firebase configuration
         const firebaseConfig = {
@@ -4580,6 +5073,63 @@
                 console.error('Error signing out:', error);
             }
         });
+
+        // Delete account function
+        async function deleteUserAccount() {
+            if (!currentUser) {
+                alert('No user is currently signed in.');
+                return;
+            }
+
+            const confirmDelete = confirm(
+                '⚠️ DELETE ACCOUNT?\n\n' +
+                'This will permanently delete:\n' +
+                '• Your account\n' +
+                '• All your data (mood logs, diary entries, safety plan, etc.)\n' +
+                '• This action CANNOT be undone\n\n' +
+                'Are you absolutely sure you want to delete your account?'
+            );
+
+            if (!confirmDelete) return;
+
+            const doubleConfirm = confirm(
+                '🛑 FINAL CONFIRMATION\n\n' +
+                'Type your email to confirm: ' + currentUser.email + '\n\n' +
+                'Click OK to permanently delete your account and all data.'
+            );
+
+            if (!doubleConfirm) return;
+
+            try {
+                const userId = currentUser.uid;
+                
+                // Delete user data from Firestore
+                const userRef = doc(db, 'users', userId);
+                await deleteDoc(userRef);
+                console.log('User data deleted from Firestore');
+
+                // Delete the Firebase Auth account
+                await deleteUser(currentUser);
+                
+                // Clear local storage
+                localStorage.clear();
+                
+                alert('✅ Your account and all data have been permanently deleted.');
+                console.log('Account deleted successfully');
+                
+            } catch (error) {
+                console.error('Error deleting account:', error);
+                
+                if (error.code === 'auth/requires-recent-login') {
+                    alert(
+                        '⚠️ For security reasons, you need to sign in again before deleting your account.\n\n' +
+                        'Please sign out, sign back in, and then try deleting your account again.'
+                    );
+                } else {
+                    alert('Error deleting account: ' + error.message + '\n\nPlease try again or contact support.');
+                }
+            }
+        }
 
         // Listen for auth state changes
         onAuthStateChanged(auth, async (user) => {
@@ -4688,14 +5238,181 @@
                 saveUserData(currentUser.uid);
             }
         };
+
+        // ===== WALL OF HOPE FUNCTIONS (localStorage — no login needed) =====
+
+        let _hopeType = 'message';
+
+        function setHopeType(type) {
+            _hopeType = type;
+            ['message','quote','song','image'].forEach(t => {
+                const btn = document.getElementById('hopeType' + t.charAt(0).toUpperCase() + t.slice(1));
+                if (btn) { btn.style.background = t === type ? '#22c55e' : '#fff'; btn.style.color = t === type ? '#fff' : '#16a34a'; }
+            });
+            document.getElementById('hopeSongRow').style.display = type === 'song' ? 'block' : 'none';
+            document.getElementById('hopeImageRow').style.display = type === 'image' ? 'block' : 'none';
+            const labels = { message: 'Your Message:', quote: 'Your Quote:', song: 'Caption (optional):', image: 'Caption (optional):' };
+            document.getElementById('hopeMessageLabel').textContent = labels[type];
+        }
+
+        // Image preview
+        document.addEventListener('change', function(e) {
+            if (e.target.id === 'hopeImageInput') {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = ev => {
+                    const preview = document.getElementById('hopeImagePreview');
+                    preview.src = ev.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+
+        function shareHopeMessage() {
+            const author = document.getElementById('hopeAuthor').value.trim() || 'Anonymous';
+            const message = document.getElementById('hopeMessage').value.trim();
+            const songLink = document.getElementById('hopeSongLink') ? document.getElementById('hopeSongLink').value.trim() : '';
+
+            if (_hopeType !== 'image' && _hopeType !== 'song' && message.length < 5) {
+                alert('Please write a message before sharing.');
+                return;
+            }
+
+            const entry = {
+                id: Date.now(),
+                type: _hopeType,
+                author,
+                message,
+                timestamp: new Date().toISOString()
+            };
+
+            if (_hopeType === 'song' && songLink) entry.songLink = songLink;
+
+            if (_hopeType === 'image') {
+                const fileInput = document.getElementById('hopeImageInput');
+                if (fileInput.files && fileInput.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(e) {
+                        entry.imageData = e.target.result;
+                        saveAndDisplayHopeEntry(entry);
+                    };
+                    reader.readAsDataURL(fileInput.files[0]);
+                    return;
+                }
+            }
+
+            saveAndDisplayHopeEntry(entry);
+        }
+
+        function saveAndDisplayHopeEntry(entry) {
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+            messages.unshift(entry);
+            localStorage.setItem('wallOfHope', JSON.stringify(messages));
+            document.getElementById('hopeAuthor').value = '';
+            document.getElementById('hopeMessage').value = '';
+            if (document.getElementById('hopeSongLink')) document.getElementById('hopeSongLink').value = '';
+            if (document.getElementById('hopeImageInput')) document.getElementById('hopeImageInput').value = '';
+            if (document.getElementById('hopeImagePreview')) document.getElementById('hopeImagePreview').style.display = 'none';
+            alert('✨ Your message of hope has been shared!');
+            loadHopeMessages();
+        }
+
+        function loadHopeMessages() {
+            const messagesDiv = document.getElementById('hopeMessages');
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+
+            if (messages.length === 0) {
+                messagesDiv.innerHTML = '<p style="color:#6b7280;font-style:italic;text-align:center;padding:20px;">Be the first to share hope! Your words can make a difference.</p>';
+                return;
+            }
+
+            const typeIcon = { message: '💬', quote: '📜', song: '🎵', image: '🖼️' };
+
+            messagesDiv.innerHTML = messages.map((entry, i) => {
+                const date = new Date(entry.timestamp);
+                const formattedDate = date.toLocaleDateString() + ' at ' + date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                const icon = typeIcon[entry.type] || '💚';
+                const ytId = entry.songLink ? getYouTubeId(entry.songLink) : null;
+
+                const shareText = encodeURIComponent((entry.message || '') + (entry.songLink ? '\n' + entry.songLink : ''));
+                const shareButtons = `
+                    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid #bbf7d0;">
+                        <button onclick="hopeShareWhatsApp(${i})" style="background:#25d366;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;">📲 WhatsApp</button>
+                        <button onclick="hopeShareEmail(${i})" style="background:#3b82f6;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;">📧 Email</button>
+                        <button onclick="hopeShareSMS(${i})" style="background:#f97316;color:#fff;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:600;">💬 Text</button>
+                        <button onclick="deleteHopeMessage(${i})" style="background:#fee2e2;color:#ef4444;border:1px solid #ef4444;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;">🗑</button>
+                    </div>`;
+
+                return `
+                    <div style="background:linear-gradient(135deg,#f0fdf4,#dcfce7);border:2px solid #22c55e;border-radius:12px;padding:20px;box-shadow:0 2px 8px rgba(0,0,0,0.08);">
+                        <div style="display:flex;justify-content:space-between;align-items:start;margin-bottom:10px;">
+                            <div>
+                                <span style="background:#22c55e;color:#fff;border-radius:6px;padding:2px 8px;font-size:12px;font-weight:700;margin-right:8px;">${icon} ${entry.type || 'message'}</span>
+                                <strong style="color:#16a34a;font-size:15px;">${escapeHtml(entry.author)}</strong>
+                                <div style="font-size:12px;color:#6b7280;margin-top:4px;">${formattedDate}</div>
+                            </div>
+                        </div>
+                        ${entry.message ? `<p style="color:#15803d;line-height:1.8;white-space:pre-wrap;word-wrap:break-word;font-size:15px;margin:0 0 8px;">${escapeHtml(entry.message)}</p>` : ''}
+                        ${entry.imageData ? `<img src="${entry.imageData}" style="width:100%;max-height:280px;object-fit:contain;border-radius:8px;margin-top:8px;">` : ''}
+                        ${ytId ? `<div style="position:relative;padding-bottom:56.25%;height:0;overflow:hidden;border-radius:8px;margin-top:8px;"><iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/${ytId}" allowfullscreen allow="encrypted-media"></iframe></div>` : (entry.songLink && !ytId ? `<a href="${escapeHtml(entry.songLink)}" target="_blank" style="color:#16a34a;font-size:13px;">� ${escapeHtml(entry.songLink)}</a>` : '')}
+                        ${shareButtons}
+                    </div>`;
+            }).join('');
+        }
+
+        function hopeShareWhatsApp(i) {
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+            const e = messages[i]; if (!e) return;
+            const text = encodeURIComponent('💚 Message of Hope from ' + e.author + ':\n\n' + (e.message || '') + (e.songLink ? '\n🎵 ' + e.songLink : ''));
+            window.open('https://wa.me/?text=' + text, '_blank');
+        }
+
+        function hopeShareEmail(i) {
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+            const e = messages[i]; if (!e) return;
+            const subject = encodeURIComponent('💚 A Message of Hope for You');
+            const body = encodeURIComponent('From ' + e.author + ':\n\n' + (e.message || '') + (e.songLink ? '\n\n🎵 Song: ' + e.songLink : ''));
+            window.open('mailto:?subject=' + subject + '&body=' + body);
+        }
+
+        function hopeShareSMS(i) {
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+            const e = messages[i]; if (!e) return;
+            const body = encodeURIComponent('💚 ' + e.author + ': ' + (e.message || '') + (e.songLink ? ' 🎵 ' + e.songLink : ''));
+            window.open('sms:?body=' + body);
+        }
+
+        function deleteHopeMessage(i) {
+            if (!confirm('Remove this message?')) return;
+            const messages = JSON.parse(localStorage.getItem('wallOfHope') || '[]');
+            messages.splice(i, 1);
+            localStorage.setItem('wallOfHope', JSON.stringify(messages));
+            loadHopeMessages();
+        }
+
+        // Load messages when the page loads
+        window.addEventListener('load', () => {
+            loadHopeMessages();
+        });
+
+        // Reload messages when Wall of Hope section is opened
+        const originalShowSection = window.showSection;
+        window.showSection = function(sectionId) {
+            originalShowSection(sectionId);
+            if (sectionId === 'hope-wall') {
+                loadHopeMessages();
+            }
+        };
     </script>
 
     <!-- Footer with Privacy & Terms -->
     <div style="background:#065f46; color:white; text-align:center; padding:30px 20px; margin-top:60px; border-top:3px solid #22c55e;">
         <div style="max-width:1200px; margin:0 auto;">
             <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
-                <strong>MysticMinded</strong> is a mental health support platform for the Jewish community. 
-                If you're in crisis, please call 988 or contact your local emergency services immediately.
+                <strong>MysticMinded³³</strong> is a spiritually-based platform rooted in Kabbalistic teachings, focusing on the <em>mind</em> aspect of holistic healing—mind, body, and soul. 
+                If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
             </p>
             <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0;">
                 <button onclick="showPrivacyPolicy()" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px;">
@@ -4706,7 +5423,7 @@
                 </button>
             </div>
             <p style="font-size:12px; opacity:0.7; margin-top:16px;">
-                &copy; 2026 MysticMinded. Not a substitute for professional medical advice, diagnosis, or treatment.
+                &copy; 2026 MysticMinded³³. Not a substitute for professional medical advice, diagnosis, or treatment.
             </p>
         </div>
     </div>
@@ -4742,12 +5459,9 @@
                 <p>We use industry-standard security measures including Firebase Authentication and Firestore security rules to protect your data. However, no system is 100% secure.</p>
                 
                 <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Your Rights</h3>
-                <p>You can delete your account and all associated data at any time by contacting us.</p>
+                <p>You can delete your account and all associated data at any time by clicking the "Delete Account" button when signed in. This action is permanent and cannot be undone.</p>
                 
-                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Crisis Situations</h3>
-                <p>If we believe you're in imminent danger, we may contact emergency services on your behalf.</p>
-                
-                <p style="margin-top:24px;"><strong>Contact:</strong> For privacy questions, email: privacy@mysticminded.com</p>
+                <p style="margin-top:24px;"><strong>Contact:</strong> For privacy questions, email: mysticminded33@gmail.com</p>
             </div>
         </div>
     </div>
@@ -4761,10 +5475,10 @@
                 <p><strong>Last Updated: March 24, 2026</strong></p>
                 
                 <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Acceptance of Terms</h3>
-                <p>By using MysticMinded, you agree to these Terms of Service. If you don't agree, please don't use the app.</p>
+                <p>By using this app, you agree to these Terms of Service. If you don't agree, please don't use the app.</p>
                 
                 <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">NOT A SUBSTITUTE FOR PROFESSIONAL CARE</h3>
-                <p><strong>IMPORTANT:</strong> MysticMinded is NOT a substitute for professional mental health care, medical advice, diagnosis, or treatment. This app provides support tools and resources, but it is NOT therapy or counseling.</p>
+                <p><strong>IMPORTANT:</strong> This app is NOT a substitute for professional mental health care, medical advice, diagnosis, or treatment. This app provides support tools and resources, but it is NOT therapy or counseling.</p>
                 <ul style="margin-left:20px; margin-top:8px;">
                     <li>Always seek professional help for mental health concerns</li>
                     <li>In a crisis, call 988, 911, or your local emergency services</li>
@@ -4789,15 +5503,12 @@
                 </ul>
                 
                 <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Disclaimer of Warranties</h3>
-                <p>MysticMinded is provided "as is" without warranties of any kind. We do not guarantee that the app will always be available, error-free, or meet your needs.</p>
+                <p>This app is provided "as is" without warranties of any kind. We do not guarantee that the app will always be available, error-free, or meet your needs.</p>
                 
                 <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Limitation of Liability</h3>
-                <p>To the fullest extent permitted by law, MysticMinded and its creators are not liable for any damages arising from your use of the app.</p>
+                <p>To the fullest extent permitted by law, this app and its creators are not liable for any damages arising from your use of the app.</p>
                 
-                <h3 style="color:#16a34a; margin-top:24px; margin-bottom:12px;">Age Requirement</h3>
-                <p>You must be at least 13 years old to use this app. If you're under 18, please use with parental guidance.</p>
-                
-                <p style="margin-top:24px;"><strong>Contact:</strong> For questions about these terms, email: legal@mysticminded.com</p>
+                <p style="margin-top:24px;"><strong>Contact:</strong> For questions about these terms, email: mysticminded33@gmail.com</p>
             </div>
         </div>
     </div>
@@ -4821,6 +5532,179 @@
         function closeTermsOfService() {
             document.getElementById('termsModal').style.display = 'none';
             document.body.style.overflow = '';
+        }
+
+        // ── Music Player ──────────────────────────────────────────
+        function getYouTubeId(url) {
+            const patterns = [
+                /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([a-zA-Z0-9_-]{11})/,
+                /youtube\.com\/shorts\/([a-zA-Z0-9_-]{11})/
+            ];
+            for (const p of patterns) {
+                const m = url.match(p);
+                if (m) return m[1];
+            }
+            return null;
+        }
+
+        function saveYouTubeSong() {
+            const input = document.getElementById('ytLinkInput');
+            const url = input.value.trim();
+            if (!url) { alert('Please paste a YouTube link first.'); return; }
+            const id = getYouTubeId(url);
+            if (!id) { alert('Could not recognise that YouTube link. Please try a standard youtube.com or youtu.be URL.'); return; }
+            const songs = JSON.parse(localStorage.getItem('mySongs') || '[]');
+            const name = prompt('Give this song a name:', 'YouTube Song ' + (songs.length + 1)) || ('YouTube Song ' + (songs.length + 1));
+            songs.push({ name, type: 'youtube', ytId: id });
+            localStorage.setItem('mySongs', JSON.stringify(songs));
+            input.value = '';
+            renderMusicList();
+            alert('✅ Song saved!');
+        }
+
+        function saveMusicTrack() {
+            const input = document.getElementById('musicFileInput');
+            if (!input.files || input.files.length === 0) {
+                alert('Please choose an audio file first.');
+                return;
+            }
+            const file = input.files[0];
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const songs = JSON.parse(localStorage.getItem('mySongs') || '[]');
+                songs.push({ name: file.name, type: 'file', url: e.target.result });
+                localStorage.setItem('mySongs', JSON.stringify(songs));
+                input.value = '';
+                renderMusicList();
+                alert('✅ Song saved!');
+            };
+            reader.readAsDataURL(file);
+        }
+
+        function renderMusicList() {
+            const songs = JSON.parse(localStorage.getItem('mySongs') || '[]');
+            const list = document.getElementById('savedMusicList');
+            if (songs.length === 0) {
+                list.innerHTML = '<p id="noSongsMsg" style="color:#005500;font-style:italic;text-align:center;font-size:13px;padding:12px;">── no songs saved yet ──</p>';
+                return;
+            }
+            list.innerHTML = songs.map((song, i) => `
+                <div style="display:flex;align-items:center;justify-content:space-between;background:#0d0d0d;border:1px solid #005500;border-radius:8px;padding:10px 14px;gap:10px;">
+                    <span style="color:#00cc33;font-size:13px;font-family:'Courier New',monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">
+                        ${song.type === 'youtube' ? '▶ YT' : '♪'} ${song.name}
+                    </span>
+                    <div style="display:flex;gap:6px;flex-shrink:0;">
+                        <button onclick="playMusicTrack(${i})" style="background:#00ff41;color:#000;border:none;border-radius:6px;padding:6px 12px;cursor:pointer;font-size:12px;font-weight:900;font-family:'Courier New',monospace;">▶ PLAY</button>
+                        <button onclick="deleteMusicTrack(${i})" style="background:#330000;color:#ff4444;border:1px solid #ff4444;border-radius:6px;padding:6px 10px;cursor:pointer;font-size:12px;font-family:'Courier New',monospace;">✕</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function playMusicTrack(index) {
+            const songs = JSON.parse(localStorage.getItem('mySongs') || '[]');
+            if (!songs[index]) return;
+            const song = songs[index];
+            const ytWrap = document.getElementById('ytPlayerWrap');
+            const ytFrame = document.getElementById('ytFrame');
+            const ytPlaceholder = document.getElementById('ytPlaceholder');
+            const audioPlayer = document.getElementById('mainMusicPlayer');
+            const title = document.getElementById('nowPlayingTitle');
+            title.textContent = '♪ ' + song.name;
+            if (song.type === 'youtube') {
+                audioPlayer.style.display = 'none';
+                audioPlayer.pause();
+                ytWrap.style.display = 'block';
+                ytPlaceholder.style.display = 'none';
+                ytFrame.src = `https://www.youtube.com/embed/${song.ytId}?autoplay=1`;
+            } else {
+                ytWrap.style.display = 'none';
+                ytPlaceholder.style.display = 'none';
+                audioPlayer.style.display = 'block';
+                audioPlayer.src = song.url;
+                audioPlayer.play();
+            }
+        }
+
+        function deleteMusicTrack(index) {
+            if (!confirm('Remove this song?')) return;
+            const songs = JSON.parse(localStorage.getItem('mySongs') || '[]');
+            songs.splice(index, 1);
+            localStorage.setItem('mySongs', JSON.stringify(songs));
+            renderMusicList();
+        }
+
+        // Render saved songs whenever the music tab is opened
+        const _origShowSection = window.showSection;
+        window.showSection = function(id) {
+            _origShowSection(id);
+            if (id === 'music') renderMusicList();
+            if (id === 'account') loadAccountSettings();
+        };
+
+        // ── Account Settings ──────────────────────────────────────
+        function loadAccountSettings() {
+            const name = localStorage.getItem('displayName') || '';
+            document.getElementById('displayNameInput').value = name;
+            const prefs = JSON.parse(localStorage.getItem('userPrefs') || '{}');
+            document.getElementById('prefSoundEffects').checked = prefs.soundEffects !== false;
+            document.getElementById('prefDailyReminder').checked = !!prefs.dailyReminder;
+            document.getElementById('prefAnimations').checked = prefs.animations !== false;
+        }
+
+        function saveDisplayName() {
+            const name = document.getElementById('displayNameInput').value.trim();
+            localStorage.setItem('displayName', name);
+            const msg = document.getElementById('displayNameMsg');
+            msg.style.display = 'block';
+            setTimeout(() => { msg.style.display = 'none'; }, 2500);
+        }
+
+        function savePref(key, value) {
+            const prefs = JSON.parse(localStorage.getItem('userPrefs') || '{}');
+            prefs[key] = value;
+            localStorage.setItem('userPrefs', JSON.stringify(prefs));
+        }
+
+        function exportAccountData() {
+            const data = {
+                displayName: localStorage.getItem('displayName') || '',
+                preferences: JSON.parse(localStorage.getItem('userPrefs') || '{}'),
+                diaryEntries: JSON.parse(localStorage.getItem('diaryEntries') || '[]'),
+                moodLog: JSON.parse(localStorage.getItem('moodLog') || '[]'),
+                safetyPlan: JSON.parse(localStorage.getItem('safetyPlanData') || '{}'),
+                affirmationBook: JSON.parse(localStorage.getItem('affirmationBook') || '[]'),
+                savedSongs: JSON.parse(localStorage.getItem('mySongs') || '[]').map(s => ({ name: s.name, type: s.type, ytId: s.ytId || null })),
+                exportedAt: new Date().toISOString()
+            };
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-app-data.json';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function clearAllData() {
+            if (!confirm('⚠️ This will delete ALL your data from this device. Are you sure?')) return;
+            const keys = ['diaryEntries','moodLog','safetyPlanData','safetyPlan','affirmationBook','mySongs','adoptedPet','plantState','displayName','userPrefs'];
+            keys.forEach(k => localStorage.removeItem(k));
+            // also clear safety textarea keys
+            Object.keys(localStorage).filter(k => k.startsWith('safety-')).forEach(k => localStorage.removeItem(k));
+            alert('✅ All data has been cleared.');
+        }
+
+        function deleteAccount() {
+            const input = document.getElementById('deleteConfirmInput').value.trim();
+            if (input !== 'DELETE') {
+                alert('Please type DELETE (in capital letters) to confirm.');
+                return;
+            }
+            if (!confirm('This will permanently erase everything. There is no going back. Continue?')) return;
+            localStorage.clear();
+            alert('Your account data has been permanently deleted. The page will now reload.');
+            location.reload();
         }
     </script>
 </body>
