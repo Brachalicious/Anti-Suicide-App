@@ -87,32 +87,20 @@
         }
         .nav-item {
             padding: 12px 24px;
-            background: rgba(255,248,240,0.85);
-            border: 1.5px solid rgba(180,140,100,0.3);
             border-radius: 25px;
             cursor: pointer;
-            background: linear-gradient(270deg, #be185d, #a21caf, #db2777, #e11d48, #7c3aed, #be185d);
-            background-size: 300% 300%;
-            animation: tieDye 7s ease infinite;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
             font-weight: 700;
             font-size: 14px;
             border: 1.5px solid rgba(190,24,93,0.4);
-            border-radius: 25px;
-            cursor: pointer;
-            background-color: rgba(255,248,240,0.85);
+            background: rgba(255,230,240,0.92);
+            color: #9d174d;
             box-shadow: 0 2px 8px rgba(180,140,100,0.1);
             text-shadow: none;
             transition: all 0.3s ease;
         }
         .nav-item:hover, .nav-item.active {
             background: linear-gradient(135deg, #fce7f3, #f3e8ff);
-            -webkit-background-clip: unset;
-            -webkit-text-fill-color: #9d174d;
-            background-clip: unset;
-            animation: none;
+            color: #7c2d42;
             border-color: #db2777;
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(190,24,93,0.3);
@@ -450,16 +438,11 @@
         }
         .nav-dropdown-btn {
             padding: 12px 24px;
-            background-color: rgba(255,248,240,0.85);
             border: 1.5px solid rgba(190,24,93,0.4);
             border-radius: 25px;
             cursor: pointer;
-            background: linear-gradient(270deg, #be185d, #a21caf, #db2777, #e11d48, #7c3aed, #be185d);
-            background-size: 300% 300%;
-            animation: tieDye 7s ease infinite;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
+            background: rgba(255,230,240,0.92);
+            color: #9d174d;
             font-weight: 700;
             font-size: 14px;
             box-shadow: 0 2px 8px rgba(180,140,100,0.1);
@@ -467,10 +450,7 @@
         }
         .nav-dropdown-btn:hover, .nav-dropdown-btn.active {
             background: linear-gradient(135deg, #fce7f3, #f3e8ff);
-            -webkit-background-clip: unset;
-            -webkit-text-fill-color: #9d174d;
-            background-clip: unset;
-            animation: none;
+            color: #7c2d42;
             border-color: #db2777;
             transform: translateY(-2px);
             box-shadow: 0 4px 16px rgba(190,24,93,0.3);
@@ -547,6 +527,26 @@
         .parent-option .emoji { font-size: 48px; margin-bottom: 8px; }
         .parent-option .label { font-weight: 600; font-size: 16px; }
         .parent-option .desc { font-size: 12px; color: #6b7280; margin-top: 4px; }
+        /* Virtual Therapist */
+        .vt-mode-btn {
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            padding: 18px 22px;
+            border-radius: 16px;
+            border: 2px solid rgba(190,24,93,0.18);
+            background: rgba(255,240,248,0.85);
+            cursor: pointer;
+            text-align: left;
+            transition: all 0.25s ease;
+            box-shadow: 0 2px 12px rgba(190,24,93,0.07);
+        }
+        .vt-mode-btn:hover {
+            background: linear-gradient(135deg, #fce7f3, #f5f3ff);
+            border-color: #db2777;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(190,24,93,0.18);
+        }
         .chat-container {
             max-height: 400px;
             overflow-y: auto;
@@ -767,16 +767,16 @@
             <div class="nav-dropdown" id="crisisToolsDropdown">
                 <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Crisis Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
-                    <button onclick="showSection('virtual-parent'); closeCrisisToolsMenu()">� Virtual Buddy</button>
+                    <button onclick="showSection('virtual-parent'); closeCrisisToolsMenu()">💕 Virtual Buddy</button>
                     <button onclick="showSection('music'); closeCrisisToolsMenu()">🎵 My Music</button>
                     <button onclick="showSection('release'); closeCrisisToolsMenu()">🔥 Release &amp; Let Go</button>
                     <button onclick="showSection('mood'); closeCrisisToolsMenu()">📓 My Diary</button>
                     <button onclick="showSection('hope-wall'); closeCrisisToolsMenu()">💚 Wall of Hope</button>
+                    <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu()">📖 My Affirmation Book</button>
                 </div>
             </div>
-
-            <button class="nav-item" onclick="showSection('affirmation-book')">� My Affirmation Book</button>
             <button class="nav-item" onclick="showSection('resources')">Resources</button>
+            <button class="nav-item" onclick="showSection('virtual-therapist')">🧘 Virtual Therapist</button>
             <button class="nav-item" onclick="showSection('contact')">📞 Contact Us / Support</button>
             <button class="nav-item" onclick="showSection('account')">⚙️ Account Settings</button>
         </nav>
@@ -2106,6 +2106,97 @@
                     <p>A one-of-a-kind Intensive Outpatient Program for women in the Jewish community. Whether post-hospitalization, to prevent hospitalization, or when standard therapy is not enough — Achieve's IOP includes individual and group therapy, family therapy, skills coaching, and support services.</p>
                     <p style="font-size: 13px; margin-top: 6px;">After one year, participants have shown significant reduction in hospitalizations, improvement in overall function, and increase in employment rates.</p>
                     <button class="btn" onclick="window.open('https://achievebh.org/iop/', '_blank')">Visit Achieve Behavioral Health</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Virtual Therapist Section -->
+        <div id="virtual-therapist" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">🧘 Virtual Therapist</h2>
+                <p style="color:#6b7280; font-size:15px; margin-bottom:24px; line-height:1.6;">
+                    Your calming space. Choose a guided experience and your therapist will walk you through it step by step.
+                </p>
+
+                <!-- Mode Selection -->
+                <div id="vt-menu" style="display:grid; gap:14px; max-width:560px; margin:0 auto;">
+                    <button class="vt-mode-btn" onclick="startVTMode('breathing')">
+                        <span style="font-size:28px;">🌬️</span>
+                        <div>
+                            <div style="font-weight:700; font-size:16px; color:#9d174d;">Guided Breathing</div>
+                            <div style="font-size:13px; color:#6b7280; margin-top:3px;">Calm your nervous system in 3 minutes</div>
+                        </div>
+                    </button>
+                    <button class="vt-mode-btn" onclick="startVTMode('pmr')">
+                        <span style="font-size:28px;">💆</span>
+                        <div>
+                            <div style="font-weight:700; font-size:16px; color:#9d174d;">Progressive Muscle Relaxation</div>
+                            <div style="font-size:13px; color:#6b7280; margin-top:3px;">Release tension from head to toe</div>
+                        </div>
+                    </button>
+                    <button class="vt-mode-btn" onclick="startVTMode('meditation')">
+                        <span style="font-size:28px;">🌸</span>
+                        <div>
+                            <div style="font-weight:700; font-size:16px; color:#9d174d;">Guided Meditation</div>
+                            <div style="font-size:13px; color:#6b7280; margin-top:3px;">Find stillness and inner peace</div>
+                        </div>
+                    </button>
+                    <button class="vt-mode-btn" onclick="startVTMode('imagery')">
+                        <span style="font-size:28px;">🌅</span>
+                        <div>
+                            <div style="font-weight:700; font-size:16px; color:#9d174d;">Safe Place Imagery</div>
+                            <div style="font-size:13px; color:#6b7280; margin-top:3px;">Visualize yourself somewhere peaceful and safe</div>
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Session Screen -->
+                <div id="vt-session" style="display:none; max-width:580px; margin:0 auto; text-align:center;">
+                    <div id="vt-therapist-bubble" style="
+                        background: linear-gradient(135deg, #fdf2f8, #f5f3ff);
+                        border: 2px solid rgba(190,24,93,0.2);
+                        border-radius: 20px 20px 20px 4px;
+                        padding: 22px 26px;
+                        margin-bottom: 22px;
+                        font-size: 16px;
+                        line-height: 1.75;
+                        color: #3d2c1e;
+                        text-align: left;
+                        min-height: 80px;
+                        box-shadow: 0 4px 20px rgba(190,24,93,0.08);
+                        position: relative;
+                    ">
+                        <div style="font-size:11px; font-weight:700; color:#be185d; letter-spacing:1px; margin-bottom:8px; text-transform:uppercase;">🧘 Your Therapist</div>
+                        <div id="vt-message">Welcome…</div>
+                    </div>
+
+                    <!-- Breathing Circle (shown during breathing mode) -->
+                    <div id="vt-breath-circle-wrap" style="display:none; margin:18px auto;">
+                        <div id="vt-breath-circle" style="
+                            width:120px; height:120px; border-radius:50%; margin:0 auto;
+                            background: radial-gradient(circle, #fce7f3, #e9d5ff);
+                            border: 3px solid #db2777;
+                            display:flex; align-items:center; justify-content:center;
+                            font-size:14px; font-weight:700; color:#9d174d;
+                            transition: all 1.5s ease;
+                            box-shadow: 0 0 0 0 rgba(219,39,119,0.3);
+                        ">breathe</div>
+                    </div>
+
+                    <!-- Progress bar -->
+                    <div style="background:rgba(190,24,93,0.1); border-radius:10px; height:6px; margin:18px 0; overflow:hidden;">
+                        <div id="vt-progress" style="height:100%; background:linear-gradient(90deg,#be185d,#a21caf); border-radius:10px; width:0%; transition:width 0.5s ease;"></div>
+                    </div>
+
+                    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap;">
+                        <button id="vt-next-btn" class="btn" onclick="vtNext()" style="background:linear-gradient(135deg,#be185d,#a21caf); color:white; border:none; min-width:140px;">
+                            Continue ▶
+                        </button>
+                        <button class="btn" onclick="vtStop()" style="background:rgba(190,24,93,0.1); color:#9d174d; border:1px solid rgba(190,24,93,0.3);">
+                            ✕ End Session
+                        </button>
+                    </div>
+                    <p id="vt-step-counter" style="font-size:12px; color:#9ca3af; margin-top:12px;"></p>
                 </div>
             </div>
         </div>
@@ -4514,7 +4605,7 @@
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall'];
+        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -4554,6 +4645,126 @@
                 closeCrisisToolsMenu();
             }
         });
+
+        // ───── Virtual Therapist ─────
+        const VT_SCRIPTS = {
+            breathing: [
+                "Hi 💕 I'm here with you. Let's slow everything down together. Find a comfortable position — sitting or lying down is perfect.",
+                "We're going to do 4-7-8 breathing. It's one of the most powerful ways to calm your nervous system. Ready? Let's begin. 🌬️",
+                "Breathe IN slowly through your nose... 1... 2... 3... 4... Feel your belly expand like a balloon.",
+                "Now HOLD your breath gently... 1... 2... 3... 4... 5... 6... 7... Good. You're doing beautifully.",
+                "Now breathe OUT slowly through your mouth... 1... 2... 3... 4... 5... 6... 7... 8... Let it all go. 😮‍💨",
+                "Wonderful. Let's do that again. Breathe IN through your nose... 1... 2... 3... 4... Feel the calm spreading.",
+                "HOLD... 1... 2... 3... 4... 5... 6... 7... You are safe. You are here.",
+                "Breathe OUT... slowly... 1... 2... 3... 4... 5... 6... 7... 8... 🌸 Release any tension.",
+                "One more round. Breathe IN... 1... 2... 3... 4... You are doing so well.",
+                "HOLD... 1... 2... 3... 4... 5... 6... 7... Notice how much calmer you feel.",
+                "Breathe OUT... 1... 2... 3... 4... 5... 6... 7... 8... ✨ Perfect.",
+                "You did it. Take a moment to notice how your body feels right now. Softer, slower, calmer. You can return here any time you need. 💗"
+            ],
+            pmr: [
+                "Welcome 💗 Progressive Muscle Relaxation helps your body let go of tension it's been holding — sometimes for a very long time. Let's begin.",
+                "Find a comfortable position. Close your eyes if you'd like. Take one slow, deep breath in... and out. 😮‍💨",
+                "Let's start with your feet. Curl your toes tightly — squeeze, squeeze, squeeze... hold it for 5 seconds... then RELEASE. Feel the warmth flood in. 🦶",
+                "Now your calves. Flex them — tighten those muscles... hold... 3... 2... 1... and let go completely. Notice the difference.",
+                "Move up to your thighs. Squeeze them tight... hold... hold... and release. 🌊 Feel the wave of relaxation moving upward.",
+                "Your stomach now. Pull your belly button in toward your spine... hold... 3... 2... 1... release. Let your belly soften.",
+                "Your hands. Make tight fists... squeeze hard... and let go. 🤲 Feel the tingling. That's your body releasing.",
+                "Your arms and shoulders. Shrug your shoulders up to your ears, tense everything... hold... and DROP. Feel them melt downward.",
+                "Your face. Scrunch everything — eyes, nose, forehead — as tight as you can... hold... and relax. 😌 Let your jaw unclench.",
+                "Now scan your body from head to toe. Notice any areas still holding tension... breathe into them... and let them go.",
+                "Your whole body is now softer, heavier, and at ease. You did beautifully. Rest here as long as you need. 💕"
+            ],
+            meditation: [
+                "Welcome to this moment. 🌸 You don't need to be anywhere else right now. Just here. Just breathing.",
+                "Close your eyes gently. Take a slow breath in through your nose... and exhale through your mouth. Do this twice more on your own.",
+                "Bring your attention to the sensation of breathing. Feel the air entering your nostrils, filling your lungs... and leaving again. You don't need to change anything.",
+                "Thoughts will come — that's completely normal. When you notice one, gently imagine it as a cloud drifting across the sky. 🌤️ You don't follow it. You just watch it go.",
+                "Bring your awareness to your body. Notice where you're sitting or lying. Feel the support beneath you. You are held. You are safe.",
+                "Now place one hand on your heart. 💗 Feel it beating. That steady rhythm has been with you your whole life. It is strong. It is yours.",
+                "Silently repeat to yourself: I am safe. I am here. I am enough. Say it three times, slowly. Mean it.",
+                "Return to your breath. In... and out. In... and out. You are in a sea of stillness. Nothing needs to be done right now.",
+                "Notice any sensations in your body — warmth, heaviness, tingling. Just observe. You are the calm observer, not the storm.",
+                "Begin to deepen your breath. Gently wiggle your fingers and toes. 🌱 When you're ready, slowly open your eyes.",
+                "You are back. Carry this stillness with you. It is always available — just one breath away. ✨"
+            ],
+            imagery: [
+                "Let's take you somewhere beautiful and safe. 🌅 This is your place — no one can follow you here. Close your eyes and take a deep breath.",
+                "Imagine you are standing at the edge of a quiet, golden beach at sunset. The sky is painted in soft pinks and purples. The air is warm and smells of salt and flowers. 🌊",
+                "Feel the warm sand under your bare feet. Each grain is soft, almost silky. With each step you sink in just slightly — grounded, steady, held by the earth.",
+                "You walk slowly toward the water. The waves are gentle — rhythmic, like a lullaby. They lap softly at the shore. You feel completely at ease. 🐚",
+                "Sit down wherever feels right. The sunset light is warm on your face. Take a deep breath of the ocean air — let it fill every part of you.",
+                "Look out at the horizon. The water stretches endlessly, calm and shimmering. This place is yours. Nothing bad can reach you here. 💛",
+                "Behind you, there's a cozy space — soft blankets, flickering candles, the sounds of nature. You can stay at the water's edge, or go wrap yourself in warmth. Your choice.",
+                "Notice how quiet it is here. No pressure. No deadlines. No one needing anything from you. Just you, the ocean, and the soft evening light. 🌸",
+                "Take three slow, deep breaths. With each one, feel yourself sinking deeper into this safe, beautiful place. You belong here.",
+                "Whenever life feels heavy, you can return here in an instant. Just close your eyes and take a breath. This place will always be waiting for you. 💗",
+                "Gently begin to bring yourself back. Wiggle your fingers. Feel where you're sitting. Open your eyes slowly when you're ready. You are calm. You are safe. ✨"
+            ]
+        };
+
+        let vtMode = null;
+        let vtStep = 0;
+        let vtTimer = null;
+        let vtBreathPhase = 0;
+
+        function startVTMode(mode) {
+            vtMode = mode;
+            vtStep = 0;
+            document.getElementById('vt-menu').style.display = 'none';
+            document.getElementById('vt-session').style.display = 'block';
+            document.getElementById('vt-breath-circle-wrap').style.display = mode === 'breathing' ? 'block' : 'none';
+            vtShowStep();
+        }
+
+        function vtShowStep() {
+            const steps = VT_SCRIPTS[vtMode];
+            if (vtStep >= steps.length) { vtDone(); return; }
+            const msg = document.getElementById('vt-message');
+            const prog = document.getElementById('vt-progress');
+            const counter = document.getElementById('vt-step-counter');
+            msg.style.opacity = 0;
+            setTimeout(() => {
+                msg.textContent = steps[vtStep];
+                msg.style.transition = 'opacity 0.6s';
+                msg.style.opacity = 1;
+            }, 200);
+            const pct = Math.round((vtStep / (steps.length - 1)) * 100);
+            prog.style.width = pct + '%';
+            counter.textContent = `Step ${vtStep + 1} of ${steps.length}`;
+            // Animate breath circle
+            if (vtMode === 'breathing') {
+                const circle = document.getElementById('vt-breath-circle');
+                const phases = ['breathe in', 'hold', 'breathe out', 'hold'];
+                const sizes = ['160px', '160px', '120px', '120px'];
+                const idx = vtStep % 4;
+                circle.style.width = sizes[idx];
+                circle.style.height = sizes[idx];
+                circle.textContent = phases[idx];
+            }
+        }
+
+        function vtNext() {
+            vtStep++;
+            vtShowStep();
+        }
+
+        function vtDone() {
+            document.getElementById('vt-message').textContent = '🌟 Session complete. Take your time returning. You did something wonderful for yourself today. 💗';
+            document.getElementById('vt-next-btn').style.display = 'none';
+            document.getElementById('vt-progress').style.width = '100%';
+            document.getElementById('vt-step-counter').textContent = 'Complete ✓';
+        }
+
+        function vtStop() {
+            vtMode = null; vtStep = 0;
+            document.getElementById('vt-session').style.display = 'none';
+            document.getElementById('vt-menu').style.display = 'grid';
+            document.getElementById('vt-next-btn').style.display = 'inline-block';
+            document.getElementById('vt-breath-circle-wrap').style.display = 'none';
+            document.getElementById('vt-progress').style.width = '0%';
+        }
+        // ───── End Virtual Therapist ─────
 
         function toggleCollapse(header) {
             header.classList.toggle('open');
