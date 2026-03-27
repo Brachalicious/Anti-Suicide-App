@@ -10,13 +10,21 @@
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: 
-                radial-gradient(ellipse at 20% 0%, rgba(187,247,208,0.35) 0%, transparent 55%),
-                radial-gradient(ellipse at 80% 10%, rgba(254,215,170,0.3) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 100%, rgba(167,243,208,0.25) 0%, transparent 60%),
-                linear-gradient(160deg, #fdf6ec 0%, #f5f0e8 40%, #eef5ec 70%, #f0f7ee 100%);
+            background: url('/public/nature-bg.jpg') center center / cover no-repeat fixed;
             min-height: 100vh;
             color: #3d2c1e;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: rgba(255, 250, 240, 0.62);
+            pointer-events: none;
+            z-index: 0;
+        }
+        .container {
+            position: relative;
+            z-index: 1;
         }
         .container {
             max-width: 1200px;
@@ -40,13 +48,34 @@
             100% { opacity: 1; }
         }
         .card {
-            background: rgba(255, 252, 245, 0.97);
+            background: rgba(255, 252, 240, 0.82);
             border-radius: 20px;
             padding: 24px;
             margin-bottom: 20px;
-            box-shadow: 0 4px 24px rgba(100,80,40,0.08), 0 1px 4px rgba(100,80,40,0.05);
-            border: 1px solid rgba(180,160,120,0.18);
-            backdrop-filter: blur(10px);
+            box-shadow: 0 4px 24px rgba(100,80,40,0.12), 0 1px 4px rgba(100,80,40,0.08);
+            border: 1px solid rgba(180,160,120,0.25);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        }
+        .logo-reflection {
+            width: 200px;
+            height: 200px;
+            border-radius: 50%;
+            clip-path: ellipse(50% 46% at 50% 50%);
+            filter: blur(0.5px) brightness(0.92) saturate(1.15);
+            opacity: 0.88;
+            box-shadow: 0 10px 50px rgba(80,160,220,0.35), 0 0 0 3px rgba(255,255,255,0.18), inset 0 2px 12px rgba(255,255,255,0.25);
+            animation: waterRipple 5s ease-in-out infinite;
+            display: block;
+            margin: 0 auto;
+            object-fit: contain;
+        }
+        @keyframes waterRipple {
+            0%,  100% { clip-path: ellipse(50% 46% at 50% 50%); filter: blur(0.4px) brightness(0.91) saturate(1.15); }
+            20%        { clip-path: ellipse(52% 44% at 48% 52%); filter: blur(0.7px) brightness(0.88) saturate(1.2); }
+            40%        { clip-path: ellipse(49% 47% at 51% 49%); filter: blur(0.5px) brightness(0.93) saturate(1.12); }
+            60%        { clip-path: ellipse(51% 45% at 50% 51%); filter: blur(0.8px) brightness(0.89) saturate(1.18); }
+            80%        { clip-path: ellipse(50% 48% at 49% 50%); filter: blur(0.6px) brightness(0.90) saturate(1.16); }
         }
         .nav {
             display: flex;
@@ -624,7 +653,7 @@
     <div class="container">
         <div style="text-align: center; padding: 16px 0 8px;">
             <div style="margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;">
-                <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px;" />
+                <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
             </div>
             <div style="font-size: 13px; color: #6b8f71; margin-top: 2px; font-weight: 600; letter-spacing: 0.5px;">Suicide Prevention App</div>
         </div>
