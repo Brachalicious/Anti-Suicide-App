@@ -54,18 +54,30 @@
             border: 2px solid rgba(255,255,255,0.4);
             border-radius: 25px;
             cursor: pointer;
-            color: white;
+            background: linear-gradient(270deg, #f9a8d4, #e879f9, #f472b6, #fb7185, #c084fc, #f9a8d4);
+            background-size: 300% 300%;
+            animation: tieDye 7s ease infinite;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
             font-weight: 700;
             font-size: 14px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.5);
+            border: 2px solid rgba(249,168,212,0.5);
+            border-radius: 25px;
+            cursor: pointer;
+            background-color: rgba(0,0,0,0.25);
+            text-shadow: none;
             transition: all 0.3s ease;
         }
         .nav-item:hover, .nav-item.active {
             background: white;
-            color: #15803d;
-            border-color: white;
+            -webkit-background-clip: unset;
+            -webkit-text-fill-color: #be185d;
+            background-clip: unset;
+            animation: none;
+            border-color: #f9a8d4;
             transform: translateY(-2px);
-            text-shadow: none;
+            box-shadow: 0 4px 15px rgba(249,168,212,0.4);
         }
         .grid {
             display: grid;
@@ -278,11 +290,30 @@
             transform: translateY(-3px);
             box-shadow: 0 8px 25px rgba(34,197,94,0.4);
         }
+        @keyframes tieDye {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+        /* Global tie-dye pink headings */
+        h1, h2:not(.no-tiedye) {
+            background: linear-gradient(270deg, #f9a8d4, #e879f9, #f472b6, #fb7185, #c084fc, #f9a8d4, #fda4af);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: tieDye 6s ease infinite;
+        }
         .section-title {
-            color: #1f2937;
             font-size: 24px;
             margin-bottom: 16px;
-            font-weight: 600;
+            font-weight: 700;
+            background: linear-gradient(270deg, #f9a8d4, #e879f9, #f472b6, #fb7185, #c084fc, #f9a8d4, #fda4af);
+            background-size: 400% 400%;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: tieDye 6s ease infinite;
         }
         .status {
             background: #10b981;
@@ -586,7 +617,7 @@
             <div style="margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;">
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" style="width: 220px; height: 220px; object-fit: contain; margin-left: -30px;" />
             </div>
-            <div style="font-size: 13px; color: rgba(255,255,255,0.8); margin-top: 2px;">Suicide Prevention App</div>
+            <div style="font-size: 13px; color: #fda4af; margin-top: 2px; font-weight: 600; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">Suicide Prevention App</div>
         </div>
 
         <!-- Firebase Auth Section -->
@@ -612,7 +643,7 @@
         <div class="crisis-banner">
             🚨 IN CRISIS? Call 988 (Suicide Lifeline) or Text HOME to 741741 NOW 🚨
         </div>
-        <div style="text-align: center; margin: -8px 0 16px; font-weight: 600; color: #ffffff;">
+        <div style="text-align: center; margin: -8px 0 16px; font-weight: 600; color: #fda4af; text-shadow: 0 1px 3px rgba(0,0,0,0.3);">
             EMERGENCY: 718-230-1000 (Hatzoloh)
         </div>
 
