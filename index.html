@@ -18,13 +18,40 @@
             content: '';
             position: fixed;
             inset: 0;
-            background: rgba(255, 250, 240, 0.30);
+            background: rgba(255, 245, 255, 0.08);
             pointer-events: none;
             z-index: 0;
         }
-        .container {
-            position: relative;
-            z-index: 1;
+        /* Vibrancy boost layer */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: transparent;
+            backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
+            -webkit-backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
+            pointer-events: none;
+            z-index: 0;
+        }
+        /* ── Animated Sky Clouds ── */
+        #sky-clouds {
+            position: fixed;
+            top: 0; left: 0; right: 0;
+            height: 45%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+        .sky-cloud {
+            position: absolute;
+            border-radius: 50%;
+            background: radial-gradient(ellipse at 40% 40%, rgba(255,255,255,0.82), rgba(230,225,255,0.45) 60%, transparent 80%);
+            filter: blur(6px);
+            animation: floatCloud linear infinite;
+        }
+        @keyframes floatCloud {
+            0%   { transform: translateX(-120%); }
+            100% { transform: translateX(110vw); }
         }
         .container {
             max-width: 1200px;
@@ -721,6 +748,9 @@
     </style>
 </head>
 <body>
+    <!-- Animated sky clouds -->
+    <div id="sky-clouds"></div>
+
     <div class="container">
         <div style="text-align: center; padding: 4px 0 4px;">
             <div style="margin: 0 auto 4px; display: flex; align-items: center; justify-content: center;">
@@ -6354,6 +6384,34 @@
             alert('Your account data has been permanently deleted. The page will now reload.');
             location.reload();
         }
+
+        // ── Animated Sky Clouds ──
+        (function spawnClouds() {
+            const container = document.getElementById('sky-clouds');
+            if (!container) return;
+            const cloudDefs = [
+                { w: 320, h: 110, top:  4, dur: 38, delay:  0, opacity: 0.78 },
+                { w: 210, h:  80, top: 12, dur: 52, delay: -9, opacity: 0.62 },
+                { w: 440, h: 130, top:  2, dur: 44, delay:-18, opacity: 0.70 },
+                { w: 180, h:  65, top: 18, dur: 60, delay: -4, opacity: 0.55 },
+                { w: 380, h: 115, top:  8, dur: 35, delay:-28, opacity: 0.80 },
+                { w: 260, h:  95, top: 14, dur: 48, delay:-13, opacity: 0.65 },
+                { w: 150, h:  55, top:  6, dur: 65, delay:-35, opacity: 0.50 },
+                { w: 500, h: 150, top:  0, dur: 42, delay:-22, opacity: 0.60 },
+            ];
+            cloudDefs.forEach(c => {
+                const el = document.createElement('div');
+                el.className = 'sky-cloud';
+                el.style.cssText = `
+                    width:${c.w}px; height:${c.h}px;
+                    top:${c.top}%;
+                    opacity:${c.opacity};
+                    animation-duration:${c.dur}s;
+                    animation-delay:${c.delay}s;
+                `;
+                container.appendChild(el);
+            });
+        })();
     </script>
 
     <!-- Footer -->
