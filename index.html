@@ -62,28 +62,30 @@
             height: 200px;
             border-radius: 50%;
             clip-path: ellipse(50% 46% at 50% 50%);
-            /* Sky-color blend: warm golden-pink sky tones, stays visible */
-            filter: blur(0.3px) brightness(1.08) saturate(0.72) hue-rotate(8deg) sepia(0.18);
-            opacity: 0.78;
-            mix-blend-mode: luminosity;
-            box-shadow: 0 8px 40px rgba(180,140,200,0.25), 0 0 0 2px rgba(255,220,240,0.22);
+            /* White/grey translucent with purple-blue sky tint */
+            filter: blur(0.3px) brightness(1.35) saturate(0.25) hue-rotate(200deg) contrast(0.85);
+            opacity: 0.62;
+            mix-blend-mode: screen;
+            box-shadow: 0 8px 40px rgba(140,160,230,0.3), 0 0 0 2px rgba(200,210,255,0.25);
             animation: waterRipple 5s ease-in-out infinite;
             display: block;
             margin: 0 auto;
             object-fit: contain;
         }
         @keyframes waterRipple {
-            0%,  100% { clip-path: ellipse(50% 46% at 50% 50%); filter: blur(0.3px) brightness(1.08) saturate(0.72) hue-rotate(8deg) sepia(0.18); }
-            20%        { clip-path: ellipse(52% 44% at 48% 52%); filter: blur(0.5px) brightness(1.05) saturate(0.68) hue-rotate(12deg) sepia(0.22); }
-            40%        { clip-path: ellipse(49% 47% at 51% 49%); filter: blur(0.3px) brightness(1.10) saturate(0.74) hue-rotate(6deg) sepia(0.16); }
-            60%        { clip-path: ellipse(51% 45% at 50% 51%); filter: blur(0.6px) brightness(1.06) saturate(0.70) hue-rotate(10deg) sepia(0.20); }
-            80%        { clip-path: ellipse(50% 48% at 49% 50%); filter: blur(0.4px) brightness(1.09) saturate(0.73) hue-rotate(7deg) sepia(0.17); }
+            0%,  100% { clip-path: ellipse(50% 46% at 50% 50%); filter: blur(0.3px) brightness(1.35) saturate(0.25) hue-rotate(200deg) contrast(0.85); opacity: 0.62; }
+            20%        { clip-path: ellipse(52% 44% at 48% 52%); filter: blur(0.5px) brightness(1.30) saturate(0.22) hue-rotate(210deg) contrast(0.83); opacity: 0.58; }
+            40%        { clip-path: ellipse(49% 47% at 51% 49%); filter: blur(0.3px) brightness(1.38) saturate(0.28) hue-rotate(195deg) contrast(0.86); opacity: 0.64; }
+            60%        { clip-path: ellipse(51% 45% at 50% 51%); filter: blur(0.6px) brightness(1.32) saturate(0.23) hue-rotate(205deg) contrast(0.84); opacity: 0.60; }
+            80%        { clip-path: ellipse(50% 48% at 49% 50%); filter: blur(0.4px) brightness(1.36) saturate(0.26) hue-rotate(198deg) contrast(0.85); opacity: 0.63; }
         }
         .nav {
             display: flex;
-            gap: 20px;
+            gap: 10px;
             margin-bottom: 30px;
             flex-wrap: wrap;
+            justify-content: flex-start;
+            padding-left: 4px;
         }
         .nav-item {
             padding: 12px 24px;
@@ -720,8 +722,8 @@
 </head>
 <body>
     <div class="container">
-        <div style="text-align: center; padding: 16px 0 8px;">
-            <div style="margin: 0 auto 8px; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; padding: 4px 0 4px;">
+            <div style="margin: 0 auto 4px; display: flex; align-items: center; justify-content: center;">
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
             </div>
         </div>
@@ -770,10 +772,11 @@
                     <button onclick="showSection('mood'); closeCrisisToolsMenu()">📓 My Diary</button>
                     <button onclick="showSection('hope-wall'); closeCrisisToolsMenu()">💚 Wall of Hope</button>
                     <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu()">📖 My Affirmation Book</button>
-                    <button onclick="showSection('resources'); closeCrisisToolsMenu()">📚 Resources</button>
+                    <button onclick="showSection('virtual-therapist'); closeCrisisToolsMenu()">🧘 Virtual Therapist</button>
+                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">🙏 Talk to God</button>
                 </div>
             </div>
-            <button class="nav-item" onclick="showSection('virtual-therapist')">🧘 Virtual Therapist</button>
+            <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
             <button class="nav-item" onclick="showSection('contact')">📞 Contact Us / Support</button>
             <button class="nav-item" onclick="showSection('account')">⚙️ Account Settings</button>
         </nav>
@@ -2174,10 +2177,11 @@
                             background: radial-gradient(circle, #fce7f3, #e9d5ff);
                             border: 3px solid #db2777;
                             display:flex; align-items:center; justify-content:center;
-                            font-size:14px; font-weight:700; color:#9d174d;
+                            font-size:12px; font-weight:700; color:#9d174d;
+                            text-align:center; white-space:pre-line; line-height:1.3;
                             transition: all 1.5s ease;
                             box-shadow: 0 0 0 0 rgba(219,39,119,0.3);
-                        ">breathe</div>
+                        ">in through&#10;your nose</div>
                     </div>
 
                     <!-- Progress bar -->
@@ -2194,6 +2198,56 @@
                         </button>
                     </div>
                     <p id="vt-step-counter" style="font-size:12px; color:#9ca3af; margin-top:12px;"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Talk to God Section -->
+        <div id="talk-to-god" class="section hidden">
+            <div class="card" style="max-width: 680px; margin: 0 auto;">
+                <h2 class="section-title">🙏 Talk to God</h2>
+                <p style="color:#6b7280; font-size:15px; margin-bottom:20px; line-height:1.6;">
+                    You don't need perfect words. Just speak from your heart — God is always listening. 💙
+                </p>
+
+                <!-- Prayer prompts -->
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
+                    <button onclick="setPrayerPrompt('I am feeling overwhelmed and I need Your strength...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">😔 I'm struggling</button>
+                    <button onclick="setPrayerPrompt('Thank You, God, for...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">🙏 Gratitude</button>
+                    <button onclick="setPrayerPrompt('Please help me forgive...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">🕊️ Forgiveness</button>
+                    <button onclick="setPrayerPrompt('God, I feel so alone. Please let me feel Your presence...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">💜 Loneliness</button>
+                    <button onclick="setPrayerPrompt('I need a miracle. Please guide me...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">✨ I need a miracle</button>
+                </div>
+
+                <!-- Prayer writing area -->
+                <div style="position:relative; margin-bottom:16px;">
+                    <div style="font-size:11px; font-weight:700; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">✍️ Write your prayer</div>
+                    <textarea id="prayer-text" placeholder="Dear God..." style="width:100%; min-height:180px; padding:16px; border-radius:14px; border:2px solid rgba(147,112,219,0.35); background:rgba(245,240,255,0.7); font-size:15px; color:#3d2c4e; line-height:1.7; resize:vertical; font-family:inherit; box-sizing:border-box; outline:none;"></textarea>
+                </div>
+
+                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;">
+                    <button onclick="sendPrayer()" style="background:linear-gradient(135deg,#7c3aed,#a21caf); color:white; border:none; border-radius:25px; padding:12px 28px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(124,58,237,0.3);">🙏 Send My Prayer</button>
+                    <button onclick="clearPrayer()" style="background:rgba(124,58,237,0.08); color:#7c3aed; border:1px solid rgba(124,58,237,0.25); border-radius:25px; padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;">🗑️ Clear</button>
+                    <button onclick="savePrayer()" style="background:rgba(124,58,237,0.08); color:#7c3aed; border:1px solid rgba(124,58,237,0.25); border-radius:25px; padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;">💾 Save Prayer</button>
+                </div>
+
+                <!-- Response / confirmation -->
+                <div id="prayer-sent-msg" style="display:none; text-align:center; padding:22px; background:linear-gradient(135deg,rgba(245,240,255,0.9),rgba(235,228,255,0.9)); border-radius:16px; border:2px solid rgba(147,112,219,0.3); margin-bottom:20px;">
+                    <div style="font-size:32px; margin-bottom:10px;">🕊️</div>
+                    <div style="font-weight:700; color:#5b3fa6; font-size:17px; margin-bottom:8px;">Your prayer has been sent with love</div>
+                    <div style="color:#7c6fa6; font-size:14px; line-height:1.7; font-style:italic;">"The Lord is close to the brokenhearted and saves those who are crushed in spirit." — Psalm 34:18</div>
+                </div>
+
+                <!-- Saved prayers -->
+                <div id="saved-prayers-section" style="display:none;">
+                    <div style="font-size:13px; font-weight:700; color:#7c3aed; margin-bottom:12px; letter-spacing:0.5px;">📖 Your Saved Prayers</div>
+                    <div id="saved-prayers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                </div>
+
+                <!-- Comforting verse -->
+                <div style="margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,rgba(230,220,255,0.6),rgba(220,230,255,0.6)); border-radius:14px; border-left:4px solid #7c3aed;">
+                    <div style="font-size:12px; font-weight:700; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">💜 A word for you today</div>
+                    <div id="daily-verse" style="color:#4c3a7a; font-size:14px; line-height:1.75; font-style:italic;"></div>
                 </div>
             </div>
         </div>
@@ -4602,7 +4656,7 @@
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'resources'];
+        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'talk-to-god'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -4624,6 +4678,7 @@
                 document.getElementById('dashboard').classList.remove('hidden');
             }
             console.log(`Navigating to: ${section}`);
+            if (section === 'talk-to-god') { setTimeout(renderSavedPrayers, 50); }
         }
 
         function toggleCrisisToolsMenu(e) {
@@ -4732,11 +4787,12 @@
             // Animate breath circle
             if (vtMode === 'breathing') {
                 const circle = document.getElementById('vt-breath-circle');
-                const phases = ['breathe in', 'hold', 'breathe out', 'hold'];
+                const phases = ['in through\nyour nose', 'hold', 'out through\nyour mouth', 'hold'];
                 const sizes = ['160px', '160px', '120px', '120px'];
                 const idx = vtStep % 4;
                 circle.style.width = sizes[idx];
                 circle.style.height = sizes[idx];
+                circle.style.whiteSpace = 'pre-line';
                 circle.textContent = phases[idx];
             }
         }
@@ -4762,6 +4818,80 @@
             document.getElementById('vt-progress').style.width = '0%';
         }
         // ───── End Virtual Therapist ─────
+
+        // ───── Talk to God ─────
+        const VERSES = [
+            '"The Lord is close to the brokenhearted and saves those who are crushed in spirit." — Psalm 34:18',
+            '"Come to me, all you who are weary and burdened, and I will give you rest." — Matthew 11:28',
+            '"For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future." — Jeremiah 29:11',
+            '"Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go." — Joshua 1:9',
+            '"He heals the brokenhearted and binds up their wounds." — Psalm 147:3',
+            '"Cast all your anxiety on Him because He cares for you." — 1 Peter 5:7',
+            '"Even though I walk through the darkest valley, I will fear no evil, for You are with me." — Psalm 23:4',
+            '"The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you; in His love He will no longer rebuke you, but will rejoice over you with singing." — Zephaniah 3:17',
+            '"I can do all this through Him who gives me strength." — Philippians 4:13',
+            '"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God." — Philippians 4:6'
+        ];
+
+        // Show a random verse on load
+        (function() {
+            const el = document.getElementById('daily-verse');
+            if (el) el.textContent = VERSES[Math.floor(Math.random() * VERSES.length)];
+        })();
+
+        function setPrayerPrompt(text) {
+            const ta = document.getElementById('prayer-text');
+            ta.value = text;
+            ta.focus();
+            ta.setSelectionRange(text.length, text.length);
+        }
+
+        function sendPrayer() {
+            const text = document.getElementById('prayer-text').value.trim();
+            if (!text) { alert('Write your prayer first 🙏'); return; }
+            document.getElementById('prayer-sent-msg').style.display = 'block';
+            document.getElementById('prayer-sent-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
+            // Rotate verse
+            const el = document.getElementById('daily-verse');
+            if (el) el.textContent = VERSES[Math.floor(Math.random() * VERSES.length)];
+        }
+
+        function clearPrayer() {
+            document.getElementById('prayer-text').value = '';
+            document.getElementById('prayer-sent-msg').style.display = 'none';
+        }
+
+        function savePrayer() {
+            const text = document.getElementById('prayer-text').value.trim();
+            if (!text) { alert('Write a prayer to save 🙏'); return; }
+            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
+            prayers.unshift({ text, date: new Date().toLocaleDateString() });
+            localStorage.setItem('savedPrayers', JSON.stringify(prayers));
+            renderSavedPrayers();
+            alert('Prayer saved 💜');
+        }
+
+        function renderSavedPrayers() {
+            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
+            const section = document.getElementById('saved-prayers-section');
+            const list = document.getElementById('saved-prayers-list');
+            if (!prayers.length) { section.style.display = 'none'; return; }
+            section.style.display = 'block';
+            list.innerHTML = prayers.map((p, i) => `
+                <div style="background:rgba(245,240,255,0.8); border-radius:12px; padding:14px 16px; border:1px solid rgba(147,112,219,0.25); position:relative;">
+                    <div style="font-size:11px; color:#9ca3af; margin-bottom:6px;">${p.date}</div>
+                    <div style="color:#4c3a7a; font-size:14px; line-height:1.65; white-space:pre-wrap;">${p.text}</div>
+                    <button onclick="deletePrayer(${i})" style="position:absolute; top:10px; right:12px; background:none; border:none; color:#c4b0e0; font-size:16px; cursor:pointer;" title="Delete">🗑️</button>
+                </div>`).join('');
+        }
+
+        function deletePrayer(i) {
+            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
+            prayers.splice(i, 1);
+            localStorage.setItem('savedPrayers', JSON.stringify(prayers));
+            renderSavedPrayers();
+        }
+        // ───── End Talk to God ─────
 
         function toggleCollapse(header) {
             header.classList.toggle('open');
