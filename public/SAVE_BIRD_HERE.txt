@@ -1,0 +1,13 @@
+INSTRUCTIONS:
+============
+Please save your pink flying bird image (the one you shared) as:
+  pink-bird.png
+
+in this same folder (/public/)
+
+The image should be:
+- PNG format with transparent background
+- The beautiful pink bird with wings spread that you shared
+- Named exactly: pink-bird.png
+
+Once saved, the birds will fly across your website!
