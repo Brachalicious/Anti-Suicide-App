@@ -850,6 +850,7 @@
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">🙏 Talk to God</button>
                     <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu()">💖 Jar of Hearts</button>
                     <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu()">🧠 Escape Your Head</button>
+                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu()">🍄 Mushroom Runner</button>
                 </div>
             </div>
             <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
@@ -2514,6 +2515,62 @@
                             <div id="escape-message" style="min-height: 80px; padding: 16px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 16px; border: 2px solid #3b82f6; text-align: center; display: none;">
                                 <div style="font-size: 16px; color: #1e40af; font-weight: 600; line-height: 1.6;"></div>
                             </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mushroom Runner Game Section -->
+        <div id="mushroom-runner" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">🍄 Mushroom Runner</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
+                        Run and jump to smash negative thoughts disguised as mushrooms! Each mushroom you smash releases a positive affirmation.
+                    </p>
+                    
+                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 20px; padding: 30px; border: 3px solid #f59e0b; box-shadow: 0 4px 20px rgba(245,158,11,0.3);">
+                        <!-- Game Info -->
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #b45309;">
+                            <div>Score: <span id="runner-score">0</span></div>
+                            <div>Mushrooms Smashed: <span id="runner-mushrooms">0</span></div>
+                            <div>Lives: <span id="runner-lives">❤️❤️❤️</span></div>
+                        </div>
+                        
+                        <!-- Game Canvas -->
+                        <div id="runner-game-canvas" style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; background: linear-gradient(180deg, #87ceeb, #98d8c8); border-radius: 16px; border: 3px solid #059669; overflow: hidden;">
+                            <!-- Ground -->
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: #78350f; border-top: 3px solid #92400e;"></div>
+                            
+                            <!-- Player Character -->
+                            <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 40px; height: 60px; background: linear-gradient(135deg, #ec4899, #f472b6); border: 2px solid #be185d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: bottom 0.3s;">
+                                🧍
+                            </div>
+                            
+                            <!-- Mushrooms will spawn here -->
+                        </div>
+                        
+                        <!-- Controls -->
+                        <div style="margin-top: 20px; text-align: center;">
+                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR or click JUMP button to jump and smash mushrooms!</div>
+                            <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+                                <button id="runner-start-btn" onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Start Game</button>
+                                <button id="runner-jump-btn" onclick="runnerJump()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">JUMP!</button>
+                                <button id="runner-pause-btn" onclick="pauseRunnerGame()" class="btn" style="background: #ef4444; color: white; font-weight: 700; display: none;">Pause</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Affirmation Display -->
+                        <div id="runner-affirmation" style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 12px; border: 2px solid #10b981; text-align: center; display: none;">
+                            <div style="font-size: 16px; color: #065f46; font-weight: 600; line-height: 1.6;"></div>
+                        </div>
+                        
+                        <!-- Game Over Message -->
+                        <div id="runner-game-over" style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #fecaca, #fca5a5); border-radius: 16px; border: 2px solid #dc2626; text-align: center; display: none;">
+                            <div style="font-size: 20px; color: #991b1b; font-weight: 700; margin-bottom: 12px;">Game Over!</div>
+                            <div style="font-size: 16px; color: #7f1d1d; margin-bottom: 16px;">You smashed <span id="runner-final-mushrooms">0</span> negative thoughts! 🎉</div>
+                            <button onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Play Again</button>
                         </div>
                     </div>
                 </div>
@@ -5334,7 +5391,7 @@
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'talk-to-god', 'jar-of-hearts', 'escape-your-head'];
+        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'talk-to-god', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -5915,6 +5972,247 @@
             }, 1500);
         }
         // ───── End Escape Your Head Game ─────
+
+        // ───── Mushroom Runner Game ─────
+        let runnerGameActive = false;
+        let runnerScore = 0;
+        let runnerMushrooms = 0;
+        let runnerLives = 3;
+        let runnerPlayerY = 0;
+        let runnerIsJumping = false;
+        let runnerObstacles = [];
+        let runnerGameLoop = null;
+        let runnerSpawnLoop = null;
+        let runnerGameSpeed = 5;
+        
+        const mushroomAffirmations = [
+            "I am capable!", "I am strong!", "I matter!", "I am loved!", "I am enough!",
+            "I can do this!", "I am brave!", "I am worthy!", "I am resilient!", "I am healing!",
+            "I choose peace!", "I am growing!", "I am supported!", "I have value!", "I am important!",
+            "I deserve joy!", "I am powerful!", "I am beautiful!", "I am unique!", "I am hope!"
+        ];
+        
+        function startRunnerGame() {
+            runnerGameActive = true;
+            runnerScore = 0;
+            runnerMushrooms = 0;
+            runnerLives = 3;
+            runnerPlayerY = 0;
+            runnerIsJumping = false;
+            runnerObstacles = [];
+            runnerGameSpeed = 5;
+            
+            document.getElementById('runner-score').textContent = '0';
+            document.getElementById('runner-mushrooms').textContent = '0';
+            document.getElementById('runner-lives').textContent = '❤️❤️❤️';
+            document.getElementById('runner-start-btn').style.display = 'none';
+            document.getElementById('runner-jump-btn').style.display = 'inline-block';
+            document.getElementById('runner-pause-btn').style.display = 'inline-block';
+            document.getElementById('runner-affirmation').style.display = 'none';
+            document.getElementById('runner-game-over').style.display = 'none';
+            
+            // Clear canvas
+            const canvas = document.getElementById('runner-game-canvas');
+            const existingObstacles = canvas.querySelectorAll('.runner-obstacle');
+            existingObstacles.forEach(obs => obs.remove());
+            
+            // Reset player position
+            const player = document.getElementById('runner-player');
+            player.style.bottom = '40px';
+            
+            // Start game loops
+            runnerGameLoop = setInterval(updateRunnerGame, 50);
+            runnerSpawnLoop = setInterval(spawnMushroom, 2000);
+            
+            // Add keyboard listener
+            document.addEventListener('keydown', runnerKeyHandler);
+        }
+        
+        function runnerKeyHandler(e) {
+            if (e.code === 'Space' && runnerGameActive) {
+                e.preventDefault();
+                runnerJump();
+            }
+        }
+        
+        function runnerJump() {
+            if (runnerIsJumping || !runnerGameActive) return;
+            
+            runnerIsJumping = true;
+            const player = document.getElementById('runner-player');
+            
+            // Jump up
+            let jumpHeight = 0;
+            const jumpUp = setInterval(() => {
+                if (jumpHeight >= 120) {
+                    clearInterval(jumpUp);
+                    // Fall down
+                    const jumpDown = setInterval(() => {
+                        if (jumpHeight <= 0) {
+                            clearInterval(jumpDown);
+                            runnerIsJumping = false;
+                            player.style.bottom = '40px';
+                        } else {
+                            jumpHeight -= 8;
+                            player.style.bottom = (40 + jumpHeight) + 'px';
+                        }
+                    }, 20);
+                } else {
+                    jumpHeight += 8;
+                    player.style.bottom = (40 + jumpHeight) + 'px';
+                }
+            }, 20);
+        }
+        
+        function spawnMushroom() {
+            if (!runnerGameActive) return;
+            
+            const canvas = document.getElementById('runner-game-canvas');
+            const mushroom = document.createElement('div');
+            
+            const isAbove = Math.random() > 0.5;
+            
+            mushroom.className = 'runner-obstacle';
+            mushroom.style.cssText = `
+                position: absolute;
+                ${isAbove ? 'top: 100px;' : 'bottom: 40px;'}
+                right: 0;
+                width: 40px;
+                height: 40px;
+                font-size: 32px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            `;
+            mushroom.textContent = '🍄';
+            mushroom.dataset.position = 'right: 0';
+            mushroom.dataset.isAbove = isAbove;
+            
+            canvas.appendChild(mushroom);
+            runnerObstacles.push(mushroom);
+        }
+        
+        function updateRunnerGame() {
+            if (!runnerGameActive) return;
+            
+            const canvas = document.getElementById('runner-game-canvas');
+            const player = document.getElementById('runner-player');
+            const playerRect = player.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            
+            runnerObstacles.forEach((mushroom, index) => {
+                const currentRight = parseFloat(mushroom.style.right);
+                const newRight = currentRight + runnerGameSpeed;
+                
+                mushroom.style.right = newRight + 'px';
+                
+                const mushroomRect = mushroom.getBoundingClientRect();
+                
+                // Check collision
+                if (!(playerRect.right < mushroomRect.left || 
+                      playerRect.left > mushroomRect.right || 
+                      playerRect.bottom < mushroomRect.top || 
+                      playerRect.top > mushroomRect.bottom)) {
+                    
+                    const isAbove = mushroom.dataset.isAbove === 'true';
+                    const playerTop = parseFloat(player.style.bottom);
+                    
+                    // If mushroom is above and player jumped to hit it - SUCCESS!
+                    if (isAbove && playerTop > 80) {
+                        mushroomSmashed(mushroom, index);
+                    }
+                    // If mushroom is on ground and player is on ground - COLLISION!
+                    else if (!isAbove && playerTop <= 40) {
+                        loseLife();
+                        mushroom.remove();
+                        runnerObstacles.splice(index, 1);
+                    }
+                    // If mushroom is above and player didn't jump high enough - COLLISION!
+                    else if (isAbove && playerTop <= 80) {
+                        loseLife();
+                        mushroom.remove();
+                        runnerObstacles.splice(index, 1);
+                    }
+                }
+                
+                // Remove if off screen
+                if (newRight > canvas.offsetWidth + 50) {
+                    mushroom.remove();
+                    runnerObstacles.splice(index, 1);
+                }
+            });
+            
+            // Increase difficulty
+            if (runnerScore % 100 === 0 && runnerScore > 0) {
+                runnerGameSpeed += 0.5;
+            }
+        }
+        
+        function mushroomSmashed(mushroom, index) {
+            runnerScore += 20;
+            runnerMushrooms++;
+            
+            document.getElementById('runner-score').textContent = runnerScore;
+            document.getElementById('runner-mushrooms').textContent = runnerMushrooms;
+            
+            // Show affirmation
+            const affirmation = mushroomAffirmations[Math.floor(Math.random() * mushroomAffirmations.length)];
+            const affirmDiv = document.getElementById('runner-affirmation');
+            affirmDiv.querySelector('div').textContent = '✨ ' + affirmation;
+            affirmDiv.style.display = 'block';
+            
+            setTimeout(() => {
+                affirmDiv.style.display = 'none';
+            }, 2000);
+            
+            // Remove mushroom with animation
+            mushroom.style.transform = 'scale(1.5) rotate(360deg)';
+            mushroom.style.opacity = '0';
+            setTimeout(() => {
+                mushroom.remove();
+                runnerObstacles.splice(index, 1);
+            }, 300);
+        }
+        
+        function loseLife() {
+            runnerLives--;
+            const hearts = ['❤️❤️❤️', '❤️❤️', '❤️', ''];
+            document.getElementById('runner-lives').textContent = hearts[3 - runnerLives];
+            
+            if (runnerLives <= 0) {
+                endRunnerGame();
+            }
+        }
+        
+        function pauseRunnerGame() {
+            runnerGameActive = false;
+            document.getElementById('runner-pause-btn').textContent = 'Resume';
+            document.getElementById('runner-pause-btn').onclick = resumeRunnerGame;
+        }
+        
+        function resumeRunnerGame() {
+            runnerGameActive = true;
+            document.getElementById('runner-pause-btn').textContent = 'Pause';
+            document.getElementById('runner-pause-btn').onclick = pauseRunnerGame;
+        }
+        
+        function endRunnerGame() {
+            runnerGameActive = false;
+            clearInterval(runnerGameLoop);
+            clearInterval(runnerSpawnLoop);
+            document.removeEventListener('keydown', runnerKeyHandler);
+            
+            document.getElementById('runner-jump-btn').style.display = 'none';
+            document.getElementById('runner-pause-btn').style.display = 'none';
+            document.getElementById('runner-start-btn').style.display = 'inline-block';
+            document.getElementById('runner-final-mushrooms').textContent = runnerMushrooms;
+            document.getElementById('runner-game-over').style.display = 'block';
+            
+            // Clear obstacles
+            runnerObstacles.forEach(obs => obs.remove());
+            runnerObstacles = [];
+        }
+        // ───── End Mushroom Runner Game ─────
 
         function toggleCollapse(header) {
             header.classList.toggle('open');
