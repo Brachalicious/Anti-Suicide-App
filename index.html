@@ -783,7 +783,7 @@
 </head>
 <body>
     <div class="container">
-        <div style="text-align: center; margin: -10px 0 8px; font-weight: 400; color: #2d0a16; font-size: 15px; line-height: 1.8; letter-spacing:0.5px; text-shadow:0 1px 2px #fff, 0 0px 1px #0001; padding: 8px 0;">
+        <div style="text-align: center; margin: -10px 0 8px; font-weight: 700; color: #2d0a16; font-size: 15px; line-height: 1.8; letter-spacing:0.5px; text-shadow:0 1px 2px #fff, 0 0px 1px #0001; padding: 8px 0;">
             EMERGENCY: 718-230-1000 (Hatzoloh) &nbsp;|&nbsp;
             National Lifeline: 1-800-273-8255 &nbsp;|&nbsp;
             Teen Line: 602-248-8336
@@ -1447,14 +1447,14 @@
 
                 <div class="card">
                     <h2 class="section-title">Quick Support Tools</h2>
-                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
-                    <button class="btn" onclick="showContacts()" style="background:#16a34a;">📱 Emergency Contacts</button>
-                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
-                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
                     <!-- Progressive Muscle Relaxation as part of Quick Support Tools -->
-                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">💆 Progressive Muscle Relaxation</button>
+                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">� Progressive Muscle Relaxation</button>
                     <!-- Guided Meditation -->
                     <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
+                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
+                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
+                    <button class="btn" onclick="showContacts()" style="background:#16a34a;">� Emergency Contacts</button>
+                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
                     <!-- Find Professional Help button moved to top emergency area -->
                 </div>
 
@@ -2465,16 +2465,55 @@
                 <div class="card">
                     <h2 class="section-title">🧠 Escape Your Head</h2>
                     <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
-                        When your thoughts feel overwhelming, click the jar to receive a gentle reminder to help you escape the spiral and find peace.
+                        Play this interactive game to break free from negative thought patterns and ground yourself in the present moment.
                     </p>
                     
-                    <div style="display: flex; flex-direction: column; align-items: center; gap: 30px;">
-                        <div id="escape-jar-container" onclick="pickEscapePiece()" style="cursor: pointer; position: relative; width: 200px; height: 250px; background: linear-gradient(135deg, rgba(147,197,253,0.3), rgba(96,165,250,0.3)); border: 3px solid #3b82f6; border-radius: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
-                            <div style="font-size: 80px;">💙</div>
+                    <div id="escape-game-container" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 20px; padding: 30px; border: 3px solid #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
+                        <!-- Game Screen -->
+                        <div id="escape-game-screen" style="text-align: center;">
+                            <div style="font-size: 24px; font-weight: 700; color: #1e40af; margin-bottom: 20px;">Thought Bubble Pop!</div>
+                            <div style="font-size: 16px; color: #1e40af; margin-bottom: 20px; line-height: 1.6;">
+                                Pop the negative thought bubbles before they overwhelm you! Each pop helps you let go and brings you back to the present.
+                            </div>
+                            
+                            <div style="margin-bottom: 20px;">
+                                <div style="font-size: 14px; color: #1e40af; margin-bottom: 8px; font-weight: 600;">Score: <span id="escape-score">0</span></div>
+                                <div style="font-size: 14px; color: #1e40af; font-weight: 600;">Level: <span id="escape-level">1</span></div>
+                            </div>
+                            
+                            <!-- Game Canvas -->
+                            <div id="escape-game-canvas" style="position: relative; width: 100%; max-width: 500px; height: 400px; margin: 0 auto; background: linear-gradient(180deg, #e0f2fe, #bae6fd); border-radius: 16px; border: 2px solid #0ea5e9; overflow: hidden; cursor: crosshair;">
+                                <!-- Thought bubbles will be spawned here dynamically -->
+                            </div>
+                            
+                            <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
+                                <button id="escape-start-btn" onclick="startEscapeGame()" class="btn" style="background: #3b82f6; color: white; font-weight: 700;">Start Game</button>
+                                <button id="escape-pause-btn" onclick="pauseEscapeGame()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">Pause</button>
+                                <button id="escape-resume-btn" onclick="resumeEscapeGame()" class="btn" style="background: #10b981; color: white; font-weight: 700; display: none;">Resume</button>
+                            </div>
+                            
+                            <div id="escape-game-message" style="margin-top: 20px; font-size: 18px; color: #1e40af; font-weight: 600; min-height: 30px;"></div>
+                            
+                            <!-- Grounding Exercises after game -->
+                            <div id="escape-grounding" style="display: none; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; border: 2px solid #f59e0b;">
+                                <div style="font-size: 18px; font-weight: 700; color: #b45309; margin-bottom: 16px;">🌟 Grounding Exercise</div>
+                                <div id="escape-grounding-text" style="font-size: 16px; color: #78350f; line-height: 1.8;"></div>
+                                <button onclick="continueEscapeGame()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; margin-top: 16px;">Continue Playing</button>
+                            </div>
                         </div>
-                        
-                        <div id="escape-message" style="min-height: 120px; padding: 20px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 16px; border: 2px solid #3b82f6; text-align: center; display: none;">
-                            <div style="font-size: 18px; color: #1e40af; font-weight: 600; line-height: 1.6;"></div>
+                    </div>
+                    
+                    <!-- Old jar feature kept below -->
+                    <div style="margin-top: 30px;">
+                        <h3 style="color: #1e40af; margin-bottom: 16px;">Or Click for a Quick Message</h3>
+                        <div style="display: flex; flex-direction: column; align-items: center; gap: 20px;">
+                            <div id="escape-jar-container" onclick="pickEscapePiece()" style="cursor: pointer; position: relative; width: 150px; height: 180px; background: linear-gradient(135deg, rgba(147,197,253,0.3), rgba(96,165,250,0.3)); border: 3px solid #3b82f6; border-radius: 20px; display: flex; align-items: center; justify-content: center; transition: all 0.3s; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
+                                <div style="font-size: 60px;">💙</div>
+                            </div>
+                            
+                            <div id="escape-message" style="min-height: 80px; padding: 16px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 16px; border: 2px solid #3b82f6; text-align: center; display: none;">
+                                <div style="font-size: 16px; color: #1e40af; font-weight: 600; line-height: 1.6;"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -5687,6 +5726,196 @@
         }
         // ───── End Jar Features ─────
 
+        // ───── Escape Your Head Game ─────
+        let escapeGameActive = false;
+        let escapeGamePaused = false;
+        let escapeScore = 0;
+        let escapeLevel = 1;
+        let escapeBubbles = [];
+        let escapeGameInterval = null;
+        let escapeSpawnInterval = null;
+        
+        const negativeThoughts = [
+            "I'm not good enough", "Nobody cares", "I always fail", "I'm worthless", 
+            "It's hopeless", "I can't do this", "Everyone hates me", "I'm a burden",
+            "Nothing ever works out", "I'm broken", "I'll never be happy", "It's all my fault",
+            "I'm not important", "I don't matter", "I'm too weak", "I mess everything up"
+        ];
+        
+        const groundingExercises = [
+            "Take 5 deep breaths. Inhale for 4 counts, hold for 4, exhale for 6.",
+            "Name 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste.",
+            "Place your feet flat on the floor. Press them down and feel the ground supporting you.",
+            "Hold an ice cube in your hand. Focus on the sensation of cold until it melts.",
+            "Count backwards from 100 by 7s. This engages your logical brain.",
+            "Name all the colors you can see around you right now.",
+            "Describe your surroundings in detail as if you're explaining it to someone who can't see.",
+            "Splash cold water on your face and notice how it feels.",
+            "List 10 things you're grateful for, no matter how small.",
+            "Tense every muscle in your body for 5 seconds, then release completely."
+        ];
+        
+        function startEscapeGame() {
+            escapeGameActive = true;
+            escapeGamePaused = false;
+            escapeScore = 0;
+            escapeLevel = 1;
+            escapeBubbles = [];
+            
+            document.getElementById('escape-score').textContent = '0';
+            document.getElementById('escape-level').textContent = '1';
+            document.getElementById('escape-start-btn').style.display = 'none';
+            document.getElementById('escape-pause-btn').style.display = 'inline-block';
+            document.getElementById('escape-game-message').textContent = '';
+            document.getElementById('escape-grounding').style.display = 'none';
+            
+            // Clear canvas
+            const canvas = document.getElementById('escape-game-canvas');
+            canvas.innerHTML = '';
+            
+            // Start game loop
+            escapeGameInterval = setInterval(updateEscapeGame, 50);
+            escapeSpawnInterval = setInterval(spawnThoughtBubble, 2000);
+        }
+        
+        function spawnThoughtBubble() {
+            if (!escapeGameActive || escapeGamePaused) return;
+            
+            const canvas = document.getElementById('escape-game-canvas');
+            const bubble = document.createElement('div');
+            const thought = negativeThoughts[Math.floor(Math.random() * negativeThoughts.length)];
+            const size = 60 + Math.random() * 40;
+            const xPos = Math.random() * (canvas.offsetWidth - size);
+            
+            bubble.className = 'thought-bubble';
+            bubble.style.cssText = `
+                position: absolute;
+                width: ${size}px;
+                height: ${size}px;
+                background: radial-gradient(circle, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.5));
+                border: 2px solid #dc2626;
+                border-radius: 50%;
+                left: ${xPos}px;
+                bottom: -${size}px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: ${size/6}px;
+                color: white;
+                font-weight: 600;
+                text-align: center;
+                padding: 8px;
+                line-height: 1.2;
+                transition: all 0.2s;
+                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+            `;
+            bubble.textContent = thought;
+            bubble.dataset.speed = (2 + Math.random() * 2 + escapeLevel * 0.5).toFixed(2);
+            bubble.onclick = function() { popBubble(this); };
+            
+            canvas.appendChild(bubble);
+            escapeBubbles.push(bubble);
+        }
+        
+        function updateEscapeGame() {
+            if (!escapeGameActive || escapeGamePaused) return;
+            
+            const canvas = document.getElementById('escape-game-canvas');
+            
+            escapeBubbles.forEach((bubble, index) => {
+                const currentBottom = parseFloat(bubble.style.bottom);
+                const speed = parseFloat(bubble.dataset.speed);
+                const newBottom = currentBottom + speed;
+                
+                if (newBottom > canvas.offsetHeight + 100) {
+                    // Bubble escaped - game over
+                    endEscapeGame(false);
+                } else {
+                    bubble.style.bottom = newBottom + 'px';
+                }
+            });
+        }
+        
+        function popBubble(bubble) {
+            escapeScore += 10;
+            document.getElementById('escape-score').textContent = escapeScore;
+            
+            // Animation
+            bubble.style.transform = 'scale(1.5)';
+            bubble.style.opacity = '0';
+            
+            setTimeout(() => {
+                bubble.remove();
+                const index = escapeBubbles.indexOf(bubble);
+                if (index > -1) escapeBubbles.splice(index, 1);
+            }, 200);
+            
+            // Level up every 50 points
+            if (escapeScore % 50 === 0 && escapeScore > 0) {
+                escapeLevel++;
+                document.getElementById('escape-level').textContent = escapeLevel;
+                document.getElementById('escape-game-message').textContent = `Level ${escapeLevel}! You're doing great! 🌟`;
+                setTimeout(() => {
+                    document.getElementById('escape-game-message').textContent = '';
+                }, 2000);
+            }
+            
+            // Show grounding exercise every 100 points
+            if (escapeScore % 100 === 0 && escapeScore > 0) {
+                pauseEscapeGame();
+                showGroundingExercise();
+            }
+        }
+        
+        function pauseEscapeGame() {
+            escapeGamePaused = true;
+            document.getElementById('escape-pause-btn').style.display = 'none';
+            document.getElementById('escape-resume-btn').style.display = 'inline-block';
+        }
+        
+        function resumeEscapeGame() {
+            escapeGamePaused = false;
+            document.getElementById('escape-pause-btn').style.display = 'inline-block';
+            document.getElementById('escape-resume-btn').style.display = 'none';
+            document.getElementById('escape-grounding').style.display = 'none';
+        }
+        
+        function continueEscapeGame() {
+            resumeEscapeGame();
+        }
+        
+        function showGroundingExercise() {
+            const exercise = groundingExercises[Math.floor(Math.random() * groundingExercises.length)];
+            document.getElementById('escape-grounding-text').textContent = exercise;
+            document.getElementById('escape-grounding').style.display = 'block';
+        }
+        
+        function endEscapeGame(won) {
+            escapeGameActive = false;
+            clearInterval(escapeGameInterval);
+            clearInterval(escapeSpawnInterval);
+            
+            document.getElementById('escape-pause-btn').style.display = 'none';
+            document.getElementById('escape-resume-btn').style.display = 'none';
+            document.getElementById('escape-start-btn').style.display = 'inline-block';
+            
+            // Clear remaining bubbles
+            escapeBubbles.forEach(b => b.remove());
+            escapeBubbles = [];
+            
+            if (won) {
+                document.getElementById('escape-game-message').textContent = `🎉 Amazing! Final Score: ${escapeScore}`;
+            } else {
+                document.getElementById('escape-game-message').textContent = `Game Over! You escaped ${escapeScore/10} negative thoughts. That's progress! 💙`;
+            }
+            
+            setTimeout(() => {
+                showGroundingExercise();
+            }, 1500);
+        }
+        // ───── End Escape Your Head Game ─────
+
         function toggleCollapse(header) {
             header.classList.toggle('open');
             const body = header.nextElementSibling;
@@ -6840,7 +7069,7 @@
     </script>
 
     <!-- Footer with Privacy & Terms -->
-    <div style="background:#065f46; color:white; text-align:center; padding:30px 20px; margin-top:60px; border-top:3px solid #22c55e;">
+    <div style="background:#065f46; color:white; text-align:center; padding:30px 20px; margin-top:180px; border-top:3px solid #22c55e;">
         <div style="max-width:1200px; margin:0 auto;">
             <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
                 <strong>MysticMinded³³</strong> is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the <em>soul</em> aspect of healing—mind, body, and soul. If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
