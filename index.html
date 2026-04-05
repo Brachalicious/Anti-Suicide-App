@@ -837,6 +837,181 @@
             height: auto;
             left: -10px;
         }
+
+        /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
+        
+        /* Tablets and smaller desktops */
+        @media screen and (max-width: 1024px) {
+            .container {
+                padding: 15px;
+            }
+            .nav {
+                flex-wrap: wrap;
+                gap: 8px;
+            }
+            .nav-item {
+                font-size: 13px;
+                padding: 10px 14px;
+            }
+        }
+
+        /* Mobile devices (landscape and portrait) */
+        @media screen and (max-width: 768px) {
+            body {
+                font-size: 14px;
+            }
+            .container {
+                padding: 10px;
+                max-width: 100%;
+            }
+            .nav {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 6px;
+                padding: 10px;
+            }
+            .nav-item, .nav-dropdown-btn {
+                width: 100%;
+                text-align: center;
+                font-size: 14px;
+                padding: 12px;
+            }
+            .nav-dropdown {
+                width: 100%;
+            }
+            .nav-dropdown-menu {
+                position: static;
+                width: 100%;
+                box-shadow: none;
+                border-radius: 12px;
+                margin-top: 6px;
+            }
+            .card {
+                padding: 16px;
+                border-radius: 16px;
+            }
+            .section-title {
+                font-size: 24px;
+            }
+            .crisis-banner {
+                font-size: 13px;
+                padding: 10px 14px;
+                max-width: 95%;
+            }
+            /* Adjust absolute positioned elements */
+            div[style*="position: absolute"] {
+                position: static !important;
+                margin-bottom: 15px;
+            }
+            /* Make buttons stack vertically on mobile */
+            .btn {
+                width: 100%;
+                margin-bottom: 10px;
+            }
+            /* Video containers responsive */
+            iframe {
+                max-width: 100%;
+            }
+        }
+
+        /* Small phones */
+        @media screen and (max-width: 480px) {
+            body {
+                font-size: 13px;
+            }
+            .container {
+                padding: 8px;
+            }
+            .nav {
+                padding: 8px;
+            }
+            .nav-item, .nav-dropdown-btn {
+                font-size: 13px;
+                padding: 10px;
+            }
+            .card {
+                padding: 12px;
+            }
+            .section-title {
+                font-size: 20px;
+            }
+            h2 {
+                font-size: 18px;
+            }
+            h3 {
+                font-size: 16px;
+            }
+            .crisis-banner {
+                font-size: 12px;
+                padding: 8px 12px;
+            }
+            /* Chat interface */
+            .chat-container {
+                max-height: 300px;
+            }
+            .chat-bubble {
+                font-size: 13px;
+                padding: 10px;
+            }
+            /* Make text inputs and textareas full width */
+            input[type="text"],
+            input[type="email"],
+            input[type="url"],
+            textarea {
+                width: 100% !important;
+                font-size: 14px;
+            }
+        }
+
+        /* iOS Safari specific fixes */
+        @supports (-webkit-touch-callout: none) {
+            /* iOS Safari */
+            body {
+                -webkit-text-size-adjust: 100%;
+            }
+            input, textarea, select {
+                font-size: 16px; /* Prevents zoom on focus in iOS */
+            }
+            .chat-input, textarea {
+                -webkit-appearance: none;
+                appearance: none;
+                border-radius: 12px;
+            }
+        }
+
+        /* Android Chrome specific optimizations */
+        @media screen and (max-width: 768px) {
+            /* Improve touch targets for Android */
+            button, .btn, .nav-item {
+                min-height: 44px; /* Android recommended touch target */
+                -webkit-tap-highlight-color: rgba(0,0,0,0.1);
+            }
+        }
+
+        /* Landscape orientation on mobile */
+        @media screen and (max-width: 896px) and (orientation: landscape) {
+            .container {
+                max-height: 100vh;
+                overflow-y: auto;
+            }
+            .nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                gap: 6px;
+            }
+            .nav-item {
+                flex: 1 1 auto;
+                min-width: auto;
+            }
+        }
+
+        /* High DPI displays (Retina, high-res Android) */
+        @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+            .logo-container img {
+                image-rendering: -webkit-optimize-contrast;
+                image-rendering: crisp-edges;
+            }
+        }
     </style>
     </style>
 </head>
