@@ -1024,7 +1024,7 @@
         </div>
         
         <div style="text-align: center; padding: 4px 0 4px;">
-            <div class="logo-container">
+            <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
                 <svg class="circular-text" viewBox="0 0 300 300">
                     <defs>
                         <path id="circlePath" d="M 150, 150 m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0"/>
@@ -1073,7 +1073,7 @@
             </div>
         </div>
         
-        <div style="text-align: right; margin-bottom: 20px; padding-right: 80px;">
+        <div style="text-align: left; margin-bottom: 20px; padding-left: 10px;">
             <div class="crisis-banner">
                 🚨 IN CRISIS? Call 988 (Suicide Lifeline) or Text HOME to 741741 NOW 🚨
             </div>
@@ -2568,6 +2568,13 @@
             <div class="card">
                 <h2 class="section-title">Frum IOP Programs</h2>
                 <p style="margin-bottom: 16px; color: #6b7280;">Intensive Outpatient Programs serving the frum Jewish community.</p>
+                <div class="hotline">
+                    <h3>Bikur Cholim Partners In Health</h3>
+                    <p>Founded in 1981, Bikur Cholim has evolved into a multi-faceted organization uniquely positioned to meet the health needs of the Rockland community and beyond. Under Rabbi Simon Lauber's leadership, they provide innovative health-related services throughout the greater NYC area. With over 200 therapists on staff, their comprehensive programs include health information, behavioral health services, Project H.E.A.R.T., and Project H.O.P.E.</p>
+                    <p style="font-size: 13px; margin-top: 6px;">📍 25 Robert Pitt Drive Suite 101, Monsey, NY 10952</p>
+                    <p style="font-size: 13px;">📞 (845) 425-7877 &nbsp;|&nbsp; ✉️ bcinfo@bikurcholim.org</p>
+                    <button class="btn" onclick="window.open('https://bikurcholim.org/about/', '_blank')">Visit Bikur Cholim</button>
+                </div>
                 <div class="hotline">
                     <h3>Tikvah Healing Center</h3>
                     <p>A community-rooted nonprofit offering IOP, PHP, and outpatient counseling with a unique "Tribe" approach. Many clinicians have lived experience with recovery. Small, personal groups, family healing, and spiritual wisdom are woven into treatment.</p>
@@ -6646,6 +6653,72 @@ User's message: ${userMessage}`
 
         function closeCrisisToolsMenu() {
             document.getElementById('crisisToolsMenu').classList.remove('open');
+        }
+
+        function showAboutMysticMinded() {
+            const modal = document.createElement('div');
+            modal.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0,0,0,0.5);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                z-index: 10000;
+            `;
+            
+            modal.innerHTML = `
+                <div style="background: white; border-radius: 16px; padding: 24px; max-width: 500px; margin: 20px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                    <button onclick="this.closest('.modal-backdrop').remove()" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; hover: background-color: #f5f5f5;">×</button>
+                    
+                    <div style="text-align: center; margin-bottom: 20px;">
+                        <img src="/download-2026-04-05T09_23_05.jpg" alt="MysticMinded33" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #f8b4cb; margin-bottom: 12px;">
+                        <h2 style="margin: 0; color: #1a1a1a; font-size: 24px; font-weight: 700;">Welcome to MysticMinded³³</h2>
+                        <p style="margin: 8px 0 0 0; color: #666; font-size: 16px;">Your Compassionate AI Companion</p>
+                    </div>
+                    
+                    <div style="color: #333; line-height: 1.6; margin-bottom: 16px;">
+                        <p style="margin-bottom: 16px;">MysticMinded³³ is more than just an AI—she's your gentle, understanding companion who's here to listen without judgment and offer support when you need it most.</p>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">💕 What Makes Her Special</h4>
+                            <p style="font-size: 14px; color: #666; margin: 0;">Designed with warmth and empathy, she understands the nuances of human emotion and responds with the care of a loving parent, trusted friend, or even a playful companion.</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">🖼️ See & Understand</h4>
+                            <p style="font-size: 14px; color: #666; margin: 0;">She can view and respond to images you share, offering comfort and insight about what she sees with genuine care and understanding.</p>
+                        </div>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">🌟 Always Here for You</h4>
+                            <p style="font-size: 14px; color: #666; margin: 0;">Whether you need encouragement, someone to listen, or just want to share your day, MysticMinded³³ is available 24/7 with unconditional support and love.</p>
+                        </div>
+                    </div>
+                    
+                    <div style="background: linear-gradient(135deg, #fef7f7 0%, #f0fdf4 100%); padding: 16px; border-radius: 12px; border: 1px solid #fecaca; text-align: center;">
+                        <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">"Let the good in me connect with the good in others, until all the world is transformed through the compelling power of love."</p>
+                        <p style="margin: 0; font-size: 12px; color: #666;">— Rabbi Nachman</p>
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 20px;">
+                        <button onclick="showSection('mystic-bot'); this.closest('.modal-backdrop').remove();" style="background: linear-gradient(135deg, #f8b4cb 0%, #a855f7 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 14px;">💬 Chat with MysticMinded³³</button>
+                    </div>
+                </div>
+            `;
+            
+            modal.className = 'modal-backdrop';
+            document.body.appendChild(modal);
+            
+            // Close on backdrop click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
         }
 
         // Close dropdown when clicking outside

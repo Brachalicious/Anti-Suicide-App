@@ -79,7 +79,7 @@ export default function Dashboard() {
       </div>
 
       {/* Crisis Support Banner - Always Visible */}
-      <div className="crisis-banner p-4 rounded-lg mb-8 text-center">
+      <div className="crisis-banner p-4 rounded-lg mb-8 text-left">
         <p className="font-medium mb-2">Need immediate help?</p>
         <Button 
           onClick={() => window.location.href = '/crisis'}

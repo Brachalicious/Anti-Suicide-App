@@ -28,7 +28,7 @@ export default function CrisisSupport() {
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
       {/* Crisis Banner */}
-      <div className="crisis-banner p-6 rounded-lg mb-8 text-center">
+      <div className="crisis-banner p-6 rounded-lg mb-8 text-left">
         <h1 className="text-3xl font-bold mb-2">You Are Not Alone</h1>
         <p className="text-lg mb-4">
           If you're having thoughts of suicide or are in crisis, please reach out for help immediately.
@@ -45,16 +45,16 @@ export default function CrisisSupport() {
           <Button
             variant="outline"
             className="justify-start h-auto py-4"
-            onClick={() => document.getElementById("coping-strategies")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => document.getElementById("emergency-contacts")?.scrollIntoView({ behavior: "smooth" })}
           >
-            � Coping Strategies
+            📞 Emergency Contacts
           </Button>
           <Button
             variant="outline"
             className="justify-start h-auto py-4"
-            onClick={() => document.getElementById("emergency-contacts")?.scrollIntoView({ behavior: "smooth" })}
+            onClick={() => document.getElementById("coping-strategies")?.scrollIntoView({ behavior: "smooth" })}
           >
-            � Emergency Contacts
+            🔧 Coping Strategies
           </Button>
           <Button
             variant="outline"

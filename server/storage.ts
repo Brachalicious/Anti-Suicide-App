@@ -138,6 +138,15 @@ export class MemStorage implements IStorage {
         tags: ["support", "relationships", "community"],
         readTime: 5,
         isEmergency: false
+      },
+      {
+        id: "4",
+        title: "Bikur Cholim Partners In Health",
+        content: "Founded in 1981, Bikur Cholim has evolved into a multi-faceted organization uniquely positioned to meet the health needs of the Rockland community and beyond. Under Rabbi Simon Lauber's leadership, they provide innovative health-related services throughout the greater NYC area. With over 200 therapists on staff, their Achieve Behavioral Health division provides advanced mental health support with utmost sensitivity and professionalism. They offer comprehensive programs including health information, behavioral health services, Project H.E.A.R.T., and Project H.O.P.E. Contact: 845-425-7877 or visit bikurcholim.org.",
+        category: "wellness",
+        tags: ["jewish-community", "mental-health", "therapy", "behavioral-health", "support"],
+        readTime: 4,
+        isEmergency: false
       }
     ];
 

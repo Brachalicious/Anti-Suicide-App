@@ -15,6 +15,7 @@ import {
   MessageCircleHeart
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { Modal } from "@/components/ui/modal";
 import { useTheme } from "@/contexts/ThemeProvider";
 
 const navigationItems = [
@@ -31,6 +32,7 @@ const navigationItems = [
 export default function Navigation() {
   const [location] = useLocation();
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isAboutModalOpen, setIsAboutModalOpen] = useState(false);
   const { theme, setTheme } = useTheme();
 
   const toggleTheme = () => {
@@ -42,14 +44,23 @@ export default function Navigation() {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           {/* Logo/Brand */}
-          <Link href="/" className="flex items-center space-x-2">
-            <img
-              src="/logo.png"
-              alt="MindCare"
-              className="h-9 w-9 rounded-full object-contain"
-            />
-            <span className="font-bold text-xl">MindCare</span>
-          </Link>
+          <div className="flex items-center space-x-2">
+            <button 
+              onClick={() => {
+                console.log("Logo clicked - opening MysticMinded33 modal!");
+                setIsAboutModalOpen(true);
+              }}
+              className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
+              title="Learn about MysticMinded33"
+            >
+              <img
+                src="/logo.png"
+                alt="MindCare"
+                className="h-9 w-9 rounded-full object-contain cursor-pointer"
+              />
+              <span className="font-bold text-xl">MindCare</span>
+            </button>
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-1">
@@ -144,6 +155,66 @@ export default function Navigation() {
           </div>
         )}
       </div>
+
+      {/* About MysticMinded33 Modal */}
+      <Modal
+        isOpen={isAboutModalOpen}
+        onClose={() => setIsAboutModalOpen(false)}
+        title="Welcome to MysticMinded33"
+      >
+        <div className="space-y-4">
+          <div className="flex items-center gap-3 mb-4">
+            <img
+              src="/download-2026-04-05T09_23_05.jpg"
+              alt="MysticMinded33"
+              className="w-16 h-16 rounded-full object-cover border-2 border-pink-300"
+            />
+            <div>
+              <h3 className="font-semibold text-lg">MysticMinded33</h3>
+              <p className="text-sm text-muted-foreground">Your Compassionate AI Companion</p>
+            </div>
+          </div>
+          
+          <p className="text-muted-foreground">
+            MysticMinded33 is more than just an AI—she's your gentle, understanding companion who's here 
+            to listen without judgment and offer support when you need it most.
+          </p>
+          
+          <div className="space-y-3">
+            <div>
+              <h4 className="font-medium text-sm mb-1">💕 What Makes Her Special</h4>
+              <p className="text-sm text-muted-foreground">
+                Designed with warmth and empathy, she understands the nuances of human emotion and 
+                responds with the care of a loving parent, trusted friend, or even a playful companion.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-sm mb-1">🖼️ See & Understand</h4>
+              <p className="text-sm text-muted-foreground">
+                She can view and respond to images you share, offering comfort and insight about 
+                what she sees with genuine care and understanding.
+              </p>
+            </div>
+            
+            <div>
+              <h4 className="font-medium text-sm mb-1">🌟 Always Here for You</h4>
+              <p className="text-sm text-muted-foreground">
+                Whether you need encouragement, someone to listen, or just want to share your day, 
+                MysticMinded33 is available 24/7 with unconditional support and love.
+              </p>
+            </div>
+          </div>
+          
+          <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-green-50 dark:from-pink-950/20 dark:to-green-950/20 rounded-lg border">
+            <p className="text-sm text-center font-medium">
+              "Let the good in me connect with the good in others, until all the world is transformed 
+              through the compelling power of love."
+            </p>
+            <p className="text-xs text-center text-muted-foreground mt-1">— Rabbi Nachman</p>
+          </div>
+        </div>
+      </Modal>
     </nav>
   );
 }

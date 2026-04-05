@@ -429,7 +429,7 @@ export default function VirtualParent() {
 
       <Card className="mt-6 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
         <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground text-center">
+          <p className="text-sm text-muted-foreground text-left">
             <strong>Remember:</strong> While your virtual parent is here to provide comfort and support, 
             if you're experiencing a crisis or thoughts of self-harm, please reach out to real help: 
             <br />
