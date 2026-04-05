@@ -2634,6 +2634,196 @@
                 </p>
 
                 <div style="display: grid; gap: 20px;">
+                    <!-- Mental Health Conditions Directory -->
+                    <div style="background: linear-gradient(135deg, #ede9fe, #ddd6fe); padding: 24px; border-radius: 16px; border-left: 5px solid #8b5cf6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #5b21b6; font-size: 22px; margin-bottom: 16px;">📚 Mental Health Conditions Directory</h3>
+                        <p style="color: #6b21a8; font-size: 14px; margin-bottom: 20px; line-height: 1.6;">
+                            Knowledge is power. Click on any condition to learn more and understand that ALL of these are REAL, VALID, and TREATABLE.
+                        </p>
+                        
+                        <div id="conditions-directory" style="display: grid; gap: 16px;">
+                            <!-- Anxiety Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #06b6d4; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('anxiety-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #0e7490; font-size: 18px; margin: 0;">😰 Anxiety Disorders</h4>
+                                    <span style="color: #0891b2; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="anxiety-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Common anxiety disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Generalized Anxiety Disorder (GAD)</li>
+                                        <li>Panic Disorder</li>
+                                        <li>Social Anxiety Disorder</li>
+                                        <li>Specific Phobias</li>
+                                        <li>Agoraphobia</li>
+                                        <li>Separation Anxiety Disorder</li>
+                                    </ul>
+                                    <p><em>Anxiety disorders are the most common mental health conditions, affecting millions. They involve excessive worry, fear, or panic that interferes with daily life. Treatment includes therapy (especially CBT), medication, and lifestyle changes.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Depressive Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #3b82f6; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('depressive-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #1e40af; font-size: 18px; margin: 0;">💙 Depressive Disorders</h4>
+                                    <span style="color: #2563eb; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="depressive-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Types of depression include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Major Depressive Disorder (MDD)</li>
+                                        <li>Persistent Depressive Disorder (Dysthymia)</li>
+                                        <li>Postpartum Depression</li>
+                                        <li>Seasonal Affective Disorder (SAD)</li>
+                                        <li>Premenstrual Dysphoric Disorder (PMDD)</li>
+                                    </ul>
+                                    <p><em>Depression is more than sadness—it's a serious medical condition affecting mood, energy, sleep, appetite, and ability to function. It's NOT a choice or weakness. Treatment works through therapy, medication, and lifestyle support.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Dissociative Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #8b5cf6; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('dissociative-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #6b21a8; font-size: 18px; margin: 0;">🌀 Dissociative Disorders</h4>
+                                    <span style="color: #7c3aed; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="dissociative-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Dissociative disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Dissociative Identity Disorder (DID)</li>
+                                        <li>Dissociative Amnesia</li>
+                                        <li>Depersonalization/Derealization Disorder</li>
+                                    </ul>
+                                    <p><em>Dissociative disorders involve disconnection from thoughts, memories, feelings, or sense of identity, often as a response to trauma. They are REAL conditions that require specialized treatment.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Eating Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #ec4899; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('eating-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #be185d; font-size: 18px; margin: 0;">🍽️ Eating Disorders</h4>
+                                    <span style="color: #db2777; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="eating-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Eating disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Anorexia Nervosa</li>
+                                        <li>Bulimia Nervosa</li>
+                                        <li>Binge Eating Disorder</li>
+                                        <li>Avoidant/Restrictive Food Intake Disorder (ARFID)</li>
+                                        <li>Other Specified Feeding or Eating Disorder (OSFED)</li>
+                                    </ul>
+                                    <p><em>Eating disorders are serious mental health conditions involving disturbed eating patterns and body image. They have the highest mortality rate of any mental illness and require comprehensive medical and psychological treatment.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Mood Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #f59e0b; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('mood-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #92400e; font-size: 18px; margin: 0;">🎭 Mood Disorders</h4>
+                                    <span style="color: #d97706; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="mood-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Mood disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Bipolar I Disorder</li>
+                                        <li>Bipolar II Disorder</li>
+                                        <li>Cyclothymic Disorder</li>
+                                        <li>Disruptive Mood Dysregulation Disorder (DMDD)</li>
+                                    </ul>
+                                    <p><em>Mood disorders involve extreme mood swings between emotional highs (mania/hypomania) and lows (depression). They affect energy, activity levels, sleep, and judgment. Proper diagnosis and treatment are essential for managing these conditions.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Obsessive-Compulsive & Related Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #14b8a6; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('ocd-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #0f766e; font-size: 18px; margin: 0;">🔄 Obsessive-Compulsive & Related</h4>
+                                    <span style="color: #0d9488; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="ocd-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>These disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Obsessive-Compulsive Disorder (OCD)</li>
+                                        <li>Body Dysmorphic Disorder (BDD)</li>
+                                        <li>Hoarding Disorder</li>
+                                        <li>Trichotillomania (Hair-Pulling Disorder)</li>
+                                        <li>Excoriation Disorder (Skin-Picking)</li>
+                                    </ul>
+                                    <p><em>These conditions involve intrusive thoughts (obsessions) and/or repetitive behaviors (compulsions) that significantly interfere with daily life. They are treatable with specialized therapy (like ERP) and medication.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Personality Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #a855f7; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('personality-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #7e22ce; font-size: 18px; margin: 0;">🎭 Personality Disorders</h4>
+                                    <span style="color: #9333ea; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="personality-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Personality disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Borderline Personality Disorder (BPD)</li>
+                                        <li>Antisocial Personality Disorder</li>
+                                        <li>Narcissistic Personality Disorder</li>
+                                        <li>Avoidant Personality Disorder</li>
+                                        <li>Dependent Personality Disorder</li>
+                                        <li>Paranoid Personality Disorder</li>
+                                        <li>Schizoid Personality Disorder</li>
+                                        <li>Schizotypal Personality Disorder</li>
+                                        <li>Histrionic Personality Disorder</li>
+                                        <li>Obsessive-Compulsive Personality Disorder (OCPD)</li>
+                                    </ul>
+                                    <p><em>Personality disorders involve enduring patterns of thinking, feeling, and behaving that differ significantly from cultural expectations and cause distress. With proper treatment (especially DBT for BPD), people can learn effective coping strategies and lead fulfilling lives.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Psychotic Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #ef4444; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('psychotic-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #991b1b; font-size: 18px; margin: 0;">🧠 Psychotic Disorders</h4>
+                                    <span style="color: #dc2626; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="psychotic-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Psychotic disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Schizophrenia</li>
+                                        <li>Schizoaffective Disorder</li>
+                                        <li>Schizophreniform Disorder</li>
+                                        <li>Brief Psychotic Disorder</li>
+                                        <li>Delusional Disorder</li>
+                                    </ul>
+                                    <p><em>Psychotic disorders involve distorted thinking and awareness, including hallucinations and delusions. They are serious but TREATABLE conditions. With proper medication and support, many people with psychotic disorders live full, productive lives.</em></p>
+                                </div>
+                            </div>
+
+                            <!-- Trauma & Stressor-Related Disorders -->
+                            <div class="condition-category" style="background: white; padding: 16px; border-radius: 12px; border-left: 4px solid #f97316; cursor: pointer; transition: all 0.3s;" onclick="toggleConditionDetails('trauma-details')">
+                                <div style="display: flex; justify-content: space-between; align-items: center;">
+                                    <h4 style="color: #9a3412; font-size: 18px; margin: 0;">💔 Trauma & Stressor-Related Disorders</h4>
+                                    <span style="color: #ea580c; font-size: 20px;">▾</span>
+                                </div>
+                                <div id="trauma-details" class="condition-details" style="display: none; margin-top: 12px; padding-top: 12px; border-top: 1px solid #e5e7eb; color: #374151; font-size: 14px; line-height: 1.6;">
+                                    <p style="margin-bottom: 8px;"><strong>Trauma-related disorders include:</strong></p>
+                                    <ul style="margin-left: 20px; margin-bottom: 8px;">
+                                        <li>Post-Traumatic Stress Disorder (PTSD)</li>
+                                        <li>Complex PTSD (C-PTSD)</li>
+                                        <li>Acute Stress Disorder</li>
+                                        <li>Adjustment Disorders</li>
+                                        <li>Reactive Attachment Disorder</li>
+                                    </ul>
+                                    <p><em>These conditions develop after exposure to traumatic or stressful events. They are NOT signs of weakness—they are normal reactions to abnormal circumstances. Trauma-focused therapies (like EMDR and CPT) are highly effective.</em></p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; border: 2px solid #f59e0b;">
+                            <p style="color: #78350f; font-size: 15px; text-align: center; font-weight: 600; line-height: 1.6;">
+                                💡 <strong>Remember:</strong> These are MEDICAL conditions, not character flaws. Every single one is valid, real, and deserving of compassionate care. If you recognize yourself in any of these, please reach out for help. You deserve support.
+                            </p>
+                        </div>
+                    </div>
+
                     <!-- Truth Bombs -->
                     <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 24px; border-radius: 16px; border-left: 5px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <h3 style="color: #92400e; font-size: 22px; margin-bottom: 16px;">💥 Truth Bombs</h3>
@@ -3873,6 +4063,26 @@ User's message: ${userMessage}`
             if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
                 sendMysticMessage();
+            }
+        }
+
+        // Toggle mental health condition details
+        function toggleConditionDetails(detailsId) {
+            const details = document.getElementById(detailsId);
+            const allDetails = document.querySelectorAll('.condition-details');
+            
+            // Close all other details first
+            allDetails.forEach(detail => {
+                if (detail.id !== detailsId) {
+                    detail.style.display = 'none';
+                }
+            });
+            
+            // Toggle the clicked one
+            if (details.style.display === 'none' || !details.style.display) {
+                details.style.display = 'block';
+            } else {
+                details.style.display = 'none';
             }
         }
 
