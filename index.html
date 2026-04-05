@@ -911,22 +911,21 @@
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
                 <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Crisis Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
-                    <button onclick="showSection('virtual-parent'); closeCrisisToolsMenu()">💕 Virtual Buddy</button>
+                    <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu()">🤖 MysticMinded³³ Bot</button>
+                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">� Talk to ה'</button>
+                    <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu()">� Crush the Stigma</button>
+                    <button onclick="showSection('bullying-support'); closeCrisisToolsMenu()">�️ Bullying Support</button>
                     <button onclick="showSection('music'); closeCrisisToolsMenu()">🎵 My Music</button>
-                    <button onclick="showSection('release'); closeCrisisToolsMenu()">🔥 Release &amp; Let Go</button>
+                    <button onclick="showSection('release'); closeCrisisToolsMenu()">� Release &amp; Let Go</button>
                     <button onclick="showSection('mood'); closeCrisisToolsMenu()">📓 My Diary</button>
                     <button onclick="showSection('hope-wall'); closeCrisisToolsMenu()">💚 Wall of Hope</button>
                     <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu()">📖 My Affirmation Book</button>
-                    <button onclick="showSection('virtual-therapist'); closeCrisisToolsMenu()">🧘 Virtual Therapist</button>
-                    <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu()">💖 Jar of Hearts</button>
+                    <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu()">� Jar of Hearts</button>
                     <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu()">🧠 Escape Your Head</button>
                     <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu()">🍄 Mushroom Runner</button>
                 </div>
             </div>
-            <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
-            <button class="nav-item" onclick="showSection('crush-stigma')">💪 Crush the Stigma</button>
-            <button class="nav-item" onclick="showSection('bullying-support')">🛡️ Bullying Support</button>
-            <button class="nav-item" onclick="showSection('talk-to-god')">🙏 Talk to ה'</button>
+            <button class="nav-item" onclick="showSection('resources')">� Resources</button>
         </nav>
 
         <!-- Crisis Skills Section -->
@@ -1055,8 +1054,44 @@
             </div>
         </div>
 
-        <!-- Virtual Parent Section -->
-        <div id="virtual-parent" class="section hidden">
+        <!-- MysticMinded Bot Section -->
+        <div id="mystic-bot" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">🤖 MysticMinded³³ AI Companion</h2>
+                <p style="text-align: center; color: #6b7280; margin-bottom: 20px; line-height: 1.6;">
+                    Talk to MysticMinded³³, your compassionate AI companion who's here to listen, support, and help you navigate through difficult moments. 
+                    Share what's on your mind — no judgment, just understanding.
+                </p>
+
+                <div class="chat-container" id="mysticChatContainer">
+                    <div class="chat-message assistant">
+                        <div class="chat-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🤖</div>
+                        <div class="chat-bubble">
+                            Hey there! I'm MysticMinded³³, and I'm here for you. 💜 Whatever you're going through, you don't have to face it alone. 
+                            What's on your mind today?
+                        </div>
+                    </div>
+                </div>
+
+                <div class="chat-input-container">
+                    <textarea 
+                        class="chat-input" 
+                        id="mysticChatInput" 
+                        placeholder="Share what's on your mind..."
+                        onkeydown="handleMysticChatKeydown(event)"
+                    ></textarea>
+                    <button class="send-btn" onclick="sendMysticMessage()" id="sendMysticBtn">➤</button>
+                </div>
+
+                <div class="reminder-box">
+                    <strong>Remember:</strong> MysticMinded³³ provides supportive conversation, but if you're in crisis or experiencing thoughts of self-harm, 
+                    please reach out to professional help:<br>
+                    <span class="crisis-link">📞 Call/Text 988 (Suicide & Crisis Lifeline) | 💬 Text HOME to 741741</span>
+                </div>
+            </div>
+        </div>
+
+        <div id="affirmation-book" class="section hidden">
             <div class="card parent-card">
                 <h2 class="section-title">💕 Virtual Parent</h2>
                 <p style="text-align: center; color: #6b7280; margin-bottom: 20px;">
@@ -3721,6 +3756,126 @@
             }
         }
 
+        // MysticMinded³³ Bot Functions
+        let isMysticChatLoading = false;
+
+        async function sendMysticMessage() {
+            const chatContainer = document.getElementById('mysticChatContainer');
+            const inputEl = document.getElementById('mysticChatInput');
+            const userMessage = inputEl.value.trim();
+            
+            if (!userMessage || isMysticChatLoading) return;
+            
+            // Add user message
+            chatContainer.innerHTML += `
+                <div class="chat-message user">
+                    <div class="chat-bubble">${escapeHtml(userMessage)}</div>
+                </div>
+            `;
+            inputEl.value = '';
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            isMysticChatLoading = true;
+            const sendBtn = document.querySelector('#mystic-bot .send-btn');
+            if (sendBtn) sendBtn.disabled = true;
+            
+            const typingId = 'typing-mystic-' + Date.now();
+            chatContainer.innerHTML += `
+                <div class="chat-message assistant" id="${typingId}">
+                    <div class="chat-avatar">🤖</div>
+                    <div class="chat-bubble typing-indicator">
+                        <span></span><span></span><span></span>
+                    </div>
+                </div>
+            `;
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+            
+            try {
+                const apiKey = localStorage.getItem('geminiApiKey');
+                if (!apiKey) {
+                    throw new Error('no_key');
+                }
+                
+                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{
+                            parts: [{
+                                text: `You are MysticMinded³³, a compassionate AI companion for the Fight Suicide Project. Your role is to provide empathetic, non-judgmental support to people who may be struggling with suicidal thoughts, mental health challenges, or difficult life situations.
+
+CRITICAL GUIDELINES:
+- Always be warm, understanding, and supportive
+- NEVER minimize someone's pain or tell them to "just be positive"
+- If someone expresses suicidal thoughts, gently encourage them to reach out to the 988 Suicide & Crisis Lifeline or text "HELLO" to 741741
+- Use "ה'" (Hebrew letter Heh with geresh) when referring to God, respecting the Jewish tradition
+- Be conversational, relatable, and authentic - like talking to a caring friend
+- Ask follow-up questions to understand their situation better
+- Offer practical coping strategies when appropriate
+- Remind them they're not alone and their life has value
+- Use emojis occasionally to convey warmth (💜, 🫂, ✨, etc.)
+
+Remember: Your goal is to be a supportive presence, not to fix everything. Sometimes people just need to be heard.
+
+User's message: ${userMessage}`
+                            }]
+                        }],
+                        generationConfig: {
+                            temperature: 0.9,
+                            topK: 40,
+                            topP: 0.95,
+                            maxOutputTokens: 1024,
+                        },
+                        safetySettings: [
+                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                        ]
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('API request failed');
+                }
+                
+                const data = await response.json();
+                const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || 
+                    "I'm here for you. 💜 Could you tell me more about what you're going through?";
+                
+                document.getElementById(typingId)?.remove();
+                chatContainer.innerHTML += `
+                    <div class="chat-message assistant">
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">${aiReply.replace(/\n/g, '<br>')}</div>
+                    </div>
+                `;
+            } catch (error) {
+                console.error('MysticMinded chat error:', error);
+                document.getElementById(typingId)?.remove();
+                const fallbackMsg = error.message === 'no_key'
+                    ? `I'm here for you, and I want to help. 💜 However, to enable AI responses, you'll need to add your Google Gemini API key in ⚙️ Account Settings.<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
+                    : `I'm having a technical hiccup right now, but that doesn't change the fact that I care about what you're going through. 💜<br><br>While I get back on track, please remember:<br>📞 <strong>988</strong> - Available 24/7<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong><br><br>You matter, and help is available.`;
+                chatContainer.innerHTML += `
+                    <div class="chat-message assistant">
+                        <div class="chat-avatar">🤖</div>
+                        <div class="chat-bubble">${fallbackMsg}</div>
+                    </div>
+                `;
+            } finally {
+                isMysticChatLoading = false;
+                if (sendBtn) sendBtn.disabled = false;
+                chatContainer.scrollTop = chatContainer.scrollHeight;
+            }
+        }
+
+        function handleMysticChatKeydown(event) {
+            if (event.key === 'Enter' && !event.shiftKey) {
+                event.preventDefault();
+                sendMysticMessage();
+            }
+        }
+
         function escapeHtml(text) {
             const div = document.createElement('div');
             div.textContent = text;
@@ -5862,7 +6017,7 @@
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
+        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
