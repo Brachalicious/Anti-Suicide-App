@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { Phone, MessageCircle, Globe, Clock } from "lucide-react";
+import { Phone, MessageCircle, Globe, Clock, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { CrisisHotline } from "@shared/schema";
 
@@ -8,7 +8,7 @@ export default function CrisisSupport() {
     queryKey: ['/api/crisis-hotlines'],
   });
 
-  const { data: emergencyResources, isLoading: resourcesLoading } = useQuery({
+  const { data: emergencyResources } = useQuery({
     queryKey: ['/api/resources', 'emergency'],
     queryFn: () => fetch('/api/resources?emergency=true').then(res => res.json()),
   });
@@ -38,8 +38,57 @@ export default function CrisisSupport() {
         </div>
       </div>
 
-      {/* Immediate Action Section */}
-      <div className="grid md:grid-cols-2 gap-6 mb-8">
+      {/* Crisis Tools */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold mb-4">Crisis Tools</h2>
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => document.getElementById("coping-strategies")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            � Coping Strategies
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => document.getElementById("emergency-contacts")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            � Emergency Contacts
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => (window.location.href = "/safety-plan")}
+          >
+            🛡️ My Safety Plan
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => document.getElementById("breathing-exercises")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            🌬️ Breathing Exercises
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => document.getElementById("progressive-muscle-relaxation")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            💪 Progressive Muscle Relaxation
+          </Button>
+          <Button
+            variant="outline"
+            className="justify-start h-auto py-4"
+            onClick={() => document.getElementById("guided-meditation")?.scrollIntoView({ behavior: "smooth" })}
+          >
+            🧘 Guided Meditation
+          </Button>
+        </div>
+      </div>
+
+  {/* Immediate Action Section */}
+  <div id="emergency-contacts" className="grid md:grid-cols-2 gap-6 mb-8">
         <div className="bg-card p-6 rounded-lg border shadow-sm">
           <h2 className="text-xl font-semibold mb-4 text-center">Emergency Services</h2>
           <div className="space-y-3">
@@ -120,9 +169,33 @@ export default function CrisisSupport() {
         </div>
       </div>
 
+      {/* Talk It Out */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-semibold mb-6">Talk It Out</h2>
+        <div className="bg-card p-6 rounded-lg border shadow-sm">
+          <p className="text-muted-foreground mb-4">
+            Just talk. Say whatever comes to mind — even gobbledegook. The bot will go with it,
+            respond to you, and help you regulate when you need a gentle place to land.
+          </p>
+          <div className="flex flex-wrap items-center gap-3">
+            <Button className="bg-primary hover:bg-primary/90">
+              <MessageCircle className="mr-2 h-4 w-4" />
+              Start Talking
+            </Button>
+            <Button variant="outline">
+              <Volume2 className="mr-2 h-4 w-4" />
+              Volume
+            </Button>
+          </div>
+          <p className="mt-3 text-xs text-muted-foreground">
+            Use the volume button if you need the response read out loud or softer.
+          </p>
+        </div>
+      </div>
+
       {/* Emergency Coping Resources */}
       {emergencyResources && emergencyResources.length > 0 && (
-        <div>
+        <div id="coping-strategies">
           <h2 className="text-2xl font-semibold mb-6">Immediate Coping Strategies</h2>
           <div className="space-y-4">
             {emergencyResources.map((resource: any) => (
@@ -139,6 +212,38 @@ export default function CrisisSupport() {
           </div>
         </div>
       )}
+
+      {/* Regulation Exercises */}
+      <div className="mt-8 space-y-4">
+        <div id="breathing-exercises" className="bg-card p-6 rounded-lg border shadow-sm">
+          <h3 className="text-lg font-semibold mb-2">Breathing Exercises</h3>
+          <p className="text-muted-foreground">
+            Try 4-4-6 breathing: inhale for 4, hold for 4, exhale for 6. Repeat until your body softens.
+          </p>
+        </div>
+        <div id="progressive-muscle-relaxation" className="bg-card p-6 rounded-lg border shadow-sm">
+          <h3 className="text-lg font-semibold mb-2">Progressive Muscle Relaxation</h3>
+          <p className="text-muted-foreground">
+            Tense and release one muscle group at a time (hands, shoulders, jaw, legs) to help your body unwind.
+          </p>
+        </div>
+        <div id="guided-meditation" className="bg-card p-6 rounded-lg border shadow-sm">
+          <h3 className="text-lg font-semibold mb-2">Guided Meditation</h3>
+          <p className="text-muted-foreground">
+            Focus on a calming voice or short visualization. Even 2–3 minutes can help you reset.
+          </p>
+        </div>
+      </div>
+
+      {/* Affirmation */}
+      <div className="mt-8 bg-card p-6 rounded-lg border shadow-sm">
+        <h3 className="text-lg font-semibold mb-2">Affirmation</h3>
+        <p className="text-muted-foreground">
+          “Let the good in me connect with the good in others, until all the world is transformed
+          through the compelling power of love.”
+        </p>
+        <p className="text-xs text-muted-foreground mt-2">— Rabbi Nachman</p>
+      </div>
 
       {/* Footer Message */}
       <div className="mt-12 text-center p-6 bg-card rounded-lg border">

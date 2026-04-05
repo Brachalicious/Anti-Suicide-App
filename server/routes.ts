@@ -366,7 +366,7 @@ export function createRouter(storage: IStorage): Router {
       console.log("Virtual Parent chat request received");
       console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
       
-      const { message, parentType = "mommy", conversationHistory = [] } = req.body;
+      const { message, parentType = "mommy", conversationHistory = [], images = [] } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
@@ -481,7 +481,15 @@ Important guidelines:
         ? `${systemPrompt}\n\nUser: ${message}`
         : message;
 
-      const result = await chat.sendMessageStream(fullMessage);
+      // Build the parts array - text first, then any inline images (max 10)
+      const messageParts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [
+        { text: fullMessage },
+        ...((images as Array<{ base64: string; mimeType: string }>).slice(0, 10).map((img) => ({
+          inlineData: { mimeType: img.mimeType, data: img.base64 },
+        }))),
+      ];
+
+      const result = await chat.sendMessageStream(messageParts);
       let fullResponse = "";
 
       for await (const chunk of result.stream) {
