@@ -3,6 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+    <meta http-equiv="Pragma" content="no-cache">
+    <meta http-equiv="Expires" content="0">
     <title>MysticMinded³³ - Mental Health Support & Crisis Prevention</title>
     <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
     <link rel="icon" type="image/png" href="/public/favicon.svg">
@@ -57,6 +60,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            padding-bottom: 300px;
         }
         .crisis-banner {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
@@ -742,6 +746,56 @@
             display: inline-block;
             animation: puppyWag 0.5s infinite ease-in-out, puppyBounce 0.6s infinite ease-in-out;
         }
+        
+        @keyframes paintSplat {
+            0% { 
+                transform: scale(0) rotate(0deg);
+                opacity: 1;
+            }
+            50% {
+                transform: scale(2) rotate(180deg);
+                opacity: 0.8;
+            }
+            100% { 
+                transform: scale(4) rotate(360deg);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes glitterExplode {
+            0% {
+                transform: translate(0, 0) scale(1);
+                opacity: 1;
+            }
+            100% {
+                transform: translate(var(--tx), var(--ty)) scale(0);
+                opacity: 0;
+            }
+        }
+        
+        @keyframes affirmationPop {
+            0% {
+                transform: translate(-50%, -50%) scale(0) rotate(-10deg);
+                opacity: 0;
+            }
+            20% {
+                transform: translate(-50%, -50%) scale(1.2) rotate(5deg);
+                opacity: 1;
+            }
+            40% {
+                transform: translate(-50%, -50%) scale(0.9) rotate(-2deg);
+            }
+            60% {
+                transform: translate(-50%, -50%) scale(1.05) rotate(1deg);
+            }
+            80% {
+                opacity: 1;
+            }
+            100% {
+                transform: translate(-50%, -50%) scale(1) rotate(0deg);
+                opacity: 0;
+            }
+        }
 
         /* (Flying birds animation removed) */
         
@@ -813,11 +867,28 @@
                     Sign in
                 </button>
             </div>
-            <div id="logged-in-view" style="display: none;">
-                <div style="display: flex; align-items: center; gap: 8px;">
+            <div id="logged-in-view" style="display: none; position: relative;">
+                <div style="display: flex; align-items: center; gap: 8px; cursor: pointer;" id="account-toggle">
                     <img id="user-photo" style="width: 24px; height: 24px; border-radius: 50%; border: 2px solid #22c55e;" />
                     <span id="user-name" style="color: #15803d; font-weight: 700; font-size: 12px; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;"></span>
-                    <button id="signout-btn" style="background: none; border: none; color: #6b7280; font-size: 11px; cursor: pointer; padding: 0; font-weight: 600;" onmouseover="this.style.color='#dc2626'" onmouseout="this.style.color='#6b7280'">Sign out</button>
+                    <svg width="12" height="12" viewBox="0 0 20 20" fill="currentColor" style="color: #6b7280;">
+                        <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd"/>
+                    </svg>
+                </div>
+                <!-- Account Dropdown -->
+                <div id="account-dropdown" style="display: none; position: absolute; top: 100%; right: 0; margin-top: 8px; background: white; border: 1px solid #e5e7eb; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); min-width: 220px; z-index: 10000;">
+                    <div style="padding: 12px 16px; border-bottom: 1px solid #e5e7eb;">
+                        <div style="font-weight: 700; font-size: 13px; color: #1f2937;" id="dropdown-name"></div>
+                        <div style="font-size: 11px; color: #6b7280; margin-top: 2px;" id="dropdown-email"></div>
+                    </div>
+                    <div style="padding: 8px 0;">
+                        <button id="signout-btn" style="width: 100%; text-align: left; padding: 10px 16px; background: none; border: none; color: #dc2626; font-size: 13px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;" onmouseover="this.style.backgroundColor='#fef2f2'" onmouseout="this.style.backgroundColor='transparent'">
+                            <svg width="16" height="16" viewBox="0 0 20 20" fill="currentColor">
+                                <path fill-rule="evenodd" d="M3 3a1 1 0 00-1 1v12a1 1 0 102 0V4a1 1 0 00-1-1zm10.293 9.293a1 1 0 001.414 1.414l3-3a1 1 0 000-1.414l-3-3a1 1 0 10-1.414 1.414L14.586 9H7a1 1 0 100 2h7.586l-1.293 1.293z" clip-rule="evenodd"/>
+                            </svg>
+                            Sign out
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -847,13 +918,15 @@
                     <button onclick="showSection('hope-wall'); closeCrisisToolsMenu()">💚 Wall of Hope</button>
                     <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu()">📖 My Affirmation Book</button>
                     <button onclick="showSection('virtual-therapist'); closeCrisisToolsMenu()">🧘 Virtual Therapist</button>
-                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">🙏 Talk to God</button>
                     <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu()">💖 Jar of Hearts</button>
                     <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu()">🧠 Escape Your Head</button>
                     <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu()">🍄 Mushroom Runner</button>
                 </div>
             </div>
             <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
+            <button class="nav-item" onclick="showSection('crush-stigma')">💪 Crush the Stigma</button>
+            <button class="nav-item" onclick="showSection('bullying-support')">🛡️ Bullying Support</button>
+            <button class="nav-item" onclick="showSection('talk-to-god')">🙏 Talk to ה'</button>
         </nav>
 
         <!-- Crisis Skills Section -->
@@ -1463,8 +1536,8 @@
                     <h2 class="section-title">Today's Affirmation</h2>
                     <p style="color: #6b7280; font-size: 13px; margin-bottom: 12px;">To save this affirmation to your Affirmation Book, click the 🤍 heart.</p>
                     <div class="affirmation" id="daily-affirmation">
-                        <div class="affirmation-verse">"[Rabbi Akiva] used to say: Beloved is man, for he was created in [G‑d's] image; it is indicative of greater love that it was made known to him that he was created in [G‑d's] image…" (Avot 3:14)</div>
-                        <div class="affirmation-message">You were created with infinite worth and divine purpose. The very fact that you exist means G‑d chose you — not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable.</div>
+                        <div class="affirmation-verse">"[Rabbi Akiva] used to say: Beloved is man, for he was created in [ה's] image; it is indicative of greater love that it was made known to him that he was created in [ה's] image…" (Avot 3:14)</div>
+                        <div class="affirmation-message">You were created with infinite worth and divine purpose. The very fact that you exist means ה' chose you — not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable.</div>
                     </div>
                     <div style="display: flex; gap: 8px;">
                         <button class="btn" onclick="newAffirmation()" style="flex: 1;">New Affirmation</button>
@@ -1987,8 +2060,8 @@
                 <h2 class="section-title">Today's Affirmation</h2>
                 <p style="color: #6b7280; font-size: 13px; margin-bottom: 12px;">To save this affirmation to your Affirmation Book, click the 🤍 heart.</p>
                 <div class="affirmation" id="daily-affirmation-mood">
-                    <div class="affirmation-verse">"[Rabbi Akiva] used to say: Beloved is man, for he was created in [G‑d's] image; it is indicative of greater love that it was made known to him that he was created in [G‑d's] image..." (Avot 3:14)</div>
-                    <div class="affirmation-message">You were created with infinite worth and divine purpose. The very fact that you exist means G-d chose you -- not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable.</div>
+                    <div class="affirmation-verse">"[Rabbi Akiva] used to say: Beloved is man, for he was created in [ה's] image; it is indicative of greater love that it was made known to him that he was created in [ה's] image..." (Avot 3:14)</div>
+                    <div class="affirmation-message">You were created with infinite worth and divine purpose. The very fact that you exist means ה' chose you -- not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable.</div>
                 </div>
                 <div style="display: flex; gap: 8px;">
                     <button class="btn" onclick="newAffirmation()" style="flex: 1;">New Affirmation</button>
@@ -2377,67 +2450,6 @@
             </div>
         </div>
 
-        <!-- Talk to God Section -->
-        <div id="talk-to-god" class="section hidden">
-            <div class="card" style="max-width: 680px; margin: 0 auto;">
-                <h2 class="section-title">🙏 Talk to God</h2>
-                <p style="color:#6b7280; font-size:15px; margin-bottom:20px; line-height:1.6;">
-                    You don't need perfect words. Just speak from your heart — God is always listening. 💙
-                </p>
-
-                <!-- Say Tehilim button -->
-
-                <!-- Say Tehilim button (single, smaller) -->
-                <div style="margin-bottom:24px; text-align:center;">
-                    <button onclick="window.open('https://www.sefaria.org/Psalms?tab=contents','_blank')" id="tehilim-toggle-btn" style="background:linear-gradient(135deg,#5b3fa6,#7c3aed); color:white; border:none; border-radius:22px; padding:8px 22px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 14px rgba(124,58,237,0.25); letter-spacing:0.5px; transition:transform 0.2s;" onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
-                        📖 Say Tehilim (Psalms)
-                    </button>
-                    <div style="color:#9ca3af; font-size:11px; margin-top:6px;">תהילים — speak the words of King David (opens Sefaria)</div>
-                </div>
-
-                <!-- Prayer prompts -->
-                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:16px;">
-                    <button onclick="setPrayerPrompt('I am feeling overwhelmed and I need Your strength...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">😔 I'm struggling</button>
-                    <button onclick="setPrayerPrompt('Thank You, God, for...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">🙏 Gratitude</button>
-                    <button onclick="setPrayerPrompt('Please help me forgive...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">🕊️ Forgiveness</button>
-                    <button onclick="setPrayerPrompt('God, I feel so alone. Please let me feel Your presence...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">💜 Loneliness</button>
-                    <button onclick="setPrayerPrompt('I need a miracle. Please guide me...')" style="padding:7px 14px; border-radius:20px; border:1px solid rgba(147,112,219,0.4); background:rgba(230,220,255,0.5); color:#5b3fa6; font-size:12px; font-weight:600; cursor:pointer;">✨ I need a miracle</button>
-                </div>
-
-                <!-- Prayer writing area -->
-                <div style="position:relative; margin-bottom:16px;">
-                    <div style="font-size:11px; font-weight:700; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:8px;">✍️ Write your prayer</div>
-                    <textarea id="prayer-text" placeholder="Dear God..." style="width:100%; min-height:180px; padding:16px; border-radius:14px; border:2px solid rgba(147,112,219,0.35); background:rgba(245,240,255,0.7); font-size:15px; color:#3d2c4e; line-height:1.7; resize:vertical; font-family:inherit; box-sizing:border-box; outline:none;"></textarea>
-                </div>
-
-                <div style="display:flex; gap:10px; flex-wrap:wrap; margin-bottom:24px;">
-                    <button onclick="sendPrayer()" style="background:linear-gradient(135deg,#7c3aed,#a21caf); color:white; border:none; border-radius:25px; padding:12px 28px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 4px 16px rgba(124,58,237,0.3);">🙏 Send My Prayer</button>
-                    <button onclick="clearPrayer()" style="background:rgba(124,58,237,0.08); color:#7c3aed; border:1px solid rgba(124,58,237,0.25); border-radius:25px; padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;">🗑️ Clear</button>
-                    <button onclick="savePrayer()" style="background:rgba(124,58,237,0.08); color:#7c3aed; border:1px solid rgba(124,58,237,0.25); border-radius:25px; padding:12px 20px; font-size:14px; font-weight:600; cursor:pointer;">💾 Save Prayer</button>
-                </div>
-
-                <!-- Response / confirmation -->
-                <div id="prayer-sent-msg" style="display:none; text-align:center; padding:22px; background:linear-gradient(135deg,rgba(245,240,255,0.9),rgba(235,228,255,0.9)); border-radius:16px; border:2px solid rgba(147,112,219,0.3); margin-bottom:20px;">
-                    <div style="font-size:32px; margin-bottom:10px;">🕊️</div>
-                    <div style="font-weight:700; color:#5b3fa6; font-size:17px; margin-bottom:8px;">Your prayer has been sent with love</div>
-                    <div style="color:#7c6fa6; font-size:14px; line-height:1.7; font-style:italic;">"The Lord is close to the brokenhearted and saves those who are crushed in spirit." — Psalm 34:18</div>
-                </div>
-
-                <!-- Saved prayers -->
-                <div id="saved-prayers-section" style="display:none;">
-                    <div style="font-size:13px; font-weight:700; color:#7c3aed; margin-bottom:12px; letter-spacing:0.5px;">📖 Your Saved Prayers</div>
-                    <div id="saved-prayers-list" style="display:flex; flex-direction:column; gap:10px;"></div>
-                </div>
-
-                <!-- Comforting verse -->
-                <div style="margin-top:20px; padding:16px 20px; background:linear-gradient(135deg,rgba(230,220,255,0.6),rgba(220,230,255,0.6)); border-radius:14px; border-left:4px solid #7c3aed;">
-                    <div style="font-size:12px; font-weight:700; color:#7c3aed; letter-spacing:1px; text-transform:uppercase; margin-bottom:6px;">💜 A word for you today</div>
-                    <div id="daily-verse" style="color:#4c3a7a; font-size:14px; line-height:1.75; font-style:italic;"></div>
-                </div>
-
-            </div>
-        </div>
-
         <!-- Jar of Hearts Section -->
         <div id="jar-of-hearts" class="section hidden">
             <div class="grid">
@@ -2466,15 +2478,15 @@
                 <div class="card">
                     <h2 class="section-title">🧠 Escape Your Head</h2>
                     <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
-                        Play this interactive game to break free from negative thought patterns and ground yourself in the present moment.
+                        Throw paint at negative thought bubbles to transform them into glittery positive affirmations!
                     </p>
                     
                     <div id="escape-game-container" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 20px; padding: 30px; border: 3px solid #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
                         <!-- Game Screen -->
                         <div id="escape-game-screen" style="text-align: center;">
-                            <div style="font-size: 24px; font-weight: 700; color: #1e40af; margin-bottom: 20px;">Thought Bubble Pop!</div>
+                            <div style="font-size: 24px; font-weight: 700; color: #1e40af; margin-bottom: 20px;">🎨 Paint the Thoughts Away!</div>
                             <div style="font-size: 16px; color: #1e40af; margin-bottom: 20px; line-height: 1.6;">
-                                Pop the negative thought bubbles before they overwhelm you! Each pop helps you let go and brings you back to the present.
+                                Click thought bubbles to throw paint at them! Watch them explode into glittery positive affirmations. ✨
                             </div>
                             
                             <div style="margin-bottom: 20px;">
@@ -2483,19 +2495,19 @@
                             </div>
                             
                             <!-- Game Canvas -->
-                            <div id="escape-game-canvas" style="position: relative; width: 100%; max-width: 500px; height: 400px; margin: 0 auto; background: linear-gradient(180deg, #e0f2fe, #bae6fd); border-radius: 16px; border: 2px solid #0ea5e9; overflow: hidden; cursor: crosshair;">
-                                <!-- Thought bubbles will be spawned here dynamically -->
+                            <div id="escape-game-canvas" style="position: relative; width: 100%; max-width: 500px; height: 400px; margin: 0 auto; background: linear-gradient(180deg, #1e1b4b, #312e81); border-radius: 16px; border: 2px solid #6366f1; overflow: hidden; cursor: url('data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 width=%2224%22 height=%2224%22><circle cx=%2212%22 cy=%2212%22 r=%228%22 fill=%22%23ec4899%22/><circle cx=%2212%22 cy=%2212%22 r=%225%22 fill=%22%23f472b6%22/></svg>') 12 12, crosshair;">
+                                <!-- Thought bubbles and paint splashes will be spawned here dynamically -->
                             </div>
                             
                             <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: center;">
-                                <button id="escape-start-btn" onclick="startEscapeGame()" class="btn" style="background: #3b82f6; color: white; font-weight: 700;">Start Game</button>
+                                <button id="escape-start-btn" onclick="startEscapeGame()" class="btn" style="background: linear-gradient(135deg, #ec4899, #f97316); color: white; font-weight: 700;">🎨 Start Painting!</button>
                                 <button id="escape-pause-btn" onclick="pauseEscapeGame()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">Pause</button>
                                 <button id="escape-resume-btn" onclick="resumeEscapeGame()" class="btn" style="background: #10b981; color: white; font-weight: 700; display: none;">Resume</button>
                             </div>
                             
                             <div id="escape-game-message" style="margin-top: 20px; font-size: 18px; color: #1e40af; font-weight: 600; min-height: 30px;"></div>
                             
-                            <!-- Grounding Exercises after game -->
+                            <!-- Grounding Exercises after milestones -->
                             <div id="escape-grounding" style="display: none; margin-top: 30px; padding: 20px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 16px; border: 2px solid #f59e0b;">
                                 <div style="font-size: 18px; font-weight: 700; color: #b45309; margin-bottom: 16px;">🌟 Grounding Exercise</div>
                                 <div id="escape-grounding-text" style="font-size: 16px; color: #78350f; line-height: 1.8;"></div>
@@ -2571,6 +2583,438 @@
                             <div style="font-size: 20px; color: #991b1b; font-weight: 700; margin-bottom: 12px;">Game Over!</div>
                             <div style="font-size: 16px; color: #7f1d1d; margin-bottom: 16px;">You smashed <span id="runner-final-mushrooms">0</span> negative thoughts! 🎉</div>
                             <button onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Play Again</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Crush the Stigma Section -->
+        <div id="crush-stigma" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">💪 Crush the Stigma</h2>
+                <p style="color: #6b7280; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
+                    Mental health is REAL health. It's time to break the silence, shatter the shame, and normalize the conversation. 
+                    You are not weak. You are not broken. You are human.
+                </p>
+
+                <div style="display: grid; gap: 20px;">
+                    <!-- Truth Bombs -->
+                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 24px; border-radius: 16px; border-left: 5px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #92400e; font-size: 22px; margin-bottom: 16px;">💥 Truth Bombs</h3>
+                        <div style="color: #78350f; font-size: 15px; line-height: 1.8; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 Depression is NOT a choice.</strong> It's a medical condition, just like diabetes or asthma. You didn't "choose" this.
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 Asking for help is NOT weakness.</strong> It's courage. Warriors ask for backup. Champions have coaches. You're strong enough to admit you need support.
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 Taking medication is NOT shameful.</strong> Would you judge someone for taking insulin? Blood pressure meds? No. Mental health medication is healthcare.
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 Therapy is NOT just for "crazy people."</strong> Therapy is for humans. Athletes have trainers. Musicians have teachers. Your mind deserves professional support too.
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 You are NOT a burden.</strong> You are a person going through something difficult. The people who love you WANT to help. Let them.
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 10px; border-left: 3px solid #f59e0b;">
+                                <strong>🔥 Bad days do NOT erase your progress.</strong> Healing isn't linear. Setbacks are part of recovery, not proof that you're failing.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What to Say -->
+                    <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 24px; border-radius: 16px; border-left: 5px solid #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #1e40af; font-size: 22px; margin-bottom: 16px;">💬 What to Say (and NOT Say)</h3>
+                        
+                        <div style="margin-bottom: 20px;">
+                            <h4 style="color: #22c55e; font-size: 16px; margin-bottom: 10px;">✅ Things That Help:</h4>
+                            <ul style="color: #1e3a8a; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                                <li>"I'm here for you. You don't have to go through this alone."</li>
+                                <li>"I'm proud of you for telling me. That took courage."</li>
+                                <li>"What do you need right now? How can I support you?"</li>
+                                <li>"It's okay to not be okay. I'm not going anywhere."</li>
+                                <li>"You're not a burden. I care about you."</li>
+                                <li>"This doesn't change how I see you. You're still you."</li>
+                            </ul>
+                        </div>
+
+                        <div>
+                            <h4 style="color: #ef4444; font-size: 16px; margin-bottom: 10px;">❌ Things That Hurt:</h4>
+                            <ul style="color: #1e3a8a; font-size: 14px; line-height: 1.8; margin-left: 20px;">
+                                <li>"Just think positive!" / "Just snap out of it!" (Depression isn't a choice.)</li>
+                                <li>"Others have it worse." (Pain isn't a competition.)</li>
+                                <li>"You're being dramatic." (Invalidation makes it worse.)</li>
+                                <li>"Have you tried praying/exercising/eating better?" (Oversimplified "solutions.")</li>
+                                <li>"You don't look depressed." (Mental illness is invisible.)</li>
+                                <li>"I know exactly how you feel." (Unless you've lived it, you don't.)</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <!-- For the Community -->
+                    <div style="background: linear-gradient(135deg, #fae8ff, #f3e8ff); padding: 24px; border-radius: 16px; border-left: 5px solid #a855f7; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #6b21a8; font-size: 22px; margin-bottom: 16px;">🕍 For the Frum Community</h3>
+                        <div style="color: #581c87; font-size: 15px; line-height: 1.8;">
+                            <p style="margin-bottom: 12px;">
+                                Mental health struggles are not a lack of emunah (faith). They are not a punishment. They are not something to hide in shame.
+                            </p>
+                            <p style="margin-bottom: 12px;">
+                                <strong>ה' created doctors, therapists, and medication for a reason.</strong> Using them is not a lack of bitachon (trust) — it's trusting in the tools ה' gave us.
+                            </p>
+                            <p style="margin-bottom: 12px;">
+                                The Torah teaches us <strong>v'nishmartem me'od l'nafshoseichem</strong> — guard your souls carefully (Deuteronomy 4:15). This includes your mental health.
+                            </p>
+                            <p style="margin-bottom: 12px;">
+                                <strong>Pikuach nefesh (saving a life)</strong> overrides nearly every mitzvah. Your mental health IS pikuach nefesh. Getting help is a mitzvah, not a failure.
+                            </p>
+                            <div style="background: white; padding: 16px; border-radius: 10px; margin-top: 16px; border: 2px solid #a855f7;">
+                                <p style="font-style: italic; color: #6b21a8; text-align: center; font-size: 16px;">
+                                    "Kol Yisrael areivim zeh bazeh — All of Israel is responsible for one another." (Shevuot 39a)
+                                </p>
+                                <p style="margin-top: 8px; text-align: center; color: #581c87; font-size: 14px;">
+                                    That includes mental health. We are responsible for each other's wellbeing — mind, body, and soul.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Statistics -->
+                    <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 24px; border-radius: 16px; border-left: 5px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #15803d; font-size: 22px; margin-bottom: 16px;">📊 You're Not Alone — The Numbers</h3>
+                        <div style="color: #166534; font-size: 15px; line-height: 1.8;">
+                            <p style="margin-bottom: 10px;"><strong>1 in 5 adults</strong> experiences mental illness each year.</p>
+                            <p style="margin-bottom: 10px;"><strong>1 in 6 youth</strong> (ages 6-17) experience a mental health disorder annually.</p>
+                            <p style="margin-bottom: 10px;"><strong>50% of all mental illness</strong> begins by age 14, and 75% by age 24.</p>
+                            <p style="margin-bottom: 10px;"><strong>Suicide is the 2nd leading cause of death</strong> for ages 10-34.</p>
+                            <p style="margin-bottom: 16px;"><strong>BUT: Treatment works.</strong> Most people who get help see significant improvement.</p>
+                            <div style="background: white; padding: 14px; border-radius: 10px; border: 2px solid #22c55e; text-align: center;">
+                                <p style="font-weight: 700; font-size: 18px; color: #15803d;">
+                                    If you're struggling, you're in the majority. Mental health issues are NORMAL, COMMON, and TREATABLE.
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Take Action -->
+                    <div style="background: linear-gradient(135deg, #1f2937, #374151); padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); color: white;">
+                        <h3 style="font-size: 22px; margin-bottom: 16px;">🎯 How YOU Can Crush the Stigma</h3>
+                        <ul style="font-size: 15px; line-height: 1.8; margin-left: 20px;">
+                            <li><strong>Talk about it.</strong> Share your story. Normalize the conversation.</li>
+                            <li><strong>Educate yourself.</strong> Learn the facts. Challenge myths.</li>
+                            <li><strong>Listen without judgment.</strong> Be a safe space for others.</li>
+                            <li><strong>Use respectful language.</strong> Say "person with depression" not "depressed person."</li>
+                            <li><strong>Support mental health organizations.</strong> Donate, volunteer, advocate.</li>
+                            <li><strong>Check in on your people.</strong> "How are you really doing?" goes a long way.</li>
+                            <li><strong>Seek help when YOU need it.</strong> Lead by example.</li>
+                        </ul>
+                        <div style="margin-top: 20px; padding: 16px; background: rgba(255,255,255,0.1); border-radius: 10px; text-align: center;">
+                            <p style="font-size: 18px; font-weight: 700; color: #fbbf24;">
+                                The stigma ends when WE end it. Start today.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bullying Support Section -->
+        <div id="bullying-support" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">🛡️ Bullying Support</h2>
+                <p style="color: #6b7280; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
+                    If you're being bullied, you need to know this: <strong>It's NOT your fault. You do NOT deserve it. And you are NOT alone.</strong>
+                    This section is your survival guide, your validation, and your way forward.
+                </p>
+
+                <div style="display: grid; gap: 20px;">
+                    <!-- First: You Need to Hear This -->
+                    <div style="background: linear-gradient(135deg, #fee2e2, #fecaca); padding: 24px; border-radius: 16px; border-left: 5px solid #ef4444; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #991b1b; font-size: 22px; margin-bottom: 16px;">❤️ First: You Need to Hear This</h3>
+                        <div style="color: #7f1d1d; font-size: 16px; line-height: 1.8; display: flex; flex-direction: column; gap: 12px;">
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <strong>🔴 This is NOT your fault.</strong> Bullies target people for their own issues — insecurity, power, control. It's about THEM, not you.
+                            </div>
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <strong>🔴 You do NOT deserve this.</strong> No one deserves to be bullied. Ever. For any reason.
+                            </div>
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <strong>🔴 You are NOT weak for being affected.</strong> Bullying causes real psychological harm. Your feelings are valid.
+                            </div>
+                            <div style="padding: 14px; background: white; border-radius: 10px;">
+                                <strong>🔴 You are NOT alone.</strong> 1 in 5 students report being bullied. It's devastatingly common — and we're here to help you through it.
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- What IS Bullying? -->
+                    <div style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); padding: 24px; border-radius: 16px; border-left: 5px solid #3b82f6; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #1e40af; font-size: 22px; margin-bottom: 16px;">🔍 What IS Bullying?</h3>
+                        <p style="color: #1e3a8a; margin-bottom: 14px; font-size: 15px;">Bullying is repeated, intentional harm. It includes:</p>
+                        <div style="display: grid; gap: 10px;">
+                            <div style="padding: 12px; background: white; border-radius: 8px; color: #1e3a8a;">
+                                <strong>Physical:</strong> Hitting, pushing, tripping, destroying belongings
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 8px; color: #1e3a8a;">
+                                <strong>Verbal:</strong> Name-calling, insults, threats, mocking
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 8px; color: #1e3a8a;">
+                                <strong>Social:</strong> Exclusion, spreading rumors, public humiliation, isolation
+                            </div>
+                            <div style="padding: 12px; background: white; border-radius: 8px; color: #1e3a8a;">
+                                <strong>Cyberbullying:</strong> Online harassment, hate messages, posting embarrassing content, impersonation
+                            </div>
+                        </div>
+                        <p style="margin-top: 14px; font-style: italic; color: #1e40af; font-size: 14px;">
+                            If someone is repeatedly making you feel scared, worthless, or unsafe — that's bullying. Trust your gut.
+                        </p>
+                    </div>
+
+                    <!-- Immediate Safety Steps -->
+                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 24px; border-radius: 16px; border-left: 5px solid #f59e0b; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #92400e; font-size: 22px; margin-bottom: 16px;">🚨 Immediate Safety Steps</h3>
+                        <ol style="color: #78350f; font-size: 15px; line-height: 1.8; margin-left: 20px;">
+                            <li style="margin-bottom: 12px;"><strong>Get to safety.</strong> If you're in physical danger, get away NOW. Go to a teacher, security, a store, a trusted adult.</li>
+                            <li style="margin-bottom: 12px;"><strong>Document everything.</strong> Screenshot messages. Write down dates, times, what happened, who was there. Evidence matters.</li>
+                            <li style="margin-bottom: 12px;"><strong>Tell a trusted adult.</strong> Parent, teacher, counselor, rabbi, coach — someone who will take you seriously.</li>
+                            <li style="margin-bottom: 12px;"><strong>Block and report online bullies.</strong> On every platform. Don't engage — block, report, move on.</li>
+                            <li style="margin-bottom: 12px;"><strong>DO NOT retaliate.</strong> It can make things worse and get YOU in trouble. Let adults handle it.</li>
+                            <li style="margin-bottom: 12px;"><strong>If adults don't help, tell another adult.</strong> Keep telling until someone listens. You deserve protection.</li>
+                        </ol>
+                    </div>
+
+                    <!-- Survival Strategies -->
+                    <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 24px; border-radius: 16px; border-left: 5px solid #22c55e; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #15803d; font-size: 22px; margin-bottom: 16px;">💪 Survival Strategies</h3>
+                        <div style="color: #166534; font-size: 15px; line-height: 1.8;">
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="color: #15803d; margin-bottom: 8px;">🔹 The "Gray Rock" Method</h4>
+                                <p>Be as boring and uninteresting as possible. Bullies feed on reactions. Give them NOTHING. Short answers. Neutral face. Walk away.</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="color: #15803d; margin-bottom: 8px;">🔹 Stay in Groups</h4>
+                                <p>Bullies usually target people who are alone. Stick with friends, sit with others at lunch, walk with someone in the hallways.</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="color: #15803d; margin-bottom: 8px;">🔹 Change Your Routine</h4>
+                                <p>If bullies wait for you in certain places, take a different route. Use different bathrooms. Sit in different spots.</p>
+                            </div>
+                            <div style="margin-bottom: 16px;">
+                                <h4 style="color: #15803d; margin-bottom: 8px;">🔹 Practice Confident Body Language</h4>
+                                <p>Stand tall. Make eye contact. Speak clearly. Even if you're terrified inside, LOOK confident. Bullies target perceived weakness.</p>
+                            </div>
+                            <div>
+                                <h4 style="color: #15803d; margin-bottom: 8px;">🔹 Find Your People</h4>
+                                <p>Join clubs, teams, groups where you feel accepted. Online communities count too. You need safe spaces where you belong.</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- For Cyberbullying -->
+                    <div style="background: linear-gradient(135deg, #fae8ff, #f3e8ff); padding: 24px; border-radius: 16px; border-left: 5px solid #a855f7; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #6b21a8; font-size: 22px; margin-bottom: 16px;">📱 For Cyberbullying Specifically</h3>
+                        <ul style="color: #581c87; font-size: 15px; line-height: 1.8; margin-left: 20px;">
+                            <li style="margin-bottom: 10px;"><strong>SCREENSHOT EVERYTHING.</strong> Before you block them. Evidence is crucial.</li>
+                            <li style="margin-bottom: 10px;"><strong>Block immediately.</strong> Don't read their messages. Don't respond. Block and move on.</li>
+                            <li style="margin-bottom: 10px;"><strong>Report to the platform.</strong> Instagram, TikTok, Snapchat, etc. — they all have reporting systems.</li>
+                            <li style="margin-bottom: 10px;"><strong>Make your accounts private.</strong> Limit who can contact you and see your posts.</li>
+                            <li style="margin-bottom: 10px;"><strong>Don't share personal info online.</strong> School name, location, phone number — keep it private.</li>
+                            <li style="margin-bottom: 10px;"><strong>Take a social media break if needed.</strong> Your mental health > social media. It's okay to log off.</li>
+                            <li style="margin-bottom: 10px;"><strong>If it's severe, contact police.</strong> Threats, blackmail, sexual content — that's criminal. Report it.</li>
+                        </ul>
+                    </div>
+
+                    <!-- Resources & Hotlines -->
+                    <div style="background: linear-gradient(135deg, #1f2937, #374151); padding: 24px; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); color: white;">
+                        <h3 style="font-size: 22px; margin-bottom: 16px;">📞 Get Help NOW</h3>
+                        <div style="display: grid; gap: 14px;">
+                            <div style="padding: 16px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                                <h4 style="color: #fbbf24; margin-bottom: 8px;">Crisis Text Line</h4>
+                                <p style="font-size: 14px; margin-bottom: 8px;">Text <strong>HOME</strong> to <strong>741741</strong></p>
+                                <p style="font-size: 13px; color: #d1d5db;">24/7 support for any crisis, including bullying</p>
+                                <button class="btn" onclick="window.open('sms:741741&body=HOME')" style="background: #3b82f6; margin-top: 10px;">Text Now</button>
+                            </div>
+                            <div style="padding: 16px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                                <h4 style="color: #fbbf24; margin-bottom: 8px;">988 Suicide & Crisis Lifeline</h4>
+                                <p style="font-size: 14px; margin-bottom: 8px;">Call or text <strong>988</strong></p>
+                                <p style="font-size: 13px; color: #d1d5db;">If bullying is making you feel suicidal</p>
+                                <button class="btn btn-emergency" onclick="window.open('tel:988')" style="background: #ef4444; margin-top: 10px;">Call 988</button>
+                            </div>
+                            <div style="padding: 16px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                                <h4 style="color: #fbbf24; margin-bottom: 8px;">StopBullying.gov</h4>
+                                <p style="font-size: 14px; margin-bottom: 8px;">Federal government resource with tons of info</p>
+                                <button class="btn" onclick="window.open('https://www.stopbullying.gov/', '_blank')" style="background: #22c55e; margin-top: 10px;">Visit StopBullying.gov</button>
+                            </div>
+                            <div style="padding: 16px; background: rgba(255,255,255,0.1); border-radius: 10px;">
+                                <h4 style="color: #fbbf24; margin-bottom: 8px;">STOMP Out Bullying</h4>
+                                <p style="font-size: 14px; margin-bottom: 8px;">Chat hotline & resources for those being bullied</p>
+                                <button class="btn" onclick="window.open('https://www.stompoutbullying.org/', '_blank')" style="background: #a855f7; margin-top: 10px;">Visit STOMP Out Bullying</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- To the Bullied -->
+                    <div style="background: linear-gradient(135deg, #fffbeb, #fef3c7); padding: 28px; border-radius: 16px; border: 3px solid #fbbf24; box-shadow: 0 4px 12px rgba(0,0,0,0.1); text-align: center;">
+                        <h3 style="color: #92400e; font-size: 24px; margin-bottom: 16px;">💛 A Message for You</h3>
+                        <div style="color: #78350f; font-size: 16px; line-height: 1.9;">
+                            <p style="margin-bottom: 14px;">
+                                The people bullying you are broken inside. They project their pain onto you because they don't know how else to cope. 
+                                <strong>This is about their brokenness, not your worth.</strong>
+                            </p>
+                            <p style="margin-bottom: 14px;">
+                                You are not what they call you. You are not defined by their cruelty. You are not less than because they treat you as less than.
+                            </p>
+                            <p style="margin-bottom: 14px;">
+                                <strong>The thing they mock you for might be the very thing that makes you extraordinary.</strong> Different is not bad. Different is powerful.
+                            </p>
+                            <p style="margin-bottom: 14px;">
+                                This season of your life will end. You will outgrow these people. You will find YOUR people — the ones who celebrate you, not tear you down.
+                            </p>
+                            <p style="font-weight: 700; font-size: 18px; color: #92400e; margin-top: 20px; padding: 16px; background: white; border-radius: 10px; border: 2px solid #fbbf24;">
+                                You are worthy. You are valuable. You are loved. And you WILL get through this. We believe in you. 💛
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Talk to ה' Section -->
+        <div id="talk-to-god" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">🙏 Talk to ה'</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6;">
+                        Sometimes the heaviest burdens need to be placed at the feet of the One who can truly carry them. 
+                        This is your sacred space to pour out your heart, write a letter to ה', and find comfort in ancient words of hope.
+                    </p>
+
+                    <!-- Write a Letter to ה' -->
+                    <div style="background: linear-gradient(135deg, #faf5ff, #f3e8ff); padding: 28px; border-radius: 16px; border: 3px solid #a855f7; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 24px;">
+                        <h3 style="color: #6b21a8; font-size: 22px; margin-bottom: 16px;">✍️ Write a Letter to ה'</h3>
+                        <p style="color: #7e22ce; font-size: 15px; line-height: 1.7; margin-bottom: 20px;">
+                            Pour out your heart. Write your fears, your pain, your confusion, your gratitude, your prayers. 
+                            ה' hears you. This is your private conversation — completely confidential and saved only on your device.
+                        </p>
+                        
+                        <div style="margin-bottom: 16px;">
+                            <label style="display: block; font-weight: 700; color: #6b21a8; margin-bottom: 10px; font-size: 16px;">Your Letter:</label>
+                            <textarea id="godLetter" placeholder="Dear ה',&#10;&#10;I come to You today with a heavy heart...&#10;&#10;Write whatever is in your heart. ה' is listening."
+                                style="width: 100%; min-height: 300px; padding: 16px; border: 3px solid #a855f7; border-radius: 12px; font-size: 16px; font-family: Georgia, 'Times New Roman', serif; line-height: 1.8; resize: vertical; box-sizing: border-box; background: white;"></textarea>
+                        </div>
+                        
+                        <div style="display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button onclick="saveGodLetter()" class="btn" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 700; padding: 14px 24px; font-size: 16px;">
+                                💾 Save My Letter
+                            </button>
+                            <button onclick="viewSavedLetters()" class="btn" style="flex: 1; min-width: 200px; background: linear-gradient(135deg, #7c3aed, #6d28d9); color: white; font-weight: 700; padding: 14px 24px; font-size: 16px;">
+                                📖 View Saved Letters
+                            </button>
+                        </div>
+                        
+                        <div id="letterSaveConfirmation" style="display: none; margin-top: 16px; padding: 12px; background: #dcfce7; border: 2px solid #22c55e; border-radius: 10px; color: #166534; font-weight: 600; text-align: center;">
+                            ✅ Your letter has been saved. ה' hears you.
+                        </div>
+                    </div>
+
+                    <!-- Saved Letters Display -->
+                    <div id="savedLettersDisplay" style="display: none; background: white; padding: 24px; border-radius: 16px; border: 2px solid #d8b4fe; margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                            <h3 style="color: #6b21a8; font-size: 20px; margin: 0;">📖 Your Saved Letters</h3>
+                            <button onclick="closeSavedLetters()" style="background: #e9d5ff; color: #6b21a8; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; cursor: pointer;">
+                                Close
+                            </button>
+                        </div>
+                        <div id="savedLettersList"></div>
+                    </div>
+
+                    <!-- Psalms Section -->
+                    <div style="background: linear-gradient(135deg, #ecfeff, #cffafe); padding: 28px; border-radius: 16px; border: 3px solid #06b6d4; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #0e7490; font-size: 22px; margin-bottom: 16px;">📜 Psalms of Comfort & Hope</h3>
+                        <p style="color: #155e75; font-size: 15px; line-height: 1.7; margin-bottom: 20px;">
+                            For thousands of years, these sacred words have brought comfort to broken hearts. 
+                            Read them aloud. Let them wash over you. You are not the first to feel this way, and you won't be the last to find hope again.
+                        </p>
+
+                        <div style="display: grid; gap: 16px;">
+                            <!-- Psalm 23 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 23 - The Shepherd's Psalm</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p style="margin-bottom: 8px;"><strong>ה' is my shepherd; I shall not want.</strong></p>
+                                    <p style="margin-bottom: 8px;">He makes me lie down in green pastures; He leads me beside still waters.</p>
+                                    <p style="margin-bottom: 8px;">He restores my soul; He guides me in paths of righteousness for His name's sake.</p>
+                                    <p style="margin-bottom: 8px;"><strong>Even though I walk through the valley of the shadow of death, I will fear no evil, for You are with me;</strong> Your rod and Your staff, they comfort me.</p>
+                                    <p style="margin-bottom: 8px;">You prepare a table before me in the presence of my enemies; You anoint my head with oil; my cup overflows.</p>
+                                    <p>Surely goodness and mercy shall follow me all the days of my life, and I shall dwell in the house of ה' forever.</p>
+                                </div>
+                            </div>
+
+                            <!-- Psalm 34 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 34:18-19 - When Your Heart is Broken</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p style="margin-bottom: 8px;"><strong>ה' is close to the brokenhearted and saves those who are crushed in spirit.</strong></p>
+                                    <p>The righteous person may have many troubles, but ה' delivers him from them all.</p>
+                                </div>
+                            </div>
+
+                            <!-- Psalm 46 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 46:1-3 - Your Refuge</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p style="margin-bottom: 8px;"><strong>ה' is our refuge and strength, an ever-present help in trouble.</strong></p>
+                                    <p style="margin-bottom: 8px;">Therefore we will not fear, though the earth give way and the mountains fall into the heart of the sea,</p>
+                                    <p>though its waters roar and foam and the mountains quake with their surging.</p>
+                                </div>
+                            </div>
+
+                            <!-- Psalm 55 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 55:22 - Cast Your Burden</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p><strong>Cast your burden upon ה' and He will sustain you; He will never allow the righteous to falter.</strong></p>
+                                </div>
+                            </div>
+
+                            <!-- Psalm 121 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 121 - The Watchful Guardian</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p style="margin-bottom: 8px;">I lift up my eyes to the mountains— where does my help come from?</p>
+                                    <p style="margin-bottom: 8px;"><strong>My help comes from ה', the Maker of heaven and earth.</strong></p>
+                                    <p style="margin-bottom: 8px;">He will not let your foot slip— He who watches over you will not slumber;</p>
+                                    <p style="margin-bottom: 8px;">indeed, He who watches over Israel will neither slumber nor sleep.</p>
+                                    <p style="margin-bottom: 8px;">ה' watches over you— ה' is your shade at your right hand;</p>
+                                    <p style="margin-bottom: 8px;">the sun will not harm you by day, nor the moon by night.</p>
+                                    <p style="margin-bottom: 8px;">ה' will keep you from all harm— He will watch over your life;</p>
+                                    <p>ה' will watch over your coming and going both now and forevermore.</p>
+                                </div>
+                            </div>
+
+                            <!-- Psalm 147 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Psalm 147:3 - The Healer of Hearts</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p><strong>He heals the brokenhearted and binds up their wounds.</strong></p>
+                                </div>
+                            </div>
+
+                            <!-- Isaiah 41:10 -->
+                            <div style="background: white; padding: 20px; border-radius: 12px; border-left: 5px solid #06b6d4;">
+                                <h4 style="color: #0e7490; font-size: 18px; margin-bottom: 12px;">Isaiah 41:10 - Do Not Fear</h4>
+                                <div style="color: #164e63; font-size: 15px; line-height: 1.9; font-family: Georgia, 'Times New Roman', serif;">
+                                    <p><strong>So do not fear, for I am with you; do not be dismayed, for I am your ה'. I will strengthen you and help you; I will uphold you with my righteous right hand.</strong></p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 20px; border-radius: 12px; margin-top: 20px; border: 2px solid #f59e0b; text-align: center;">
+                            <p style="color: #92400e; font-size: 16px; line-height: 1.8; font-weight: 600; margin: 0;">
+                                💙 "ה' is close to the brokenhearted." You are not alone in this darkness. 
+                                The One who created the stars knows your name and counts your tears. Keep holding on.
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -3284,26 +3728,27 @@
         }
         
         const affirmations = [
-            { verse: "\"[Rabbi Akiva] used to say: Beloved is man, for he was created in [G‑d's] image; it is indicative of greater love that it was made known to him that he was created in [G‑d's] image…\" (Avot 3:14)", message: "You were created with infinite worth and divine purpose. The very fact that you exist means G‑d chose you — not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable." },
-            { verse: "\"Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the L-rd your G‑d will be with you wherever you go.\" (Joshua 1:9)", message: "Courage doesn't mean the absence of fear — it means moving forward even when you're afraid. G‑d walks beside you through every struggle, every dark night, every uncertain moment. You are never walking alone, even when it feels that way." },
-            { verse: "\"The L-rd is close to the brokenhearted and saves those who are crushed in spirit.\" (Psalms 34:19)", message: "When your heart is shattered and you feel like you can't go on, know that G‑d draws even closer to you in those moments. Your pain is seen, your tears are counted, and your broken pieces are held with the gentlest care. Healing is coming." },
+            { verse: "\"[Rabbi Akiva] used to say: Beloved is man, for he was created in [ה's] image; it is indicative of greater love that it was made known to him that he was created in [ה's] image…\" (Avot 3:14)", message: "You were created with infinite worth and divine purpose. The very fact that you exist means ה' chose you — not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable." },
+            { verse: "\"Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the L-rd your ה' will be with you wherever you go.\" (Joshua 1:9)", message: "Courage doesn't mean the absence of fear — it means moving forward even when you're afraid. ה' walks beside you through every struggle, every dark night, every uncertain moment. You are never walking alone, even when it feels that way." },
+            { verse: "\"The L-rd is close to the brokenhearted and saves those who are crushed in spirit.\" (Psalms 34:19)", message: "When your heart is shattered and you feel like you can't go on, know that ה' draws even closer to you in those moments. Your pain is seen, your tears are counted, and your broken pieces are held with the gentlest care. Healing is coming." },
             { verse: "\"For I know the plans I have for you, declares the L-rd, plans to prosper you and not to harm you, plans to give you hope and a future.\" (Jeremiah 29:11)", message: "Even when life feels chaotic and hopeless, there is a plan unfolding that you cannot yet see. Your story isn't over. The struggles of today are shaping the strength of tomorrow. Hold on — your future holds more beauty than you can imagine right now." },
-            { verse: "\"G‑d is our refuge and strength, an ever-present help in trouble.\" (Psalms 46:2)", message: "You don't have to be strong enough on your own. G‑d is your shelter when the storms of life feel overwhelming. Lean into that refuge. It's okay to rest, to ask for help, and to let yourself be carried when you can't walk on your own." },
+            { verse: "\"ה' is our refuge and strength, an ever-present help in trouble.\" (Psalms 46:2)", message: "You don't have to be strong enough on your own. ה' is your shelter when the storms of life feel overwhelming. Lean into that refuge. It's okay to rest, to ask for help, and to let yourself be carried when you can't walk on your own." },
             { verse: "\"Even though I walk through the valley of the shadow of death, I will fear no evil, for You are with me.\" (Psalms 23:4)", message: "The darkest valleys are not your final destination — they are passages you walk through. And even in the deepest darkness, you are accompanied by a love greater than any shadow. Keep walking. The light ahead is real." },
             { verse: "\"He heals the brokenhearted and binds up their wounds.\" (Psalms 147:3)", message: "Your wounds — visible and invisible — are being tended to by the greatest Healer. Recovery takes time, and it's okay to not be okay right now. Every tear, every ache, every sleepless night is known. Healing is not instant, but it is certain." },
             { verse: "\"Cast your burden upon the L-rd and He will sustain you; He will never allow the righteous to falter.\" (Psalms 55:23)", message: "You were never meant to carry everything alone. Release the weight that's crushing you — hand it over to the One who can hold it all. You are sustained, supported, and strengthened in ways you may not even realize yet." },
-            { verse: "\"When you pass through the waters, I will be with you; and when you pass through the rivers, they will not sweep over you.\" (Isaiah 43:2)", message: "The floods of life may rise around you, but they will not drown you. You have survived every storm that has come before, and you will survive this one too. G‑d's promise is that the waters will not overcome you. Hold on to that truth." },
-            { verse: "\"The L-rd your G‑d is in your midst, a mighty one who will save; He will rejoice over you with gladness; He will quiet you by His love.\" (Zephaniah 3:17)", message: "Imagine being so loved that the Creator of the universe rejoices over you and quiets your anxious heart with His love. That is the reality of how you are cherished. In your darkest moments, let that love wash over you like a warm embrace." },
+            { verse: "\"When you pass through the waters, I will be with you; and when you pass through the rivers, they will not sweep over you.\" (Isaiah 43:2)", message: "The floods of life may rise around you, but they will not drown you. You have survived every storm that has come before, and you will survive this one too. ה's promise is that the waters will not overcome you. Hold on to that truth." },
+            { verse: "\"The L-rd your ה' is in your midst, a mighty one who will save; He will rejoice over you with gladness; He will quiet you by His love.\" (Zephaniah 3:17)", message: "Imagine being so loved that the Creator of the universe rejoices over you and quiets your anxious heart with His love. That is the reality of how you are cherished. In your darkest moments, let that love wash over you like a warm embrace." },
             { verse: "\"I will never leave you nor forsake you.\" (Deuteronomy 31:6)", message: "No matter how alone you feel, no matter how many people may have walked away, there is One who will never abandon you. This promise is unbreakable. You are held, you are kept, and you are never, ever forsaken." },
-            { verse: "\"You are precious in My eyes, and honored, and I love you.\" (Isaiah 43:4)", message: "Read those words again slowly: precious, honored, loved. That is how G‑d sees you — not your mistakes, not your failures, not your worst moments. You are treasured beyond measure. Let that truth sink deep into your soul today." },
+            { verse: "\"You are precious in My eyes, and honored, and I love you.\" (Isaiah 43:4)", message: "Read those words again slowly: precious, honored, loved. That is how ה' sees you — not your mistakes, not your failures, not your worst moments. You are treasured beyond measure. Let that truth sink deep into your soul today." },
             { verse: "\"A righteous man falls down seven times and gets up.\" – King Solomon (Proverbs 24:16)", message: "Falling is not failure — staying down is. Every time you get back up, you prove your resilience. It doesn't matter how many times life knocks you down. What matters is that you rise again. And you will rise again. You always have." },
             { verse: "\"Gam zu l'tova. This too is for the good.\" – Nachum Ish Gamzu (Talmud, Taanit 21a)", message: "Even in the pain, even in the confusion, even when nothing makes sense — there is a hidden good waiting to be revealed. You may not see it now, and that's okay. Trust that your suffering is not meaningless. Something beautiful can grow from even the hardest ground." },
-            { verse: "\"I have greatly hoped for the L-rd, and He extended His ear to me and heard my cry. And He drew me up out of the roaring pit, from the thick mire, and He set my feet upon a rock, He established my steps. He put a new song into my mouth, a praise to our G‑d, so that many may see and fear, and trust in the L-rd.\" (Psalms 40:2-4)", message: "No matter how deep the pit feels, no matter how stuck you are in the mud of despair — G‑d hears your cry. He is reaching down to pull you out, to set your feet on solid ground again. And when you emerge, you will have a new song in your heart. Your pain will become your testimony, and your struggle will inspire others to trust and hope." },
+            { verse: "\"I have greatly hoped for the L-rd, and He extended His ear to me and heard my cry. And He drew me up out of the roaring pit, from the thick mire, and He set my feet upon a rock, He established my steps. He put a new song into my mouth, a praise to our ה', so that many may see and fear, and trust in the L-rd.\" (Psalms 40:2-4)", message: "No matter how deep the pit feels, no matter how stuck you are in the mud of despair — ה' hears your cry. He is reaching down to pull you out, to set your feet on solid ground again. And when you emerge, you will have a new song in your heart. Your pain will become your testimony, and your struggle will inspire others to trust and hope." },
             { verse: "Gam Ze Yavor (גם זה יעבור) — This too shall pass.", message: "This ancient Jewish wisdom reminds us that all things — good and bad — are temporary. The intense pain you feel right now will not last forever. Like the seasons, life moves in cycles. Winter always gives way to spring. Hold on through this dark season, knowing that change is coming. Gam ze yavor — this too shall pass." },
-            { verse: "\"For you created my inmost being; you knit me together in my mother's womb. I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well.\" (Psalm 139:13-14)", message: "Before you took your first breath, G‑d was already crafting you with intention, love, and infinite care. You are not an accident. You are not a mistake. You were knit together with purpose — every fiber of your being designed with wonder. You are fearfully and wonderfully made. Your existence is not just valuable; it is miraculous." },
-            { verse: "Elokai Neshama (אלוקי נשמה) — My G‑d, the soul You placed within me", message: "\"Elokai, neshama shenatata bi tehorah hi — My G‑d, the soul You placed within me is pure.\" Every morning we recite this blessing, acknowledging that our soul is pure, given by G‑d Himself. No matter what you've been through, no matter what you've done, your neshamah — your divine soul — remains pure and sacred. You are inherently holy and beloved." },
-            { verse: "Birkat Kohanim (ברכת כהנים) — Yevarechicha Hashem V'yishmerecha", message: "\"May Hashem bless you and guard you. May Hashem illuminate His face toward you and be gracious to you. May Hashem turn His face toward you and grant you peace.\" (Numbers 6:24-26) This priestly blessing is a prayer of protection, grace, and peace. Even in your darkest moment, Hashem's face is turned toward you with love. You are blessed, guarded, and deserving of divine peace." },
-            { verse: "B'sheim Hashem Elokei Yisrael (בשם ה' אלוקי ישראל) — In the name of Hashem, G‑d of Israel", message: "\"B'sheim Hashem Elokei Yisrael, mimini Michael, u'mismoli Gavriel, u'milfanai Uriel, u'mei achorai Refael, v'al roshi Shechinas Kel.\" Before we sleep, we invoke the angels of protection: Michael on our right, Gabriel on our left, Uriel before us, Raphael behind us, and the Shechinah (Divine Presence) above our heads. You are surrounded by divine protection at all times. You are not alone. The angels and the Divine Presence are with you, guarding you with infinite love." }
+            { verse: "\"For you created my inmost being; you knit me together in my mother's womb. I praise you because I am fearfully and wonderfully made; your works are wonderful, I know that full well.\" (Psalm 139:13-14)", message: "Before you took your first breath, ה' was already crafting you with intention, love, and infinite care. You are not an accident. You are not a mistake. You were knit together with purpose — every fiber of your being designed with wonder. You are fearfully and wonderfully made. Your existence is not just valuable; it is miraculous." },
+            { verse: "Elokai Neshama (אלוקי נשמה) — My ה', the soul You placed within me", message: "\"Elokai, neshama shenatata bi tehorah hi — My ה', the soul You placed within me is pure.\" Every morning we recite this blessing, acknowledging that our soul is pure, given by ה' Himself. No matter what you've been through, no matter what you've done, your neshamah — your divine soul — remains pure and sacred. You are inherently holy and beloved." },
+            { verse: "Birkat Kohanim (ברכת כהנים) — Yevarechicha ה' V'yishmerecha", message: "\"May ה' bless you and guard you. May ה' illuminate His face toward you and be gracious to you. May ה' turn His face toward you and grant you peace.\" (Numbers 6:24-26) This priestly blessing is a prayer of protection, grace, and peace. Even in your darkest moment, ה's face is turned toward you with love. You are blessed, guarded, and deserving of divine peace." },
+            { verse: "B'sheim ה' Elokei Yisrael (בשם ה' אלוקי ישראל) — In the name of ה', ה' of Israel", message: "\"B'sheim ה' Elokei Yisrael, mimini Michael, u'mismoli Gavriel, u'milfanai Uriel, u'mei achorai Refael, v'al roshi Shechinas Kel.\" Before we sleep, we invoke the angels of protection: Michael on our right, Gabriel on our left, Uriel before us, Raphael behind us, and the Shechinah (Divine Presence) above our heads. You are surrounded by divine protection at all times. You are not alone. The angels and the Divine Presence are with you, guarding you with infinite love." },
+            { verse: "\"In peace I will lie down and sleep, for you alone, Lord, make me dwell in safety\" (Psalm 4:8)", message: "When anxiety keeps you awake at night, when your mind races with worry, remember this ancient promise: ה' Himself watches over your rest. You can release your grip on control and surrender to peaceful sleep, knowing that the Creator of the universe is your guardian. You are safe. You are protected. You can rest now.", background: "linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #1e1b4b 100%)" }
         ];
 
         const moodEmojis = ['😭','😢','😞','😔','😐','🙂','😊','😄','😁','🤩'];
@@ -3668,12 +4113,38 @@
         let currentAffirmationIndex = 0;
 
         function newAffirmation() {
-            currentAffirmationIndex = Math.floor(Math.random() * affirmations.length);
+            let newIndex;
+            do {
+                newIndex = Math.floor(Math.random() * affirmations.length);
+            } while (newIndex === currentAffirmationIndex && affirmations.length > 1);
+            
+            currentAffirmationIndex = newIndex;
             const a = affirmations[currentAffirmationIndex];
             const html = '<div class="affirmation-verse">' + a.verse + '</div><div class="affirmation-message">' + a.message + '</div>';
             document.getElementById('daily-affirmation').innerHTML = html;
+            
+            // Apply background if specified
+            const affirmationContainer = document.getElementById('daily-affirmation');
+            if (a.background) {
+                affirmationContainer.style.background = a.background;
+                affirmationContainer.style.color = '#ffffff';
+            } else {
+                affirmationContainer.style.background = '';
+                affirmationContainer.style.color = '';
+            }
+            
             const moodEl = document.getElementById('daily-affirmation-mood');
-            if (moodEl) moodEl.innerHTML = html;
+            if (moodEl) {
+                moodEl.innerHTML = html;
+                if (a.background) {
+                    moodEl.style.background = a.background;
+                    moodEl.style.color = '#ffffff';
+                } else {
+                    moodEl.style.background = '';
+                    moodEl.style.color = '';
+                }
+            }
+            
             document.querySelectorAll('.heart-btn').forEach(btn => {
                 btn.textContent = '🤍';
                 btn.classList.remove('hearted');
@@ -5275,7 +5746,7 @@
             const container = document.getElementById(section + '-gif-results');
             container.innerHTML = '<p style="color: #6b7280; font-size: 13px;">Searching...</p>';
             try {
-                const res = await fetch('https://api.giphy.com/v1/gifs/search?api_key=dc6zaTOxFJmzC&q=' + encodeURIComponent(query) + '&limit=12&rating=g');
+                const res = await fetch('https://api.giphy.com/v1/gifs/search?api_key=wPRdvFvMfriKnCOK9TAjQpKZofRBeRjt&q=' + encodeURIComponent(query) + '&limit=12&rating=g');
                 const data = await res.json();
                 if (data.data.length === 0) {
                     container.innerHTML = '<p style="color: #6b7280; font-size: 13px;">No GIFs found. Try a different search.</p>';
@@ -5391,7 +5862,7 @@
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'talk-to-god', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
+        const crisisToolsSections = ['virtual-parent', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'virtual-therapist', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -5413,7 +5884,6 @@
                 document.getElementById('dashboard').classList.remove('hidden');
             }
             console.log(`Navigating to: ${section}`);
-            if (section === 'talk-to-god') { setTimeout(renderSavedPrayers, 50); }
         }
 
         function toggleCrisisToolsMenu(e) {
@@ -5608,80 +6078,7 @@
         }
         // ───── End Virtual Therapist ─────
 
-        // ───── Talk to God ─────
-        const VERSES = [
-            '"The Lord is close to the brokenhearted and saves those who are crushed in spirit." — Psalm 34:18',
-            '"Come to me, all you who are weary and burdened, and I will give you rest." — Matthew 11:28',
-            '"For I know the plans I have for you, plans to prosper you and not to harm you, plans to give you hope and a future." — Jeremiah 29:11',
-            '"Be strong and courageous. Do not be afraid; do not be discouraged, for the Lord your God will be with you wherever you go." — Joshua 1:9',
-            '"He heals the brokenhearted and binds up their wounds." — Psalm 147:3',
-            '"Cast all your anxiety on Him because He cares for you." — 1 Peter 5:7',
-            '"Even though I walk through the darkest valley, I will fear no evil, for You are with me." — Psalm 23:4',
-            '"The Lord your God is with you, the Mighty Warrior who saves. He will take great delight in you; in His love He will no longer rebuke you, but will rejoice over you with singing." — Zephaniah 3:17',
-            '"I can do all this through Him who gives me strength." — Philippians 4:13',
-            '"Do not be anxious about anything, but in every situation, by prayer and petition, with thanksgiving, present your requests to God." — Philippians 4:6'
-        ];
-
-        // Show a random verse on load
-        (function() {
-            const el = document.getElementById('daily-verse');
-            if (el) el.textContent = VERSES[Math.floor(Math.random() * VERSES.length)];
-        })();
-
-        function setPrayerPrompt(text) {
-            const ta = document.getElementById('prayer-text');
-            ta.value = text;
-            ta.focus();
-            ta.setSelectionRange(text.length, text.length);
-        }
-
-        function sendPrayer() {
-            const text = document.getElementById('prayer-text').value.trim();
-            if (!text) { alert('Write your prayer first 🙏'); return; }
-            document.getElementById('prayer-sent-msg').style.display = 'block';
-            document.getElementById('prayer-sent-msg').scrollIntoView({ behavior: 'smooth', block: 'center' });
-            // Rotate verse
-            const el = document.getElementById('daily-verse');
-            if (el) el.textContent = VERSES[Math.floor(Math.random() * VERSES.length)];
-        }
-
-        function clearPrayer() {
-            document.getElementById('prayer-text').value = '';
-            document.getElementById('prayer-sent-msg').style.display = 'none';
-        }
-
-        function savePrayer() {
-            const text = document.getElementById('prayer-text').value.trim();
-            if (!text) { alert('Write a prayer to save 🙏'); return; }
-            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
-            prayers.unshift({ text, date: new Date().toLocaleDateString() });
-            localStorage.setItem('savedPrayers', JSON.stringify(prayers));
-            renderSavedPrayers();
-            alert('Prayer saved 💜');
-        }
-
-        function renderSavedPrayers() {
-            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
-            const section = document.getElementById('saved-prayers-section');
-            const list = document.getElementById('saved-prayers-list');
-            if (!prayers.length) { section.style.display = 'none'; return; }
-            section.style.display = 'block';
-            list.innerHTML = prayers.map((p, i) => `
-                <div style="background:rgba(245,240,255,0.8); border-radius:12px; padding:14px 16px; border:1px solid rgba(147,112,219,0.25); position:relative;">
-                    <div style="font-size:11px; color:#9ca3af; margin-bottom:6px;">${p.date}</div>
-                    <div style="color:#4c3a7a; font-size:14px; line-height:1.65; white-space:pre-wrap;">${p.text}</div>
-                    <button onclick="deletePrayer(${i})" style="position:absolute; top:10px; right:12px; background:none; border:none; color:#c4b0e0; font-size:16px; cursor:pointer;" title="Delete">🗑️</button>
-                </div>`).join('');
-        }
-
-        function deletePrayer(i) {
-            const prayers = JSON.parse(localStorage.getItem('savedPrayers') || '[]');
-            prayers.splice(i, 1);
-            localStorage.setItem('savedPrayers', JSON.stringify(prayers));
-            renderSavedPrayers();
-        }
-        // ───── End Talk to God ─────
-
+        // ───── Talk to ה' ─────
         // ───── Jar of Hearts - Positive Self Talk ─────
         const heartMessages = [
             "You are worthy of love and kindness.",
@@ -5799,6 +6196,17 @@
             "I'm not important", "I don't matter", "I'm too weak", "I mess everything up"
         ];
         
+        const positiveAffirmations = [
+            "You are enough", "You are loved", "You are worthy", "You matter",
+            "You are strong", "You are capable", "You are important", "You are valuable",
+            "You deserve happiness", "You are resilient", "You are brave", "You are beautiful",
+            "You have purpose", "You are appreciated", "You make a difference", "You are amazing"
+        ];
+        
+        const paintColors = [
+            '#ec4899', '#f97316', '#eab308', '#22c55e', '#06b6d4', '#8b5cf6', '#f43f5e', '#10b981'
+        ];
+        
         const groundingExercises = [
             "Take 5 deep breaths. Inhale for 4 counts, hold for 4, exhale for 6.",
             "Name 5 things you can see, 4 things you can touch, 3 things you can hear, 2 things you can smell, and 1 thing you can taste.",
@@ -5841,7 +6249,7 @@
             const canvas = document.getElementById('escape-game-canvas');
             const bubble = document.createElement('div');
             const thought = negativeThoughts[Math.floor(Math.random() * negativeThoughts.length)];
-            const size = 60 + Math.random() * 40;
+            const size = 70 + Math.random() * 50;
             const xPos = Math.random() * (canvas.offsetWidth - size);
             
             bubble.className = 'thought-bubble';
@@ -5849,8 +6257,8 @@
                 position: absolute;
                 width: ${size}px;
                 height: ${size}px;
-                background: radial-gradient(circle, rgba(239, 68, 68, 0.7), rgba(220, 38, 38, 0.5));
-                border: 2px solid #dc2626;
+                background: radial-gradient(circle at 30% 30%, rgba(100, 100, 120, 0.9), rgba(60, 60, 80, 0.7));
+                border: 3px solid rgba(150, 150, 170, 0.6);
                 border-radius: 50%;
                 left: ${xPos}px;
                 bottom: -${size}px;
@@ -5859,20 +6267,172 @@
                 align-items: center;
                 justify-content: center;
                 font-size: ${size/6}px;
-                color: white;
+                color: rgba(255, 255, 255, 0.9);
                 font-weight: 600;
                 text-align: center;
-                padding: 8px;
+                padding: 10px;
                 line-height: 1.2;
-                transition: all 0.2s;
-                box-shadow: 0 4px 12px rgba(220, 38, 38, 0.4);
+                transition: transform 0.1s;
+                box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5), inset 0 2px 10px rgba(255, 255, 255, 0.2);
             `;
-            bubble.textContent = thought;
+            
+            // Add thought bubble tail
+            const tail = document.createElement('div');
+            tail.style.cssText = `
+                position: absolute;
+                width: ${size/4}px;
+                height: ${size/4}px;
+                background: radial-gradient(circle, rgba(80, 80, 100, 0.8), rgba(60, 60, 80, 0.6));
+                border-radius: 50%;
+                bottom: -${size/6}px;
+                left: ${size/3}px;
+                border: 2px solid rgba(150, 150, 170, 0.5);
+            `;
+            bubble.appendChild(tail);
+            
+            const textSpan = document.createElement('span');
+            textSpan.textContent = thought;
+            textSpan.style.position = 'relative';
+            textSpan.style.zIndex = '1';
+            bubble.appendChild(textSpan);
+            
             bubble.dataset.speed = (2 + Math.random() * 2 + escapeLevel * 0.5).toFixed(2);
-            bubble.onclick = function() { popBubble(this); };
+            bubble.onclick = function(e) { 
+                throwPaint(this, e); 
+            };
             
             canvas.appendChild(bubble);
             escapeBubbles.push(bubble);
+        }
+        
+        function throwPaint(bubble, event) {
+            if (!escapeGameActive || escapeGamePaused) return;
+            
+            const canvas = document.getElementById('escape-game-canvas');
+            const rect = canvas.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const clickY = event.clientY - rect.top;
+            
+            // Create paint splat at click position
+            const paintSplat = document.createElement('div');
+            const paintColor = paintColors[Math.floor(Math.random() * paintColors.length)];
+            paintSplat.style.cssText = `
+                position: absolute;
+                left: ${clickX}px;
+                top: ${clickY}px;
+                width: 40px;
+                height: 40px;
+                background: radial-gradient(circle, ${paintColor}, transparent);
+                border-radius: 50%;
+                pointer-events: none;
+                animation: paintSplat 0.4s ease-out forwards;
+                z-index: 100;
+            `;
+            canvas.appendChild(paintSplat);
+            
+            setTimeout(() => paintSplat.remove(), 400);
+            
+            // Pop the bubble and create explosion
+            popBubbleWithExplosion(bubble);
+        }
+        
+        function popBubbleWithExplosion(bubble) {
+            escapeScore += 10;
+            document.getElementById('escape-score').textContent = escapeScore;
+            
+            const canvas = document.getElementById('escape-game-canvas');
+            const rect = bubble.getBoundingClientRect();
+            const canvasRect = canvas.getBoundingClientRect();
+            const centerX = rect.left - canvasRect.left + rect.width / 2;
+            const centerY = rect.top - canvasRect.top + rect.height / 2;
+            
+            // Get random positive affirmation
+            const affirmation = positiveAffirmations[Math.floor(Math.random() * positiveAffirmations.length)];
+            
+            // Create glittery explosion
+            for (let i = 0; i < 20; i++) {
+                const particle = document.createElement('div');
+                const angle = (Math.PI * 2 * i) / 20;
+                const velocity = 50 + Math.random() * 100;
+                const color = paintColors[Math.floor(Math.random() * paintColors.length)];
+                
+                particle.style.cssText = `
+                    position: absolute;
+                    left: ${centerX}px;
+                    top: ${centerY}px;
+                    width: ${4 + Math.random() * 8}px;
+                    height: ${4 + Math.random() * 8}px;
+                    background: ${color};
+                    border-radius: 50%;
+                    pointer-events: none;
+                    box-shadow: 0 0 10px ${color}, 0 0 20px ${color};
+                    animation: glitterExplode 1s ease-out forwards;
+                    z-index: 200;
+                `;
+                
+                particle.style.setProperty('--tx', `${Math.cos(angle) * velocity}px`);
+                particle.style.setProperty('--ty', `${Math.sin(angle) * velocity}px`);
+                
+                canvas.appendChild(particle);
+                
+                setTimeout(() => particle.remove(), 1000);
+            }
+            
+            // Show positive affirmation with glitter
+            const affirmationText = document.createElement('div');
+            affirmationText.style.cssText = `
+                position: absolute;
+                left: 50%;
+                top: 50%;
+                transform: translate(-50%, -50%) scale(0);
+                font-size: 28px;
+                font-weight: 800;
+                color: #fbbf24;
+                text-shadow: 
+                    0 0 10px #fbbf24,
+                    0 0 20px #f59e0b,
+                    0 0 30px #fbbf24,
+                    2px 2px 4px rgba(0,0,0,0.5);
+                pointer-events: none;
+                z-index: 300;
+                animation: affirmationPop 2s ease-out forwards;
+                text-align: center;
+                padding: 20px;
+                background: linear-gradient(135deg, rgba(251, 191, 36, 0.2), rgba(245, 158, 11, 0.2));
+                border-radius: 16px;
+                backdrop-filter: blur(10px);
+                max-width: 90%;
+            `;
+            affirmationText.textContent = affirmation + ' ✨';
+            canvas.appendChild(affirmationText);
+            
+            setTimeout(() => affirmationText.remove(), 2000);
+            
+            // Remove bubble
+            bubble.style.transform = 'scale(0)';
+            bubble.style.opacity = '0';
+            
+            setTimeout(() => {
+                bubble.remove();
+                const index = escapeBubbles.indexOf(bubble);
+                if (index > -1) escapeBubbles.splice(index, 1);
+            }, 300);
+            
+            // Level up every 50 points
+            if (escapeScore % 50 === 0 && escapeScore > 0) {
+                escapeLevel++;
+                document.getElementById('escape-level').textContent = escapeLevel;
+                document.getElementById('escape-game-message').textContent = `Level ${escapeLevel}! Your mind is getting clearer! 🌟`;
+                setTimeout(() => {
+                    document.getElementById('escape-game-message').textContent = '';
+                }, 2000);
+            }
+            
+            // Show grounding exercise every 100 points
+            if (escapeScore % 100 === 0 && escapeScore > 0) {
+                pauseEscapeGame();
+                showGroundingExercise();
+            }
         }
         
         function updateEscapeGame() {
@@ -5892,37 +6452,6 @@
                     bubble.style.bottom = newBottom + 'px';
                 }
             });
-        }
-        
-        function popBubble(bubble) {
-            escapeScore += 10;
-            document.getElementById('escape-score').textContent = escapeScore;
-            
-            // Animation
-            bubble.style.transform = 'scale(1.5)';
-            bubble.style.opacity = '0';
-            
-            setTimeout(() => {
-                bubble.remove();
-                const index = escapeBubbles.indexOf(bubble);
-                if (index > -1) escapeBubbles.splice(index, 1);
-            }, 200);
-            
-            // Level up every 50 points
-            if (escapeScore % 50 === 0 && escapeScore > 0) {
-                escapeLevel++;
-                document.getElementById('escape-level').textContent = escapeLevel;
-                document.getElementById('escape-game-message').textContent = `Level ${escapeLevel}! You're doing great! 🌟`;
-                setTimeout(() => {
-                    document.getElementById('escape-game-message').textContent = '';
-                }, 2000);
-            }
-            
-            // Show grounding exercise every 100 points
-            if (escapeScore % 100 === 0 && escapeScore > 0) {
-                pauseEscapeGame();
-                showGroundingExercise();
-            }
         }
         
         function pauseEscapeGame() {
@@ -6997,11 +7526,12 @@
         const firebaseConfig = {
             apiKey: "AIzaSyBbVt6AmWRi61VHZVF12ernzt8nJR0uaDM",
             authDomain: "antisuicideapp.firebaseapp.com",
+            databaseURL: "https://antisuicideapp-default-rtdb.firebaseio.com",
             projectId: "antisuicideapp",
             storageBucket: "antisuicideapp.firebasestorage.app",
             messagingSenderId: "149935134747",
-            appId: "1:149935134747:web:8fa44fcb4205d9e47d00be",
-            measurementId: "G-1DZLJNRS3D"
+            appId: "1:149935134747:web:8e128c56c0b4005e7d00be",
+            measurementId: "G-GYX63Q43EJ"
         };
 
         // Initialize Firebase
@@ -7028,8 +7558,26 @@
             try {
                 await signOut(auth);
                 console.log('User signed out');
+                // Close dropdown
+                document.getElementById('account-dropdown').style.display = 'none';
             } catch (error) {
                 console.error('Error signing out:', error);
+            }
+        });
+
+        // Account dropdown toggle
+        document.getElementById('account-toggle').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const dropdown = document.getElementById('account-dropdown');
+            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+        });
+
+        // Close dropdown when clicking outside
+        document.addEventListener('click', (e) => {
+            const dropdown = document.getElementById('account-dropdown');
+            const accountToggle = document.getElementById('account-toggle');
+            if (dropdown && !accountToggle.contains(e.target) && !dropdown.contains(e.target)) {
+                dropdown.style.display = 'none';
             }
         });
 
@@ -7100,6 +7648,10 @@
                 document.getElementById('logged-in-view').style.display = 'block';
                 document.getElementById('user-name').textContent = user.displayName;
                 document.getElementById('user-photo').src = user.photoURL;
+                
+                // Populate dropdown with user info
+                document.getElementById('dropdown-name').textContent = user.displayName;
+                document.getElementById('dropdown-email').textContent = user.email;
                 
                 // Load user data from Firestore
                 await loadUserData(user.uid);
@@ -7367,7 +7919,7 @@
     </script>
 
     <!-- Footer with Privacy & Terms -->
-    <div style="background:#065f46; color:white; text-align:center; padding:30px 20px; margin-top:180px; border-top:3px solid #22c55e;">
+    <div style="position: fixed !important; bottom: 0 !important; left: 0; right: 0; background:#065f46; color:white; text-align:center; padding:20px 20px; border-top:3px solid #22c55e; z-index: 1000; width: 100%;">
         <div style="max-width:1200px; margin:0 auto;">
             <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
                 <strong>MysticMinded³³</strong> is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the <em>soul</em> aspect of healing—mind, body, and soul. If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
@@ -7628,6 +8180,86 @@
             setTimeout(() => { msg.style.display = 'none'; }, 2500);
         }
 
+        // ───── Talk to ה' Letter Functions ─────
+        function saveGodLetter() {
+            const letterText = document.getElementById('godLetter').value.trim();
+            if (!letterText) {
+                alert('Please write something before saving.');
+                return;
+            }
+
+            const letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            const newLetter = {
+                id: Date.now(),
+                date: new Date().toISOString(),
+                text: letterText
+            };
+            letters.push(newLetter);
+            localStorage.setItem('godLetters', JSON.stringify(letters));
+
+            // Show confirmation
+            const confirmation = document.getElementById('letterSaveConfirmation');
+            confirmation.style.display = 'block';
+            setTimeout(() => { confirmation.style.display = 'none'; }, 3000);
+
+            // Clear the textarea
+            document.getElementById('godLetter').value = '';
+        }
+
+        function viewSavedLetters() {
+            const letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            const display = document.getElementById('savedLettersDisplay');
+            const list = document.getElementById('savedLettersList');
+
+            if (letters.length === 0) {
+                list.innerHTML = '<p style="color: #6b7280; text-align: center; padding: 20px;">You haven\'t saved any letters yet. Pour out your heart above and save it.</p>';
+            } else {
+                list.innerHTML = letters.reverse().map(letter => {
+                    const date = new Date(letter.date);
+                    const formattedDate = date.toLocaleDateString('en-US', { 
+                        weekday: 'long', 
+                        year: 'numeric', 
+                        month: 'long', 
+                        day: 'numeric',
+                        hour: '2-digit',
+                        minute: '2-digit'
+                    });
+                    return `
+                        <div style="background: #faf5ff; padding: 20px; border-radius: 12px; margin-bottom: 16px; border: 2px solid #d8b4fe;">
+                            <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 12px;">
+                                <div style="color: #7e22ce; font-size: 14px; font-weight: 600;">${formattedDate}</div>
+                                <button onclick="deleteGodLetter(${letter.id})" style="background: #fecaca; color: #991b1b; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 600; cursor: pointer;">
+                                    Delete
+                                </button>
+                            </div>
+                            <div style="color: #6b21a8; font-size: 15px; line-height: 1.7; white-space: pre-wrap; font-family: Georgia, 'Times New Roman', serif;">
+                                ${letter.text}
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            display.style.display = 'block';
+        }
+
+        function closeSavedLetters() {
+            document.getElementById('savedLettersDisplay').style.display = 'none';
+        }
+
+        function deleteGodLetter(letterId) {
+            if (!confirm('Are you sure you want to delete this letter? This cannot be undone.')) {
+                return;
+            }
+
+            let letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            letters = letters.filter(letter => letter.id !== letterId);
+            localStorage.setItem('godLetters', JSON.stringify(letters));
+
+            // Refresh the display
+            viewSavedLetters();
+        }
+
         function savePref(key, value) {
             const prefs = JSON.parse(localStorage.getItem('userPrefs') || '{}');
             prefs[key] = value;
@@ -7656,7 +8288,7 @@
 
         function clearAllData() {
             if (!confirm('⚠️ This will delete ALL your data from this device. Are you sure?')) return;
-            const keys = ['diaryEntries','moodLog','safetyPlanData','safetyPlan','affirmationBook','mySongs','adoptedPet','plantState','displayName','userPrefs'];
+            const keys = ['diaryEntries','moodLog','safetyPlanData','safetyPlan','affirmationBook','mySongs','adoptedPet','plantState','displayName','userPrefs','godLetters'];
             keys.forEach(k => localStorage.removeItem(k));
             // also clear safety textarea keys
             Object.keys(localStorage).filter(k => k.startsWith('safety-')).forEach(k => localStorage.removeItem(k));
