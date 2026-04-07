@@ -95,14 +95,20 @@
             100% { opacity: 1; }
         }
         .card {
-            background: rgba(255, 252, 240, 0.65);
-            border-radius: 20px;
-            padding: 24px;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 24px rgba(100,80,40,0.12), 0 1px 4px rgba(100,80,40,0.08);
-            border: 1px solid rgba(180,160,120,0.25);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
+            background: rgba(255, 252, 240, 0.7);
+            border-radius: 24px;
+            padding: 32px;
+            margin-bottom: 24px;
+            box-shadow: 0 6px 28px rgba(100,80,40,0.15), 0 2px 6px rgba(100,80,40,0.1);
+            border: 2px solid rgba(180,160,120,0.35);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+        }
+        .card p, .card li {
+            font-size: 18px;
+            line-height: 1.8;
+            color: #1f2937;
+            font-weight: 500;
         }
         .logo-reflection {
             width: 200px;
@@ -132,24 +138,25 @@
             padding-right: 0;
         }
         .nav-item {
-            padding: 12px 24px;
-            border-radius: 25px;
+            padding: 16px 28px;
+            border-radius: 28px;
             cursor: pointer;
-            font-weight: 700;
-            font-size: 14px;
-            border: 1.5px solid rgba(190,24,93,0.4);
-            background: rgba(255,230,240,0.92);
+            font-weight: 800;
+            font-size: 18px;
+            border: 2.5px solid rgba(190,24,93,0.5);
+            background: rgba(255,230,240,0.95);
             color: #9d174d;
-            box-shadow: 0 2px 8px rgba(180,140,100,0.1);
+            box-shadow: 0 3px 10px rgba(180,140,100,0.15);
             text-shadow: none;
             transition: all 0.3s ease;
+            letter-spacing: 0.3px;
         }
         .nav-item:hover, .nav-item.active {
             background: linear-gradient(135deg, #fce7f3, #f3e8ff);
             color: #7c2d42;
             border-color: #db2777;
-            transform: translateY(-2px);
-            box-shadow: 0 4px 16px rgba(190,24,93,0.3);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(190,24,93,0.35);
         }
         .grid {
             display: grid;
@@ -158,56 +165,69 @@
         }
         .hotline {
             background: #fefcf7;
-            border: 1px solid #ddd3be;
-            border-radius: 12px;
-            padding: 20px;
-            margin-bottom: 16px;
-            transition: transform 0.2s;
+            border: 2px solid #b8a989;
+            border-radius: 14px;
+            padding: 24px;
+            margin-bottom: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
         .hotline:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(100,80,40,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(100,80,40,0.15);
         }
         .hotline h3 {
-            color: #2d6a4f;
-            margin-bottom: 8px;
+            color: #15803d;
+            margin-bottom: 12px;
+            font-size: 22px;
+            font-weight: 800;
+        }
+        .hotline p {
+            font-size: 17px;
+            line-height: 1.7;
+            color: #1f2937;
+            font-weight: 500;
         }
         .phone {
-            font-size: 18px;
-            font-weight: bold;
-            color: #16a34a;
-            margin: 8px 0;
+            font-size: 24px;
+            font-weight: 800;
+            color: #15803d;
+            margin: 12px 0;
+            letter-spacing: 0.5px;
         }
         .mood-scale {
             display: flex;
             justify-content: space-between;
-            margin: 20px 0;
+            margin: 24px 0;
             flex-wrap: wrap;
         }
         .feeling-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 8px;
-            margin: 12px 0;
+            gap: 10px;
+            margin: 16px 0;
         }
         .feeling-tag {
             display: flex;
             align-items: center;
-            gap: 4px;
-            padding: 6px 12px;
-            border: 2px solid #e5e7eb;
-            border-radius: 20px;
+            gap: 6px;
+            padding: 10px 16px;
+            border: 3px solid #cbd5e1;
+            border-radius: 24px;
             background: white;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 17px;
+            font-weight: 600;
             transition: all 0.2s;
         }
         .feeling-tag:hover {
             border-color: #3b82f6;
-            background: #f0f5ff;
+            background: #dbeafe;
+            transform: scale(1.05);
         }
         .feeling-tag.selected {
-            border-color: #3b82f6;
+            border-color: #2563eb;
+            background: #3b82f6;
+            color: white;
             background: #e0e7ff;
         }
         .safety-chip {
@@ -326,23 +346,27 @@
             background: linear-gradient(135deg, #40916c, #52b788);
             color: white;
             border: none;
-            padding: 12px 24px;
-            border-radius: 10px;
+            padding: 16px 28px;
+            border-radius: 12px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 18px;
             transition: all 0.2s;
             width: 100%;
-            margin: 8px 0;
-            box-shadow: 0 2px 8px rgba(64,145,108,0.2);
+            margin: 10px 0;
+            box-shadow: 0 4px 12px rgba(64,145,108,0.3);
+            letter-spacing: 0.3px;
         }
         .btn:hover {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
-            box-shadow: 0 4px 14px rgba(64,145,108,0.3);
+            box-shadow: 0 6px 18px rgba(64,145,108,0.4);
+            transform: translateY(-2px);
         }
         .btn-emergency {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
-            font-size: 18px;
-            padding: 16px 32px;
+            font-size: 22px;
+            padding: 20px 36px;
+            font-weight: 800;
         }
         .btn-emergency:hover {
             background: linear-gradient(135deg, #1b4332, #2d6a4f);
@@ -350,11 +374,12 @@
         .breathing-option {
             background: linear-gradient(135deg, #15803d, #22c55e);
             color: white;
-            border: 2px solid #22c55e;
-            padding: 20px;
-            border-radius: 12px;
+            border: 3px solid #22c55e;
+            padding: 24px;
+            border-radius: 14px;
             cursor: pointer;
-            font-weight: 600;
+            font-weight: 700;
+            font-size: 18px;
             transition: all 0.3s;
             width: 100%;
             text-align: center;
@@ -379,59 +404,64 @@
             animation: tieDye 6s ease infinite;
         }
         .section-title {
-            font-size: 24px;
-            margin-bottom: 16px;
-            font-weight: 700;
+            font-size: 32px;
+            margin-bottom: 20px;
+            font-weight: 800;
             background: linear-gradient(270deg, #be185d, #a21caf, #db2777, #e11d48, #7c3aed, #be185d, #c2185b);
             background-size: 400% 400%;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             animation: tieDye 6s ease infinite;
+            letter-spacing: -0.5px;
         }
         .status {
             background: #10b981;
             color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
+            padding: 12px 20px;
+            border-radius: 24px;
+            font-size: 18px;
+            font-weight: 700;
             display: inline-block;
-            margin-bottom: 20px;
+            margin-bottom: 24px;
         }
         .journal-area {
             width: 100%;
-            padding: 16px;
-            border-radius: 8px;
-            border: 1px solid #ddd;
-            margin: 16px 0;
-            min-height: 100px;
+            padding: 18px;
+            border-radius: 10px;
+            border: 2px solid #94a3b8;
+            margin: 20px 0;
+            min-height: 120px;
             font-family: inherit;
+            font-size: 18px;
         }
         .affirmation {
-            color: #6b7280;
-            font-size: 16px;
-            line-height: 1.6;
+            color: #1f2937;
+            font-size: 19px;
+            line-height: 1.7;
             text-align: center;
-            padding: 24px;
+            padding: 28px;
             background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
-            border-radius: 12px;
-            margin: 20px 0;
+            border-radius: 14px;
+            margin: 24px 0;
+            font-weight: 500;
         }
         .affirmation-verse {
             font-style: italic;
-            font-size: 18px;
-            color: #1e40af;
-            font-weight: 600;
-            margin-bottom: 14px;
-            line-height: 1.5;
+            font-size: 22px;
+            color: #1e3a8a;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.6;
         }
         .affirmation-message {
-            font-size: 15px;
-            color: #4b5563;
-            line-height: 1.7;
-            border-top: 1px solid #d1d5db;
-            padding-top: 14px;
-            margin-top: 4px;
+            font-size: 18px;
+            color: #1f2937;
+            line-height: 1.8;
+            border-top: 2px solid #94a3b8;
+            padding-top: 16px;
+            margin-top: 6px;
+            font-weight: 500;
         }
         .gif-results {
             display: flex;
@@ -1028,18 +1058,18 @@
 </head>
 <body>
     <div class="container">
-        <div style="text-align: center; margin: -10px 0 8px; font-weight: 700; color: #2d0a16; font-size: 15px; line-height: 1.8; letter-spacing:0.5px; text-shadow:0 1px 2px #fff, 0 0px 1px #0001; padding: 8px 0;">
-            EMERGENCY: 718-230-1000 (Hatzoloh) &nbsp;|&nbsp;
+        <div style="text-align: center; margin: -10px 0 12px; font-weight: 800; color: #1f2937; font-size: 20px; line-height: 1.9; letter-spacing:0.5px; text-shadow:0 1px 2px #fff, 0 0px 2px rgba(0,0,0,0.1); padding: 12px 0; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 8px;">
+            <span style="color: #b91c1c; font-size: 22px;">🚨 EMERGENCY:</span> 718-230-1000 (Hatzoloh) &nbsp;|&nbsp;
             National Lifeline: 1-800-273-8255 &nbsp;|&nbsp;
             Teen Line: 602-248-8336
         </div>
         
         <!-- Rabbi Nachman Quote Banner -->
-        <div style="text-align: center; padding: 12px 20px; margin: 0 0 16px;">
-            <div style="color: #0f766e; font-size: 18px; font-weight: 500; line-height: 1.7; font-family: Georgia, serif; margin-bottom: 6px;">
+        <div style="text-align: center; padding: 14px 24px; margin: 0 0 18px;">
+            <div style="color: #0f766e; font-size: 24px; font-weight: 600; line-height: 1.7; font-family: Georgia, serif; margin-bottom: 8px;">
                 "The day you were born was the day Hashem decided the world could not exist without you."
             </div>
-            <div style="color: #0891b2; font-size: 14px; font-weight: 500; font-style: italic;">— Rabbi Nachman of Breslov</div>
+            <div style="color: #0891b2; font-size: 18px; font-weight: 600; font-style: italic;">— Rabbi Nachman of Breslov</div>
         </div>
         
         <div style="text-align: center; padding: 4px 0 4px;">
