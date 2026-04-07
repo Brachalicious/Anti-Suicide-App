@@ -5314,15 +5314,11 @@ User's message: ${userMessage}`
             window.open(`https://wa.me/?text=${text}`);
         }
 
-        function initSafetyPlan() {
-            const saved = JSON.parse(localStorage.getItem('safetyPlanData') || 'null');
-            if (saved) {
-                Object.keys(safetyPlanSelections).forEach(key => {
-                    safetyPlanSelections[key] = new Set(saved.selections?.[key] || []);
-                    safetyPlanNotes[key] = saved.notes?.[key] || '';
-                });
-            }
+        async function initSafetyPlan() {
+            // Load saved data from Firebase or localStorage
+            await loadSafetyPlan();
 
+            // Update the UI with loaded data
             Object.keys(safetyPlanSelections).forEach(key => {
                 const notes = document.getElementById(`safety-${key}-notes`);
                 if (notes) notes.value = safetyPlanNotes[key] || '';
@@ -5371,12 +5367,73 @@ User's message: ${userMessage}`
             summary.textContent = selections.length ? `Selected: ${selections.join(', ')}` : '';
         }
 
-        function persistSafetyPlan() {
+        async function persistSafetyPlan() {
             const data = {
                 selections: Object.fromEntries(Object.entries(safetyPlanSelections).map(([key, set]) => [key, Array.from(set)])),
-                notes: safetyPlanNotes
+                notes: safetyPlanNotes,
+                lastUpdated: new Date().toISOString()
             };
+            
+            // Save to localStorage as backup
             localStorage.setItem('safetyPlanData', JSON.stringify(data));
+            
+            // Save to Firebase if user is logged in
+            const user = auth.currentUser;
+            if (user) {
+                try {
+                    await setDoc(doc(db, 'users', user.uid, 'safetyPlan', 'current'), data);
+                    console.log('Safety plan saved to Firebase');
+                } catch (error) {
+                    console.error('Error saving safety plan to Firebase:', error);
+                }
+            }
+        }
+
+        async function loadSafetyPlan() {
+            const user = auth.currentUser;
+            let data = null;
+            
+            // Try to load from Firebase first if user is logged in
+            if (user) {
+                try {
+                    const docRef = doc(db, 'users', user.uid, 'safetyPlan', 'current');
+                    const docSnap = await getDoc(docRef);
+                    if (docSnap.exists()) {
+                        data = docSnap.data();
+                        console.log('Safety plan loaded from Firebase');
+                    }
+                } catch (error) {
+                    console.error('Error loading safety plan from Firebase:', error);
+                }
+            }
+            
+            // Fall back to localStorage if no Firebase data
+            if (!data) {
+                const stored = localStorage.getItem('safetyPlanData');
+                if (stored) {
+                    data = JSON.parse(stored);
+                    console.log('Safety plan loaded from localStorage');
+                }
+            }
+            
+            // Restore the data
+            if (data) {
+                if (data.selections) {
+                    Object.keys(data.selections).forEach(key => {
+                        safetyPlanSelections[key] = new Set(data.selections[key]);
+                        updateChipSummary(key);
+                    });
+                }
+                if (data.notes) {
+                    Object.keys(data.notes).forEach(key => {
+                        safetyPlanNotes[key] = data.notes[key];
+                        const textarea = document.querySelector(`textarea[data-category="${key}"]`);
+                        if (textarea) {
+                            textarea.value = data.notes[key];
+                        }
+                    });
+                }
+            }
         }
 
         function findHelp() {
@@ -8672,6 +8729,9 @@ User's message: ${userMessage}`
                 
                 // Load user data from Firestore
                 await loadUserData(user.uid);
+                
+                // Load safety plan data
+                await loadSafetyPlan();
                 
                 // Set up real-time listener for user data
                 const userRef = doc(db, 'users', user.uid);
