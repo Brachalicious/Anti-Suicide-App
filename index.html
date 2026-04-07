@@ -1124,6 +1124,7 @@
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
                     <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu()">🤖 MysticMinded³³ Bot</button>
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">🙏 Talk to ה'</button>
+                    <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu()">💫 Affirmation Cards</button>
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu()">💪 Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu()">🛡️ Bullying Support</button>
                     <button onclick="showSection('color-paint'); closeCrisisToolsMenu()">🎨 Color & Paint</button>
@@ -3900,6 +3901,53 @@
             </div>
         </div>
 
+        <!-- Affirmation Cards Section -->
+        <div id="affirmation-cards" class="section hidden">
+            <div class="grid">
+                <div class="card">
+                    <h2 class="section-title">💫 Affirmation Cards</h2>
+                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6; font-size: 16px;">
+                        Draw a card of hope. Each affirmation is rooted in sacred wisdom and designed to remind you of your infinite worth.
+                    </p>
+
+                    <!-- Card Display -->
+                    <div style="display: flex; justify-content: center; margin-bottom: 32px;">
+                        <div id="affirmationCard" style="background: linear-gradient(135deg, #fce7f3, #e9d5ff, #ddd6fe); padding: 40px; border-radius: 20px; border: 4px solid #a855f7; box-shadow: 0 8px 24px rgba(168, 85, 247, 0.4); max-width: 600px; width: 100%; min-height: 300px; display: flex; flex-direction: column; justify-content: center; text-align: center; transition: transform 0.3s ease;">
+                            <div id="cardVerse" style="color: #6b21a8; font-size: 20px; font-weight: 700; line-height: 1.7; margin-bottom: 20px; font-family: Georgia, serif;"></div>
+                            <div id="cardMessage" style="color: #581c87; font-size: 17px; line-height: 1.8;"></div>
+                        </div>
+                    </div>
+
+                    <!-- Draw Card Button -->
+                    <div style="text-align: center; margin-bottom: 24px;">
+                        <button onclick="drawAffirmationCard()" class="btn" style="background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 800; padding: 18px 48px; font-size: 20px; border-radius: 16px; box-shadow: 0 6px 20px rgba(168, 85, 247, 0.4); transition: transform 0.2s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                            ✨ Draw a Card
+                        </button>
+                    </div>
+
+                    <!-- Share & Save Buttons -->
+                    <div style="display: flex; gap: 12px; flex-wrap: wrap; justify-content: center;">
+                        <button onclick="saveAffirmationCard()" class="btn" style="background: #22c55e; color: white; font-weight: 700; padding: 12px 24px;">
+                            💾 Save This Card
+                        </button>
+                        <button onclick="shareAffirmationCard('whatsapp')" style="padding: 12px 24px; background: #25D366; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 700;">
+                            WhatsApp
+                        </button>
+                        <button onclick="shareAffirmationCard('sms')" style="padding: 12px 24px; background: #3b82f6; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 700;">
+                            Text
+                        </button>
+                        <button onclick="shareAffirmationCard('email')" style="padding: 12px 24px; background: #8b5cf6; color: white; border: none; border-radius: 10px; cursor: pointer; font-size: 15px; font-weight: 700;">
+                            Email
+                        </button>
+                    </div>
+
+                    <div id="cardSaveConfirmation" style="display: none; margin-top: 20px; padding: 16px; background: #dcfce7; border: 2px solid #22c55e; border-radius: 12px; color: #166534; font-weight: 600; text-align: center;">
+                        ✅ Card saved to your collection!
+                    </div>
+                </div>
+            </div>
+        </div>
+
         <!-- Contact Us / Support Section -->
         <div id="contact" class="section hidden">
             <div class="grid">
@@ -4843,6 +4891,7 @@ User's message: ${userMessage}`
         }
         
         const affirmations = [
+            { verse: "\"The day you were born was the day Hashem decided the world could not exist without you.\" — Rabbi Nachman of Breslov", message: "Your existence is not random. You were chosen. The world needs you here — not the version of you that you think you should be, but exactly who you are right now. Your presence matters more than you know. You are irreplaceable." },
             { verse: "\"[Rabbi Akiva] used to say: Beloved is man, for he was created in [ה's] image; it is indicative of greater love that it was made known to him that he was created in [ה's] image…\" (Avot 3:14)", message: "You were created with infinite worth and divine purpose. The very fact that you exist means ה' chose you — not by accident, but with love. You carry a spark of the Divine within you, and nothing can ever take that away. You are irreplaceable." },
             { verse: "\"Have I not commanded you? Be strong and courageous. Do not be afraid; do not be discouraged, for the L-rd your ה' will be with you wherever you go.\" (Joshua 1:9)", message: "Courage doesn't mean the absence of fear — it means moving forward even when you're afraid. ה' walks beside you through every struggle, every dark night, every uncertain moment. You are never walking alone, even when it feels that way." },
             { verse: "\"The L-rd is close to the brokenhearted and saves those who are crushed in spirit.\" (Psalms 34:19)", message: "When your heart is shattered and you feel like you can't go on, know that ה' draws even closer to you in those moments. Your pain is seen, your tears are counted, and your broken pieces are held with the gentlest care. Healing is coming." },
@@ -5301,6 +5350,84 @@ User's message: ${userMessage}`
                 else btn.classList.remove('hearted');
             });
         }
+
+        // Affirmation Cards Functions
+        let currentCard = null;
+
+        function drawAffirmationCard() {
+            const randomIndex = Math.floor(Math.random() * affirmations.length);
+            currentCard = affirmations[randomIndex];
+            
+            document.getElementById('cardVerse').textContent = currentCard.verse.replace(/"/g, '');
+            document.getElementById('cardMessage').textContent = currentCard.message;
+            
+            // Add animation
+            const card = document.getElementById('affirmationCard');
+            card.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                card.style.transform = 'scale(1)';
+            }, 100);
+            
+            // Hide save confirmation
+            document.getElementById('cardSaveConfirmation').style.display = 'none';
+        }
+
+        function saveAffirmationCard() {
+            if (!currentCard) {
+                alert('Please draw a card first!');
+                return;
+            }
+            
+            const entries = getBookEntries();
+            const alreadySaved = entries.some(e => e.text === currentCard.verse);
+            
+            if (alreadySaved) {
+                alert('This card is already in your Affirmation Book!');
+                return;
+            }
+            
+            entries.unshift({
+                id: Date.now(),
+                text: currentCard.verse,
+                message: currentCard.message,
+                image: null,
+                date: new Date().toLocaleDateString()
+            });
+            
+            saveBookEntries(entries);
+            renderBookEntries();
+            
+            document.getElementById('cardSaveConfirmation').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('cardSaveConfirmation').style.display = 'none';
+            }, 3000);
+        }
+
+        function shareAffirmationCard(platform) {
+            if (!currentCard) {
+                alert('Please draw a card first!');
+                return;
+            }
+            
+            const text = `${currentCard.verse}\n\n${currentCard.message}\n\n— From MysticMinded³³`;
+            const encoded = encodeURIComponent(text);
+            
+            if (platform === 'whatsapp') {
+                window.open(`https://wa.me/?text=${encoded}`, '_blank');
+            } else if (platform === 'sms') {
+                window.open(`sms:?&body=${encoded}`, '_blank');
+            } else if (platform === 'email') {
+                window.open(`mailto:?subject=${encodeURIComponent('Affirmation from MysticMinded³³')}&body=${encoded}`, '_blank');
+            }
+        }
+
+        // Initialize with a card
+        document.addEventListener('DOMContentLoaded', function() { 
+            updateHeartButtons();
+            if (document.getElementById('affirmation-cards')) {
+                drawAffirmationCard();
+            }
+        });
 
         document.addEventListener('DOMContentLoaded', function() { updateHeartButtons(); });
 
