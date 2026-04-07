@@ -49,7 +49,7 @@
             animation: screamRipple 1.2s ease-out forwards;
             pointer-events: none;
         }
-        #scream-rings-container {
+        #scream-rings-container, #silent-rings-container {
             position: absolute;
             inset: 0;
             border-radius: 50%;
@@ -1240,6 +1240,49 @@
                     Scream, vent, cry, share. Whatever you need to release, this is your space.
                 </p>
 
+                <!-- Scream Therapy Info -->
+                <div style="margin-bottom: 24px; padding: 20px; background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(124, 58, 237, 0.1)); border: 2px solid #8b5cf6; border-radius: 16px;">
+                    <h3 style="color: #8b5cf6; font-size: 20px; font-weight: 700; margin-bottom: 12px;">🗣️ About Scream Therapy</h3>
+                    <p style="color: #6b7280; line-height: 1.6; margin-bottom: 12px;">
+                        Screaming to cope, often called <strong>scream therapy</strong> or <strong>primal therapy</strong>, acts as a cathartic release for pent-up stress, anger, and anxiety, triggering endorphin release and reducing cortisol. It helps regulate the nervous system by engaging the vagus nerve, providing temporary relief by allowing a safe outlet for emotional tension.
+                    </p>
+                    
+                    <div style="margin: 16px 0;">
+                        <h4 style="color: #7c3aed; font-weight: 600; margin-bottom: 8px;">✨ Benefits:</h4>
+                        <ul style="color: #6b7280; margin-left: 20px; line-height: 1.8;">
+                            <li>Acts as a quick, temporary emotional reset</li>
+                            <li>Helps lower blood pressure and heart rate after the initial shock</li>
+                            <li>Releases repressed emotions and helps process trauma</li>
+                            <li>Triggers endorphin release and reduces cortisol</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin: 16px 0;">
+                        <h4 style="color: #7c3aed; font-weight: 600; margin-bottom: 8px;">🛡️ How to Do It Safely:</h4>
+                        <ul style="color: #6b7280; margin-left: 20px; line-height: 1.8;">
+                            <li>Shout into a pillow to muffle sound</li>
+                            <li>Scream in your car with windows up</li>
+                            <li>Use soundproof spaces to avoid frightening others</li>
+                            <li>Keep sessions short (a few minutes)</li>
+                            <li>Warm up your vocal cords beforehand</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="margin: 16px 0; padding: 12px; background: rgba(239, 68, 68, 0.1); border-radius: 8px; border-left: 4px solid #ef4444;">
+                        <h4 style="color: #dc2626; font-weight: 600; margin-bottom: 8px;">⚠️ Important Considerations:</h4>
+                        <ul style="color: #6b7280; margin-left: 20px; line-height: 1.8; font-size: 14px;">
+                            <li>Limited scientific evidence for long-term efficacy</li>
+                            <li>Can sometimes trigger anxiety or fear by activating the limbic system</li>
+                            <li>May damage vocal cords if done too frequently or intensely</li>
+                            <li><strong>Not a substitute for traditional therapy</strong> to address root causes of stress</li>
+                        </ul>
+                    </div>
+                    
+                    <p style="color: #8b5cf6; font-size: 13px; font-style: italic; text-align: center; margin-top: 12px;">
+                        💜 While some find it beneficial for immediate relief, please consider professional support for long-term healing.
+                    </p>
+                </div>
+
                 <div class="chat-container" id="mysticChatContainer">
                     <div class="chat-message assistant">
                         <div class="chat-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🤖</div>
@@ -1416,8 +1459,62 @@
                 <button id="screamStopBtn" onclick="stopListening()" style="display:none; background:#ef4444; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px;">
                     ⏹️ Stop
                 </button>
+                <button id="silentScreamBtn" onclick="startSilentScream()" style="background:#8b5cf6; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5);">
+                    🤫 Silent Scream
+                </button>
 
                 <div id="screamVolume" style="margin-top:8px; color:#c4b5fd; font-size:14px; line-height:1.5; padding:0 10px;"></div>
+                
+                <!-- Silent Scream Container -->
+                <div id="silentScreamContainer" style="display:none; margin-top:20px; padding:24px; background:rgba(139, 92, 246, 0.15); border:2px solid #8b5cf6; border-radius:16px; color:#e9d5ff;">
+                    <div id="silentScreamDisclaimer" style="margin-bottom:20px; padding:16px; background:rgba(124, 58, 237, 0.2); border-radius:12px; text-align:left; line-height:1.6; font-size:13px;">
+                        <h3 style="color:#e9d5ff; font-size:18px; font-weight:700; margin-bottom:12px;">⚡ About Silent Screaming</h3>
+                        <p style="margin-bottom:10px;">Silent screaming—or screaming without sound—acts as a powerful, non-verbal emotional release that can immediately reduce stress, calm the nervous system, and help manage anxiety, trauma, or overwhelming grief.</p>
+                        
+                        <p style="margin-bottom:10px; font-weight:600; color:#c4b5fd;">Mental and Physiological Effects:</p>
+                        <ul style="margin-left:20px; margin-bottom:10px; color:#c4b5fd;">
+                            <li><strong>Nervous System Regulation:</strong> Activates the vagus nerve, helping break up emotional "stuckness" stored in the body</li>
+                            <li><strong>Cathartic Release:</strong> Allows primal reaction to relieve repressed rage, anger, or frustration without noise</li>
+                            <li><strong>Managing High Stress:</strong> Acts as a grounding technique to process PTSD, panic, and anxiety</li>
+                            <li><strong>Reduced Inhibition:</strong> Can be done quietly anywhere, allowing immediate, uninhibited emotional expression</li>
+                        </ul>
+                        
+                        <p style="margin-top:10px; padding:10px; background:rgba(239, 68, 68, 0.2); border-radius:8px; font-size:12px; color:#fca5a5;">
+                            <strong>Important:</strong> Silent screaming can bring up a lot of emotions, especially for those who have had to stay silent for far too long and silently screamed for years. Use this in a safe place where you can switch between regular and silent screaming if needed. Grounding exercises are available between sessions.
+                        </p>
+                    </div>
+                    
+                    <div id="silentScreamActive" style="display:none;">
+                        <div id="silentScreamCircle" style="width:200px; height:200px; border-radius:50%; background: radial-gradient(circle, #8b5cf6, #7c3aed); margin: 20px auto; display:flex; align-items:center; justify-content:center; transition: all 0.3s; box-shadow: 0 0 60px rgba(139, 92, 246, 0.8); position:relative;">
+                            <div id="silent-rings-container"></div>
+                            <span style="color:white; font-size:20px; font-weight:700; position:relative; z-index:1;">RELEASE</span>
+                        </div>
+                        
+                        <p id="silentScreamInstructions" style="color:#e9d5ff; font-size:16px; margin-bottom:16px; font-weight:600;"></p>
+                        
+                        <div id="silentScreamTimer" style="font-size:48px; font-weight:700; color:#8b5cf6; margin:20px 0;"></div>
+                        
+                        <button onclick="stopSilentScream()" style="background:#ef4444; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer;">
+                            Stop Silent Scream
+                        </button>
+                    </div>
+                    
+                    <div id="silentScreamCheckIn" style="display:none; margin-top:20px;">
+                        <p style="color:#e9d5ff; font-size:18px; font-weight:600; margin-bottom:12px;">How are you feeling? 💜</p>
+                        <p style="color:#c4b5fd; font-size:14px; margin-bottom:16px;">Please type your response below. MysticMinded33 is here to support you.</p>
+                        
+                        <textarea id="silentScreamResponse" placeholder="I'm feeling..." style="width:100%; min-height:100px; padding:12px; border-radius:8px; background:rgba(0,0,0,0.3); border:2px solid #8b5cf6; color:white; font-size:14px; margin-bottom:12px; resize:vertical;"></textarea>
+                        
+                        <button onclick="sendSilentScreamCheckIn()" style="background:#22c55e; color:white; border:none; padding:12px 28px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);">
+                            💬 Send to MysticMinded33
+                        </button>
+                        
+                        <div id="mysticBotResponse" style="display:none; margin-top:16px; padding:16px; background:rgba(34, 197, 94, 0.15); border:2px solid #22c55e; border-radius:12px; color:#d1fae5; text-align:left; line-height:1.6;">
+                            <div style="color:#6ee7b7; font-weight:600; margin-bottom:8px;">💜 MysticMinded33:</div>
+                            <div id="mysticBotText"></div>
+                        </div>
+                    </div>
+                </div>
                 
                 <div id="screamTranscript" style="margin-top:16px; padding:16px; background:rgba(124, 58, 237, 0.15); border:2px solid #7c3aed; border-radius:12px; color:#c4b5fd; font-size:14px; line-height:1.6; min-height:80px; max-height:150px; overflow-y:auto; display:none; text-align:left;">
                     <div style="color:#e9d5ff; font-weight:600; margin-bottom:8px;">📝 What you're saying:</div>
@@ -4348,7 +4445,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const GEMINI_KEY = 'AIzaSyBHNPJXlTR4Ut-F9FR3b_RbiqutGoCAe-8'; // Default Gemini API key
+                const GEMINI_KEY = 'AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g'; // Default Gemini API key
                 const storedKey = localStorage.getItem('openai_api_key') || '';
 
                 const systemPrompt = selectedParent === 'mommy'
@@ -6032,6 +6129,135 @@ User's message: ${userMessage}`
             circle.style.transform = 'scale(1)';
             circle.style.background = 'radial-gradient(circle, #7c3aed, #6d28d9)';
             circle.style.boxShadow = '0 0 60px rgba(124, 58, 237, 0.8)';
+            
+            // Reset silent scream state
+            document.getElementById('silentScreamContainer').style.display = 'none';
+            document.getElementById('silentScreamActive').style.display = 'none';
+            document.getElementById('silentScreamCheckIn').style.display = 'none';
+        }
+
+        let silentScreamInterval = null;
+        let silentScreamCount = 0;
+
+        function startSilentScream() {
+            // Show the silent scream container
+            document.getElementById('silentScreamContainer').style.display = 'block';
+            document.getElementById('silentScreamActive').style.display = 'block';
+            document.getElementById('silentScreamCheckIn').style.display = 'none';
+            
+            // Hide other buttons
+            document.getElementById('screamStartBtn').style.display = 'none';
+            document.getElementById('silentScreamBtn').style.display = 'none';
+            
+            const instructions = [
+                "Open your mouth wide as if screaming...",
+                "Tense your neck and throat muscles...",
+                "Exhale deeply through your open mouth...",
+                "Feel the energy releasing from your body...",
+                "Let go of all the tension..."
+            ];
+            
+            let count = 0;
+            silentScreamCount = 0;
+            const timerDiv = document.getElementById('silentScreamTimer');
+            const instructionsDiv = document.getElementById('silentScreamInstructions');
+            const circle = document.getElementById('silentScreamCircle');
+            
+            function cycleInstructions() {
+                instructionsDiv.textContent = instructions[count % instructions.length];
+                count++;
+                silentScreamCount++;
+                
+                // Pulse effect on circle
+                circle.style.transform = 'scale(1.2)';
+                circle.style.boxShadow = '0 0 100px rgba(139, 92, 246, 1)';
+                
+                // Create energy rings
+                createSilentScreamRing();
+                
+                setTimeout(() => {
+                    circle.style.transform = 'scale(1)';
+                    circle.style.boxShadow = '0 0 60px rgba(139, 92, 246, 0.8)';
+                }, 500);
+                
+                // Update timer
+                const minutes = Math.floor(silentScreamCount * 5 / 60);
+                const seconds = (silentScreamCount * 5) % 60;
+                timerDiv.textContent = `${minutes}:${seconds.toString().padStart(2, '0')}`;
+            }
+            
+            // Start with first instruction
+            cycleInstructions();
+            
+            // Continue cycling every 5 seconds
+            silentScreamInterval = setInterval(cycleInstructions, 5000);
+        }
+
+        function createSilentScreamRing() {
+            const container = document.getElementById('silent-rings-container');
+            const ring = document.createElement('div');
+            ring.className = 'scream-ring';
+            ring.style.position = 'absolute';
+            ring.style.top = '50%';
+            ring.style.left = '50%';
+            ring.style.transform = 'translate(-50%, -50%)';
+            ring.style.width = '100%';
+            ring.style.height = '100%';
+            ring.style.borderRadius = '50%';
+            ring.style.border = '4px solid #8b5cf6';
+            ring.style.opacity = '1';
+            container.appendChild(ring);
+            
+            setTimeout(() => ring.remove(), 1200);
+        }
+
+        function stopSilentScream() {
+            if (silentScreamInterval) {
+                clearInterval(silentScreamInterval);
+                silentScreamInterval = null;
+            }
+            
+            // Show check-in
+            document.getElementById('silentScreamActive').style.display = 'none';
+            document.getElementById('silentScreamCheckIn').style.display = 'block';
+        }
+
+        async function sendSilentScreamCheckIn() {
+            const response = document.getElementById('silentScreamResponse').value.trim();
+            
+            if (!response) {
+                alert('Please share how you\'re feeling before sending.');
+                return;
+            }
+            
+            // Show loading state
+            const responseDiv = document.getElementById('mysticBotResponse');
+            const textDiv = document.getElementById('mysticBotText');
+            responseDiv.style.display = 'block';
+            textDiv.textContent = '💭 MysticMinded33 is listening and responding...';
+            
+            try {
+                const chatResponse = await fetch('/api/virtual-parent/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        message: `After a silent scream session, the user shared: "${response}". Please provide compassionate, grounding support acknowledging their courage in releasing emotions and help them process what came up. Be gentle and validating.`,
+                        parentType: 'mysticminded33',
+                        conversationHistory: []
+                    })
+                });
+                
+                if (!chatResponse.ok) {
+                    throw new Error('Failed to get response');
+                }
+                
+                const data = await chatResponse.json();
+                textDiv.textContent = data.response;
+                
+            } catch (error) {
+                console.error('Error:', error);
+                textDiv.textContent = '💜 I hear you, and I\'m here with you. What you\'re feeling is completely valid. Silent screaming can bring up so much that\'s been held inside for too long. You showed incredible courage in allowing yourself to release. Take your time. Breathe. You\'re safe here, and you don\'t have to carry this alone anymore. I\'m here to listen whenever you need me. 🌟';
+            }
         }
 
         async function startListening() {
