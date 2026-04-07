@@ -1481,72 +1481,58 @@
         </div>
 
         <!-- Scream Overlay -->
-        <div id="screamCircleOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index:9999; display:flex; justify-content:center; align-items:center; padding:30px; overflow-y:auto;">
-            <button onclick="closeScreamCircle()" style="position:fixed; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer; z-index:10;">&times;</button>
-            <div style="max-width:600px; width:100%; text-align:center;">
+        <div id="screamCircleOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; flex-direction:column; padding:30px; text-align:center; overflow-y:auto;">
+            <button onclick="closeScreamCircle()" style="position:absolute; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer;">&times;</button>
+            <div style="max-width:500px; width:100%;">
                 <h2 style="color:#e9d5ff; font-size:28px; font-weight:700; margin-bottom:16px;">Scream your heart out</h2>
                 <p style="color:#c4b5fd; font-size:16px; margin-bottom:20px;">Let it ALL out. This space is just for you...</p>
                 
-                <!-- Collapsible Benefits Button -->
-                <button onclick="toggleScreamInfo()" style="width:100%; background:rgba(139, 92, 246, 0.2); border:2px solid #8b5cf6; color:#e9d5ff; padding:12px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-                    <span>📖 Please read about Scream Therapy before use</span>
-                    <span id="screamInfoArrow" style="font-size:18px;">▼</span>
-                </button>
-                
-                <!-- Collapsible Benefits Content -->
-                <div id="screamInfoContent" style="display:none; background:rgba(139, 92, 246, 0.15); border:2px solid #8b5cf6; border-radius:12px; padding:16px; text-align:left; margin-bottom:20px; max-height:400px; overflow-y:auto;">
-                    <h3 style="color:#e9d5ff; font-size:16px; font-weight:700; margin-bottom:10px;">💜 Benefits of Scream Therapy</h3>
-                    <p style="color:#c4b5fd; font-size:13px; line-height:1.5; margin-bottom:10px;">
+                <!-- Scream Therapy Benefits -->
+                <div style="background:rgba(139, 92, 246, 0.15); border:2px solid #8b5cf6; border-radius:12px; padding:20px; margin-bottom:24px; text-align:left;">
+                    <h3 style="color:#e9d5ff; font-size:18px; font-weight:700; margin-bottom:12px;">💜 Benefits of Scream Therapy</h3>
+                    <p style="color:#c4b5fd; font-size:14px; line-height:1.6; margin-bottom:12px;">
                         Scream therapy, or primal therapy, provides immediate emotional relief by allowing you to release pent-up anger, stress, and trauma through intense vocalization. It acts as a cathartic tool that can lower cortisol, trigger endorphin release (similar to exercise), and reduce physical tension in the body.
                     </p>
                     
-                    <p style="color:#a78bfa; font-size:12px; font-weight:600; margin-bottom:6px;">Key Benefits:</p>
-                    <ul style="color:#c4b5fd; font-size:12px; line-height:1.6; margin-left:16px; margin-bottom:10px;">
-                        <li style="margin-bottom:4px;"><strong>Immediate Emotional Catharsis:</strong> Provides a safe outlet to "let it all out," offering a sense of lightness, freedom, and relief</li>
-                        <li style="margin-bottom:4px;"><strong>Stress & Anxiety Reduction:</strong> Reduces bodily tension and lowers cortisol levels</li>
-                        <li style="margin-bottom:4px;"><strong>Endorphin Boost:</strong> Triggers the release of feel-good neurotransmitters like dopamine and endorphins</li>
-                        <li style="margin-bottom:4px;"><strong>Processing Trauma:</strong> Helps access and release deep-seated pain from childhood trauma or grief</li>
-                        <li style="margin-bottom:4px;"><strong>Vagus Nerve Regulation:</strong> Loud, intentional vocalization can activate the vagus nerve, helping regulate the nervous system and lower heart rate</li>
-                        <li style="margin-bottom:4px;"><strong>Empowerment:</strong> Allows you to speak up and reclaim your voice, especially if you've been in suppressing environments</li>
+                    <p style="color:#a78bfa; font-size:13px; font-weight:600; margin-bottom:8px;">Key Benefits:</p>
+                    <ul style="color:#c4b5fd; font-size:13px; line-height:1.7; margin-left:20px; margin-bottom:12px;">
+                        <li><strong>Immediate Emotional Catharsis:</strong> Provides a safe outlet to "let it all out," offering a sense of lightness, freedom, and relief</li>
+                        <li><strong>Stress & Anxiety Reduction:</strong> Reduces bodily tension and lowers cortisol levels</li>
+                        <li><strong>Endorphin Boost:</strong> Triggers the release of feel-good neurotransmitters like dopamine and endorphins</li>
+                        <li><strong>Processing Trauma:</strong> Helps access and release deep-seated pain from childhood trauma or grief</li>
+                        <li><strong>Vagus Nerve Regulation:</strong> Loud, intentional vocalization can activate the vagus nerve, helping regulate the nervous system and lower heart rate</li>
+                        <li><strong>Empowerment:</strong> Allows you to speak up and reclaim your voice, especially if you've been in suppressing environments</li>
                     </ul>
                     
-                    <p style="color:#fca5a5; font-size:11px; line-height:1.4; background:rgba(239, 68, 68, 0.15); padding:8px; border-radius:6px; margin-top:10px;">
+                    <p style="color:#fca5a5; font-size:12px; line-height:1.5; background:rgba(239, 68, 68, 0.15); padding:10px; border-radius:8px; margin-top:12px;">
                         <strong>Important:</strong> While many report benefits, research is limited. Treat this as a form of expression rather than a cure for mental health conditions. It may not be suitable for those with high blood pressure or heart conditions.
                     </p>
                     
-                    <p style="color:#fef3c7; font-size:12px; font-weight:700; line-height:1.5; background:rgba(239, 68, 68, 0.25); padding:10px; border-radius:6px; margin-top:10px; border:2px solid #ef4444;">
+                    <p style="color:#fef3c7; font-size:13px; font-weight:700; line-height:1.6; background:rgba(239, 68, 68, 0.25); padding:12px; border-radius:8px; margin-top:12px; border:2px solid #ef4444;">
                         ⚠️ <strong>This is NOT a substitute for professional therapy.</strong> If you feel like self-harming immediately, please call Hatzoloh at 718-230-1000 or the Suicide & Crisis Lifeline at 988.
                     </p>
                 </div>
                 
-                <!-- Scream Circle -->
-                <div id="screamCircle" style="width:250px; height:250px; border-radius:50%; background: radial-gradient(circle, #7c3aed, #6d28d9); margin:0 auto 20px; display:flex; align-items:center; justify-content:center; transition: all 0.3s; box-shadow: 0 0 60px rgba(124, 58, 237, 0.8); position:relative;">
+                <div id="screamCircle" style="width:250px; height:250px; border-radius:50%; background: radial-gradient(circle, #7c3aed, #6d28d9); margin: 0 auto 30px; display:flex; align-items:center; justify-content:center; transition: all 0.3s; box-shadow: 0 0 60px rgba(124, 58, 237, 0.8); position:relative;">
                     <div id="scream-rings-container"></div>
                     <span id="screamCircleText" style="color:white; font-size:26px; font-weight:700; position:relative; z-index:1; letter-spacing:1px;">SCREAM</span>
                 </div>
                 
-                <button id="screamStartBtn" onclick="startListening()" style="background:#7c3aed; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.5); width:100%;">
+                <button id="screamStartBtn" onclick="startListening()" style="background:#7c3aed; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px; box-shadow: 0 4px 16px rgba(124, 58, 237, 0.5);">
                     Start screaming
                 </button>
-                <button id="screamStopBtn" onclick="stopListening()" style="display:none; background:#ef4444; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px; width:100%;">
+                <button id="screamStopBtn" onclick="stopListening()" style="display:none; background:#ef4444; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px;">
                     ⏹️ Stop
                 </button>
-                <button id="silentScreamBtn" onclick="startSilentScream()" style="background:#8b5cf6; color:white; border:none; padding:14px 32px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; margin-bottom:12px; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5); width:100%;">
+                <button id="silentScreamBtn" onclick="startSilentScream()" style="background:#8b5cf6; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-bottom:16px; box-shadow: 0 4px 16px rgba(139, 92, 246, 0.5);">
                     🤫 Silent Scream
                 </button>
-                
-                <div id="screamVolume" style="margin-top:8px; color:#c4b5fd; font-size:14px; line-height:1.5; text-align:center;"></div>
+
+                <div id="screamVolume" style="margin-top:8px; color:#c4b5fd; font-size:14px; line-height:1.5; padding:0 10px;"></div>
                 
                 <!-- Silent Scream Container -->
-                <div id="silentScreamContainer" style="display:none; margin-top:20px;">
-                    <!-- Collapsible Silent Scream Info Button -->
-                    <button onclick="toggleSilentScreamInfo()" style="width:100%; background:rgba(139, 92, 246, 0.2); border:2px solid #8b5cf6; color:#e9d5ff; padding:12px; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; margin-bottom:16px; display:flex; justify-content:space-between; align-items:center;">
-                        <span>⚡ About Silent Screaming - Please Read</span>
-                        <span id="silentScreamInfoArrow" style="font-size:18px;">▼</span>
-                    </button>
-                    
-                    <!-- Collapsible Silent Scream Info Content -->
-                    <div id="silentScreamDisclaimer" style="display:none; margin-bottom:20px; padding:16px; background:rgba(124, 58, 237, 0.2); border:2px solid #8b5cf6; border-radius:12px; text-align:left; line-height:1.6; font-size:13px; max-height:400px; overflow-y:auto;">
+                <div id="silentScreamContainer" style="display:none; margin-top:20px; padding:24px; background:rgba(139, 92, 246, 0.15); border:2px solid #8b5cf6; border-radius:16px; color:#e9d5ff;">
+                    <div id="silentScreamDisclaimer" style="margin-bottom:20px; padding:16px; background:rgba(124, 58, 237, 0.2); border-radius:12px; text-align:left; line-height:1.6; font-size:13px;">
                         <h3 style="color:#e9d5ff; font-size:18px; font-weight:700; margin-bottom:12px;">⚡ About Silent Screaming</h3>
                         <p style="margin-bottom:10px;">Silent screaming—or screaming without sound—acts as a powerful, non-verbal emotional release that can immediately reduce stress, calm the nervous system, and help manage anxiety, trauma, or overwhelming grief.</p>
                         
@@ -1908,18 +1894,14 @@
 
                 <div class="card">
                     <h2 class="section-title">Quick Support Tools</h2>
-                    <!-- 1. Emergency Contacts -->
-                    <button class="btn" onclick="showContacts()" style="background:#16a34a;">📞 Emergency Contacts</button>
-                    <!-- 2. Coping Strategies -->
-                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
-                    <!-- 3. My Safety Plan -->
-                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
-                    <!-- 4. Breathing Exercises -->
-                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
-                    <!-- 5. Progressive Muscle Relaxation -->
-                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">💪 Progressive Muscle Relaxation</button>
-                    <!-- 6. Guided Meditation -->
+                    <!-- Progressive Muscle Relaxation as part of Quick Support Tools -->
+                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">� Progressive Muscle Relaxation</button>
+                    <!-- Guided Meditation -->
                     <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
+                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
+                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
+                    <button class="btn" onclick="showContacts()" style="background:#16a34a;">� Emergency Contacts</button>
+                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
                     <!-- Find Professional Help button moved to top emergency area -->
                 </div>
 
@@ -2619,14 +2601,14 @@
         </div>
 
         <!-- Dedication Section -->
-        <div id="dedication" class="section hidden" style="background-image: url(\'https://images.unsplash.com/photo-1522383225653-ed111181a951?w=1920&q=80\'); background-size: cover; background-position: center; background-attachment: fixed; min-height: 100vh; padding: 40px 20px;">
-            <div class="card" style="background: linear-gradient(135deg, rgba(252, 231, 243, 0.95), rgba(251, 207, 232, 0.95), rgba(252, 231, 243, 0.95)); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); border: 2px solid #f9a8d4; box-shadow: 0 8px 24px rgba(249, 168, 212, 0.4);">
-                <h2 class="section-title" style="color: #d97706; font-size: 32px; margin-bottom: 24px; text-shadow: 0 2px 4px rgba(217, 119, 6, 0.2);">� Dedication</h2>
+        <div id="dedication" class="section hidden">
+            <div class="card" style="background: linear-gradient(135deg, #1e1b4b, #312e81, #1e3a8a); border: 2px solid #6366f1; box-shadow: 0 8px 24px rgba(99, 102, 241, 0.3);">
+                <h2 class="section-title" style="color: #e0e7ff; font-size: 32px; margin-bottom: 24px; text-shadow: 0 2px 8px rgba(0,0,0,0.5);">💜 Dedication</h2>
                 
-                <div style="background: rgba(255,255,255,0.6); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(249, 168, 212, 0.3); box-shadow: 0 4px 16px rgba(219, 39, 119, 0.15);">
-                    <div style="color: #be185d; font-size: 18px; line-height: 1.8; font-family: Georgia, serif; text-align: center; margin-bottom: 24px;">
+                <div style="background: rgba(255,255,255,0.05); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); padding: 32px; border-radius: 16px; border: 1px solid rgba(255,255,255,0.1); box-shadow: 0 4px 16px rgba(0,0,0,0.3);">
+                    <div style="color: #e0e7ff; font-size: 18px; line-height: 1.8; font-family: Georgia, serif; text-align: center; margin-bottom: 24px;">
                         <p style="margin-bottom: 20px;">
-                            <strong style="color: #c026d3; font-size: 20px;">Dedicated to all the people who took the time to check out my app as I built it and give me feedback on how to make it better for our community of people who are trying to fight to live,</strong>
+                            <strong style="color: #c7d2fe; font-size: 20px;">Dedicated to all the people who took the time to check out my app as I built it and give me feedback on how to make it better for our community of people who are trying to fight to live,</strong>
                         </p>
                         <p style="margin-bottom: 20px;">
                             and to every single person who woke up today and wished they didn't,
@@ -2637,8 +2619,8 @@
                         <p style="margin-bottom: 20px;">
                             to the people who chose to fight to live today for this moment—
                         </p>
-                        <p style="margin-bottom: 32px; padding-top: 20px; border-top: 1px solid rgba(249, 168, 212, 0.4);">
-                            <strong style="color: #d97706; font-size: 19px;">and to the souls who did not have the support they needed,<br>
+                        <p style="margin-bottom: 32px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.2);">
+                            <strong style="color: #fbbf24; font-size: 19px;">and to the souls who did not have the support they needed,<br>
                             may their souls merit peace and love and healing<br>
                             and may their pain be ended.</strong>
                         </p>
@@ -2648,14 +2630,14 @@
                         <p style="margin-bottom: 20px;">
                             Those beloved souls are the reason we need to fight and show up for each other,
                         </p>
-                        <p style="margin-bottom: 0; font-size: 20px; color: #ca8a04; font-weight: 600;">
+                        <p style="margin-bottom: 0; font-size: 20px; color: #86efac; font-weight: 600;">
                             and if you are here right now, breathing in this moment,<br>
-                            <span style="color: #d97706; font-size: 22px;">you matter more than you know.</span>
+                            <span style="color: #6ee7b7; font-size: 22px;">you matter more than you know.</span>
                         </p>
                     </div>
                     
-                    <div style="margin-top: 32px; padding: 24px; background: rgba(251, 207, 232, 0.3); border-radius: 12px; border-left: 4px solid #f472b6;">
-                        <div style="color: #be185d; font-size: 16px; line-height: 1.7; text-align: center;">
+                    <div style="margin-top: 32px; padding: 24px; background: rgba(34, 197, 94, 0.1); border-radius: 12px; border-left: 4px solid #22c55e;">
+                        <div style="color: #86efac; font-size: 16px; line-height: 1.7; text-align: center;">
                             <p style="margin-bottom: 12px; font-weight: 600;">
                                 Every breath you take is an act of resistance.
                             </p>
@@ -6536,38 +6518,8 @@ User's message: ${userMessage}`
             document.getElementById('screamResponse').style.display = 'none';
             document.getElementById('screamTranscript').style.display = 'none';
             document.getElementById('transcriptText').innerHTML = '';
-            // Reset info panel
-            document.getElementById('screamInfoContent').style.display = 'none';
-            document.getElementById('screamInfoArrow').textContent = '▼';
-            // Reset silent scream info panel
-            document.getElementById('silentScreamDisclaimer').style.display = 'none';
-            document.getElementById('silentScreamInfoArrow').textContent = '▼';
-        }
-
-        function toggleScreamInfo() {
-            const content = document.getElementById('screamInfoContent');
-            const arrow = document.getElementById('screamInfoArrow');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                arrow.textContent = '▲';
-            } else {
-                content.style.display = 'none';
-                arrow.textContent = '▼';
-            }
-        }
-
-        function toggleSilentScreamInfo() {
-            const content = document.getElementById('silentScreamDisclaimer');
-            const arrow = document.getElementById('silentScreamInfoArrow');
-            if (content.style.display === 'none') {
-                content.style.display = 'block';
-                arrow.textContent = '▲';
-            } else {
-                content.style.display = 'none';
-                arrow.textContent = '▼';
-            }
             document.getElementById('screamVolume').textContent = '';
-            document.getElementById('screamCircleText').textContent = 'SCREAM';
+            document.getElementById('screamCircleText').textContent = '🎤';
             const circle = document.getElementById('screamCircle');
             circle.style.transform = 'scale(1)';
             circle.style.background = 'radial-gradient(circle, #7c3aed, #6d28d9)';
