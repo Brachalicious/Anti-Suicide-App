@@ -3906,9 +3906,19 @@
             <div class="grid">
                 <div class="card">
                     <h2 class="section-title">💫 Affirmation Cards</h2>
-                    <p style="margin-bottom: 24px; color: #6b7280; line-height: 1.6; font-size: 16px;">
-                        Draw a card of hope. Each affirmation is rooted in sacred wisdom and designed to remind you of your infinite worth.
+                    <p style="margin-bottom: 20px; color: #6b7280; line-height: 1.6; font-size: 16px;">
+                        Draw a card of hope. Choose your affirmation type below.
                     </p>
+
+                    <!-- Affirmation Type Toggle -->
+                    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap;">
+                        <button id="biblicalBtn" onclick="setAffirmationType('biblical')" class="btn" style="background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 700; padding: 12px 32px; font-size: 16px;">
+                            📜 Biblical Affirmations
+                        </button>
+                        <button id="depressionBtn" onclick="setAffirmationType('depression')" class="btn" style="background: #d1d5db; color: #4b5563; font-weight: 700; padding: 12px 32px; font-size: 16px;">
+                            💪 Depression Affirmations
+                        </button>
+                    </div>
 
                     <!-- Card Display -->
                     <div style="display: flex; justify-content: center; margin-bottom: 32px;">
@@ -3943,6 +3953,13 @@
 
                     <div id="cardSaveConfirmation" style="display: none; margin-top: 20px; padding: 16px; background: #dcfce7; border: 2px solid #22c55e; border-radius: 12px; color: #166534; font-weight: 600; text-align: center;">
                         ✅ Card saved to your collection!
+                    </div>
+
+                    <!-- Resource Credit -->
+                    <div style="margin-top: 28px; padding: 16px; background: #f3f4f6; border-radius: 12px; text-align: center;">
+                        <p style="color: #6b7280; font-size: 14px; margin: 0;">
+                            Depression affirmations from <a href="https://www.crisistextline.org/blog/2024/01/08/100-positive-affirmations-for-better-self-care/#affirmations-for-depression" target="_blank" style="color: #3b82f6; font-weight: 600; text-decoration: underline;">Crisis Text Line (741741)</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -4915,6 +4932,19 @@ User's message: ${userMessage}`
             { verse: "\"In peace I will lie down and sleep, for you alone, Lord, make me dwell in safety\" (Psalm 4:8)", message: "When anxiety keeps you awake at night, when your mind races with worry, remember this ancient promise: ה' Himself watches over your rest. You can release your grip on control and surrender to peaceful sleep, knowing that the Creator of the universe is your guardian. You are safe. You are protected. You can rest now.", background: "linear-gradient(135deg, #1e3a8a 0%, #312e81 50%, #1e1b4b 100%)" }
         ];
 
+        const depressionAffirmations = [
+            { verse: "I am open to healing.", message: "Healing is a journey, not a destination. By opening yourself to the possibility of healing, you've already taken the first brave step. Allow yourself the time and space you need." },
+            { verse: "I can lean on others for support.", message: "Asking for help is not weakness—it's wisdom. You don't have to carry this burden alone. There are people who care about you and want to support you." },
+            { verse: "I treat myself with loving kindness.", message: "You deserve the same compassion you would offer to a dear friend. Be gentle with yourself, especially on the hard days." },
+            { verse: "My past does not define me.", message: "Your past has shaped you, but it doesn't have to limit you. You have the power to write new chapters and create new beginnings." },
+            { verse: "This darkness won't last forever.", message: "Even the longest night ends with sunrise. The pain you're feeling now is temporary. Better days are ahead, even if you can't see them yet." },
+            { verse: "I am resilient in the face of any challenge.", message: "You have survived 100% of your worst days so far. That's proof of your incredible strength and resilience. You can get through this too." },
+            { verse: "I am in charge of my life and my happiness.", message: "While you can't control everything that happens, you have the power to choose how you respond. You can take small steps toward the life you want." },
+            { verse: "Not everybody will understand my situation and it is okay.", message: "You don't need everyone to understand what you're going through. What matters is that you're being true to your own experience and taking care of yourself." },
+            { verse: "I have made it this far, I won't stop now.", message: "Look at how far you've come. Every day you've survived, every challenge you've faced—that takes courage. Keep going. You're stronger than you know." },
+            { verse: "I am needed.", message: "Your presence in this world matters. There are people whose lives are better because you're in them. You have value and purpose, even when it's hard to see." }
+        ];
+
         const moodEmojis = ['😭','😢','😞','😔','😐','🙂','😊','😄','😁','🤩'];
 
         function toggleFeeling(el) {
@@ -5353,10 +5383,35 @@ User's message: ${userMessage}`
 
         // Affirmation Cards Functions
         let currentCard = null;
+        let currentAffirmationType = 'biblical';
+
+        function setAffirmationType(type) {
+            currentAffirmationType = type;
+            
+            // Update button styles
+            const biblicalBtn = document.getElementById('biblicalBtn');
+            const depressionBtn = document.getElementById('depressionBtn');
+            
+            if (type === 'biblical') {
+                biblicalBtn.style.background = 'linear-gradient(135deg, #a855f7, #9333ea)';
+                biblicalBtn.style.color = 'white';
+                depressionBtn.style.background = '#d1d5db';
+                depressionBtn.style.color = '#4b5563';
+            } else {
+                biblicalBtn.style.background = '#d1d5db';
+                biblicalBtn.style.color = '#4b5563';
+                depressionBtn.style.background = 'linear-gradient(135deg, #a855f7, #9333ea)';
+                depressionBtn.style.color = 'white';
+            }
+            
+            // Draw a new card from the selected type
+            drawAffirmationCard();
+        }
 
         function drawAffirmationCard() {
-            const randomIndex = Math.floor(Math.random() * affirmations.length);
-            currentCard = affirmations[randomIndex];
+            const selectedAffirmations = currentAffirmationType === 'biblical' ? affirmations : depressionAffirmations;
+            const randomIndex = Math.floor(Math.random() * selectedAffirmations.length);
+            currentCard = selectedAffirmations[randomIndex];
             
             document.getElementById('cardVerse').textContent = currentCard.verse.replace(/"/g, '');
             document.getElementById('cardMessage').textContent = currentCard.message;
