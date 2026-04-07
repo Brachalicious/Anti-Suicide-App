@@ -147,6 +147,24 @@ export class MemStorage implements IStorage {
         tags: ["jewish-community", "mental-health", "therapy", "behavioral-health", "support"],
         readTime: 4,
         isEmergency: false
+      },
+      {
+        id: "5",
+        title: "DBSA — Depression and Bipolar Support Alliance",
+        content: "DBSA is the leading peer-directed national organization focusing on depression and bipolar disorder. They provide hope, help, support, and education to improve the lives of people who have mood disorders. DBSA offers free, peer-led support groups across the country where individuals and families affected by depression and bipolar disorder can share experiences in a safe, confidential environment. Visit dbsalliance.org to find local support groups, online communities, educational resources, and advocacy opportunities.",
+        category: "wellness",
+        tags: ["support-groups", "depression", "bipolar", "peer-support", "mental-health", "resources"],
+        readTime: 3,
+        isEmergency: false
+      },
+      {
+        id: "6",
+        title: "NAMI Family Support Groups",
+        content: "NAMI Family Support Groups are free, peer-led support groups for family members, caregivers, and loved ones of individuals living with mental health conditions. These groups provide a safe, confidential space for family members to share their experiences, learn coping strategies, and gain emotional support from others who truly understand the challenges of supporting a loved one with mental illness. Support groups meet regularly in communities nationwide and are facilitated by trained family members. Find a group near you at nami.org/support-groups or contact NAMI NYC Metro at naminycmetro.org for local programs and resources for families and friends.",
+        category: "wellness",
+        tags: ["family-support", "caregivers", "support-groups", "nami", "mental-health", "peer-support"],
+        readTime: 3,
+        isEmergency: false
       }
     ];
 
