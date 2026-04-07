@@ -39,15 +39,26 @@
         /* (Animated sky clouds removed) */
         /* Scream circle expanding energy rings */
         @keyframes screamRipple {
-            0%   { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(3.5); opacity: 0; }
+            0%   { transform: scale(1); opacity: 0.9; border-width: 4px; }
+            50%  { opacity: 0.6; }
+            100% { transform: scale(4); opacity: 0; border-width: 1px; }
+        }
+        @keyframes crisisRipple {
+            0%   { transform: scale(1); opacity: 1; border-width: 6px; }
+            30%  { opacity: 0.8; }
+            70%  { opacity: 0.4; }
+            100% { transform: scale(5); opacity: 0; border-width: 1px; }
         }
         .scream-ring {
             position: absolute;
             border-radius: 50%;
-            border: 3px solid rgba(168, 85, 247, 0.9);
+            border: 4px solid rgba(168, 85, 247, 0.9);
             animation: screamRipple 1.2s ease-out forwards;
             pointer-events: none;
+        }
+        .scream-ring.crisis {
+            border: 6px solid rgba(236, 72, 153, 0.95);
+            animation: crisisRipple 1.5s ease-out forwards;
         }
         #scream-rings-container, #silent-rings-container {
             position: absolute;
@@ -6084,11 +6095,11 @@ User's message: ${userMessage}`
     let circleScreamRecognition = null;
     let circleScreamListening = false;
     let circleScreamResponseTimer = null;
-    let circleScreamRecorder = null;        function spawnScreamRing(intensityScale) {
+    let circleScreamRecorder = null;        function spawnScreamRing(intensityScale, isCrisis = false) {
             const container = document.getElementById('scream-rings-container');
             if (!container) return;
             const ring = document.createElement('div');
-            ring.className = 'scream-ring';
+            ring.className = isCrisis ? 'scream-ring crisis' : 'scream-ring';
             // Size the ring relative to the circle (250px) — fill it fully
             const size = 250;
             ring.style.width = size + 'px';
@@ -6096,9 +6107,9 @@ User's message: ${userMessage}`
             ring.style.left = (-size/2) + 'px';
             ring.style.top = (-size/2) + 'px';
             // Vary color based on intensity
-            const hue = Math.round(270 + (intensityScale - 1) * 30); // purple → pink as louder
+            const hue = isCrisis ? Math.round(330 + (intensityScale - 1) * 20) : Math.round(270 + (intensityScale - 1) * 30); // pink for crisis, purple for normal
             ring.style.borderColor = `hsla(${hue},90%,70%,0.9)`;
-            ring.style.animationDuration = (0.9 + Math.random() * 0.5) + 's';
+            ring.style.animationDuration = isCrisis ? (1.2 + Math.random() * 0.3) + 's' : (0.9 + Math.random() * 0.5) + 's';
             container.appendChild(ring);
             ring.addEventListener('animationend', () => ring.remove());
         }
@@ -6387,22 +6398,53 @@ User's message: ${userMessage}`
                 // Scroll to bottom of transcript
                 document.getElementById('screamTranscript').scrollTop = document.getElementById('screamTranscript').scrollHeight;
                 
-                // Animate circle + spawn rings
-                const scale = 1 + (Math.random() * 0.5);
+                // Check for crisis keywords to provide specific support
+                const currentText = (finalTranscript + interimTranscript).toLowerCase();
+                const crisisKeywords = {
+                    suicidal: ['suicidal', 'kill myself', 'want to die', 'end my life', 'no reason to live'],
+                    pain: ['hurt', 'pain', 'suffering', 'agony', 'unbearable'],
+                    alone: ['alone', 'lonely', 'no one cares', 'nobody loves me', 'abandoned'],
+                    hopeless: ['hopeless', 'give up', 'cant go on', 'no point', 'worthless'],
+                    anger: ['angry', 'rage', 'hate', 'furious', 'pissed'],
+                    anxiety: ['anxious', 'panic', 'scared', 'terrified', 'afraid']
+                };
+                
+                let detectedKeyword = null;
+                let intensity = 1;
+                
+                for (const [category, keywords] of Object.entries(crisisKeywords)) {
+                    for (const keyword of keywords) {
+                        if (currentText.includes(keyword)) {
+                            detectedKeyword = category;
+                            intensity = 1.5 + (Math.random() * 0.5); // Higher intensity for crisis words
+                            break;
+                        }
+                    }
+                    if (detectedKeyword) break;
+                }
+                
+                // Animate circle + spawn MORE rings for crisis keywords
+                const scale = intensity;
+                const numRings = detectedKeyword ? 5 + Math.floor(Math.random() * 5) : 2 + Math.floor(Math.random() * 3);
+                
                 circle.style.transform = `scale(${scale})`;
                 circle.style.boxShadow = `0 0 ${60 + Math.random() * 40}px rgba(124, 58, 237, ${0.8 + Math.random() * 0.2})`;
-                // Spawn 2-4 expanding rings
-                const numRings = 2 + Math.floor(Math.random() * 3);
+                
+                // Spawn expanding rings - pass crisis flag
                 for (let r = 0; r < numRings; r++) {
-                    setTimeout(() => spawnScreamRing(scale), r * 120);
+                    setTimeout(() => spawnScreamRing(scale, !!detectedKeyword), r * 100);
                 }
                 
                 // Show volume indicator
-                document.getElementById('screamVolume').textContent = '🌊 Energy rings expanding — the circle hears you!';
+                if (detectedKeyword) {
+                    document.getElementById('screamVolume').textContent = '💜 I hear your pain. The circle is absorbing your energy. You are not alone.';
+                } else {
+                    document.getElementById('screamVolume').textContent = '🌊 Energy rings expanding — the circle hears you!';
+                }
                 
-                // Show supportive response periodically (every 5 seconds max)
+                // Show supportive response with context-aware messages
                 const now = Date.now();
-                if (finalTranscript && (now - lastResponseTime > 5000)) {
+                if (finalTranscript && (now - lastResponseTime > 3000)) {
                     lastResponseTime = now;
                     
                     // Clear any existing response timer
@@ -6410,11 +6452,28 @@ User's message: ${userMessage}`
                     
                     // Show response after a pause
                     circleScreamResponseTimer = setTimeout(() => {
-                        const randomResponse = responses[Math.floor(Math.random() * responses.length)];
-                        responseDiv.textContent = randomResponse;
+                        let specificResponse;
+                        
+                        if (detectedKeyword === 'suicidal') {
+                            specificResponse = "💜 I hear you. Your life has value even when it doesn't feel like it. Please reach 988 Suicide & Crisis Lifeline or text HELLO to 741741. You deserve support. I'm here with you.";
+                        } else if (detectedKeyword === 'pain') {
+                            specificResponse = "I feel the weight of your pain. It's real, it's valid, and you don't have to carry it alone. Let the circle hold some of this for you.";
+                        } else if (detectedKeyword === 'alone') {
+                            specificResponse = "You are NOT alone. I'm here. The circle is here. You are seen, you are heard, and you matter deeply.";
+                        } else if (detectedKeyword === 'hopeless') {
+                            specificResponse = "I know hope feels impossible right now. But you showing up here, expressing this — that IS hope in action. You're stronger than you know.";
+                        } else if (detectedKeyword === 'anger') {
+                            specificResponse = "Your anger is valid. Let it OUT. Scream it. The circle can handle all of your rage. Release it here where it's safe.";
+                        } else if (detectedKeyword === 'anxiety') {
+                            specificResponse = "I feel your anxiety. Breathe with me. You're safe in this moment. The circle is protecting you. One breath at a time.";
+                        } else {
+                            specificResponse = responses[Math.floor(Math.random() * responses.length)];
+                        }
+                        
+                        responseDiv.textContent = specificResponse;
                         responseDiv.style.display = 'block';
-                        circle.style.transform = 'scale(1.2)';
-                        circle.style.background = 'radial-gradient(circle, #a855f7, #7c3aed)';
+                        circle.style.transform = 'scale(1.3)';
+                        circle.style.background = detectedKeyword ? 'radial-gradient(circle, #ec4899, #7c3aed)' : 'radial-gradient(circle, #a855f7, #7c3aed)';
                     }, 800);
                 }
                 
