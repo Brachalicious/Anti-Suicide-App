@@ -1072,12 +1072,6 @@
                 </div>
             </div>
         </div>
-        
-        <div style="text-align: right; margin-bottom: 20px; padding-right: 10px;">
-            <div class="crisis-banner">
-                🚨 IN CRISIS? Call 988 (Suicide Lifeline) or Text HOME to 741741 NOW 🚨
-            </div>
-        </div>
 
         <div style="position: absolute; top: 18px; left: 18px; z-index: 1000; display: flex; flex-direction: column; gap: 8px; align-items: flex-start;">
             <button class="nav-item" onclick="showSection('account')" style="padding: 8px 20px; font-size: 14px; border-radius: 20px; background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(16,185,129,0.95)); color: #022c22; font-weight: 700; border: none; box-shadow: 0 3px 10px rgba(16,185,129,0.35);">⚙️ Account Settings</button>
@@ -1097,6 +1091,7 @@
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">� Talk to ה'</button>
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu()">� Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu()">�️ Bullying Support</button>
+                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu()">🎨 Color & Paint</button>
                     <button onclick="showSection('music'); closeCrisisToolsMenu()">🎵 My Music</button>
                     <button onclick="showSection('release'); closeCrisisToolsMenu()">� Release &amp; Let Go</button>
                     <button onclick="showSection('mood'); closeCrisisToolsMenu()">📓 My Diary</button>
@@ -3712,6 +3707,103 @@
                     <div class="hotline">
                         <h3>📱 Follow Us (Coming Soon!)</h3>
                         <p>Stay updated with new features, spiritual resources, and services.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Color & Paint Section -->
+        <div id="color-paint" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">🎨 Color & Paint</h2>
+                <p style="color:#6b7280; font-size:15px; margin-bottom:24px; line-height:1.6;">
+                    Art therapy can be incredibly calming and therapeutic. Choose a coloring page or use the paint canvas to express yourself creatively.
+                </p>
+
+                <!-- Coloring Pages -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #1a1a1a;">📄 Printable Coloring Pages</h3>
+                    <p style="color:#6b7280; font-size:14px; margin-bottom:16px;">Click on any image to download and print. Then color with your favorite art supplies!</p>
+                    
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                        <!-- Mandala Coloring Page -->
+                        <div style="background: white; padding: 16px; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 80px; margin-bottom: 8px;">🌸</div>
+                                    <p style="font-size: 14px; color: #6b7280;">Intricate Mandala</p>
+                                </div>
+                            </div>
+                            <h4 style="font-weight: 600; margin-bottom: 8px;">Peaceful Mandala</h4>
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">Detailed patterns for mindful coloring</p>
+                            <button class="btn" style="width: 100%;" onclick="alert('Download feature coming soon! For now, use the digital paint canvas below.')">Download & Print</button>
+                        </div>
+
+                        <!-- Nature Scene -->
+                        <div style="background: white; padding: 16px; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 80px; margin-bottom: 8px;">🌳</div>
+                                    <p style="font-size: 14px; color: #6b7280;">Find Your Peace</p>
+                                </div>
+                            </div>
+                            <h4 style="font-weight: 600; margin-bottom: 8px;">Nature Scene</h4>
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">Calming forest and wildlife design</p>
+                            <button class="btn" style="width: 100%;" onclick="alert('Download feature coming soon! For now, use the digital paint canvas below.')">Download & Print</button>
+                        </div>
+
+                        <!-- Hot Air Balloons -->
+                        <div style="background: white; padding: 16px; border-radius: 12px; border: 2px solid #e5e7eb; text-align: center;">
+                            <div style="background: #f9fafb; padding: 20px; border-radius: 8px; margin-bottom: 12px; min-height: 200px; display: flex; align-items: center; justify-content: center;">
+                                <div style="text-align: center;">
+                                    <div style="font-size: 80px; margin-bottom: 8px;">🎈</div>
+                                    <p style="font-size: 14px; color: #6b7280;">Color Your Calm</p>
+                                </div>
+                            </div>
+                            <h4 style="font-weight: 600; margin-bottom: 8px;">Dream Sky</h4>
+                            <p style="font-size: 13px; color: #6b7280; margin-bottom: 12px;">Whimsical hot air balloons and clouds</p>
+                            <button class="btn" style="width: 100%;" onclick="alert('Download feature coming soon! For now, use the digital paint canvas below.')">Download & Print</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Digital Paint Canvas -->
+                <div style="margin-bottom: 32px;">
+                    <h3 style="font-size: 18px; font-weight: 600; margin-bottom: 16px; color: #1a1a1a;">🖌️ Digital Paint Canvas</h3>
+                    <p style="color:#6b7280; font-size:14px; margin-bottom:16px;">Express yourself freely with our digital painting tool. Choose your colors and let your creativity flow!</p>
+                    
+                    <div style="background: white; padding: 20px; border-radius: 12px; border: 2px solid #e5e7eb;">
+                        <!-- Color Palette -->
+                        <div style="margin-bottom: 16px;">
+                            <p style="font-weight: 600; margin-bottom: 8px;">Choose Color:</p>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button onclick="setPaintColor('#000000')" style="width: 40px; height: 40px; background: #000000; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#ff0000')" style="width: 40px; height: 40px; background: #ff0000; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#ff6b00')" style="width: 40px; height: 40px; background: #ff6b00; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#ffd700')" style="width: 40px; height: 40px; background: #ffd700; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#00ff00')" style="width: 40px; height: 40px; background: #00ff00; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#0000ff')" style="width: 40px; height: 40px; background: #0000ff; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#8b00ff')" style="width: 40px; height: 40px; background: #8b00ff; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#ff1493')" style="width: 40px; height: 40px; background: #ff1493; border: 2px solid #e5e7eb; border-radius: 8px; cursor: pointer;"></button>
+                                <button onclick="setPaintColor('#ffffff')" style="width: 40px; height: 40px; background: #ffffff; border: 2px solid #000000; border-radius: 8px; cursor: pointer;"></button>
+                            </div>
+                        </div>
+
+                        <!-- Brush Size -->
+                        <div style="margin-bottom: 16px;">
+                            <p style="font-weight: 600; margin-bottom: 8px;">Brush Size:</p>
+                            <input type="range" id="brushSize" min="1" max="20" value="5" style="width: 200px;">
+                            <span id="brushSizeValue" style="margin-left: 12px; font-weight: 600;">5px</span>
+                        </div>
+
+                        <!-- Canvas -->
+                        <canvas id="paintCanvas" width="800" height="600" style="border: 2px solid #e5e7eb; border-radius: 8px; max-width: 100%; cursor: crosshair; background: white;"></canvas>
+
+                        <!-- Controls -->
+                        <div style="margin-top: 16px; display: flex; gap: 12px; flex-wrap: wrap;">
+                            <button class="btn" onclick="clearCanvas()">🗑️ Clear Canvas</button>
+                            <button class="btn" onclick="saveCanvasImage()">💾 Save Drawing</button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -6622,7 +6714,7 @@ User's message: ${userMessage}`
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
+        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -6697,11 +6789,6 @@ User's message: ${userMessage}`
                             <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">🌟 Always Here for You</h4>
                             <p style="font-size: 14px; color: #666; margin: 0;">Whether you need encouragement, someone to listen, or just want to share your day, MysticMinded³³ is available 24/7 with unconditional support and love.</p>
                         </div>
-                    </div>
-                    
-                    <div style="background: linear-gradient(135deg, #fef7f7 0%, #f0fdf4 100%); padding: 16px; border-radius: 12px; border: 1px solid #fecaca; text-align: center;">
-                        <p style="margin: 0 0 8px 0; font-size: 14px; font-weight: 600; color: #1a1a1a;">"Let the good in me connect with the good in others, until all the world is transformed through the compelling power of love."</p>
-                        <p style="margin: 0; font-size: 12px; color: #666;">— Rabbi Nachman</p>
                     </div>
                     
                     <div style="text-align: center; margin-top: 20px;">
@@ -7898,6 +7985,110 @@ User's message: ${userMessage}`
             const panel = document.getElementById('rage-music-panel');
             panel.style.display = panel.style.display === 'none' ? 'block' : 'none';
         }
+
+        // Paint Canvas Functions
+        let paintCanvas, paintCtx, painting = false;
+        let currentColor = '#000000';
+        let currentBrushSize = 5;
+
+        function initPaintCanvas() {
+            paintCanvas = document.getElementById('paintCanvas');
+            if (!paintCanvas) return;
+            
+            paintCtx = paintCanvas.getContext('2d');
+            paintCtx.lineCap = 'round';
+            paintCtx.lineJoin = 'round';
+
+            // Mouse events
+            paintCanvas.addEventListener('mousedown', startPainting);
+            paintCanvas.addEventListener('mousemove', draw);
+            paintCanvas.addEventListener('mouseup', stopPainting);
+            paintCanvas.addEventListener('mouseout', stopPainting);
+
+            // Touch events for mobile
+            paintCanvas.addEventListener('touchstart', handleTouchStart);
+            paintCanvas.addEventListener('touchmove', handleTouchMove);
+            paintCanvas.addEventListener('touchend', stopPainting);
+
+            // Brush size slider
+            const brushSizeSlider = document.getElementById('brushSize');
+            if (brushSizeSlider) {
+                brushSizeSlider.addEventListener('input', function() {
+                    currentBrushSize = this.value;
+                    document.getElementById('brushSizeValue').textContent = this.value + 'px';
+                });
+            }
+        }
+
+        function setPaintColor(color) {
+            currentColor = color;
+        }
+
+        function startPainting(e) {
+            painting = true;
+            draw(e);
+        }
+
+        function stopPainting() {
+            painting = false;
+            paintCtx.beginPath();
+        }
+
+        function draw(e) {
+            if (!painting) return;
+
+            const rect = paintCanvas.getBoundingClientRect();
+            const x = e.clientX - rect.left;
+            const y = e.clientY - rect.top;
+
+            paintCtx.lineWidth = currentBrushSize;
+            paintCtx.strokeStyle = currentColor;
+
+            paintCtx.lineTo(x, y);
+            paintCtx.stroke();
+            paintCtx.beginPath();
+            paintCtx.moveTo(x, y);
+        }
+
+        function handleTouchStart(e) {
+            e.preventDefault();
+            painting = true;
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousedown', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            paintCanvas.dispatchEvent(mouseEvent);
+        }
+
+        function handleTouchMove(e) {
+            e.preventDefault();
+            if (!painting) return;
+            const touch = e.touches[0];
+            const mouseEvent = new MouseEvent('mousemove', {
+                clientX: touch.clientX,
+                clientY: touch.clientY
+            });
+            paintCanvas.dispatchEvent(mouseEvent);
+        }
+
+        function clearCanvas() {
+            if (confirm('Are you sure you want to clear your drawing?')) {
+                paintCtx.clearRect(0, 0, paintCanvas.width, paintCanvas.height);
+            }
+        }
+
+        function saveCanvasImage() {
+            const link = document.createElement('a');
+            link.download = 'my-artwork.png';
+            link.href = paintCanvas.toDataURL();
+            link.click();
+        }
+
+        // Initialize paint canvas when section is shown
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(initPaintCanvas, 500);
+        });
 
         function loadRageVideo() {
             const input = document.getElementById('rage-yt-input').value.trim();

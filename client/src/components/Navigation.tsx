@@ -205,14 +205,6 @@ export default function Navigation() {
               </p>
             </div>
           </div>
-          
-          <div className="mt-6 p-4 bg-gradient-to-r from-pink-50 to-green-50 dark:from-pink-950/20 dark:to-green-950/20 rounded-lg border">
-            <p className="text-sm text-center font-medium">
-              "Let the good in me connect with the good in others, until all the world is transformed 
-              through the compelling power of love."
-            </p>
-            <p className="text-xs text-center text-muted-foreground mt-1">— Rabbi Nachman</p>
-          </div>
         </div>
       </Modal>
     </nav>
