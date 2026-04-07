@@ -2665,10 +2665,14 @@
                         </div>
                     </div>
                 </div>
+                <!-- Download Button -->
+                <div style="text-align: center; margin-top: 24px;">
+                    <button onclick="downloadDedication()" style="background: linear-gradient(135deg, #d97706, #ca8a04); color: white; border: none; padding: 14px 32px; border-radius: 12px; font-size: 18px; font-family: 'Brush Script MT', 'Lucida Handwriting', cursive; cursor: pointer; box-shadow: 0 4px 16px rgba(217,119,6,0.4); transition: all 0.3s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        📥 Save as Image
+                    </button>
+                </div>
             </div>
         </div>
-
-        <div id="resources" class="section hidden">
             <div class="card">
                 <h2 class="section-title">Wellness Tools</h2>
                 <button class="btn" onclick="showBreathingTechniques()">🧘 Guided Breathing Exercise</button>
@@ -10393,6 +10397,29 @@ User's message: ${userMessage}`
             <button onclick="closeBreathingOverlay()" style="background:#22c55e; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer;">✓ Done</button>
         </div>
     </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script>
+        function downloadDedication() {
+            const card = document.querySelector('#dedication .card');
+            const btn = document.querySelector('#dedication button');
+            btn.style.display = 'none';
+            html2canvas(card, { 
+                useCORS: true, 
+                allowTaint: true,
+                scale: 2,
+                backgroundColor: null
+            }).then(canvas => {
+                btn.style.display = 'inline-block';
+                const link = document.createElement('a');
+                link.download = 'dedication.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            }).catch(() => {
+                btn.style.display = 'inline-block';
+            });
+        }
+    </script>
 
 </body>
 </html>
