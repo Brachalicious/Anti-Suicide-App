@@ -5304,7 +5304,7 @@ User's message: ${userMessage}`
             shareContent(text, method);
         }
 
-        let currentAffirmationIndex = 0;
+        let currentAffirmationIndex = Math.floor(Math.random() * 22); // Start with random index
 
         function newAffirmation() {
             let newIndex;
@@ -5384,6 +5384,7 @@ User's message: ${userMessage}`
         // Affirmation Cards Functions
         let currentCard = null;
         let currentAffirmationType = 'biblical';
+        let lastCardIndex = -1;
 
         function setAffirmationType(type) {
             currentAffirmationType = type;
@@ -5404,13 +5405,23 @@ User's message: ${userMessage}`
                 depressionBtn.style.color = 'white';
             }
             
+            // Reset last card index when switching types
+            lastCardIndex = -1;
+            
             // Draw a new card from the selected type
             drawAffirmationCard();
         }
 
         function drawAffirmationCard() {
             const selectedAffirmations = currentAffirmationType === 'biblical' ? affirmations : depressionAffirmations;
-            const randomIndex = Math.floor(Math.random() * selectedAffirmations.length);
+            
+            // Prevent showing the same card twice in a row
+            let randomIndex;
+            do {
+                randomIndex = Math.floor(Math.random() * selectedAffirmations.length);
+            } while (randomIndex === lastCardIndex && selectedAffirmations.length > 1);
+            
+            lastCardIndex = randomIndex;
             currentCard = selectedAffirmations[randomIndex];
             
             document.getElementById('cardVerse').textContent = currentCard.verse.replace(/"/g, '');
