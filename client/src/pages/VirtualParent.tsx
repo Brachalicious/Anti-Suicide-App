@@ -22,6 +22,11 @@ interface ChatMessage {
 
 const dailyAffirmations = [
   {
+    theme: "Your Existence",
+    text: "The day you were born was the day Hashem decided the world could not exist without you",
+    source: "Rabbi Nachman of Breslov"
+  },
+  {
     theme: "Choice & Purpose",
     text: "I have set before you life and death... Choose life",
     source: "Deuteronomy 30:19"
