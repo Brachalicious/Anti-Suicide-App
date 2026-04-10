@@ -138,18 +138,18 @@
             padding-right: 0;
         }
         .nav-item {
-            padding: 16px 28px;
-            border-radius: 28px;
+            padding: 10px 16px;
+            border-radius: 20px;
             cursor: pointer;
-            font-weight: 800;
-            font-size: 18px;
-            border: 2.5px solid rgba(190,24,93,0.5);
+            font-weight: 700;
+            font-size: 13px;
+            border: 2px solid rgba(190,24,93,0.4);
             background: rgba(255,230,240,0.95);
             color: #9d174d;
-            box-shadow: 0 3px 10px rgba(180,140,100,0.15);
+            box-shadow: 0 2px 8px rgba(180,140,100,0.12);
             text-shadow: none;
             transition: all 0.3s ease;
-            letter-spacing: 0.3px;
+            letter-spacing: 0.2px;
         }
         .nav-item:hover, .nav-item.active {
             background: linear-gradient(135deg, #fce7f3, #f3e8ff);
@@ -900,6 +900,7 @@
         @media screen and (max-width: 768px) {
             body {
                 font-size: 14px;
+                background: linear-gradient(160deg, #fff0f6 0%, #fdf4ff 40%, #f0f9ff 100%);
             }
             .container {
                 padding: 10px;
@@ -908,14 +909,22 @@
             .nav {
                 flex-direction: column;
                 align-items: stretch;
-                gap: 6px;
+                gap: 5px;
                 padding: 10px;
+                background: rgba(255,255,255,0.6);
+                border-radius: 16px;
+                backdrop-filter: blur(8px);
+                margin-bottom: 16px;
             }
             .nav-item, .nav-dropdown-btn {
                 width: 100%;
                 text-align: center;
-                font-size: 14px;
-                padding: 12px;
+                font-size: 15px;
+                padding: 13px;
+                border-radius: 14px;
+                background: rgba(255, 240, 248, 0.9);
+                border: 1.5px solid rgba(190,24,93,0.2);
+                box-shadow: 0 2px 6px rgba(180,100,140,0.08);
             }
             .nav-dropdown {
                 width: 100%;
@@ -1117,6 +1126,7 @@
             <button class="nav-item active" onclick="showSection('dashboard')">Dashboard</button>
             <button class="nav-item" onclick="showSection('crisis')">Crisis Support</button>
             <button class="nav-item" onclick="showSection('crisis-skills')">🛟 Crisis Skills</button>
+            <button class="nav-item" onclick="showSection('chizuk')">✨ Chizuk</button>
 
             <!-- Crisis Tools Dropdown -->
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
@@ -1138,8 +1148,8 @@
                     <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu()">🍄 Mushroom Runner</button>
                 </div>
             </div>
-            <button class="nav-item" onclick="showSection('resources')">� Resources</button>
-            <button class="nav-item" onclick="showSection('dedication')">� Dedication</button>
+            <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
+            <button class="nav-item" onclick="showSection('dedication')">💖 Dedication</button>
         </nav>
 
         <!-- Crisis Skills Section -->
@@ -1940,6 +1950,46 @@
                         <button onclick="shareCurrentAffirmation('email')" style="flex:1;padding:6px;background:#22c55e;color:white;border:none;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;">Email</button>
                     </div>
                 </div>
+            </div>
+        </div>
+
+        <div id="chizuk" class="section hidden">
+            <div class="card" style="background: linear-gradient(135deg, #fffbeb, #fef3c7); border: 2px solid #f59e0b;">
+                <h2 class="section-title" style="color: #92400e; font-family: Georgia, serif; font-size: 28px;">✨ Chizuk — Words of Strength</h2>
+                <p style="color: #78350f; font-size: 15px; margin-bottom: 24px; line-height: 1.7; text-align: center;">
+                    Sometimes all we need is one word of encouragement. You are not alone. You are loved. You have a purpose.
+                </p>
+
+                <!-- Daily Chizuk Quote -->
+                <div id="chizukQuote" style="background: white; border-radius: 16px; padding: 28px; margin-bottom: 20px; border-left: 5px solid #f59e0b; box-shadow: 0 4px 16px rgba(245,158,11,0.15); text-align: center;">
+                    <div style="font-size: 36px; margin-bottom: 12px;">🌟</div>
+                    <p id="chizukText" style="color: #78350f; font-size: 20px; line-height: 1.8; font-family: Georgia, serif; font-style: italic; margin-bottom: 12px;"></p>
+                    <p id="chizukSource" style="color: #b45309; font-size: 14px; font-weight: 600;"></p>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button onclick="newChizuk()" style="background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 12px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(245,158,11,0.4); margin-right: 10px;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🔄 New Chizuk
+                    </button>
+                    <button onclick="copyChizuk()" style="background: white; color: #d97706; border: 2px solid #f59e0b; padding: 12px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        📋 Copy
+                    </button>
+                </div>
+
+                <!-- Categories -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #92400e; font-size: 17px; margin-bottom: 12px; text-align: center;">Choose Your Chizuk:</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                        <button onclick="showChizukCategory('emunah')" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e40af; border: 2px solid #93c5fd; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">🙏 Emunah & Bitachon</button>
+                        <button onclick="showChizukCategory('strength')" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #166534; border: 2px solid #86efac; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">💪 Koach & Strength</button>
+                        <button onclick="showChizukCategory('hope')" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6b21a8; border: 2px solid #c084fc; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">🌈 Hope & Healing</button>
+                        <button onclick="showChizukCategory('love')" style="background: linear-gradient(135deg, #fce7f3, #fbcfe8); color: #9d174d; border: 2px solid #f9a8d4; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">💗 Hashem's Love</button>
+                        <button onclick="showChizukCategory('purpose')" style="background: linear-gradient(135deg, #fef9c3, #fef08a); color: #854d0e; border: 2px solid #fde047; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">⭐ Your Purpose</button>
+                    </div>
+                </div>
+
+                <!-- Chizuk Cards Grid -->
+                <div id="chizukGrid" style="display: grid; gap: 14px;"></div>
             </div>
         </div>
 
@@ -4058,9 +4108,11 @@
                             <button class="btn btn-emergency" onclick="window.open('sms:741741&body=HOME')" style="background: #3b82f6;">💬 Text 741741</button>
                         </div>
                         <p style="margin-top: 16px; font-size: 13px; color: #92400e; font-style: italic; line-height: 1.6;">
-                            <strong>Note from ברכה (Bracha):</strong> I have deliberately not included 911 on this platform. I do not feel the police department 
-                            is adequately trained in handling mental health crises the way organizations like 988, Hatzoloh (718-230-1000), and other crisis lines are. 
-                            I strongly suggest calling <strong>Hatzoloh (718-230-1000)</strong> over 911 any day for mental health emergencies.
+                            <strong>Note from ברכה (Bracha):</strong> I have deliberately not included 911 on this platform. Research shows that approximately <strong>80–98% of 988 calls are resolved over the phone</strong> without needing emergency dispatch — and studies consistently show that 988 and 741-741 lead to fewer involuntary hospitalizations and less trauma than a 911 response. For many people in crisis, a police response can escalate distress due to sirens, uniforms, and restraints. 988 and 741-741 take a <em>"clinical first"</em> approach that prioritizes de-escalation through conversation.
+                            <br><br>
+                            For teens especially, research found that only <strong>5% are willing to call a voice crisis line</strong> — but are far more likely to use text (741-741). Text lines are also safer in situations like domestic abuse or bullying where a voice call could alert an aggressor.
+                            <br><br>
+                            I strongly suggest calling <strong>Hatzoloh (718-230-1000)</strong> or <strong>988</strong> over 911 for mental health emergencies. If you are in a situation with physical danger, please call 911.
                         </p>
                     </div>
 
@@ -7492,7 +7544,7 @@ User's message: ${userMessage}`
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner'];
+        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -10419,6 +10471,83 @@ User's message: ${userMessage}`
                 btn.style.display = 'inline-block';
             });
         }
+
+        // ===== CHIZUK =====
+        const chizukData = {
+            emunah: [
+                { text: "Gam zu l'tovah — This too is for the good.", source: "— Nachum Ish Gamzu, Taanis 21a" },
+                { text: "Bitachon means trusting Hashem even when you can't see the path forward.", source: "— Chovos HaLevavos, Shaar HaBitachon" },
+                { text: "Hashem is close to the brokenhearted and saves those who are crushed in spirit.", source: "— Tehillim 34:19" },
+                { text: "Even in the darkest night, the stars are still there — you just can't always see them.", source: "— Chassidic teaching" },
+                { text: "A person's steps are guided by Hashem.", source: "— Tehillim 37:23" }
+            ],
+            strength: [
+                { text: "You have survived 100% of your worst days so far.", source: "— Chizuk reminder" },
+                { text: "The soul Hashem gave you is pure and strong, even when you feel broken.", source: "— Based on the morning prayer, Elokai Neshamah" },
+                { text: "A tzaddik falls seven times and rises.", source: "— Mishlei 24:16" },
+                { text: "Your pain does not define you. Your courage to keep going does.", source: "— Chizuk reminder" },
+                { text: "Chazak v'ematz — Be strong and courageous.", source: "— Devarim 31:6" }
+            ],
+            hope: [
+                { text: "Even after the longest night, morning always comes.", source: "— Based on Tehillim 30:6" },
+                { text: "Hashem heals the brokenhearted and binds up their wounds.", source: "— Tehillim 147:3" },
+                { text: "There is always hope. As long as there is breath, there is the possibility of renewal.", source: "— Rebbe Nachman of Breslov" },
+                { text: "The redemption can come in the blink of an eye.", source: "— Mechilta, Beshalach" },
+                { text: "Your story is not over. The best chapters are still being written.", source: "— Chizuk reminder" }
+            ],
+            love: [
+                { text: "I have loved you with an everlasting love.", source: "— Yirmiyahu 31:2" },
+                { text: "You are precious in My eyes, and I love you.", source: "— Yeshayahu 43:4" },
+                { text: "Hashem's love for you is unconditional — nothing can take it away.", source: "— Based on Tanya, Ch. 41" },
+                { text: "Like a parent who never stops loving their child, Hashem never stops loving you.", source: "— Based on Hoshea 11:1" },
+                { text: "You are never alone. Hashem is with you wherever you go.", source: "— Bereishis 28:15" }
+            ],
+            purpose: [
+                { text: "Every single soul contains an entire world.", source: "— Sanhedrin 37a" },
+                { text: "You were put in this world because there is something only YOU can do.", source: "— Based on Baal Shem Tov teachings" },
+                { text: "Your neshamah chose this life. You have what it takes to live it.", source: "— Chassidic teaching" },
+                { text: "The world was created for your sake.", source: "— Sanhedrin 37a" },
+                { text: "There are people in this world who need exactly what you carry inside you.", source: "— Chizuk reminder" }
+            ]
+        };
+
+        const allChizuk = Object.values(chizukData).flat();
+        let lastChizukIndex = -1;
+
+        function newChizuk() {
+            let idx;
+            do { idx = Math.floor(Math.random() * allChizuk.length); } 
+            while (idx === lastChizukIndex);
+            lastChizukIndex = idx;
+            document.getElementById('chizukText').textContent = allChizuk[idx].text;
+            document.getElementById('chizukSource').textContent = allChizuk[idx].source;
+        }
+
+        function copyChizuk() {
+            const text = document.getElementById('chizukText').textContent + '\n' + document.getElementById('chizukSource').textContent;
+            navigator.clipboard.writeText(text).then(() => {
+                const btn = event.target;
+                btn.textContent = '✅ Copied!';
+                setTimeout(() => btn.textContent = '📋 Copy', 2000);
+            });
+        }
+
+        function showChizukCategory(cat) {
+            const grid = document.getElementById('chizukGrid');
+            const quotes = chizukData[cat];
+            grid.innerHTML = quotes.map(q => `
+                <div style="background: white; border-radius: 14px; padding: 20px; border-left: 4px solid #f59e0b; box-shadow: 0 2px 8px rgba(245,158,11,0.1);">
+                    <p style="color: #78350f; font-size: 17px; line-height: 1.7; font-family: Georgia, serif; font-style: italic; margin-bottom: 8px;">${q.text}</p>
+                    <p style="color: #b45309; font-size: 13px; font-weight: 600;">${q.source}</p>
+                </div>
+            `).join('');
+            grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        // Show a random chizuk on load
+        document.addEventListener('DOMContentLoaded', function() {
+            newChizuk();
+        });
     </script>
 
 </body>
