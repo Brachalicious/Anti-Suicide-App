@@ -1195,6 +1195,7 @@
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
                     <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu(); closeMobileNav()">🤖 MysticMinded³³ Bot</button>
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
+                    <button onclick="showBreathingTechniques(); closeCrisisToolsMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
                     <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
@@ -1979,27 +1980,34 @@
                     <h2 class="section-title">Quick Support Tools</h2>
                     <!-- 1. Emergency Contacts -->
                     <button class="btn" onclick="showContacts()" style="background:#16a34a;">📞 Emergency Contacts</button>
-                    <!-- 2. My Safety Plan -->
+                    <!-- 2. Coping Strategies -->
+                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
+                    <!-- 3. My Safety Plan -->
                     <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
-                    <!-- 3. Breathing Exercises -->
+                    <!-- 4. Breathing Exercises -->
                     <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
                     <!-- 5. Progressive Muscle Relaxation -->
                     <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">💪 Progressive Muscle Relaxation</button>
                     <!-- 6. Guided Meditation -->
                     <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
 
-                    <!-- 7. Guided Affirmations -->
-                    <div style="margin-top: 12px; padding: 14px; background: linear-gradient(135deg, #1c0a2e, #3b1059); border-radius: 14px; border: 2px solid #e879f9;">
-                        <h3 style="color:#f0abfc; font-size:16px; margin-bottom:8px;">💫 Guided Affirmations</h3>
-                        <p style="color:#e9d5ff; font-size:13px; margin-bottom:10px;">Read each affirmation slowly and breathe it in.</p>
-                        <div id="guidedAffBox" style="background:rgba(255,255,255,0.08); border-radius:10px; padding:14px; text-align:center; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                            <span id="guidedAffText" style="color:#f3e8ff; font-size:16px; font-weight:600; line-height:1.6; font-style:italic;">"I am worthy of love and healing."</span>
+                    <!-- 7. Affirmations Mirror (collapsible) -->
+                    <div style="margin-top: 12px; border-radius: 14px; border: 2px solid #e879f9; overflow: hidden;">
+                        <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer; background: linear-gradient(135deg, #1c0a2e, #3b1059); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center;">
+                            <span style="color:#f0abfc; font-size:16px; font-weight:700;">🪞 Affirmations Mirror</span>
+                            <span style="color:#e879f9; font-size:18px;">▾</span>
                         </div>
-                        <div style="display:flex; gap:8px; margin-top:10px;">
-                            <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="prevGuidedAff()">← Prev</button>
-                            <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="nextGuidedAff()">Next →</button>
+                        <div style="display:none; background: linear-gradient(135deg, #1c0a2e, #3b1059); padding: 0 14px 14px 14px;">
+                            <p style="color:#e9d5ff; font-size:13px; margin-bottom:10px;">Read each affirmation slowly and breathe it in.</p>
+                            <div id="guidedAffBox" style="background:rgba(255,255,255,0.08); border-radius:10px; padding:14px; text-align:center; min-height:70px; display:flex; align-items:center; justify-content:center;">
+                                <span id="guidedAffText" style="color:#f3e8ff; font-size:16px; font-weight:600; line-height:1.6; font-style:italic;">"I am worthy of love and healing."</span>
+                            </div>
+                            <div style="display:flex; gap:8px; margin-top:10px;">
+                                <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="prevGuidedAff()">← Prev</button>
+                                <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="nextGuidedAff()">Next →</button>
+                            </div>
+                            <p id="guidedAffCounter" style="color:#d8b4fe; font-size:12px; text-align:center; margin-top:6px;">1 / 12</p>
                         </div>
-                        <p id="guidedAffCounter" style="color:#d8b4fe; font-size:12px; text-align:center; margin-top:6px;">1 / 12</p>
                     </div>
 
                     <!-- Find Professional Help button moved to top emergency area -->
@@ -2876,7 +2884,6 @@
                         🌐 Open Psychology Today
                     </button>
                 </div>
-                <button class="btn" style="margin-top: 12px;" onclick="showBreathingTechniques()">🧘 Guided Breathing Exercise</button>
             </div>
             <div class="card">
                 <h2 class="section-title">Crisis Alternatives</h2>
