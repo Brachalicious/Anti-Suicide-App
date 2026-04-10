@@ -905,7 +905,9 @@
         @media screen and (max-width: 768px) {
             body {
                 font-size: 14px;
-                background: linear-gradient(160deg, #fff0f6 0%, #fdf4ff 40%, #f0f9ff 100%);
+                /* Keep the background image on mobile — don't override it */
+                background-size: cover;
+                background-attachment: scroll; /* fixed doesn't work well on iOS */
             }
             .container {
                 padding: 10px;
