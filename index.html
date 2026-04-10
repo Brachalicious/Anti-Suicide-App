@@ -896,6 +896,11 @@
             }
         }
 
+        /* Hamburger button — hidden on desktop */
+        .hamburger-btn {
+            display: none;
+        }
+
         /* Mobile devices (landscape and portrait) */
         @media screen and (max-width: 768px) {
             body {
@@ -906,15 +911,64 @@
                 padding: 10px;
                 max-width: 100%;
             }
+
+            /* Hamburger toggle button */
+            .hamburger-btn {
+                display: flex;
+                align-items: center;
+                gap: 8px;
+                width: 100%;
+                padding: 13px 18px;
+                background: linear-gradient(135deg, #fce7f3, #f3e8ff);
+                border: 2px solid rgba(190,24,93,0.35);
+                border-radius: 16px;
+                color: #9d174d;
+                font-weight: 700;
+                font-size: 16px;
+                cursor: pointer;
+                margin-bottom: 6px;
+                box-shadow: 0 2px 8px rgba(180,100,140,0.15);
+                justify-content: space-between;
+            }
+            .hamburger-btn .hamburger-icon {
+                font-size: 20px;
+                line-height: 1;
+            }
+            .hamburger-btn .hamburger-label {
+                flex: 1;
+                text-align: left;
+            }
+            .hamburger-btn .hamburger-arrow {
+                font-size: 13px;
+                transition: transform 0.3s ease;
+            }
+            .hamburger-btn.open .hamburger-arrow {
+                transform: rotate(180deg);
+            }
+
+            /* Nav wrapper on mobile */
+            .nav-mobile-wrapper {
+                margin-bottom: 16px;
+            }
+
+            /* Collapsible nav panel */
             .nav {
                 flex-direction: column;
                 align-items: stretch;
                 gap: 5px;
                 padding: 10px;
-                background: rgba(255,255,255,0.6);
-                border-radius: 16px;
-                backdrop-filter: blur(8px);
-                margin-bottom: 16px;
+                background: rgba(255,255,255,0.85);
+                border-radius: 0 0 16px 16px;
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px);
+                border: 1.5px solid rgba(190,24,93,0.18);
+                border-top: none;
+                margin-bottom: 0;
+                /* Collapsed by default on mobile */
+                display: none;
+            }
+            .nav.mobile-open {
+                display: flex;
             }
             .nav-item, .nav-dropdown-btn {
                 width: 100%;
@@ -1122,35 +1176,42 @@
             <button class="nav-item" onclick="showSection('contact')" style="padding: 8px 20px; font-size: 14px; border-radius: 20px; background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(16,185,129,0.95)); color: #022c22; font-weight: 700; border: none; box-shadow: 0 3px 10px rgba(16,185,129,0.35);">📞 Contact Us / Support</button>
             <button id="small-find-help" class="nav-item" onclick="window.open('https://www.psychologytoday.com/us', '_blank')" style="padding: 8px 20px; font-size: 14px; border-radius: 20px; background: linear-gradient(135deg, rgba(34,197,94,0.95), rgba(16,185,129,0.95)); color: #022c22; font-weight: 700; border: none; box-shadow: 0 3px 10px rgba(16,185,129,0.35);">🔍 Find Help</button>
         </div>
-        <nav class="nav">
-            <button class="nav-item active" onclick="showSection('dashboard')">Dashboard</button>
-            <button class="nav-item" onclick="showSection('crisis')">Crisis Support</button>
-            <button class="nav-item" onclick="showSection('crisis-skills')">🛟 Crisis Skills</button>
+        <div class="nav-mobile-wrapper">
+          <button class="hamburger-btn" id="hamburgerBtn" onclick="toggleMobileNav()">
+            <span class="hamburger-icon">☰</span>
+            <span class="hamburger-label" id="hamburgerLabel">Menu</span>
+            <span class="hamburger-arrow">▼</span>
+          </button>
+        <nav class="nav" id="mainNav">
+            <button class="nav-item active" onclick="showSection('dashboard'); closeMobileNav()">Dashboard</button>
+            <button class="nav-item" onclick="showSection('crisis'); closeMobileNav()">Crisis Support</button>
+            <button class="nav-item" onclick="showSection('crisis-skills'); closeMobileNav()">🛟 Crisis Skills</button>
 
             <!-- Crisis Tools Dropdown -->
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
                 <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Crisis Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
-                    <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu()">🤖 MysticMinded³³ Bot</button>
-                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu()">🙏 Talk to ה'</button>
-                    <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu()">💫 Affirmation Cards</button>
-                    <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu()">💪 Crush the Stigma</button>
-                    <button onclick="showSection('bullying-support'); closeCrisisToolsMenu()">🛡️ Bullying Support</button>
-                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu()">🎨 Color & Paint</button>
-                    <button onclick="showSection('music'); closeCrisisToolsMenu()">🎵 My Music</button>
-                    <button onclick="showSection('release'); closeCrisisToolsMenu()">😤 Release &amp; Let Go</button>
-                    <button onclick="showSection('mood'); closeCrisisToolsMenu()">📓 My Diary</button>
-                    <button onclick="showSection('hope-wall'); closeCrisisToolsMenu()">💚 Wall of Hope</button>
-                    <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu()">📖 My Affirmation Book</button>
-                    <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu()">💝 Jar of Hearts</button>
-                    <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu()">🧠 Escape Your Head</button>
-                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu()">🍄 Mushroom Runner</button>
+                    <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu(); closeMobileNav()">🤖 MysticMinded³³ Bot</button>
+                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
+                    <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
+                    <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
+                    <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
+                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu(); closeMobileNav()">🎨 Color & Paint</button>
+                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav()">🎵 My Music</button>
+                    <button onclick="showSection('release'); closeCrisisToolsMenu(); closeMobileNav()">😤 Release &amp; Let Go</button>
+                    <button onclick="showSection('mood'); closeCrisisToolsMenu(); closeMobileNav()">📓 My Diary</button>
+                    <button onclick="showSection('hope-wall'); closeCrisisToolsMenu(); closeMobileNav()">💚 Wall of Hope</button>
+                    <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu(); closeMobileNav()">📖 My Affirmation Book</button>
+                    <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu(); closeMobileNav()">💝 Jar of Hearts</button>
+                    <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu(); closeMobileNav()">🧠 Escape Your Head</button>
+                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
                 </div>
             </div>
-            <button class="nav-item" onclick="showSection('resources')">📚 Resources</button>
-            <button class="nav-item" onclick="showSection('chizuk')">✨ Chizuk</button>
-            <button class="nav-item" onclick="showSection('dedication')">💖 Dedication</button>
+            <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
+            <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
+            <button class="nav-item" onclick="showSection('dedication'); closeMobileNav()">💖 Dedication</button>
         </nav>
+        </div><!-- end nav-mobile-wrapper -->
 
         <!-- Crisis Skills Section -->
         <div id="crisis-skills" class="section hidden">
@@ -7575,6 +7636,14 @@ User's message: ${userMessage}`
                 document.getElementById('dashboard').classList.remove('hidden');
             }
             console.log(`Navigating to: ${section}`);
+            // Update hamburger label to reflect current section
+            const hamburgerLabel = document.getElementById('hamburgerLabel');
+            if (hamburgerLabel) {
+                const activeBtn = document.querySelector('.nav-item.active, .nav-dropdown-btn.active');
+                if (activeBtn) {
+                    hamburgerLabel.textContent = activeBtn.textContent.replace('▾','').trim();
+                }
+            }
         }
 
         function toggleCrisisToolsMenu(e) {
@@ -7584,6 +7653,34 @@ User's message: ${userMessage}`
 
         function closeCrisisToolsMenu() {
             document.getElementById('crisisToolsMenu').classList.remove('open');
+        }
+
+        // ── Mobile hamburger nav ──
+        function toggleMobileNav() {
+            const nav = document.getElementById('mainNav');
+            const btn = document.getElementById('hamburgerBtn');
+            const label = document.getElementById('hamburgerLabel');
+            const isOpen = nav.classList.toggle('mobile-open');
+            btn.classList.toggle('open', isOpen);
+            // Show the active section name on the button when closed
+            if (!isOpen) {
+                const active = nav.querySelector('.nav-item.active');
+                label.textContent = active ? active.textContent.trim() : 'Menu';
+            } else {
+                label.textContent = 'Close Menu ✕';
+            }
+        }
+
+        function closeMobileNav() {
+            const nav = document.getElementById('mainNav');
+            const btn = document.getElementById('hamburgerBtn');
+            const label = document.getElementById('hamburgerLabel');
+            if (nav.classList.contains('mobile-open')) {
+                nav.classList.remove('mobile-open');
+                btn.classList.remove('open');
+                const active = nav.querySelector('.nav-item.active');
+                label.textContent = active ? active.textContent.trim() : 'Menu';
+            }
         }
 
         function showAboutMysticMinded() {
