@@ -1918,6 +1918,7 @@
                         <div class="mood-btn" onclick="selectMoodEmoji(this, 9)">😁</div>
                         <div class="mood-btn" onclick="selectMoodEmoji(this, 10)">🤩</div>
                     </div>
+                    <div id="mood-emotion-label" style="display:none; text-align:center; margin: 10px 0 4px 0; font-size: 17px; font-weight: 700; color: #be185d; letter-spacing: 0.5px;"></div>
                     <p style="margin-top: 8px; font-size: 14px; color: #6b7280;">I'm also feeling:</p>
                     <div class="feeling-tags" id="home-feeling-tags">
                         <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">💔</span> Heartbroken</div>
@@ -5203,6 +5204,24 @@ User's message: ${userMessage}`
             const valueDisplay = card.querySelector('.mood-slider-value');
             if (slider) { slider.value = mood; }
             if (valueDisplay) { valueDisplay.textContent = mood; }
+            // Show emotion name label
+            const moodNames = {
+                1: '😭 Devastated',
+                2: '😢 Really Sad',
+                3: '😞 Down',
+                4: '😔 Low',
+                5: '😐 Neutral',
+                6: '🙂 Okay',
+                7: '😊 Good',
+                8: '😄 Happy',
+                9: '😁 Really Happy',
+                10: '🤩 Amazing!'
+            };
+            const label = card.querySelector('#mood-emotion-label');
+            if (label) {
+                label.textContent = 'You\'re feeling: ' + (moodNames[mood] || '');
+                label.style.display = 'block';
+            }
         }
 
         function updateHomeSlider(val) {
