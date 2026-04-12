@@ -25,14 +25,13 @@
             pointer-events: none;
             z-index: 0;
         }
-        /* Vibrancy boost layer */
+        /* Vibrancy boost layer - color overlay instead of backdrop-filter to avoid blurring background */
         body::after {
             content: '';
             position: fixed;
             inset: 0;
-            background: transparent;
-            backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
-            -webkit-backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
+            background: rgba(255, 220, 240, 0.08);
+            mix-blend-mode: screen;
             pointer-events: none;
             z-index: 0;
         }
