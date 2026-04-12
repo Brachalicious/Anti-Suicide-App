@@ -71,7 +71,7 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 300px;
+            padding-bottom: 80px;
         }
         .crisis-banner {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
@@ -928,13 +928,17 @@
         @media screen and (max-width: 768px) {
             body {
                 font-size: 14px;
-                /* Keep the background image on mobile — don't override it */
                 background-size: cover;
-                background-position: top center;
+                background-position: center center;
+                background-repeat: no-repeat;
                 background-attachment: scroll; /* fixed doesn't work well on iOS */
+                -webkit-background-size: cover;
+                min-height: 100vh;
+                min-height: -webkit-fill-available;
             }
             .container {
                 padding: 10px;
+                padding-bottom: 60px;
                 max-width: 100%;
             }
 
@@ -1051,6 +1055,7 @@
             }
             .container {
                 padding: 8px;
+                padding-bottom: 60px;
             }
             .nav {
                 padding: 8px;
@@ -1929,7 +1934,7 @@
                 <div class="card">
                     <h2 class="section-title">Daily Check-in</h2>
                     <p>How are you feeling today? Pick an emoji:</p>
-                    <div class="mood-scale" style="justify-content: center; gap: 4px;">
+                    <div class="mood-scale">
                         <div class="mood-btn" onclick="selectMoodEmoji(this, 1)" data-label="Devastated">😭</div>
                         <div class="mood-btn" onclick="selectMoodEmoji(this, 2)" data-label="Really Sad">😢</div>
                         <div class="mood-btn" onclick="selectMoodEmoji(this, 3)" data-label="Down">😞</div>
@@ -2569,7 +2574,7 @@
                 </div>
 
                 <p style="color: #5d4037; font-family: 'Georgia', serif; font-size: 14px; margin-bottom: 6px;">How are you feeling?</p>
-                <div class="mood-scale" style="justify-content: center; gap: 4px;">
+                <div class="mood-scale">
                     <div class="mood-btn" onclick="selectMoodEmoji(this, 1)" data-label="Devastated">😭</div>
                     <div class="mood-btn" onclick="selectMoodEmoji(this, 2)" data-label="Really Sad">😢</div>
                     <div class="mood-btn" onclick="selectMoodEmoji(this, 3)" data-label="Down">😞</div>
