@@ -196,10 +196,9 @@
         }
         .mood-scale {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             margin: 24px 0;
-            flex-wrap: nowrap;
-            gap: 4px;
+            flex-wrap: wrap;
         }
         .feeling-tags {
             display: flex;
@@ -258,8 +257,8 @@
             font-size: 18px;
         }
         .mood-btn {
-            width: 38px;
-            height: 38px;
+            width: 44px;
+            height: 44px;
             border-radius: 50%;
             border: 2px solid #ddd;
             background: white;
@@ -267,10 +266,32 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 19px;
+            font-size: 22px;
             transition: all 0.2s;
             margin: 2px;
-            flex-shrink: 0;
+            position: relative;
+        }
+        .mood-btn::after {
+            content: attr(data-label);
+            position: absolute;
+            bottom: 110%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #be185d;
+            color: white;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 4px 9px;
+            border-radius: 10px;
+            white-space: nowrap;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.18s;
+            z-index: 10;
+        }
+        .mood-btn:hover::after,
+        .mood-btn.selected::after {
+            opacity: 1;
         }
         .mood-btn:hover {
             transform: scale(1.15);
@@ -1909,16 +1930,16 @@
                     <h2 class="section-title">Daily Check-in</h2>
                     <p>How are you feeling today? Pick an emoji:</p>
                     <div class="mood-scale" style="justify-content: center; gap: 4px;">
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 1)">😭</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 2)">😢</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 3)">😞</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 4)">😔</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 5)">😐</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 6)">🙂</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 7)">😊</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 8)">😄</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 9)">😁</div>
-                        <div class="mood-btn" onclick="selectMoodEmoji(this, 10)">🤩</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 1)" data-label="Devastated">😭</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 2)" data-label="Really Sad">😢</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 3)" data-label="Down">😞</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 4)" data-label="Low">😔</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 5)" data-label="Neutral">😐</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 6)" data-label="Okay">🙂</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 7)" data-label="Good">😊</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 8)" data-label="Happy">😄</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 9)" data-label="Really Happy">😁</div>
+                        <div class="mood-btn" onclick="selectMoodEmoji(this, 10)" data-label="Amazing!">🤩</div>
                     </div>
                     <div id="mood-emotion-label" style="display:none; text-align:center; margin: 10px 0 4px 0; font-size: 17px; font-weight: 700; color: #be185d; letter-spacing: 0.5px;"></div>
                     <p style="margin-top: 8px; font-size: 14px; color: #6b7280;">I'm also feeling:</p>
@@ -2549,16 +2570,16 @@
 
                 <p style="color: #5d4037; font-family: 'Georgia', serif; font-size: 14px; margin-bottom: 6px;">How are you feeling?</p>
                 <div class="mood-scale" style="justify-content: center; gap: 4px;">
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 1)">😭</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 2)">😢</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 3)">😞</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 4)">😔</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 5)">😐</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 6)">🙂</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 7)">😊</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 8)">😄</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 9)">😁</div>
-                    <div class="mood-btn" onclick="selectMoodEmoji(this, 10)">🤩</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 1)" data-label="Devastated">😭</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 2)" data-label="Really Sad">😢</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 3)" data-label="Down">😞</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 4)" data-label="Low">😔</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 5)" data-label="Neutral">😐</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 6)" data-label="Okay">🙂</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 7)" data-label="Good">😊</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 8)" data-label="Happy">😄</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 9)" data-label="Really Happy">😁</div>
+                    <div class="mood-btn" onclick="selectMoodEmoji(this, 10)" data-label="Amazing!">🤩</div>
                 </div>
 
                 <p style="margin-top: 8px; font-size: 13px; color: #8d6e63; font-family: 'Georgia', serif;">I'm also feeling:</p>
