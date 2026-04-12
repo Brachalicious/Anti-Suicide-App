@@ -25,17 +25,7 @@
             pointer-events: none;
             z-index: 0;
         }
-        /* Vibrancy boost layer */
-        body::after {
-            content: '';
-            position: fixed;
-            inset: 0;
-            background: transparent;
-            backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
-            -webkit-backdrop-filter: saturate(1.6) brightness(1.05) contrast(1.08);
-            pointer-events: none;
-            z-index: 0;
-        }
+        /* Vibrancy boost layer removed - was causing blurry background on desktop */
         /* (Animated sky clouds removed) */
         /* Scream circle expanding energy rings */
         @keyframes screamRipple {
@@ -1125,10 +1115,6 @@
 
         /* Landscape orientation on mobile */
         @media screen and (max-width: 896px) and (orientation: landscape) {
-            .container {
-                max-height: 100vh;
-                overflow-y: auto;
-            }
             .nav {
                 flex-direction: row;
                 flex-wrap: wrap;
