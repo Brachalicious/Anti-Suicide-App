@@ -22,6 +22,150 @@
             from { opacity: 0; transform: scale(0.7) translateY(6px); }
             to   { opacity: 1; transform: scale(1) translateY(0); }
         }
+        @keyframes mirrorPulseRing {
+            0%   { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        @keyframes mirrorListenGlow {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(236,72,153,0.7), 0 0 20px rgba(236,72,153,0.4); }
+            50%       { box-shadow: 0 0 0 12px rgba(236,72,153,0), 0 0 40px rgba(236,72,153,0.7); }
+        }
+        @keyframes mirrorAffSlideIn {
+            from { opacity: 0; transform: translateY(12px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes mirrorShimmer {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
+        }
+        .mirror-frame-wrap {
+            position: relative;
+            width: 100%;
+            max-width: 320px;
+            margin: 0 auto;
+            aspect-ratio: 1 / 1;
+        }
+        .mirror-frame-wrap::before {
+            content: '';
+            position: absolute;
+            inset: -6px;
+            border-radius: 50%;
+            background: conic-gradient(#d4af37, #f5e27a, #c8960c, #e8d060, #d4af37);
+            z-index: 0;
+            animation: mirrorShimmer 3s linear infinite;
+        }
+        .mirror-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            overflow: hidden;
+            z-index: 1;
+            background: #000;
+            border: 4px solid #d4af37;
+        }
+        .mirror-inner video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+            display: block;
+        }
+        .mirror-aff-overlay {
+            position: absolute;
+            bottom: 14%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 82%;
+            text-align: center;
+            z-index: 3;
+            pointer-events: none;
+        }
+        .mirror-aff-overlay p {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(13px, 3.5vw, 20px);
+            font-weight: 700;
+            color: #fff;
+            text-shadow: 0 2px 12px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.8);
+            margin: 0;
+            line-height: 1.35;
+            animation: mirrorAffSlideIn 0.5s ease;
+        }
+        .mirror-speech-badge {
+            position: absolute;
+            top: 12%;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 4;
+            background: rgba(16,185,129,0.9);
+            color: #fff;
+            padding: 5px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: 600;
+            white-space: nowrap;
+            max-width: 90%;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .mirror-tab-btn {
+            flex: 1;
+            padding: 8px 4px;
+            border: 2px solid rgba(212,175,55,0.4);
+            border-radius: 10px;
+            background: rgba(255,255,255,0.06);
+            color: #fce7f3;
+            font-size: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .mirror-tab-btn.active {
+            background: rgba(212,175,55,0.25);
+            border-color: #d4af37;
+            color: #f5e27a;
+        }
+        .mirror-aff-item {
+            padding: 10px 12px;
+            border-radius: 10px;
+            border: 1.5px solid rgba(212,175,55,0.3);
+            background: rgba(255,255,255,0.06);
+            color: #fce7f3;
+            font-size: 13px;
+            cursor: pointer;
+            text-align: left;
+            line-height: 1.4;
+            transition: all 0.15s;
+            font-style: italic;
+        }
+        .mirror-aff-item:hover, .mirror-aff-item.selected {
+            background: rgba(212,175,55,0.2);
+            border-color: #d4af37;
+            color: #f5e27a;
+        }
+        .mirror-listen-btn {
+            background: linear-gradient(135deg, #be185d, #ec4899);
+            border: none;
+            border-radius: 50%;
+            width: 64px;
+            height: 64px;
+            font-size: 26px;
+            cursor: pointer;
+            position: relative;
+            transition: transform 0.15s;
+            flex-shrink: 0;
+        }
+        .mirror-listen-btn:active { transform: scale(0.93); }
+        .mirror-listen-btn.listening {
+            animation: mirrorListenGlow 1.2s ease-in-out infinite;
+        }
+        .mirror-listen-btn::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: 50%;
+            border: 3px solid rgba(236,72,153,0.6);
+        }
         @keyframes screamRipple {
             0%   { transform: scale(1); opacity: 0.9; border-width: 4px; }
             50%  { opacity: 0.6; }
@@ -871,9 +1015,9 @@
         }
         
         .circular-text text {
-            font-size: 18px;
+            font-size: 11px;
             font-weight: 800;
-            letter-spacing: 5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             fill: #ff1493;
             filter: drop-shadow(0 0 4px rgba(255,20,147,0.5));
@@ -1225,6 +1369,7 @@
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
             <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" onclick="showSection('dedication'); closeMobileNav()">💖 Dedication</button>
+            <button class="nav-item" onclick="window.open('https://988lifeline.org/get-involved/','_blank'); closeMobileNav()">🤝 Give Back</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
 
@@ -3149,6 +3294,57 @@
                     <button class="btn" onclick="window.open('https://www.reliefhelp.org/', '_blank')">Visit Relief Resources</button>
                 </div>
             </div>
+
+            <!-- NYC In-Person Crisis Teams -->
+            <div class="card">
+                <h2 class="section-title">🏙️ In-Person Crisis Teams (NYC)</h2>
+                <p style="margin-bottom:16px; color:#ff69b4;">These teams come to YOU — at home, school, or in your community. You don't have to go anywhere.</p>
+
+                <div class="hotline">
+                    <h3>NYC Mobile Crisis Teams (via 988)</h3>
+                    <div class="phone">📞 Call or text 988</div>
+                    <p>NYC operates Mobile Crisis Teams across all five boroughs — nurses, social workers, and peer specialists who come to you in person. When you call 988, <strong>specifically ask for a "Mobile Crisis Team"</strong> to be sent to your location.</p>
+                    <p style="margin-top:8px; font-size:13px; color:#ff69b4;">⏱️ Typically respond within 2 hours · Available 8 AM–8 PM</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:988')">📞 Call 988 Now</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Amudim — 24/7 Crisis Assistance</h3>
+                    <div class="phone">📞 646-517-0222</div>
+                    <p>Provides 24/7 crisis assistance for mental health and family violence — frequently coordinating direct in-person intervention through their community network. Serves the Jewish community with deep cultural sensitivity.</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:6465170222')">Call Amudim 24/7</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Hatzalah — Acute Emergency Response</h3>
+                    <p>While primarily for medical emergencies, Hatzalah provides the fastest in-person response in most Jewish neighborhoods and can facilitate immediate stabilization or transport for acute mental health crises.</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:7182301000')">📞 718-230-1000</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Ohel Mobile Outreach</h3>
+                    <div class="phone">📞 718-686-3311 · 1-800-603-OHEL</div>
+                    <p>A dedicated mobile team that travels directly to you — at home, school, or anywhere in the community — for immediate crisis intervention. Provides rapid face-to-face response, short-term case management (4–6 visits), and stabilization support.</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:7186863311')">Call Ohel Mobile</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.ohelfamily.org/','_blank')">Visit Ohel</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>The Jewish Board — Children's Mobile Crisis Team (CMCT)</h3>
+                    <div class="phone">📞 1-844-ONE-CALL (1-844-663-2255)</div>
+                    <p>In-person crisis response for children and young adults up to age 20 in Staten Island. Clinicians and advocates respond within two hours of a referral, coming directly to your home or school.</p>
+                    <p style="margin-top:8px; font-size:13px; color:#ff69b4;">⏱️ Available 7 days a week, 8 AM–8 PM</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:18446632255')">Call Jewish Board CMCT</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>The Jewish Board — Home-Based Crisis Intervention (HBCI)</h3>
+                    <div class="phone">📞 1-844-663-2255</div>
+                    <p>Intensive in-home support for families with a child at risk of psychiatric hospitalization. Clinicians come directly to your home to provide stabilization and support — keeping families together.</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:18446632255')">Call Jewish Board HBCI</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://jewishboard.org/','_blank')">Visit Jewish Board</button>
+                </div>
+            </div>
         </div>
         </div>
 
@@ -4255,34 +4451,88 @@
                         </p>
                     </div>
 
-                    <!-- Affirmation Mirror -->
-                    <div style="margin-top: 24px; padding: 18px; background: linear-gradient(135deg, #0c1a2e, #0f3460); border-radius: 16px; border: 2px solid #60a5fa;">
-                        <h3 style="color:#93c5fd; font-size:18px; margin-bottom:8px;">🪞 Affirmations in the Mirror</h3>
-                        <p style="color:#bfdbfe; font-size:14px; margin-bottom:12px;">Open your camera, look yourself in the eye, and say your affirmation out loud. 💜</p>
-                        <div id="mirrorContainer" style="display:none; margin-bottom:10px; border-radius:12px; overflow:hidden; background:#000; position:relative;">
-                            <video id="mirrorVideo" autoplay playsinline muted style="width:100%; max-height:280px; object-fit:cover; display:block; transform:scaleX(-1);"></video>
-                            <!-- Animated affirmation text overlay -->
-                            <div id="mirrorTextOverlay" style="position:absolute; bottom:52px; left:0; right:0; text-align:center; padding:0 12px;">
-                                <p id="mirrorAffDisplay" style="font-family:'Dancing Script',cursive; font-size:22px; font-weight:700; color:#fff; text-shadow:0 2px 8px rgba(0,0,0,0.9); margin:0; line-height:1.3;">"I am worthy of love and healing."</p>
+                    <!-- Affirmation Mirror (Redesigned) -->
+                    <div style="margin-top:28px; padding:20px; background:linear-gradient(135deg,#1a0a2e,#0c1a2e); border-radius:20px; border:2px solid rgba(212,175,55,0.5);">
+                        <h3 style="color:#f5e27a; font-size:18px; margin:0 0 6px 0; text-align:center; letter-spacing:1px;">&#127766; Affirmation Mirror</h3>
+                        <p style="color:#fce7f3; font-size:13px; margin:0 0 16px 0; text-align:center;">Look yourself in the eye. Say it out loud. Hear your own voice speak truth.</p>
+
+                        <!-- Main layout: mirror left, affirmations right -->
+                        <div style="display:flex; gap:14px; flex-wrap:wrap; align-items:flex-start;">
+
+                            <!-- Left: Circular Mirror -->
+                            <div style="flex:1; min-width:220px; display:flex; flex-direction:column; align-items:center; gap:10px;">
+                                <div id="mirrorFrameWrap" class="mirror-frame-wrap" style="display:none;">
+                                    <div class="mirror-inner">
+                                        <video id="mirrorVideo" autoplay playsinline muted></video>
+                                        <!-- Affirmation text overlay -->
+                                        <div class="mirror-aff-overlay">
+                                            <p id="mirrorAffDisplay">"I am worthy of love and healing."</p>
+                                        </div>
+                                        <!-- Speech heard badge -->
+                                        <div id="mirrorSpeechBadge" class="mirror-speech-badge" style="display:none;">
+                                            &#127908; <span id="mirrorHeardText">...</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Placeholder when camera off -->
+                                <div id="mirrorPlaceholder" style="width:240px; height:240px; border-radius:50%; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); border:5px solid #d4af37; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; box-shadow:0 0 30px rgba(212,175,55,0.3);">
+                                    <span style="font-size:52px;">&#127766;</span>
+                                    <p style="color:#f5e27a; font-size:13px; font-weight:700; margin:0; text-align:center; padding:0 20px;">Tap Open Mirror<br>to see you</p>
+                                </div>
+
+                                <!-- Status text -->
+                                <p id="mirrorStatus" style="color:#f5e27a; font-size:13px; min-height:18px; text-align:center; margin:0;"></p>
+                                <p id="mirrorCelebration" style="color:#fbbf24; font-size:14px; font-weight:700; text-align:center; margin:0; display:none;"></p>
+
+                                <!-- Open/Close button -->
+                                <div style="display:flex; gap:8px; width:100%; max-width:260px;">
+                                    <button id="mirrorStartBtn" class="btn" style="flex:1; background:linear-gradient(135deg,#92400e,#d4af37); color:#1a0a2e; font-weight:800; font-size:14px;" onclick="openMirror()">&#128248; Open Mirror</button>
+                                    <button id="mirrorStopBtn" class="btn" style="flex:1; background:#374151; font-size:14px; display:none;" onclick="closeMirror()">&#10005; Close</button>
+                                </div>
+
+                                <!-- Say It button (shown when camera open) -->
+                                <div id="mirrorListenRow" style="display:none; flex-direction:column; align-items:center; gap:6px;">
+                                    <button class="mirror-listen-btn" id="mirrorListenBtn" onclick="startMirrorListening()" title="Say your affirmation out loud">&#127908;</button>
+                                    <p style="color:#fce7f3; font-size:12px; margin:0; font-weight:700;">Tap &amp; Say It</p>
+                                </div>
+
+                                <!-- TTS repeat button -->
+                                <button id="mirrorRepeatBtn" style="display:none; padding:8px 18px; background:rgba(212,175,55,0.2); border:1.5px solid #d4af37; border-radius:20px; color:#f5e27a; font-size:13px; font-weight:700; cursor:pointer;" onclick="mirrorRepeatAff()">&#128264; Hear it repeated back</button>
                             </div>
-                            <!-- Speech feedback overlay -->
-                            <div id="mirrorSpeechOverlay" style="position:absolute; top:10px; left:0; right:0; text-align:center; display:none;">
-                                <span style="background:rgba(16,185,129,0.85); color:#fff; padding:5px 14px; border-radius:20px; font-size:13px;">🎤 <span id="mirrorHeardText">...</span></span>
+
+                            <!-- Right: Affirmation Picker -->
+                            <div style="flex:1; min-width:200px; max-width:320px;">
+                                <p style="color:#f5e27a; font-size:13px; font-weight:800; margin:0 0 8px 0; text-align:center; letter-spacing:0.5px;">&#10024; Pick an affirmation</p>
+
+                                <!-- Tabs -->
+                                <div style="display:flex; gap:6px; margin-bottom:10px;">
+                                    <button class="mirror-tab-btn active" id="mTab-list" onclick="switchMirrorTab('list')">&#128221; List</button>
+                                    <button class="mirror-tab-btn" id="mTab-book" onclick="switchMirrorTab('book')">&#128218; My Book</button>
+                                    <button class="mirror-tab-btn" id="mTab-custom" onclick="switchMirrorTab('custom')">&#43; Custom</button>
+                                </div>
+
+                                <!-- Tab: Built-in list -->
+                                <div id="mPanel-list" style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px;">
+                                </div>
+
+                                <!-- Tab: Affirmation Book -->
+                                <div id="mPanel-book" style="max-height:280px; overflow-y:auto; display:flex; flex-direction:column; gap:6px; display:none;">
+                                    <p id="mBookEmpty" style="color:#fce7f3; font-size:13px; font-style:italic; text-align:center; margin:8px 0;">Your affirmation book is empty.<br>Add some in &#128218; My Affirmation Book!</p>
+                                </div>
+
+                                <!-- Tab: Custom input -->
+                                <div id="mPanel-custom" style="display:none; flex-direction:column; gap:8px;">
+                                    <textarea id="mirrorCustomInput" placeholder="Type your own affirmation here..." style="width:100%; min-height:70px; padding:10px; border-radius:10px; border:2px solid rgba(212,175,55,0.4); background:rgba(255,255,255,0.07); color:#fce7f3; font-size:13px; resize:vertical; outline:none; box-sizing:border-box;"></textarea>
+                                    <button class="btn" style="background:linear-gradient(135deg,#92400e,#d4af37); color:#1a0a2e; font-weight:800; font-size:13px;" onclick="setMirrorCustomAff()">&#10003; Use This Affirmation</button>
+                                </div>
+
+                                <!-- Currently selected -->
+                                <div id="mirrorSelectedBox" style="margin-top:10px; padding:10px 12px; border-radius:10px; background:rgba(212,175,55,0.12); border:2px solid #d4af37; display:none;">
+                                    <p style="color:#f5e27a; font-size:11px; font-weight:800; margin:0 0 4px 0; text-transform:uppercase; letter-spacing:0.5px;">Selected:</p>
+                                    <p id="mirrorSelectedText" style="color:#fce7f3; font-size:13px; font-style:italic; margin:0; line-height:1.4;"></p>
+                                </div>
                             </div>
-                        </div>
-                        <!-- Status & celebration -->
-                        <p id="mirrorStatus" style="color:#93c5fd; font-size:13px; margin:6px 0; min-height:20px; text-align:center;"></p>
-                        <p id="mirrorCelebration" style="color:#fbbf24; font-size:15px; font-weight:700; margin:4px 0 8px; text-align:center; display:none;"></p>
-                        <!-- Main buttons row -->
-                        <div style="display:flex; gap:8px;">
-                            <button class="btn" id="mirrorStartBtn" style="flex:1; background:#1d4ed8; font-size:14px;" onclick="openMirror()">📸 Open Mirror</button>
-                            <button class="btn" id="mirrorListenBtn" style="flex:1; background:#059669; font-size:14px; display:none;" onclick="startMirrorListening()">🎤 Say It!</button>
-                            <button class="btn" id="mirrorStopBtn" style="flex:1; background:#6b7280; font-size:14px; display:none;" onclick="closeMirror()">✕ Close</button>
-                        </div>
-                        <!-- Navigation row -->
-                        <div style="display:flex; gap:8px; margin-top:8px;">
-                            <button class="btn" style="flex:1; background:#1e40af; font-size:13px;" onclick="prevMirrorAff()">← Prev</button>
-                            <button class="btn" style="flex:1; background:#1e40af; font-size:13px;" onclick="nextMirrorAff()">Next →</button>
                         </div>
                     </div>
                 </div>
@@ -7854,68 +8104,73 @@ User's message: ${userMessage}`
             }
         }
 
-        function showAboutMysticMinded() {
+                function showAboutMysticMinded() {
+            const existing = document.querySelector('.help-guide-modal');
+            if (existing) { existing.remove(); return; }
+
             const modal = document.createElement('div');
-            modal.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0,0,0,0.5);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                z-index: 10000;
-            `;
-            
+            modal.className = 'help-guide-modal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;';
+
             modal.innerHTML = `
-                <div style="background: white; border-radius: 16px; padding: 24px; max-width: 500px; margin: 20px; position: relative; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                    <button onclick="this.closest('.modal-backdrop').remove()" style="position: absolute; top: 12px; right: 12px; background: none; border: none; font-size: 20px; cursor: pointer; width: 30px; height: 30px; display: flex; align-items: center; justify-content: center; border-radius: 50%; hover: background-color: #f5f5f5;">×</button>
-                    
-                    <div style="text-align: center; margin-bottom: 20px;">
-                        <img src="/download-2026-04-05T09_23_05.jpg" alt="MysticMinded33" style="width: 80px; height: 80px; border-radius: 50%; object-fit: cover; border: 3px solid #f8b4cb; margin-bottom: 12px;">
-                        <h2 style="margin: 0; color: #1a1a1a; font-size: 24px; font-weight: 700;">Welcome to MysticMinded³³</h2>
-                        <p style="margin: 8px 0 0 0; color: #666; font-size: 16px;">Your Compassionate AI Companion</p>
+                <div style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:24px;padding:32px;max-width:480px;width:100%;position:relative;border:2px solid rgba(255,20,147,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
+                    <button onclick="this.closest('.help-guide-modal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">\u2715</button>
+                    <div style="text-align:center;margin-bottom:20px;">
+                        <h2 style="color:#ff1493;font-size:22px;font-weight:800;margin:0 0 6px 0;">\U0001f338 Fight Suicide Project</h2>
+                        <p style="color:#ff69b4;font-size:14px;margin:0;">You are not alone. We are here 24/7.</p>
+                        <p style="color:#fce7f3;font-size:13px;margin:10px 0 0 0;line-height:1.5;">A safe space built with love \u2014 tools to breathe, cope, plan, and feel heard. Whatever you need right now, we have it.</p>
                     </div>
-                    
-                    <div style="color: #333; line-height: 1.6; margin-bottom: 16px;">
-                        <p style="margin-bottom: 16px;">MysticMinded³³ is more than just an AI—she's your gentle, understanding companion who's here to listen without judgment and offer support when you need it most.</p>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">💕 What Makes Her Special</h4>
-                            <p style="font-size: 14px; color: #666; margin: 0;">Designed with warmth and empathy, she understands the nuances of human emotion and responds with the care of a loving parent, trusted friend, or even a playful companion.</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">🖼️ See & Understand</h4>
-                            <p style="font-size: 14px; color: #666; margin: 0;">She can view and respond to images you share, offering comfort and insight about what she sees with genuine care and understanding.</p>
-                        </div>
-                        
-                        <div style="margin-bottom: 16px;">
-                            <h4 style="color: #1a1a1a; font-size: 14px; font-weight: 600; margin: 0 0 8px 0;">🌟 Always Here for You</h4>
-                            <p style="font-size: 14px; color: #666; margin: 0;">Whether you need encouragement, someone to listen, or just want to share your day, MysticMinded³³ is available 24/7 with unconditional support and love.</p>
-                        </div>
+                    <p style="color:#fce7f3;font-size:15px;text-align:center;margin:0 0 16px 0;font-weight:700;">What do you need right now?</p>
+                    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
+                        <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('breathingOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">\U0001f62e\u200d\U0001f4a8<br>Breathing</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('safetyPlanOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">\U0001f4cb<br>Safety Plan</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('guidedMeditationOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">\U0001f9d8<br>Calm Down</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('screamCircleOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">\U0001f624<br>Release Anger</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();(document.querySelector('[onclick*=crisis],[onclick*=Crisis]')||{click:function(){}}).click()" style="padding:14px 10px;background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:14px;color:#fca5a5;cursor:pointer;font-size:14px;font-weight:700;">\U0001f198<br>I'm in Crisis</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();(document.querySelector('#chat-input,textarea')||{focus:function(){}}).focus()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">\U0001f4ac<br>Talk to Someone</button>
                     </div>
-                    
-                    <div style="text-align: center; margin-top: 20px;">
-                        <button onclick="showSection('mystic-bot'); this.closest('.modal-backdrop').remove();" style="background: linear-gradient(135deg, #f8b4cb 0%, #a855f7 100%); color: white; border: none; padding: 12px 24px; border-radius: 25px; font-weight: 600; cursor: pointer; font-size: 14px;">💬 Chat with MysticMinded³³</button>
+                    <div style="display:flex;gap:8px;">
+                        <input id="help-guide-input" placeholder="Tell me what you need..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
+                        <button onclick="handleHelpGuideInput()" style="padding:10px 16px;background:#ff1493;border:none;border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:14px;">\u2192</button>
                     </div>
-                </div>
-            `;
-            
-            modal.className = 'modal-backdrop';
+                </div>`;
+
             document.body.appendChild(modal);
-            
-            // Close on backdrop click
-            modal.addEventListener('click', function(e) {
-                if (e.target === modal) {
-                    modal.remove();
-                }
-            });
+            modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
         }
 
-        // Close dropdown when clicking outside
+        function openOverlay(id) {
+            const el = document.getElementById(id);
+            if (!el) return;
+            el.style.display = 'flex';
+            if (!el.style.position) el.style.position = 'fixed';
+        }
+
+        function handleHelpGuideInput() {
+            const input = document.getElementById('help-guide-input');
+            if (!input) return;
+            const text = input.value.toLowerCase().trim();
+            if (!text) return;
+            const modal = document.querySelector('.help-guide-modal');
+            if (/breath|breathe|calm|relax|anxiety|panic|anxious/.test(text)) {
+                modal && modal.remove(); openOverlay('breathingOverlay');
+            } else if (/meditat|guided|peace|quiet|still/.test(text)) {
+                modal && modal.remove(); openOverlay('guidedMeditationOverlay');
+            } else if (/safe|plan|safety|crisis|suicid|harm|hurt|die|dying|end|hopeless/.test(text)) {
+                modal && modal.remove(); openOverlay('safetyPlanOverlay');
+            } else if (/angry|anger|rage|scream|yell|furious|mad/.test(text)) {
+                modal && modal.remove(); openOverlay('screamCircleOverlay');
+            } else if (/talk|chat|speak|listen|someone|help|support/.test(text)) {
+                modal && modal.remove();
+                const inp = document.querySelector('#chat-input, textarea');
+                if (inp) inp.focus();
+            } else {
+                input.value = '';
+                input.placeholder = 'Try: breathing, safety plan, calm down, talk...';
+            }
+        }
+
+                // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             const dropdown = document.getElementById('crisisToolsDropdown');
             if (dropdown && !dropdown.contains(e.target)) {
@@ -9635,24 +9890,112 @@ User's message: ${userMessage}`
             updateGuidedAff();
         }
 
-        // ===== MIRROR TOOL =====
+        // ===== MIRROR TOOL (Redesigned) =====
         let mirrorStream = null;
         let mirrorCurrentAff = '';
+        let mirrorTabActive = 'list';
+        let mirrorSpeechRecog = null;
+
+        // Populate the built-in list panel on page load
+        function initMirrorListPanel() {
+            const panel = document.getElementById('mPanel-list');
+            if (!panel) return;
+            panel.innerHTML = '';
+            guidedAffList.forEach(function(aff, i) {
+                const btn = document.createElement('button');
+                btn.className = 'mirror-aff-item';
+                btn.textContent = '\u201c' + aff + '\u201d';
+                btn.onclick = function() { selectMirrorAff(aff, 'list', i); };
+                panel.appendChild(btn);
+            });
+        }
+
+        function populateMirrorBookPanel() {
+            const panel = document.getElementById('mPanel-book');
+            const empty = document.getElementById('mBookEmpty');
+            if (!panel) return;
+            // Remove old items (keep empty msg)
+            Array.from(panel.querySelectorAll('.mirror-aff-item')).forEach(function(el) { el.remove(); });
+            const entries = getBookEntries ? getBookEntries() : [];
+            if (entries.length === 0) {
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+            if (empty) empty.style.display = 'none';
+            entries.forEach(function(e) {
+                const text = (e.text || '').trim();
+                if (!text) return;
+                const btn = document.createElement('button');
+                btn.className = 'mirror-aff-item';
+                btn.textContent = '\u201c' + text + '\u201d';
+                btn.onclick = function() { selectMirrorAff(text, 'book', null); };
+                panel.appendChild(btn);
+            });
+        }
+
+        function switchMirrorTab(tab) {
+            mirrorTabActive = tab;
+            ['list','book','custom'].forEach(function(t) {
+                const btn = document.getElementById('mTab-' + t);
+                const panel = document.getElementById('mPanel-' + t);
+                if (btn) btn.classList.toggle('active', t === tab);
+                if (panel) {
+                    if (t === tab) {
+                        panel.style.display = (t === 'custom') ? 'flex' : 'flex';
+                        panel.style.flexDirection = 'column';
+                    } else {
+                        panel.style.display = 'none';
+                    }
+                }
+            });
+            if (tab === 'book') populateMirrorBookPanel();
+        }
+
+        function selectMirrorAff(text, source, idx) {
+            mirrorCurrentAff = text;
+            // Highlight selected
+            document.querySelectorAll('.mirror-aff-item').forEach(function(el) {
+                el.classList.toggle('selected', el.textContent === '\u201c' + text + '\u201d');
+            });
+            // Show selected box
+            const box = document.getElementById('mirrorSelectedBox');
+            const selText = document.getElementById('mirrorSelectedText');
+            if (box) box.style.display = 'block';
+            if (selText) selText.textContent = '\u201c' + text + '\u201d';
+            // Update overlay if mirror is open
+            animateMirrorText(text);
+            // Reset celebration
+            const cel = document.getElementById('mirrorCelebration');
+            const badge = document.getElementById('mirrorSpeechBadge');
+            if (cel) cel.style.display = 'none';
+            if (badge) badge.style.display = 'none';
+        }
+
+        function setMirrorCustomAff() {
+            const inp = document.getElementById('mirrorCustomInput');
+            if (!inp) return;
+            const text = inp.value.trim();
+            if (!text) { inp.focus(); return; }
+            selectMirrorAff(text, 'custom', null);
+            const status = document.getElementById('mirrorStatus');
+            if (status) status.textContent = '\u2728 Custom affirmation set!';
+        }
 
         function animateMirrorText(text) {
             const el = document.getElementById('mirrorAffDisplay');
             if (!el) return;
             el.innerHTML = '';
-            const words = text.replace(/^"|"$/g, '').split(' ');
+            const clean = text.replace(/^[\u201c"]+|[\u201d"]+$/g, '').trim();
+            const words = clean.split(' ');
             words.forEach(function(word, i) {
                 setTimeout(function() {
                     const span = document.createElement('span');
-                    span.textContent = (i === 0 ? '"' : '') + word + (i === words.length - 1 ? '"' : ' ');
+                    span.textContent = (i === 0 ? '\u201c' : '') + word + (i === words.length - 1 ? '\u201d' : ' ');
                     span.style.cssText = 'display:inline-block; opacity:0; animation:mirrorWordPop 0.4s ease forwards;';
                     el.appendChild(span);
-                }, i * 180);
+                }, i * 160);
             });
-            mirrorCurrentAff = text.replace(/^"|"$/g, '').trim();
+            mirrorCurrentAff = clean;
         }
 
         function openMirror() {
@@ -9664,50 +10007,61 @@ User's message: ${userMessage}`
                 .then(function(stream) {
                     mirrorStream = stream;
                     const video = document.getElementById('mirrorVideo');
-                    const container = document.getElementById('mirrorContainer');
+                    const frame = document.getElementById('mirrorFrameWrap');
+                    const placeholder = document.getElementById('mirrorPlaceholder');
                     const startBtn = document.getElementById('mirrorStartBtn');
                     const stopBtn = document.getElementById('mirrorStopBtn');
-                    const listenBtn = document.getElementById('mirrorListenBtn');
+                    const listenRow = document.getElementById('mirrorListenRow');
+                    const repeatBtn = document.getElementById('mirrorRepeatBtn');
                     const status = document.getElementById('mirrorStatus');
-                    video.srcObject = stream;
-                    container.style.display = 'block';
-                    startBtn.style.display = 'none';
-                    stopBtn.style.display = 'block';
-                    if (listenBtn) listenBtn.style.display = 'block';
-                    if (status) status.textContent = '📷 Camera active — look yourself in the eye and say it!';
-                    updateGuidedAff();
-                    // Animate the current affirmation text
-                    const currentText = guidedAffList[guidedAffIndex];
-                    animateMirrorText('"' + currentText + '"');
+                    if (video) video.srcObject = stream;
+                    if (frame) frame.style.display = 'block';
+                    if (placeholder) placeholder.style.display = 'none';
+                    if (startBtn) startBtn.style.display = 'none';
+                    if (stopBtn) stopBtn.style.display = 'block';
+                    if (listenRow) listenRow.style.display = 'flex';
+                    if (repeatBtn) repeatBtn.style.display = 'block';
+                    if (status) status.textContent = '\ud83d\udc40 Look yourself in the eye and say it!';
+                    // Set default affirmation if none selected yet
+                    if (!mirrorCurrentAff) {
+                        mirrorCurrentAff = guidedAffList[guidedAffIndex] || guidedAffList[0];
+                    }
+                    animateMirrorText(mirrorCurrentAff);
                 })
                 .catch(function(err) {
                     const status = document.getElementById('mirrorStatus');
-                    if (status) status.textContent = '⚠️ Camera access denied. Please allow camera in browser settings.';
-                    else alert('Could not access camera: ' + err.message);
+                    if (status) status.textContent = '\u26a0\ufe0f Camera access denied. Please allow camera in browser settings.';
                 });
         }
 
         function closeMirror() {
+            if (mirrorSpeechRecog) { try { mirrorSpeechRecog.abort(); } catch(e){} mirrorSpeechRecog = null; }
             if (mirrorStream) {
                 mirrorStream.getTracks().forEach(function(t) { t.stop(); });
                 mirrorStream = null;
             }
             const video = document.getElementById('mirrorVideo');
-            const container = document.getElementById('mirrorContainer');
+            const frame = document.getElementById('mirrorFrameWrap');
+            const placeholder = document.getElementById('mirrorPlaceholder');
             const startBtn = document.getElementById('mirrorStartBtn');
             const stopBtn = document.getElementById('mirrorStopBtn');
-            const listenBtn = document.getElementById('mirrorListenBtn');
+            const listenRow = document.getElementById('mirrorListenRow');
+            const repeatBtn = document.getElementById('mirrorRepeatBtn');
             const status = document.getElementById('mirrorStatus');
             const celebration = document.getElementById('mirrorCelebration');
-            const speechOverlay = document.getElementById('mirrorSpeechOverlay');
+            const badge = document.getElementById('mirrorSpeechBadge');
+            const listenBtn = document.getElementById('mirrorListenBtn');
             if (video) video.srcObject = null;
-            if (container) container.style.display = 'none';
+            if (frame) frame.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'flex';
             if (startBtn) startBtn.style.display = 'block';
             if (stopBtn) stopBtn.style.display = 'none';
-            if (listenBtn) listenBtn.style.display = 'none';
+            if (listenRow) listenRow.style.display = 'none';
+            if (repeatBtn) repeatBtn.style.display = 'none';
             if (status) status.textContent = '';
             if (celebration) celebration.style.display = 'none';
-            if (speechOverlay) speechOverlay.style.display = 'none';
+            if (badge) badge.style.display = 'none';
+            if (listenBtn) { listenBtn.classList.remove('listening'); listenBtn.disabled = false; }
         }
 
         function startMirrorListening() {
@@ -9715,61 +10069,103 @@ User's message: ${userMessage}`
             const status = document.getElementById('mirrorStatus');
             const listenBtn = document.getElementById('mirrorListenBtn');
             if (!SR) {
-                if (status) status.textContent = '⚠️ Speech recognition not supported in this browser. Try Chrome.';
+                if (status) status.textContent = '\u26a0\ufe0f Speech recognition not supported. Try Chrome.';
                 return;
             }
+            if (mirrorSpeechRecog) { try { mirrorSpeechRecog.abort(); } catch(e){} }
             const recog = new SR();
+            mirrorSpeechRecog = recog;
             recog.lang = 'en-US';
             recog.continuous = false;
-            recog.interimResults = false;
-            if (status) status.textContent = '🎤 Listening… say your affirmation!';
-            if (listenBtn) listenBtn.disabled = true;
+            recog.interimResults = true;
+            if (status) status.textContent = '\ud83c\udfa4 Listening\u2026 say your affirmation!';
+            if (listenBtn) { listenBtn.classList.add('listening'); listenBtn.disabled = true; }
+
             recog.onresult = function(e) {
-                const heard = e.results[0][0].transcript;
-                const heardEl = document.getElementById('mirrorHeardText');
-                const speechOverlay = document.getElementById('mirrorSpeechOverlay');
-                const celebration = document.getElementById('mirrorCelebration');
-                if (heardEl) heardEl.textContent = '"' + heard + '"';
-                if (speechOverlay) speechOverlay.style.display = 'block';
-                // Check if key words match
-                const keywords = mirrorCurrentAff.toLowerCase().split(' ').filter(function(w) { return w.length > 4; });
-                const matches = keywords.filter(function(k) { return heard.toLowerCase().includes(k); }).length;
-                if (matches >= Math.max(1, Math.floor(keywords.length * 0.4))) {
-                    if (celebration) {
-                        celebration.textContent = '✨ Beautiful! You said it out loud! You ARE worthy of love. 💜';
-                        celebration.style.display = 'block';
-                    }
-                    if (status) status.textContent = '💬 Listen to your own voice — it speaks truth.';
-                } else {
-                    if (status) status.textContent = '💬 You spoke! Try again whenever you\'re ready.';
+                let interim = '';
+                let final = '';
+                for (let i = e.resultIndex; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) final += e.results[i][0].transcript;
+                    else interim += e.results[i][0].transcript;
                 }
-                if (listenBtn) listenBtn.disabled = false;
+                const heard = final || interim;
+                const badge = document.getElementById('mirrorSpeechBadge');
+                const heardEl = document.getElementById('mirrorHeardText');
+                if (badge) badge.style.display = 'block';
+                if (heardEl) heardEl.textContent = heard;
+                if (final) {
+                    // Match check
+                    const keywords = mirrorCurrentAff.toLowerCase().split(' ').filter(function(w){ return w.length > 3; });
+                    const matches = keywords.filter(function(k){ return final.toLowerCase().includes(k); }).length;
+                    const celebration = document.getElementById('mirrorCelebration');
+                    if (matches >= Math.max(1, Math.floor(keywords.length * 0.35))) {
+                        if (celebration) {
+                            celebration.textContent = '\u2728 You said it! Your voice speaks truth. You ARE worthy. \ud83d\udc9c';
+                            celebration.style.display = 'block';
+                        }
+                        if (status) status.textContent = '\ud83d\udcac Your own voice just spoke that into existence.';
+                        // Auto repeat it back via TTS after a short delay
+                        setTimeout(function() { mirrorRepeatAff(); }, 1200);
+                    } else {
+                        if (status) status.textContent = '\ud83d\udcac You spoke! Try again whenever you\u2019re ready.';
+                    }
+                    if (listenBtn) { listenBtn.classList.remove('listening'); listenBtn.disabled = false; }
+                    mirrorSpeechRecog = null;
+                }
             };
             recog.onerror = function() {
-                if (status) status.textContent = '🎤 Could not hear clearly — try again?';
-                if (listenBtn) listenBtn.disabled = false;
+                if (status) status.textContent = '\ud83c\udfa4 Could not hear clearly \u2014 try again?';
+                if (listenBtn) { listenBtn.classList.remove('listening'); listenBtn.disabled = false; }
+                mirrorSpeechRecog = null;
+            };
+            recog.onend = function() {
+                if (listenBtn) { listenBtn.classList.remove('listening'); listenBtn.disabled = false; }
+                mirrorSpeechRecog = null;
             };
             recog.start();
         }
 
-        function nextMirrorAff() {
-            nextGuidedAff();
-            if (mirrorStream) animateMirrorText('"' + guidedAffList[guidedAffIndex] + '"');
-            const celebration = document.getElementById('mirrorCelebration');
-            const speechOverlay = document.getElementById('mirrorSpeechOverlay');
-            if (celebration) celebration.style.display = 'none';
-            if (speechOverlay) speechOverlay.style.display = 'none';
-        }
-        function prevMirrorAff() {
-            prevGuidedAff();
-            if (mirrorStream) animateMirrorText('"' + guidedAffList[guidedAffIndex] + '"');
-            const celebration = document.getElementById('mirrorCelebration');
-            const speechOverlay = document.getElementById('mirrorSpeechOverlay');
-            if (celebration) celebration.style.display = 'none';
-            if (speechOverlay) speechOverlay.style.display = 'none';
+        function mirrorRepeatAff() {
+            const text = mirrorCurrentAff || guidedAffList[guidedAffIndex] || '';
+            if (!text) return;
+            if (!window.speechSynthesis) return;
+            window.speechSynthesis.cancel();
+            const utt = new SpeechSynthesisUtterance(text);
+            utt.rate = 0.85;
+            utt.pitch = 1.05;
+            utt.volume = 1;
+            // Prefer a warm female voice
+            const voices = window.speechSynthesis.getVoices();
+            const preferred = voices.find(function(v) {
+                return /samantha|karen|victoria|female|woman/i.test(v.name);
+            }) || voices.find(function(v) { return v.lang === 'en-US'; }) || voices[0];
+            if (preferred) utt.voice = preferred;
+            const status = document.getElementById('mirrorStatus');
+            if (status) status.textContent = '\ud83d\udd0a Repeating your affirmation\u2026';
+            utt.onend = function() {
+                if (status) status.textContent = '\ud83d\udc9c Breathe it in.';
+            };
+            window.speechSynthesis.speak(utt);
         }
 
-        // ===== FREE TALK / FREE ASSOCIATION =====
+        // Keep old nav functions working
+        function nextMirrorAff() {
+            guidedAffIndex = (guidedAffIndex + 1) % guidedAffList.length;
+            updateGuidedAff();
+            selectMirrorAff(guidedAffList[guidedAffIndex], 'list', guidedAffIndex);
+        }
+        function prevMirrorAff() {
+            guidedAffIndex = (guidedAffIndex - 1 + guidedAffList.length) % guidedAffList.length;
+            updateGuidedAff();
+            selectMirrorAff(guidedAffList[guidedAffIndex], 'list', guidedAffIndex);
+        }
+
+        // Init on load
+        document.addEventListener('DOMContentLoaded', function() {
+            initMirrorListPanel();
+        });
+
+                // ===== FREE TALK / FREE ASSOCIATION =====
         const freeTalkPrompts = [
             "Close your eyes, take a breath, then type every single word that pops into your head for 60 seconds. Go!",
             "What color is your anxiety right now? Describe it in the weirdest way possible.",
