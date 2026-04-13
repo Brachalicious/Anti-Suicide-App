@@ -61,43 +61,84 @@
             border-radius: 50%;
             overflow: hidden;
             z-index: 1;
-            background: #000;
-            border: 4px solid #d4af37;
+            background: #fff;
+            border: 5px solid #c8a951;
+            box-shadow: 0 0 0 2px #e8d060, 0 8px 40px rgba(180,140,30,0.4), inset 0 0 30px rgba(255,255,255,0.15);
+        }
+        /* Mirror image bg (shown when camera is off) */
+        .mirror-img-bg {
+            position: absolute;
+            inset: 0;
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            display: block;
         }
         .mirror-inner video {
+            position: absolute;
+            inset: 0;
             width: 100%;
             height: 100%;
             object-fit: cover;
             transform: scaleX(-1);
             display: block;
+            z-index: 1;
         }
+        /* Affirmation text overlay — bottom of mirror, cursive script like "hello gorgeous" */
         .mirror-aff-overlay {
             position: absolute;
-            bottom: 14%;
+            bottom: 13%;
             left: 50%;
             transform: translateX(-50%);
-            width: 82%;
+            width: 78%;
             text-align: center;
-            z-index: 3;
+            z-index: 4;
             pointer-events: none;
         }
         .mirror-aff-overlay p {
             font-family: 'Dancing Script', cursive;
-            font-size: clamp(13px, 3.5vw, 20px);
+            font-size: clamp(15px, 4.5vw, 24px);
             font-weight: 700;
-            color: #fff;
-            text-shadow: 0 2px 12px rgba(0,0,0,0.95), 0 0 6px rgba(0,0,0,0.8);
+            color: #1a1a1a;
+            text-shadow: none;
             margin: 0;
             line-height: 1.35;
-            animation: mirrorAffSlideIn 0.5s ease;
+            letter-spacing: 0.5px;
+        }
+        /* Live speech text — appears on mirror as user speaks, cursive, dark ink */
+        .mirror-live-overlay {
+            position: absolute;
+            bottom: 16%;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80%;
+            text-align: center;
+            z-index: 5;
+            pointer-events: none;
+        }
+        .mirror-live-overlay span {
+            font-family: 'Dancing Script', cursive;
+            font-size: clamp(16px, 5vw, 26px);
+            font-weight: 700;
+            color: #1a0a0a;
+            background: none;
+            display: block;
+            line-height: 1.4;
+            animation: mirrorInkIn 0.3s ease forwards;
+            opacity: 0;
+        }
+        @keyframes mirrorInkIn {
+            from { opacity: 0; transform: translateY(4px) scale(0.97); }
+            to   { opacity: 1; transform: translateY(0) scale(1); }
         }
         .mirror-speech-badge {
             position: absolute;
-            top: 12%;
+            top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            z-index: 4;
-            background: rgba(16,185,129,0.9);
+            z-index: 6;
+            background: rgba(16,185,129,0.88);
             color: #fff;
             padding: 5px 16px;
             border-radius: 20px;
@@ -107,6 +148,8 @@
             max-width: 90%;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-family: 'Dancing Script', cursive;
+            font-size: 15px;
         }
         .mirror-tab-btn {
             flex: 1;
@@ -1000,24 +1043,26 @@
         /* Circular text around logo */
         .logo-container {
             position: relative;
-            width: 240px;
-            height: 240px;
+            width: 300px;
+            height: 300px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: visible;
         }
         
         .circular-text {
             position: absolute;
             width: 100%;
             height: 100%;
+            overflow: visible;
         }
         
         .circular-text text {
-            font-size: 11px;
+            font-size: 13px;
             font-weight: 800;
-            letter-spacing: 2px;
+            letter-spacing: 3px;
             text-transform: uppercase;
             fill: #ff1493;
             filter: drop-shadow(0 0 4px rgba(255,20,147,0.5));
@@ -1026,9 +1071,8 @@
         .logo-container img {
             position: relative;
             z-index: 2;
-            max-width: 170px;
+            max-width: 180px;
             height: auto;
-            left: -10px;
         }
 
         /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
@@ -1281,23 +1325,18 @@
     <div class="container">
         <div style="text-align: center; padding: 4px 0 4px;">
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
-                <svg class="circular-text" viewBox="0 0 300 300">
+                <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <path id="circleTop" d="M 150,150 m -108,0 a 108,108 0 1,1 216,0"/>
-                        <path id="circleBottom" d="M 150,150 m -108,0 a 108,108 0 0,0 216,0"/>
+                        <!-- Full circle: two semicarcs so browser renders the full 360° path -->
+                        <path id="fullCircle" d="M 150,42 A 108,108 0 0,1 258,150 A 108,108 0 0,1 150,258 A 108,108 0 0,1 42,150 A 108,108 0 0,1 150,42 Z"/>
                     </defs>
                     <text>
-                        <textPath href="#circleTop" startOffset="2%">
-                            ✦ FIGHT SUICIDE PROJECT ✦ FIGHT
-                        </textPath>
-                    </text>
-                    <text>
-                        <textPath href="#circleBottom" startOffset="5%">
-                            SUICIDE PROJECT ✦
+                        <textPath href="#fullCircle" startOffset="0%">
+                            ✦ FIGHT SUICIDE PROJECT ✦ FIGHT SUICIDE PROJECT ✦
                         </textPath>
                     </text>
                 </svg>
-                <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
+                <img src="/public/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
             </div>
         </div>
 
@@ -3415,6 +3454,94 @@
                     </div>
                 </div>
 
+                <!-- 🇮🇱 Israel Full Resources Section -->
+                <div style="margin-top:28px; padding:20px; background:linear-gradient(135deg,#f0f9ff,#e0f2fe); border-radius:20px; border:2px solid #2563eb;">
+                    <h3 style="color:#1d4ed8; font-size:18px; font-weight:800; margin:0 0 4px 0; text-align:center;">🇮🇱 Israel Crisis &amp; Mental Health Resources</h3>
+                    <p style="color:#1e40af; font-size:13px; text-align:center; margin:0 0 16px 0;">Comprehensive support for people in Israel</p>
+                    <div style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px;">
+
+                        <!-- ERAN -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #3b82f6; box-shadow:0 2px 8px rgba(59,130,246,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">📞</div>
+                            <h4 style="color:#1d4ed8; font-size:15px; font-weight:800; margin:0 0 4px 0;">ERAN — Emotional First Aid</h4>
+                            <div style="font-size:22px; font-weight:900; color:#1d4ed8; margin-bottom:4px;"><a href="tel:1201" style="color:#1d4ed8; text-decoration:none;">*1201</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">24/7 crisis line · Hebrew, Arabic, Russian, English · Confidential &amp; free</p>
+                            <button class="btn" style="background:#2563eb; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:1201')">📞 Call *1201</button>
+                        </div>
+
+                        <!-- Sahar -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #7c3aed; box-shadow:0 2px 8px rgba(124,58,237,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">💬</div>
+                            <h4 style="color:#7c3aed; font-size:15px; font-weight:800; margin:0 0 4px 0;">SAHAR — Online Crisis Support</h4>
+                            <p style="font-size:12px; color:#374151; margin:0 0 4px 0;">Anonymous online chat &amp; emotional support for people in distress</p>
+                            <p style="font-size:11px; color:#6b7280; margin:0 0 8px 0;">Available in Hebrew &amp; Arabic · No registration needed</p>
+                            <button class="btn" style="background:#7c3aed; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('https://sahar.org.il/help/', '_blank')">💬 Open Chat</button>
+                        </div>
+
+                        <!-- Maaneh/Kehila 24hr -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #059669; box-shadow:0 2px 8px rgba(5,150,105,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🕐</div>
+                            <h4 style="color:#065f46; font-size:15px; font-weight:800; margin:0 0 4px 0;">Maaneh / Kehila — 24hr Hotline</h4>
+                            <div style="font-size:20px; font-weight:900; color:#059669; margin-bottom:4px;"><a href="tel:025301160" style="color:#059669; text-decoration:none;">02-301-1160</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">24-hour mental &amp; emotional stress support · Run by Maaneh/Kehila</p>
+                            <button class="btn" style="background:#059669; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:025301160')">📞 Call 02-301-1160</button>
+                        </div>
+
+                        <!-- Mental & Emotional Stress Hotline -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #0891b2; box-shadow:0 2px 8px rgba(8,145,178,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🧠</div>
+                            <h4 style="color:#0e7490; font-size:15px; font-weight:800; margin:0 0 4px 0;">Mental &amp; Emotional Stress Hotline</h4>
+                            <div style="font-size:20px; font-weight:900; color:#0891b2; margin-bottom:4px;"><a href="tel:023011160" style="color:#0891b2; text-decoration:none;">02-301-1160</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">Ministry of Health supported · Free &amp; confidential</p>
+                            <button class="btn" style="background:#0891b2; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:023011160')">📞 Call Now</button>
+                        </div>
+
+                        <!-- Teen Crisis -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #f59e0b; box-shadow:0 2px 8px rgba(245,158,11,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🧒</div>
+                            <h4 style="color:#92400e; font-size:15px; font-weight:800; margin:0 0 4px 0;">Teen Crisis Hotline</h4>
+                            <div style="font-size:18px; font-weight:900; color:#d97706; margin-bottom:4px;"><a href="tel:050-HOTLINE" style="color:#d97706; text-decoration:none;">050-HOTLINE (050-468-5463)</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">Crisis support specifically for teens and young adults in Israel</p>
+                            <button class="btn" style="background:#d97706; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:0504685463')">📞 Call Teen Hotline</button>
+                        </div>
+
+                        <!-- Crisis Hotline for Religious Women -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #ec4899; box-shadow:0 2px 8px rgba(236,72,153,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🕍</div>
+                            <h4 style="color:#9d174d; font-size:15px; font-weight:800; margin:0 0 4px 0;">Crisis Hotline for Religious Women</h4>
+                            <div style="font-size:18px; font-weight:900; color:#ec4899; margin-bottom:4px;"><a href="tel:026730002" style="color:#ec4899; text-decoration:none;">02-673-0002</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">Culturally sensitive support for religious women in crisis</p>
+                            <button class="btn" style="background:#ec4899; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:026730002')">📞 Call Now</button>
+                        </div>
+
+                        <!-- Anxiety & Trauma -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #6366f1; box-shadow:0 2px 8px rgba(99,102,241,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🫂</div>
+                            <h4 style="color:#4338ca; font-size:15px; font-weight:800; margin:0 0 4px 0;">Anxiety &amp; Trauma Victims Hotline</h4>
+                            <div style="font-size:18px; font-weight:900; color:#6366f1; margin-bottom:4px;"><a href="tel:1800363363" style="color:#6366f1; text-decoration:none;">1-800-363363</a></div>
+                            <p style="font-size:12px; color:#374151; margin:0 0 8px 0;">Free &amp; anonymous · Trauma &amp; anxiety support · National line</p>
+                            <button class="btn" style="background:#6366f1; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('tel:1800363363')">📞 Call Now</button>
+                        </div>
+
+                        <!-- Get Help Israel -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #10b981; box-shadow:0 2px 8px rgba(16,185,129,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">🌐</div>
+                            <h4 style="color:#065f46; font-size:15px; font-weight:800; margin:0 0 4px 0;">Get Help Israel</h4>
+                            <p style="font-size:12px; color:#374151; margin:0 0 4px 0;">Israel Association of Mental Health Professionals · Full directory of hotlines, therapists &amp; mental health resources</p>
+                            <button class="btn" style="background:#10b981; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('https://gethelpisrael.com/', '_blank')">🌐 Visit GetHelpIsrael.com</button>
+                        </div>
+
+                        <!-- Israel Trauma Coalition -->
+                        <div style="background:white; border-radius:14px; padding:14px; border:2px solid #f97316; box-shadow:0 2px 8px rgba(249,115,22,0.15);">
+                            <div style="font-size:22px; margin-bottom:4px;">💪</div>
+                            <h4 style="color:#9a3412; font-size:15px; font-weight:800; margin:0 0 4px 0;">Israel Trauma Coalition — Resilience Centers</h4>
+                            <p style="font-size:12px; color:#374151; margin:0 0 4px 0;">Network of resilience &amp; trauma recovery centers across Israel · In-person &amp; community support</p>
+                            <button class="btn" style="background:#f97316; color:white; font-size:12px; padding:7px 14px;" onclick="window.open('https://israeltraumacoalition.org/en/resilience-centers/', '_blank')">🗺️ Find a Resilience Center</button>
+                        </div>
+
+                    </div>
+                </div>
+
                 <!-- Full world list toggle -->
                 <div>
                     <button onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.textContent = this.textContent.includes('▾') ? '▸ Show Full Global List' : '▾ Show Full Global List'" style="width:100%; background:linear-gradient(135deg,#6d28d9,#9333ea); color:white; border:none; border-radius:12px; padding:12px; font-size:14px; font-weight:800; cursor:pointer; margin-bottom:8px;">▾ Show Full Global List</button>
@@ -4590,10 +4717,17 @@
                             <div style="flex:1; min-width:220px; display:flex; flex-direction:column; align-items:center; gap:10px;">
                                 <div id="mirrorFrameWrap" class="mirror-frame-wrap" style="display:none;">
                                     <div class="mirror-inner">
+                                        <!-- Mirror image always visible as glass background -->
+                                        <img class="mirror-img-bg" src="/public/mirror-bg.png" alt="mirror" id="mirrorImgBg" style="z-index:0;">
+                                        <!-- Live camera feed (on top of image) -->
                                         <video id="mirrorVideo" autoplay playsinline muted></video>
-                                        <!-- Affirmation text overlay -->
+                                        <!-- Affirmation text overlay — cursive on glass -->
                                         <div class="mirror-aff-overlay">
                                             <p id="mirrorAffDisplay">"I am worthy of love and healing."</p>
+                                        </div>
+                                        <!-- Live speech-to-text overlay — words appear as spoken -->
+                                        <div class="mirror-live-overlay" id="mirrorLiveOverlay" style="display:none;">
+                                            <span id="mirrorLiveText"></span>
                                         </div>
                                         <!-- Speech heard badge -->
                                         <div id="mirrorSpeechBadge" class="mirror-speech-badge" style="display:none;">
@@ -4602,11 +4736,19 @@
                                     </div>
                                 </div>
 
-                                <!-- Placeholder when camera off -->
-                                <div id="mirrorPlaceholder" style="width:240px; height:240px; border-radius:50%; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); border:5px solid #d4af37; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:8px; box-shadow:0 0 30px rgba(212,175,55,0.3);">
-                                    <span style="font-size:52px;">&#127766;</span>
-                                    <p style="color:#f5e27a; font-size:13px; font-weight:700; margin:0; text-align:center; padding:0 20px;">Tap Open Mirror<br>to see you</p>
-                                </div>
+                                <!-- Placeholder when camera off — uses actual mirror image -->
+                                <div id="mirrorPlaceholder" style="width:280px; height:280px; border-radius:50%; overflow:hidden; position:relative; margin:0 auto;
+  border: 7px solid #c8a951;
+  box-shadow: 0 0 0 2px #e8d060, inset 0 0 0 2px #e8d060, 0 8px 50px rgba(180,140,30,0.5);
+  background: linear-gradient(135deg, #f0eeea 0%, #e8e4df 30%, #f5f3f0 50%, #dedad4 70%, #ece9e4 100%);">
+  <!-- Reflective sheen overlays like a real mirror -->
+  <div style="position:absolute; inset:0; background: linear-gradient(120deg, rgba(255,255,255,0.55) 0%, rgba(255,255,255,0.1) 40%, rgba(255,255,255,0.0) 60%, rgba(200,190,180,0.15) 100%); border-radius:50%; pointer-events:none;"></div>
+  <div style="position:absolute; top:8%; left:12%; width:18%; height:35%; background: rgba(255,255,255,0.35); border-radius:50%; filter:blur(8px); pointer-events:none;"></div>
+  <!-- Cursive affirmation text at bottom like the hello gorgeous mirror -->
+  <div style="position:absolute; bottom:22%; left:50%; transform:translateX(-50%); width:80%; text-align:center; pointer-events:none;">
+    <p style="font-family:'Dancing Script',cursive; font-size:clamp(15px,4.5vw,22px); font-weight:700; color:#1a1a1a; margin:0; line-height:1.3; letter-spacing:0.5px;">hello gorgeous</p>
+  </div>
+</div>
 
                                 <!-- Status text -->
                                 <p id="mirrorStatus" style="color:#f5e27a; font-size:13px; min-height:18px; text-align:center; margin:0;"></p>
@@ -10254,11 +10396,25 @@ User's message: ${userMessage}`
                     else interim += e.results[i][0].transcript;
                 }
                 const heard = final || interim;
+                // Stream words live onto mirror glass in cursive as user speaks
+                const liveOverlay = document.getElementById('mirrorLiveOverlay');
+                const liveText = document.getElementById('mirrorLiveText');
+                if (liveOverlay && liveText && heard) {
+                    liveOverlay.style.display = 'block';
+                    liveText.style.animation = 'none';
+                    void liveText.offsetHeight;
+                    liveText.style.animation = '';
+                    liveText.textContent = heard;
+                }
                 const badge = document.getElementById('mirrorSpeechBadge');
                 const heardEl = document.getElementById('mirrorHeardText');
                 if (badge) badge.style.display = 'block';
                 if (heardEl) heardEl.textContent = heard;
                 if (final) {
+                    // Keep spoken words on mirror then fade
+                    setTimeout(function() {
+                        if (liveOverlay) liveOverlay.style.display = 'none';
+                    }, 3500);
                     // Match check
                     const keywords = mirrorCurrentAff.toLowerCase().split(' ').filter(function(w){ return w.length > 3; });
                     const matches = keywords.filter(function(k){ return final.toLowerCase().includes(k); }).length;
