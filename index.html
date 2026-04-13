@@ -1283,11 +1283,17 @@
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
                 <svg class="circular-text" viewBox="0 0 300 300">
                     <defs>
-                        <path id="circlePath" d="M 150, 150 m -105, 0 a 105,105 0 1,1 210,0 a 105,105 0 1,1 -210,0"/>
+                        <path id="circleTop" d="M 150,150 m -108,0 a 108,108 0 1,1 216,0"/>
+                        <path id="circleBottom" d="M 150,150 m -108,0 a 108,108 0 0,0 216,0"/>
                     </defs>
                     <text>
-                        <textPath href="#circlePath" startOffset="0">
-                            ✦ FIGHT SUICIDE PROJECT ✦ FIGHT SUICIDE PROJECT ✦
+                        <textPath href="#circleTop" startOffset="2%">
+                            ✦ FIGHT SUICIDE PROJECT ✦ FIGHT
+                        </textPath>
+                    </text>
+                    <text>
+                        <textPath href="#circleBottom" startOffset="5%">
+                            SUICIDE PROJECT ✦
                         </textPath>
                     </text>
                 </svg>
@@ -2150,21 +2156,28 @@
                     <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
 
                     <!-- 7. Affirmations Mirror (collapsible) -->
-                    <div style="margin-top: 12px; border-radius: 14px; border: 2px solid #e879f9; overflow: hidden;">
-                        <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer; background: linear-gradient(135deg, #1c0a2e, #3b1059); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center;">
-                            <span style="color:#f0abfc; font-size:16px; font-weight:700;">🪞 Affirmations Mirror</span>
-                            <span style="color:#e879f9; font-size:18px;">▾</span>
+                    <div style="margin-top: 12px; border-radius: 16px; border: 2px solid #d4af37; overflow: hidden; background: linear-gradient(135deg, #1a0a2e, #2d1b4e);">
+                        <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer; background: linear-gradient(135deg, #2d1b4e, #4a2070); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(212,175,55,0.3);">
+                            <span style="color:#d4af37; font-size:16px; font-weight:800; letter-spacing:1px;">🪞 Affirmation Mirror</span>
+                            <span style="color:#d4af37; font-size:18px;">▾</span>
                         </div>
-                        <div style="display:none; background: linear-gradient(135deg, #1c0a2e, #3b1059); padding: 0 14px 14px 14px;">
-                            <p style="color:#e9d5ff; font-size:13px; margin-bottom:10px;">Read each affirmation slowly and breathe it in.</p>
-                            <div id="guidedAffBox" style="background:rgba(255,255,255,0.08); border-radius:10px; padding:14px; text-align:center; min-height:70px; display:flex; align-items:center; justify-content:center;">
-                                <span id="guidedAffText" style="color:#f3e8ff; font-size:16px; font-weight:600; line-height:1.6; font-style:italic;">"I am worthy of love and healing."</span>
+                        <div style="display:none; padding: 14px;">
+                            <p style="color:#fce7f3; font-size:13px; margin-bottom:12px; text-align:center; opacity:0.85;">✨ Read it slowly. Say it out loud. Let it land.</p>
+                            <!-- Circular gold mirror display -->
+                            <div style="width:180px; height:180px; border-radius:50%; background:linear-gradient(135deg,#1a0a2e,#3b1059); border:5px solid #d4af37; box-shadow:0 0 24px rgba(212,175,55,0.5), inset 0 0 30px rgba(212,175,55,0.1); margin:0 auto 14px; display:flex; align-items:center; justify-content:center; padding:16px; box-sizing:border-box;">
+                                <span id="guidedAffText" style="color:#fff; font-size:15px; font-weight:700; line-height:1.5; font-style:italic; text-align:center; display:block;">"I am worthy of love and healing."</span>
                             </div>
-                            <div style="display:flex; gap:8px; margin-top:10px;">
-                                <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="prevGuidedAff()">← Prev</button>
-                                <button class="btn" style="flex:1; background:#9333ea; font-size:13px;" onclick="nextGuidedAff()">Next →</button>
+                            <!-- Nav buttons -->
+                            <div style="display:flex; gap:8px; margin-bottom:8px;">
+                                <button class="btn" style="flex:1; background:linear-gradient(135deg,#92400e,#d4af37); color:#1a0a2e; font-weight:800; font-size:13px; border:none; border-radius:10px; padding:10px;" onclick="prevGuidedAff()">← Prev</button>
+                                <button class="btn" style="flex:1; background:linear-gradient(135deg,#92400e,#d4af37); color:#1a0a2e; font-weight:800; font-size:13px; border:none; border-radius:10px; padding:10px;" onclick="nextGuidedAff()">Next →</button>
                             </div>
-                            <p id="guidedAffCounter" style="color:#d8b4fe; font-size:12px; text-align:center; margin-top:6px;">1 / 12</p>
+                            <p id="guidedAffCounter" style="color:#d4af37; font-size:12px; text-align:center; margin-bottom:10px; font-weight:700;">1 / 12</p>
+                            <!-- Say it + hear it -->
+                            <div style="display:flex; gap:8px;">
+                                <button style="flex:1; background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:10px; padding:9px; font-size:12px; font-weight:700; cursor:pointer;" onclick="startMirrorListening()">🎤 Say It</button>
+                                <button style="flex:1; background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:10px; padding:9px; font-size:12px; font-weight:700; cursor:pointer;" onclick="mirrorRepeatAff()">🔊 Hear It</button>
+                            </div>
                         </div>
                     </div>
 
@@ -3305,6 +3318,158 @@
                     <p>Intensive in-home support for families with a child at risk of psychiatric hospitalization. Clinicians come directly to your home to provide stabilization and support — keeping families together.</p>
                     <button class="btn btn-emergency" onclick="window.open('tel:18446632255')">Call Jewish Board HBCI</button>
                     <button class="btn" style="margin-top:8px;" onclick="window.open('https://jewishboard.org/','_blank')">Visit Jewish Board</button>
+                </div>
+            </div>
+
+            <!-- Community & Specialized Support Organizations -->
+            <div class="card">
+                <h2 class="section-title">💛 Community Support Organizations</h2>
+                <p style="margin-bottom:16px; color:#ff69b4;">Specialized organizations offering hope, healing, and community support.</p>
+
+                <div class="hotline">
+                    <h3>Ray of Hope</h3>
+                    <p>A beacon of hope for those struggling with mental health challenges, offering resources, support, and community connection to help people find their way back to healing and wholeness.</p>
+                    <button class="btn" onclick="window.open('https://rayofhopeus.org/','_blank')">Visit Ray of Hope →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Gila's Way</h3>
+                    <p>A compassionate organization dedicated to supporting individuals and families navigating mental health challenges — providing guidance, resources, and a warm community network.</p>
+                    <button class="btn" onclick="window.open('https://gilasway.com/','_blank')">Visit Gila's Way →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>MASK — Mothers And Fathers Aligned Saving Kids</h3>
+                    <div class="phone" style="color:#db2777;">📞 718-758-0400</div>
+                    <p>MASK empowers parents with the knowledge, tools, and support to protect their children from addiction, mental health crises, and other modern dangers. Their confidential helpline is staffed by caring professionals who understand what families are going through.</p>
+                    <p style="font-size:13px; margin-top:6px; color:#ff69b4;">⏰ Available <strong>daily 10 AM – 10 PM</strong> · All calls strictly confidential</p>
+                    <button class="btn btn-emergency" onclick="window.open('tel:7187580400')">📞 Call MASK Helpline</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://maskparents.org/','_blank')">Visit maskparents.org →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Ohel Family Services</h3>
+                    <p>Ohel's comprehensive mental health services serve the Jewish community with culturally sensitive, professional care. Their team of licensed clinicians provides therapy, crisis intervention, and long-term support for individuals and families of all ages.</p>
+                    <p style="font-size:13px; margin-top:6px;">📞 718-686-3311 &nbsp;|&nbsp; ✉️ <a href="mailto:access@ohelfamily.org" style="color:#ff69b4;">access@ohelfamily.org</a></p>
+                    <button class="btn" onclick="window.open('https://www.ohelfamily.org/mental-health-services/','_blank')">Ohel Mental Health Services →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Nevonim — How We Help</h3>
+                    <p>Explore the full range of ways Nevonim supports young adults in crisis — from 1:1 guides and care managers to rehab placement, life coaching, and couple's consulting. Peer-based, family-style support for those who need more than therapy alone.</p>
+                    <button class="btn" onclick="window.open('https://nevonim.org/how-we-help/','_blank')">See How Nevonim Helps →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Coping After Suicide</h3>
+                    <p>Specialized support for suicide loss survivors and those affected by suicide. Offers resources, community, and guidance for navigating grief after losing someone to suicide.</p>
+                    <button class="btn" onclick="window.open('https://www.copingaftersuicide.com/','_blank')">Visit Coping After Suicide →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Sparks Center</h3>
+                    <p>A warm and welcoming mental health resource center offering counseling, workshops, and community programs. Sparks Center believes everyone deserves access to meaningful mental health support.</p>
+                    <button class="btn" onclick="window.open('https://www.sparkscenter.org/','_blank')">Visit Sparks Center →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Kesher Nafshi</h3>
+                    <p>Connecting souls — Kesher Nafshi provides mental health resources, referrals, and support tailored to the Orthodox Jewish community, bridging the gap between traditional values and modern mental health care.</p>
+                    <button class="btn" onclick="window.open('https://keshernafshi.org/','_blank')">Visit Kesher Nafshi →</button>
+                </div>
+
+                <div class="hotline">
+                    <h3>Refaenu</h3>
+                    <p>Dedicated to healing — Refaenu provides mental health resources and support services for the Jewish community, connecting individuals and families to compassionate professional care.</p>
+                    <button class="btn" onclick="window.open('https://refaenu.org/','_blank')">Visit Refaenu →</button>
+                </div>
+            </div>
+
+            <!-- Global Crisis Hotlines -->
+            <div class="card">
+                <h2 class="section-title">🌍 Crisis Hotlines Worldwide</h2>
+                <p style="margin-bottom:16px; color:#ff69b4;">No matter where you are in the world, help is available. Call your country's crisis line right now.</p>
+
+                <!-- Featured 3 -->
+                <div style="display:grid; gap:12px; margin-bottom:16px;">
+                    <div class="hotline" style="border:3px solid #ef4444; background:linear-gradient(135deg,#fff5f5,#fee2e2); text-align:center;">
+                        <div style="font-size:28px; margin-bottom:4px;">🇺🇸</div>
+                        <h3 style="color:#dc2626; margin-bottom:4px;">United States</h3>
+                        <div class="phone" style="color:#dc2626; font-size:22px;">988</div>
+                        <p style="font-size:13px; margin-bottom:10px;">Call or text · Also text 741-741 (Crisis Text Line)</p>
+                        <button class="btn btn-emergency" style="background:#ef4444;" onclick="window.open('tel:988')">📞 Call 988</button>
+                    </div>
+                    <div class="hotline" style="border:3px solid #dc2626; background:linear-gradient(135deg,#fff5f5,#fee2e2); text-align:center;">
+                        <div style="font-size:28px; margin-bottom:4px;">🇨🇦</div>
+                        <h3 style="color:#dc2626; margin-bottom:4px;">Canada</h3>
+                        <div class="phone" style="color:#dc2626; font-size:22px;">988</div>
+                        <p style="font-size:13px; margin-bottom:10px;">Call or text · Also: 833-456-4566</p>
+                        <button class="btn btn-emergency" style="background:#dc2626;" onclick="window.open('tel:988')">📞 Call 988 (Canada)</button>
+                    </div>
+                    <div class="hotline" style="border:3px solid #2563eb; background:linear-gradient(135deg,#eff6ff,#dbeafe); text-align:center;">
+                        <div style="font-size:28px; margin-bottom:4px;">🇮🇱</div>
+                        <h3 style="color:#1d4ed8; margin-bottom:4px;">Israel</h3>
+                        <div class="phone" style="color:#1d4ed8; font-size:22px;">1201</div>
+                        <p style="font-size:13px; margin-bottom:10px;">ERAN — 24/7 emotional first aid · Also: SAHAR online chat</p>
+                        <button class="btn" style="background:#2563eb; color:white;" onclick="window.open('tel:1201')">📞 Call 1201</button>
+                    </div>
+                </div>
+
+                <!-- Full world list toggle -->
+                <div>
+                    <button onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display==='none'?'block':'none'; this.textContent = this.textContent.includes('▾') ? '▸ Show Full Global List' : '▾ Show Full Global List'" style="width:100%; background:linear-gradient(135deg,#6d28d9,#9333ea); color:white; border:none; border-radius:12px; padding:12px; font-size:14px; font-weight:800; cursor:pointer; margin-bottom:8px;">▾ Show Full Global List</button>
+                    <div style="display:block; overflow-y:auto; max-height:400px; border-radius:12px; border:2px solid rgba(147,51,234,0.3); padding:12px; background:rgba(255,255,255,0.05);">
+                        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+                            <tr style="background:rgba(147,51,234,0.2);"><th style="padding:8px; text-align:left; color:#ff69b4;">Country</th><th style="padding:8px; text-align:left; color:#ff69b4;">Emergency</th><th style="padding:8px; text-align:left; color:#ff69b4;">Crisis / Suicide Hotline</th></tr>
+                            <tr><td style="padding:6px 8px;">🇺🇸 United States</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:988" style="color:#ff69b4; font-weight:700;">988</a> · Text 741-741</td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇨🇦 Canada</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:988" style="color:#ff69b4; font-weight:700;">988</a> · <a href="tel:8334564566" style="color:#ff69b4;">833-456-4566</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇮🇱 Israel</td><td style="padding:6px 8px;">100</td><td style="padding:6px 8px;"><a href="tel:1201" style="color:#ff69b4; font-weight:700;">1201</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇦🇺 Australia</td><td style="padding:6px 8px;">000</td><td style="padding:6px 8px;"><a href="tel:131114" style="color:#ff69b4; font-weight:700;">131114</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇬🇧 United Kingdom</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:08006895652" style="color:#ff69b4; font-weight:700;">0800 689 5652</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇩🇪 Germany</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:08001110111" style="color:#ff69b4; font-weight:700;">0800 111 0 111</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇫🇷 France</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:0145394000" style="color:#ff69b4; font-weight:700;">0145394000</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇪🇸 Spain</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:914590050" style="color:#ff69b4; font-weight:700;">914590050</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇮🇹 Italy</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:800860022" style="color:#ff69b4; font-weight:700;">800860022</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇳🇱 Netherlands</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:9000113" style="color:#ff69b4; font-weight:700;">900 0113</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇧🇪 Belgium</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:1813" style="color:#ff69b4; font-weight:700;">1813</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇨🇭 Switzerland</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:143" style="color:#ff69b4; font-weight:700;">143</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇦🇹 Austria</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:142" style="color:#ff69b4; font-weight:700;">142</a> · Youth: <a href="tel:147" style="color:#ff69b4;">147</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇸🇪 Sweden</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:46317112400" style="color:#ff69b4; font-weight:700;">46317112400</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇳🇴 Norway</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:+4781533300" style="color:#ff69b4; font-weight:700;">+47 815 33 300</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇩🇰 Denmark</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:4570201201" style="color:#ff69b4; font-weight:700;">4570201201</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇫🇮 Finland</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:010195202" style="color:#ff69b4; font-weight:700;">010 195 202</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇮🇪 Ireland</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:116123" style="color:#ff69b4; font-weight:700;">116123</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇳🇿 New Zealand</td><td style="padding:6px 8px;">111</td><td style="padding:6px 8px;"><a href="tel:1737" style="color:#ff69b4; font-weight:700;">1737</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇿🇦 South Africa</td><td style="padding:6px 8px;">10111</td><td style="padding:6px 8px;"><a href="tel:0514445691" style="color:#ff69b4; font-weight:700;">0514445691</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇮🇳 India</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:8888817666" style="color:#ff69b4; font-weight:700;">8888817666</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇯🇵 Japan</td><td style="padding:6px 8px;">110</td><td style="padding:6px 8px;"><a href="tel:810352869090" style="color:#ff69b4; font-weight:700;">81-3-5286-9090</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇰🇷 South Korea</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:021157600" style="color:#ff69b4; font-weight:700;">(02) 715-8600</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇨🇳 China</td><td style="padding:6px 8px;">110</td><td style="padding:6px 8px;"><a href="tel:8008101117" style="color:#ff69b4; font-weight:700;">800-810-1117</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇭🇰 Hong Kong</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:85223820000" style="color:#ff69b4; font-weight:700;">852 2382 0000</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇸🇬 Singapore</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:18002214444" style="color:#ff69b4; font-weight:700;">1-800-221-4444</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇲🇾 Malaysia</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:062842500" style="color:#ff69b4; font-weight:700;">(06) 2842500</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇵🇭 Philippines</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:028969191" style="color:#ff69b4; font-weight:700;">028-969-191</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇧🇷 Brazil</td><td style="padding:6px 8px;">188</td><td style="padding:6px 8px;"><a href="tel:188" style="color:#ff69b4; font-weight:700;">188</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇦🇷 Argentina</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:135" style="color:#ff69b4; font-weight:700;">135</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇲🇽 Mexico</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:5255102550" style="color:#ff69b4; font-weight:700;">5255102550</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇨🇴 Colombia</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:57132324325" style="color:#ff69b4; font-weight:700;">(57-1) 323 24 25</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇵🇱 Poland</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:5270000" style="color:#ff69b4; font-weight:700;">5270000</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇭🇺 Hungary</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:116123" style="color:#ff69b4; font-weight:700;">116123</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇷🇴 Romania</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:0800801200" style="color:#ff69b4; font-weight:700;">0800 801200</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇬🇷 Greece</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:1018" style="color:#ff69b4; font-weight:700;">1018</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇵🇹 Portugal</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:218540740" style="color:#ff69b4; font-weight:700;">21 854 07 40</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇷🇺 Russia</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:0078202577577" style="color:#ff69b4; font-weight:700;">007-820-257-7577</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇺🇦 Ukraine</td><td style="padding:6px 8px;">112</td><td style="padding:6px 8px;"><a href="tel:7333" style="color:#ff69b4; font-weight:700;">7333</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇱🇧 Lebanon</td><td style="padding:6px 8px;">140</td><td style="padding:6px 8px;"><a href="tel:1564" style="color:#ff69b4; font-weight:700;">1564</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇯🇴 Jordan</td><td style="padding:6px 8px;">911</td><td style="padding:6px 8px;"><a href="tel:110" style="color:#ff69b4; font-weight:700;">110</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇿🇼 Zimbabwe</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:08012333333" style="color:#ff69b4; font-weight:700;">080 12 333 333</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇿🇲 Zambia</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:+260960264040" style="color:#ff69b4; font-weight:700;">+260 960 264 040</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇰🇪 Kenya</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:722178177" style="color:#ff69b4; font-weight:700;">722178177</a></td></tr>
+                            <tr><td style="padding:6px 8px;">🇳🇬 Nigeria</td><td style="padding:6px 8px;">—</td><td style="padding:6px 8px;"><a href="tel:2348092106493" style="color:#ff69b4; font-weight:700;">234 809 210 6493</a></td></tr>
+                            <tr style="background:rgba(255,255,255,0.04);"><td style="padding:6px 8px;">🇬🇭 Ghana</td><td style="padding:6px 8px;">999</td><td style="padding:6px 8px;"><a href="tel:233244471279" style="color:#ff69b4; font-weight:700;">2332 444 71279</a></td></tr>
+                        </table>
+                        <p style="font-size:12px; color:#d8b4fe; text-align:center; margin-top:12px;">More countries: <a href="https://www.opencounseling.com/suicide-hotlines" target="_blank" style="color:#ff69b4;">opencounseling.com/suicide-hotlines</a></p>
+                    </div>
                 </div>
             </div>
         </div>
