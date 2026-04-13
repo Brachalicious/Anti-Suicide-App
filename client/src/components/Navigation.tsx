@@ -12,7 +12,8 @@ import {
   X,
   Moon,
   Sun,
-  MessageCircleHeart
+  MessageCircleHeart,
+  Library
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Modal } from "@/components/ui/modal";
@@ -27,6 +28,7 @@ const navigationItems = [
   { href: "/wellness", label: "Wellness", icon: Activity },
   { href: "/safety-plan", label: "Safety Plan", icon: Shield },
   { href: "/support", label: "Support", icon: Users },
+  { href: "/resources", label: "Resources", icon: Library },
 ];
 
 export default function Navigation() {

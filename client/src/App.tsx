@@ -7,6 +7,7 @@ import Dashboard from "@/pages/Dashboard";
 import CrisisSupport from "@/pages/CrisisSupport";
 import MoodTracking from "@/pages/MoodTracking";
 import VirtualParent from "@/pages/VirtualParent";
+import Resources from "@/pages/Resources";
 import "./index.css";
 
 function App() {
@@ -21,6 +22,7 @@ function App() {
               <Route path="/crisis" component={CrisisSupport} />
               <Route path="/mood" component={MoodTracking} />
               <Route path="/virtual-parent" component={VirtualParent} />
+              <Route path="/resources" component={Resources} />
               <Route>
                 <div className="container mx-auto px-4 py-8 text-center">
                   <h1 className="text-2xl font-bold mb-4">Page Not Found</h1>

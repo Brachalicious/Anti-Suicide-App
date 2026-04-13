@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, BookOpen, Users, Activity, Phone, Shield } from "lucide-react";
+import { Heart, BookOpen, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 export default function Dashboard() {
@@ -13,52 +13,6 @@ export default function Dashboard() {
   const { data: recentJournals } = useQuery({
     queryKey: ['/api/journal-entries', currentUserId],
   });
-
-  const quickActions = [
-    {
-      title: "Crisis Support",
-      description: "Get immediate help and support",
-      icon: Phone,
-      href: "/crisis",
-      className: "bg-red-50 dark:bg-red-950 border-red-200 dark:border-red-800 hover:bg-red-100 dark:hover:bg-red-900",
-      urgent: true
-    },
-    {
-      title: "Mood Check-in",
-      description: "Track how you're feeling today",
-      icon: Heart,
-      href: "/mood",
-      className: "bg-blue-50 dark:bg-blue-950 border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900"
-    },
-    {
-      title: "Journal",
-      description: "Write about your thoughts and feelings",
-      icon: BookOpen,
-      href: "/journal",
-      className: "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900"
-    },
-    {
-      title: "Wellness Activities",
-      description: "Guided exercises and coping strategies",
-      icon: Activity,
-      href: "/wellness",
-  className: "bg-green-50 dark:bg-green-950 border-green-200 dark:border-green-800 hover:bg-green-100 dark:hover:bg-green-900"
-    },
-    {
-      title: "Safety Plan",
-      description: "Create your personal safety plan",
-      icon: Shield,
-      href: "/safety-plan",
-      className: "bg-orange-50 dark:bg-orange-950 border-orange-200 dark:border-orange-800 hover:bg-orange-100 dark:hover:bg-orange-900"
-    },
-    {
-      title: "Support Network",
-      description: "Connect with others and get help",
-      icon: Users,
-      href: "/support",
-      className: "bg-teal-50 dark:bg-teal-950 border-teal-200 dark:border-teal-800 hover:bg-teal-100 dark:hover:bg-teal-900"
-    }
-  ];
 
   const getMoodEmoji = (mood: number) => {
     if (mood >= 8) return "😊";
@@ -88,34 +42,6 @@ export default function Dashboard() {
           <Phone className="mr-2 h-4 w-4" />
           Crisis Support Resources
         </Button>
-      </div>
-
-      {/* Quick Actions Grid */}
-      <div className="mb-8">
-        <h2 className="text-2xl font-semibold mb-6">Quick Actions</h2>
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {quickActions.map((action) => {
-            const Icon = action.icon;
-            return (
-              <div
-                key={action.title}
-                className={`p-6 rounded-lg border-2 cursor-pointer transition-all duration-200 ${action.className}`}
-                onClick={() => window.location.href = action.href}
-              >
-                <div className="flex items-center mb-3">
-                  <Icon className="h-6 w-6 mr-3" />
-                  <h3 className="font-semibold">{action.title}</h3>
-                  {action.urgent && (
-                    <span className="ml-auto bg-red-600 text-white text-xs px-2 py-1 rounded-full">
-                      Urgent
-                    </span>
-                  )}
-                </div>
-                <p className="text-sm opacity-80">{action.description}</p>
-              </div>
-            );
-          })}
-        </div>
       </div>
 
       {/* Recent Activity */}

@@ -7,8 +7,8 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>MysticMinded³³ - Mental Health Support & Crisis Prevention</title>
-    <link rel="icon" type="image/svg+xml" href="/public/favicon.svg">
-    <link rel="icon" type="image/png" href="/public/favicon.svg">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/png" href="/favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -1043,29 +1043,27 @@
         /* Circular text around logo */
         .logo-container {
             position: relative;
-            width: 300px;
-            height: 300px;
+            width: 220px;
+            height: 220px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow: visible;
         }
         
         .circular-text {
             position: absolute;
             width: 100%;
             height: 100%;
-            overflow: visible;
         }
         
         .circular-text text {
-            font-size: 13px;
+            font-size: 18px;
             font-weight: 800;
-            letter-spacing: 3px;
+            letter-spacing: 5px;
             text-transform: uppercase;
-            fill: #ff1493;
-            filter: drop-shadow(0 0 4px rgba(255,20,147,0.5));
+            fill: #9d174d;
+            filter: drop-shadow(0 0 4px rgba(157, 23, 77, 0.3));
         }
         
         .logo-container img {
@@ -1327,16 +1325,15 @@
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
                 <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <!-- Full circle: two semicarcs so browser renders the full 360° path -->
-                        <path id="fullCircle" d="M 150,42 A 108,108 0 0,1 258,150 A 108,108 0 0,1 150,258 A 108,108 0 0,1 42,150 A 108,108 0 0,1 150,42 Z"/>
+                        <path id="circlePath" d="M 150, 150 m -90, 0 a 90,90 0 1,1 180,0 a 90,90 0 1,1 -180,0"/>
                     </defs>
                     <text>
-                        <textPath href="#fullCircle" startOffset="0%">
+                        <textPath href="#circlePath" startOffset="0">
                             ✦ FIGHT SUICIDE PROJECT ✦ FIGHT SUICIDE PROJECT ✦
                         </textPath>
                     </text>
                 </svg>
-                <img src="/public/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
+                <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
             </div>
         </div>
 
@@ -3057,7 +3054,7 @@
 
         <!-- Dedication Section -->
         <div id="dedication" class="section hidden">
-            <div class="card" style="background-image: url('./public/cherry-blossom.png'); background-size: cover; background-repeat: no-repeat; background-position: center; border: 2px solid #f9a8d4; box-shadow: 0 8px 24px rgba(249, 168, 212, 0.4); position: relative; overflow: hidden; padding: 32px;">
+            <div class="card" style="background-image: url('/cherry-blossom.png'); background-size: cover; background-repeat: no-repeat; background-position: center; border: 2px solid #f9a8d4; box-shadow: 0 8px 24px rgba(249, 168, 212, 0.4); position: relative; overflow: hidden; padding: 32px;">
                 <h2 class="section-title" style="color: #000000; font-size: 36px; margin-bottom: 24px; text-shadow: 0 0 8px rgba(255,255,255,0.95), 1px 1px 0px rgba(255,255,255,0.95); font-family: 'Brush Script MT', 'Lucida Handwriting', cursive;">Dedication</h2>
                 
                 <div style="padding: 32px;">
@@ -4718,7 +4715,7 @@
                                 <div id="mirrorFrameWrap" class="mirror-frame-wrap" style="display:none;">
                                     <div class="mirror-inner">
                                         <!-- Mirror image always visible as glass background -->
-                                        <img class="mirror-img-bg" src="/public/mirror-bg.png" alt="mirror" id="mirrorImgBg" style="z-index:0;">
+                                        <img class="mirror-img-bg" src="/mirror-bg.png" alt="mirror" id="mirrorImgBg" style="z-index:0;">
                                         <!-- Live camera feed (on top of image) -->
                                         <video id="mirrorVideo" autoplay playsinline muted></video>
                                         <!-- Affirmation text overlay — cursive on glass -->
