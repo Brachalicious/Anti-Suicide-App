@@ -2711,44 +2711,6 @@
                     </div>
                 </div>
             </div>
-            <div class="card">
-                <h2 class="section-title">🎵 Healing Music Playlists</h2>
-                <p style="margin-bottom: 12px; color: #ff69b4;">Curated playlists for emotional support and calm.</p>
-                <div class="hotline">
-                    <button class="btn" style="margin-top:4px;" onclick="window.open('https://www.youtube.com/results?search_query=healing+meditation+music', '_blank')">🎵 Healing Meditation Music</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=jewish+healing+niggunim', '_blank')">🎵 Jewish Healing Niggunim</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=calming+piano+music+for+anxiety', '_blank')">🎵 Calming Piano for Anxiety</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=binaural+beats+anxiety+relief', '_blank')">🎵 Binaural Beats for Anxiety Relief</button>
-                </div>
-            </div>
-            <div class="card">
-                <h2 class="section-title">🎧 Healing Music</h2>
-                <p style="margin-bottom: 16px; color: #ff69b4;">Music can be a powerful tool for emotional healing and regulation. Put on headphones, close your eyes, and let the sound carry you.</p>
-                <div class="hotline">
-                    <h3>Binaural Beats — Deep Calm</h3>
-                    <p>Plays calming theta-wave binaural beats (best with headphones). Gently guides your brain toward a relaxed, meditative state.</p>
-                    <button class="btn" id="binauralPlayBtn" onclick="toggleBinauralPlayer()">▶ Play Binaural Beats</button>
-                    <div id="binauralControls" style="display:none; margin-top:12px;">
-                        <label style="font-size:13px; color:#ff69b4;">Volume</label>
-                        <input type="range" id="binauralVolume" min="0" max="100" value="50" style="width:100%; accent-color:#22c55e;" oninput="setBinauralVolume(this.value)">
-                        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
-                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('theta')">Theta (Calm)</button>
-                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('alpha')">Alpha (Focus)</button>
-                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('delta')">Delta (Sleep)</button>
-                        </div>
-                    </div>
-                </div>
-                <div class="hotline">
-                    <h3>Nature Sounds</h3>
-                    <p>Gentle ambient sounds to help ground you in the present moment.</p>
-                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
-                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('rain')">🌧️ Rain</button>
-                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('ocean')">🌊 Ocean</button>
-                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('wind')">🍃 Wind</button>
-                    </div>
-                    <button class="btn" id="natureStopBtn" style="display:none; margin-top:8px; font-size:13px;" onclick="stopNatureSound()">⏹ Stop Nature Sound</button>
-                </div>
-            </div>
         </div>
 
         <div id="mood" class="section hidden">
@@ -4782,6 +4744,44 @@
                         </div>
                     </div>
 
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="section-title">🎵 Healing Music Playlists</h2>
+                <p style="margin-bottom: 12px; color: #ff69b4;">Curated playlists for emotional support and calm.</p>
+                <div class="hotline">
+                    <button class="btn" style="margin-top:4px;" onclick="window.open('https://www.youtube.com/results?search_query=healing+meditation+music', '_blank')">🎵 Healing Meditation Music</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=jewish+healing+niggunim', '_blank')">🎵 Jewish Healing Niggunim</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=calming+piano+music+for+anxiety', '_blank')">🎵 Calming Piano for Anxiety</button>
+                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=binaural+beats+anxiety+relief', '_blank')">🎵 Binaural Beats for Anxiety Relief</button>
+                </div>
+            </div>
+            <div class="card">
+                <h2 class="section-title">🎧 Healing Music</h2>
+                <p style="margin-bottom: 16px; color: #ff69b4;">Music can be a powerful tool for emotional healing and regulation. Put on headphones, close your eyes, and let the sound carry you.</p>
+                <div class="hotline">
+                    <h3>Binaural Beats — Deep Calm</h3>
+                    <p>Plays calming theta-wave binaural beats (best with headphones). Gently guides your brain toward a relaxed, meditative state.</p>
+                    <button class="btn" id="binauralPlayBtn" onclick="toggleBinauralPlayer()">▶ Play Binaural Beats</button>
+                    <div id="binauralControls" style="display:none; margin-top:12px;">
+                        <label style="font-size:13px; color:#ff69b4;">Volume</label>
+                        <input type="range" id="binauralVolume" min="0" max="100" value="50" style="width:100%; accent-color:#22c55e;" oninput="setBinauralVolume(this.value)">
+                        <div style="display:flex; gap:8px; margin-top:8px; flex-wrap:wrap;">
+                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('theta')">Theta (Calm)</button>
+                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('alpha')">Alpha (Focus)</button>
+                            <button class="btn" style="flex:1; min-width:100px; font-size:13px;" onclick="setBinauralPreset('delta')">Delta (Sleep)</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="hotline">
+                    <h3>Nature Sounds</h3>
+                    <p>Gentle ambient sounds to help ground you in the present moment.</p>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('rain')">🌧️ Rain</button>
+                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('ocean')">🌊 Ocean</button>
+                        <button class="btn" style="flex:1; min-width:80px; font-size:13px;" onclick="playNatureSound('wind')">🍃 Wind</button>
+                    </div>
+                    <button class="btn" id="natureStopBtn" style="display:none; margin-top:8px; font-size:13px;" onclick="stopNatureSound()">⏹ Stop Nature Sound</button>
                 </div>
             </div>
         </div>
