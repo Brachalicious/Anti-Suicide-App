@@ -44,23 +44,26 @@
             50%       { text-shadow: 0 0 20px #fff, 0 0 50px #ffd700, 0 0 90px #ffec6e; }
         }
         #liveMirrorGlitterLine {
-            position: fixed;
-            bottom: 16vh;
+            position: absolute;
+            top: 12%;
             left: 50%;
             transform: translateX(-50%);
-            width: 90vw;
-            z-index: 999999;
+            width: 80%;
+            z-index: 10;
             pointer-events: none;
             text-align: center;
-            font-size: clamp(24px, 4.5vw, 42px);
+            font-size: clamp(16px, 4vw, 28px);
             font-weight: 900;
             font-family: Georgia, serif;
             color: #ffd700;
             animation: glitterSparkle 1.4s ease-in-out infinite;
             line-height: 1.5;
-            letter-spacing: 3px;
-            text-shadow: 0 0 12px #ffd700, 0 0 30px #ffec6e, 0 0 60px #d4af37;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px #ffd700, 0 0 25px #ffec6e, 0 0 50px #d4af37;
             display: none;
+            background: rgba(0,0,0,0.35);
+            border-radius: 12px;
+            padding: 6px 10px;
         }
         .mirror-frame-wrap {
             position: relative;
@@ -12214,6 +12217,8 @@ User's message: ${userMessage}`
             </div>
             <!-- Shimmer ring overlay -->
             <div style="position:absolute; inset:0; border-radius:50%; pointer-events:none; box-shadow:inset 0 0 40px rgba(212,175,55,0.25);"></div>
+            <!-- Gold glitter spoken words — floats above user's head inside the circle -->
+            <div id="liveMirrorGlitterLine"></div>
         </div>
 
         <!-- Controls row: flip camera + record session + say it -->
@@ -12222,12 +12227,7 @@ User's message: ${userMessage}`
             <button onclick="startLiveMirrorSpeech()" id="liveMirrorMicBtn" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s;">🎤 Say It</button>
             <button onclick="recordMirrorSession()" id="mirrorRecordBtn" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;">✅ Mark Complete</button>
         </div>
-        <p id="liveMirrorSpeechStatus" style="color:rgba(212,175,55,0.8); font-size:12px; text-align:center; margin-top:6px; min-height:16px;"></p>
-
-        <!-- Gold glitter spoken text line — appears over the whole screen as user speaks -->
-        <div id="liveMirrorGlitterLine"></div>
-
-        <!-- Affirmation text below -->
+        <p id="liveMirrorSpeechStatus" style="color:rgba(212,175,55,0.8); font-size:12px; text-align:center; margin-top:6px; min-height:16px;"></p>        <!-- Affirmation text below -->
         <div style="margin-top:14px; text-align:center; padding:0 24px; max-width:340px;">
             <p style="color:#fce7f3; font-size:13px; opacity:0.75; margin-bottom:6px; letter-spacing:0.5px;">✨ Look at yourself and say:</p>
             <p id="mirrorModalAffText" style="color:#d4af37; font-size:19px; font-weight:800; line-height:1.5; text-shadow:0 0 20px rgba(212,175,55,0.6);"></p>
