@@ -5112,7 +5112,7 @@
                     <!-- OpenAI API Key -->
                     <div class="hotline" style="margin-bottom: 20px; border: 2px solid #a855f7;">
                         <h3 style="color:#ff1493;">🤖 Google Gemini AI Key</h3>
-                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px;">Enter your Google Gemini API key (AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g) to enable real AI responses in Virtual Buddy and other features. Your key is stored only on your device and never sent anywhere except directly to Google.</p>
+                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px;">Enter your Google Gemini API key to enable real AI responses in Virtual Buddy and other features. Your key is stored only on your device and never sent anywhere except directly to Google.</p>
                         <div style="display:flex; gap:10px; align-items:center;">
                             <input type="password" id="openaiKeyInput" placeholder="AIzaSy..." 
                                 style="flex:1; padding:10px 14px; border:2px solid #a855f7; border-radius:8px; font-size:15px; outline:none;">
@@ -5574,7 +5574,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const GEMINI_KEY = 'AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g'; // Default Gemini API key
+                const GEMINI_KEY = localStorage.getItem('openai_api_key') || '';
                 const storedKey = localStorage.getItem('openai_api_key') || '';
 
                 const systemPrompt = selectedParent === 'mommy'
@@ -5686,7 +5686,7 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             
             try {
-                const GEMINI_KEY = 'AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g'; // Default Gemini API key
+                const GEMINI_KEY = localStorage.getItem('openai_api_key') || '';
                 const storedKey = localStorage.getItem('geminiApiKey') || '';
                 const apiKey = storedKey || GEMINI_KEY;
                 
