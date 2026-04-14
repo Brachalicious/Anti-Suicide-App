@@ -8502,7 +8502,7 @@ User's message: ${userMessage}`
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('guidedMeditationOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">🧘<br>Calm Down</button>
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('screamCircleOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">😤<br>Release Anger</button>
                         <button onclick="document.querySelector('.help-guide-modal').remove();(document.querySelector('[onclick*=crisis],[onclick*=Crisis]')||{click:function(){}}).click()" style="padding:14px 10px;background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:14px;color:#fca5a5;cursor:pointer;font-size:14px;font-weight:700;">🆘<br>I'm in Crisis</button>
-                        <button onclick="document.querySelector('.help-guide-modal').remove();(document.querySelector('#chat-input,textarea')||{focus:function(){}}).focus()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">💬<br>Talk to Someone</button>
+                        <button onclick="document.querySelector('.help-guide-modal').remove();openTalkToSomeoneModal()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">💬<br>Talk to Someone</button>
                     </div>
                     <div style="display:flex;gap:8px;">
                         <input id="help-guide-input" placeholder="Tell me what you need..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
@@ -12208,6 +12208,142 @@ User's message: ${userMessage}`
                     ? '🪞 ' + stats.total + ' done · 🔥 ' + stats.streak + '-day streak'
                     : 'No sessions yet — tap the mirror to start!';
             }
+        }
+
+        /* ===== TALK TO SOMEONE — COUNTRY FLAG HOTLINE PICKER ===== */
+        var HOTLINES = {
+            'US':  { name:'United States 🇺🇸', lines:[
+                { label:'988 Suicide & Crisis Lifeline', sub:'Call or Text', tel:'988', text:'988' },
+                { label:'Crisis Text Line', sub:'Text HOME to 741741', text:'741741', textword:'HOME' },
+                { label:'Trevor Project (LGBTQ+)', sub:'1-866-488-7386', tel:'18664887386' }
+            ]},
+            'IL':  { name:'Israel 🇮🇱', lines:[
+                { label:'ERAN – Emotional First Aid', sub:'1201 (24/7, free)', tel:'1201' },
+                { label:'ERAN English/Arabic', sub:'1800-599-559', tel:'1800599559' },
+                { label:'Hatzolah Jerusalem', sub:'1221', tel:'1221' }
+            ]},
+            'GB':  { name:'United Kingdom 🇬🇧', lines:[
+                { label:'Samaritans', sub:'116 123 (free, 24/7)', tel:'116123' },
+                { label:'PAPYRUS HOPElineUK', sub:'0800 068 4141', tel:'08000684141' },
+                { label:'Crisis Text Line UK', sub:'Text SHOUT to 85258', text:'85258', textword:'SHOUT' }
+            ]},
+            'CA':  { name:'Canada 🇨🇦', lines:[
+                { label:'Talk Suicide Canada', sub:'1-833-456-4566', tel:'18334564566' },
+                { label:'Crisis Text Line Canada', sub:'Text HOME to 686868', text:'686868', textword:'HOME' },
+                { label:'Kids Help Phone', sub:'1-800-668-6868', tel:'18006686868' }
+            ]},
+            'AU':  { name:'Australia 🇦🇺', lines:[
+                { label:'Lifeline Australia', sub:'13 11 14', tel:'131114' },
+                { label:'Beyond Blue', sub:'1300 22 4636', tel:'1300224636' },
+                { label:'Kids Helpline', sub:'1800 55 1800', tel:'1800551800' }
+            ]},
+            'ZA':  { name:'South Africa 🇿🇦', lines:[
+                { label:'SADAG Suicide Crisis Line', sub:'0800 567 567', tel:'0800567567' },
+                { label:'Lifeline SA', sub:'0861 322 322', tel:'0861322322' }
+            ]},
+            'IN':  { name:'India 🇮🇳', lines:[
+                { label:'iCall', sub:'9152987821', tel:'9152987821' },
+                { label:'Vandrevala Foundation', sub:'1860-2662-345 (24/7)', tel:'18602662345' },
+                { label:'AASRA', sub:'91-22-27546669', tel:'912227546669' }
+            ]},
+            'FR':  { name:'France 🇫🇷', lines:[
+                { label:'Numéro National Prévention Suicide', sub:'3114 (24/7)', tel:'3114' },
+                { label:'SOS Amitié', sub:'09 72 39 40 50', tel:'0972394050' }
+            ]},
+            'DE':  { name:'Germany 🇩🇪', lines:[
+                { label:'Telefonseelsorge', sub:'0800 111 0 111 (free, 24/7)', tel:'08001110111' },
+                { label:'Telefonseelsorge (alt)', sub:'0800 111 0 222', tel:'08001110222' }
+            ]},
+            'NL':  { name:'Netherlands 🇳🇱', lines:[
+                { label:'113 Zelfmoordpreventie', sub:'113 or 0800-0113', tel:'0800-0113' }
+            ]},
+            'NZ':  { name:'New Zealand 🇳🇿', lines:[
+                { label:'Lifeline Aotearoa', sub:'0800 543 354', tel:'0800543354' },
+                { label:'Youthline', sub:'0800 376 633', tel:'0800376633' }
+            ]},
+            'BR':  { name:'Brazil 🇧🇷', lines:[
+                { label:'CVV – Centro de Valorização da Vida', sub:'188 (24/7)', tel:'188' }
+            ]},
+            'MX':  { name:'Mexico 🇲🇽', lines:[
+                { label:'SAPTEL', sub:'55 5259-8121', tel:'5552598121' },
+                { label:'INPRF Línea de la Vida', sub:'800-911-2000', tel:'8009112000' }
+            ]},
+            'ES':  { name:'Spain 🇪🇸', lines:[
+                { label:'Telèfon de l\'Esperança', sub:'93 414 48 48', tel:'934144848' },
+                { label:'Teléfono de la Esperanza', sub:'717 003 717', tel:'717003717' }
+            ]},
+            'IT':  { name:'Italy 🇮🇹', lines:[
+                { label:'Telefono Amico', sub:'02 2327 2327', tel:'0223272327' },
+                { label:'Telefono Azzurro (youth)', sub:'19696', tel:'19696' }
+            ]},
+            'JP':  { name:'Japan 🇯🇵', lines:[
+                { label:'Inochi no Denwa', sub:'0120-783-556 (free, 24/7)', tel:'0120783556' },
+                { label:'Yorisoi Hotline', sub:'0120-279-338', tel:'0120279338' }
+            ]},
+            'KR':  { name:'South Korea 🇰🇷', lines:[
+                { label:'Korea Suicide Prevention Hotline', sub:'1393 (24/7)', tel:'1393' }
+            ]},
+            'NG':  { name:'Nigeria 🇳🇬', lines:[
+                { label:'Mentally Aware Initiative', sub:'08091116264', tel:'08091116264' },
+                { label:'Suicide Research & Prevention', sub:'234-8062-106-493', tel:'2348062106493' }
+            ]},
+            'OTHER': { name:'Other Country 🌍', lines:[
+                { label:'Find Your Country\'s Line', sub:'Visit findahelpline.com', url:'https://findahelpline.com' },
+                { label:'International Association for Suicide Prevention', sub:'Visit iasp.info/resources/Crisis_Centres/', url:'https://www.iasp.info/resources/Crisis_Centres/' }
+            ]}
+        };
+
+        function openTalkToSomeoneModal() {
+            var existing = document.getElementById('talkToSomeoneModal');
+            if (existing) { existing.remove(); return; }
+            var modal = document.createElement('div');
+            modal.id = 'talkToSomeoneModal';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.82);z-index:100002;display:flex;align-items:center;justify-content:center;padding:16px;';
+            modal.innerHTML = `
+              <div style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:24px;padding:28px 20px 20px;max-width:480px;width:100%;max-height:88vh;overflow-y:auto;position:relative;border:2px solid rgba(255,20,147,0.45);box-shadow:0 20px 60px rgba(0,0,0,0.6);">
+                <button onclick="document.getElementById('talkToSomeoneModal').remove()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">✕</button>
+                <h2 style="color:#ff1493;font-size:20px;font-weight:800;text-align:center;margin:0 0 4px 0;">💬 Talk to Someone</h2>
+                <p style="color:#fce7f3;font-size:13px;text-align:center;margin:0 0 16px 0;">Tap your country's flag to see crisis lines</p>
+                <div id="talkFlagGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px;">
+                  ${Object.entries(HOTLINES).map(([code, c]) => `
+                    <button onclick="showCountryHotlines('${code}')" style="padding:10px 6px;background:rgba(255,20,147,0.12);border:2px solid rgba(255,20,147,0.3);border-radius:12px;color:#fce7f3;cursor:pointer;font-size:12px;font-weight:700;line-height:1.4;text-align:center;transition:background 0.2s;"
+                      onmouseover="this.style.background='rgba(255,20,147,0.28)'" onmouseout="this.style.background='rgba(255,20,147,0.12)'">
+                      ${c.name}
+                    </button>`).join('')}
+                </div>
+                <div id="talkHotlineResult" style="display:none;"></div>
+              </div>`;
+            document.body.appendChild(modal);
+            modal.addEventListener('click', function(e){ if(e.target===modal) modal.remove(); });
+        }
+
+        function showCountryHotlines(code) {
+            var country = HOTLINES[code];
+            if (!country) return;
+            var el = document.getElementById('talkHotlineResult');
+            var grid = document.getElementById('talkFlagGrid');
+            if (!el || !grid) return;
+            grid.style.display = 'none';
+            el.style.display = 'block';
+            var html = '<button onclick="document.getElementById(\'talkFlagGrid\').style.display=\'grid\';document.getElementById(\'talkHotlineResult\').style.display=\'none\';" style="background:none;border:none;color:#ff69b4;font-size:13px;cursor:pointer;margin-bottom:12px;padding:0;">← Back to all countries</button>';
+            html += '<h3 style="color:#ff1493;font-size:16px;font-weight:800;margin:0 0 12px 0;text-align:center;">' + country.name + '</h3>';
+            country.lines.forEach(function(line) {
+                html += '<div style="background:rgba(255,20,147,0.1);border:1.5px solid rgba(255,20,147,0.35);border-radius:14px;padding:14px;margin-bottom:10px;">';
+                html += '<p style="color:#fce7f3;font-size:14px;font-weight:700;margin:0 0 3px 0;">' + line.label + '</p>';
+                html += '<p style="color:#ff69b4;font-size:12px;margin:0 0 10px 0;">' + line.sub + '</p>';
+                html += '<div style="display:flex;gap:8px;flex-wrap:wrap;">';
+                if (line.tel) {
+                    html += '<a href="tel:' + line.tel + '" style="flex:1;min-width:90px;padding:9px 12px;background:#22c55e;border-radius:10px;color:white;font-weight:700;font-size:13px;text-align:center;text-decoration:none;">📞 Call Now</a>';
+                }
+                if (line.text && line.textword) {
+                    html += '<a href="sms:' + line.text + '?body=' + line.textword + '" style="flex:1;min-width:90px;padding:9px 12px;background:#3b82f6;border-radius:10px;color:white;font-weight:700;font-size:13px;text-align:center;text-decoration:none;">💬 Text Now</a>';
+                }
+                if (line.url) {
+                    html += '<a href="' + line.url + '" target="_blank" rel="noopener" style="flex:1;min-width:90px;padding:9px 12px;background:#8b5cf6;border-radius:10px;color:white;font-weight:700;font-size:13px;text-align:center;text-decoration:none;">🔗 Open Site</a>';
+                }
+                html += '</div></div>';
+            });
+            el.innerHTML = html;
         }
     </script>
 
