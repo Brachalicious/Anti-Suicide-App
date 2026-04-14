@@ -3803,9 +3803,9 @@
                     <div style="margin-top: 28px; border-radius: 20px; border: 2px solid #a78bfa; background: linear-gradient(135deg, #1e1b4b, #312e81); overflow: hidden;">
                         <div onclick="toggleFreeAssoc()" id="freeAssocHeader" style="cursor:pointer; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#312e81,#4c1d95);">
                             <span style="color:#c4b5fd; font-size:17px; font-weight:800; letter-spacing:0.5px;">🌀 Free Association — Talk Gibberish</span>
-                            <span id="freeAssocArrow" style="color:#a78bfa; font-size:18px;">▾</span>
+                            <span id="freeAssocArrow" style="color:#a78bfa; font-size:18px;">▴</span>
                         </div>
-                        <div id="freeAssocBody" style="display:none; padding:18px;">
+                        <div id="freeAssocBody" style="display:block; padding:18px;">
                             <p style="color:#ddd6fe; font-size:13px; margin-bottom:16px; line-height:1.7; text-align:center;">No rules. No judgment. Just say <em>anything</em> — words, sounds, nonsense. Let it all out. I'll respond until you feel steadier. 💜</p>
                             <div id="freeAssocChat" style="min-height:120px; max-height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:14px; padding:4px 2px;"></div>
                             <div style="display:flex; gap:8px; align-items:center;">
@@ -9135,7 +9135,6 @@ User's message: ${userMessage}`
             if (body.style.display === 'none') {
                 body.style.display = 'block';
                 arrow.textContent = '▴';
-                // Auto-send the opening prompt if first time
                 if (freeAssocMsgCount === 0) {
                     setTimeout(function() {
                         addFreeAssocMsg('bot', '💜 Say anything. Words, sounds, nonsense — whatever is in your head right now. Go.');
@@ -9146,6 +9145,15 @@ User's message: ${userMessage}`
                 arrow.textContent = '▾';
             }
         }
+
+        // Auto-send opening message on page load since panel starts open
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(function() {
+                if (freeAssocMsgCount === 0) {
+                    addFreeAssocMsg('bot', '💜 Say anything. Words, sounds, nonsense — whatever is in your head right now. Go.');
+                }
+            }, 500);
+        });
 
         function addFreeAssocMsg(sender, text) {
             var chat = document.getElementById('freeAssocChat');
@@ -12007,7 +12015,7 @@ User's message: ${userMessage}`
         }
 
         function startLiveMirrorCamera() {
-            var video = document.getElementById('mirrorVideo');
+            var video = document.getElementById('liveMirrorVideo');
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
                 navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
                     .then(function(stream) {
@@ -12031,7 +12039,7 @@ User's message: ${userMessage}`
                 mirrorStream.getTracks().forEach(function(t) { t.stop(); });
                 mirrorStream = null;
             }
-            var video = document.getElementById('mirrorVideo');
+            var video = document.getElementById('liveMirrorVideo');
             if (video) video.srcObject = null;
         }
     </script>
@@ -12043,7 +12051,7 @@ User's message: ${userMessage}`
 
         <!-- Round camera viewport -->
         <div style="position:relative; width:min(82vw, 82vh); height:min(82vw, 82vh); border-radius:50%; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 60px rgba(212,175,55,0.7), 0 0 120px rgba(212,175,55,0.3);">
-            <video id="mirrorVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
+            <video id="liveMirrorVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
             <!-- Fallback if camera denied — hidden by default, shown only on error -->
             <div id="mirrorCameraError" style="display:none; position:absolute; inset:0; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center;">
                 <div style="font-size:48px; margin-bottom:12px;">🪞</div>
