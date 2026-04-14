@@ -2206,9 +2206,10 @@
                         </div>
                         <div style="display:none; padding: 14px;">
                             <p style="color:#fce7f3; font-size:13px; margin-bottom:12px; text-align:center; opacity:0.85;">✨ Read it slowly. Say it out loud. Let it land.</p>
-                            <!-- Circular gold mirror display -->
-                            <div style="width:200px; height:200px; border-radius:50%; margin:0 auto 14px; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 28px rgba(212,175,55,0.6);">
+                            <!-- Circular gold mirror display - tap to open live mirror -->
+                            <div onclick="openLiveMirror()" style="width:200px; height:200px; border-radius:50%; margin:0 auto 14px; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 28px rgba(212,175,55,0.6); cursor:pointer; position:relative;" title="Tap to see yourself">
                                 <img src="/public/mirror.png" alt="hello gorgeous mirror" style="width:100%; height:100%; object-fit:cover; display:block;" />
+                                <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.45); color:#d4af37; font-size:11px; font-weight:700; text-align:center; padding:6px 4px; letter-spacing:0.5px;">👆 Tap to see you</div>
                             </div>
                             <!-- Nav buttons -->
                             <div style="display:flex; gap:8px; margin-bottom:8px;">
@@ -11833,7 +11834,81 @@ User's message: ${userMessage}`
         document.addEventListener('DOMContentLoaded', function() {
             newChizuk();
         });
+
+        /* ===== LIVE MIRROR MODAL ===== */
+        function openLiveMirror() {
+            var modal = document.getElementById('liveMirrorModal');
+            modal.style.display = 'flex';
+            document.body.style.overflow = 'hidden';
+            // Show current affirmation text in modal
+            var modalAff = document.getElementById('mirrorModalAffText');
+            if (modalAff && typeof guidedAffList !== 'undefined') {
+                modalAff.textContent = '"' + guidedAffList[guidedAffIndex] + '"';
+            }
+            startLiveMirrorCamera();
+        }
+
+        function closeLiveMirror() {
+            var modal = document.getElementById('liveMirrorModal');
+            modal.style.display = 'none';
+            document.body.style.overflow = '';
+            stopLiveMirrorCamera();
+        }
+
+        function startLiveMirrorCamera() {
+            var video = document.getElementById('mirrorVideo');
+            if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+                    .then(function(stream) {
+                        mirrorStream = stream;
+                        video.srcObject = stream;
+                        video.play();
+                        document.getElementById('mirrorCameraError').style.display = 'none';
+                        video.style.display = 'block';
+                    })
+                    .catch(function(err) {
+                        document.getElementById('mirrorCameraError').style.display = 'flex';
+                        video.style.display = 'none';
+                    });
+            } else {
+                document.getElementById('mirrorCameraError').style.display = 'flex';
+            }
+        }
+
+        function stopLiveMirrorCamera() {
+            if (mirrorStream) {
+                mirrorStream.getTracks().forEach(function(t) { t.stop(); });
+                mirrorStream = null;
+            }
+            var video = document.getElementById('mirrorVideo');
+            if (video) video.srcObject = null;
+        }
     </script>
+
+    <!-- ===== LIVE MIRROR FULLSCREEN MODAL ===== -->
+    <div id="liveMirrorModal" style="display:none; position:fixed; inset:0; z-index:99999; background:rgba(0,0,0,0.92); flex-direction:column; align-items:center; justify-content:center;">
+        <!-- Close button -->
+        <button onclick="closeLiveMirror()" style="position:absolute; top:18px; right:20px; background:rgba(212,175,55,0.2); border:2px solid #d4af37; color:#d4af37; border-radius:50%; width:44px; height:44px; font-size:22px; cursor:pointer; z-index:100001; display:flex; align-items:center; justify-content:center;">✕</button>
+
+        <!-- Round camera viewport -->
+        <div style="position:relative; width:min(82vw, 82vh); height:min(82vw, 82vh); border-radius:50%; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 60px rgba(212,175,55,0.7), 0 0 120px rgba(212,175,55,0.3);">
+            <video id="mirrorVideo" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></video>
+            <!-- Fallback if camera denied -->
+            <div id="mirrorCameraError" style="display:none; width:100%; height:100%; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center;">
+                <div style="font-size:48px; margin-bottom:12px;">🪞</div>
+                <p style="color:#d4af37; font-size:16px; font-weight:700;">Camera access needed</p>
+                <p style="color:#fce7f3; font-size:13px; margin-top:8px;">Allow camera permission to see your reflection</p>
+            </div>
+            <!-- Shimmer ring overlay -->
+            <div style="position:absolute; inset:0; border-radius:50%; pointer-events:none; box-shadow:inset 0 0 40px rgba(212,175,55,0.25);"></div>
+        </div>
+
+        <!-- Affirmation text below -->
+        <div style="margin-top:24px; text-align:center; padding:0 24px; max-width:340px;">
+            <p style="color:#fce7f3; font-size:13px; opacity:0.75; margin-bottom:8px; letter-spacing:0.5px;">✨ Look at yourself and say:</p>
+            <p id="mirrorModalAffText" style="color:#d4af37; font-size:20px; font-weight:800; line-height:1.5; text-shadow:0 0 20px rgba(212,175,55,0.6);"></p>
+        </div>
+    </div>
 
 </body>
 </html>
