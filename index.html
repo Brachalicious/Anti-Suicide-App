@@ -1059,12 +1059,12 @@
         }
         
         .circular-text text {
-            font-size: 12px;
-            font-weight: 700;
-            letter-spacing: 1.35px;
+            font-size: 13.5px;
+            font-weight: 900;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            fill: #6b7280;
-            filter: drop-shadow(0 0 1px rgba(107, 114, 128, 0.18));
+            fill: #ff1493;
+            filter: drop-shadow(0 0 3px rgba(255,20,147,0.5));
         }
         
         .logo-container img {
@@ -1326,12 +1326,16 @@
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
                 <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <path id="circlePath" d="M 150,150 m -126,0 a 126,126 0 1,1 252,0"/>
+                        <!-- Top arc: left to right across the top -->
+                        <path id="topArc" d="M 24,150 a 126,126 0 0,1 252,0"/>
+                        <!-- Bottom arc: right to left across the bottom -->
+                        <path id="bottomArc" d="M 276,150 a 126,126 0 0,1 -252,0"/>
                     </defs>
-                    <text font-size="15" font-weight="bold" font-family="Arial, sans-serif" fill="#ff1493" letter-spacing="3" text-anchor="middle">
-                        <textPath href="#circlePath" startOffset="50%">
-                            ✦ FIGHT SUICIDE PROJECT ✦ FIGHT SUICIDE PROJECT ✦
-                        </textPath>
+                    <text font-family="Arial, sans-serif">
+                        <textPath href="#topArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                    </text>
+                    <text font-family="Arial, sans-serif">
+                        <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
                     </text>
                 </svg>
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
