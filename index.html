@@ -38,6 +38,27 @@
             0%   { background-position: -200% center; }
             100% { background-position: 200% center; }
         }
+        /* Gold glitter word flow animation */
+        @keyframes glitterFloat {
+            0%   { transform: translateX(-120px) translateY(0px) scale(0.7); opacity: 0; }
+            10%  { opacity: 1; transform: translateX(0px) translateY(-8px) scale(1); }
+            80%  { opacity: 1; }
+            100% { transform: translateX(110vw) translateY(-30px) scale(0.85); opacity: 0; }
+        }
+        @keyframes glitterSparkle {
+            0%, 100% { text-shadow: 0 0 8px #ffd700, 0 0 20px #ffec6e, 0 0 40px #d4af37; }
+            50%       { text-shadow: 0 0 16px #fff, 0 0 40px #ffd700, 0 0 80px #ffec6e, 0 0 4px #fff; }
+        }
+        .glitter-word {
+            position: fixed;
+            pointer-events: none;
+            z-index: 999999;
+            font-weight: 900;
+            font-family: Georgia, serif;
+            color: #ffd700;
+            animation: glitterFloat linear forwards, glitterSparkle 0.6s ease-in-out infinite;
+            white-space: nowrap;
+        }
         .mirror-frame-wrap {
             position: relative;
             width: 100%;
@@ -12038,6 +12059,96 @@ User's message: ${userMessage}`
             }
             var video = document.getElementById('liveMirrorVideo');
             if (video) video.srcObject = null;
+            // Also stop any active speech
+            if (liveMirrorSpeechRecog) { liveMirrorSpeechRecog.stop(); liveMirrorSpeechRecog = null; }
+        }
+
+        // ── Live Mirror Speech + Gold Glitter ──
+        var liveMirrorSpeechRecog = null;
+        var liveMirrorListening = false;
+
+        function startLiveMirrorSpeech() {
+            var btn = document.getElementById('liveMirrorMicBtn');
+            var status = document.getElementById('liveMirrorSpeechStatus');
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                status.textContent = 'Speech not supported on this browser';
+                return;
+            }
+            if (liveMirrorListening) {
+                // Stop listening
+                if (liveMirrorSpeechRecog) liveMirrorSpeechRecog.stop();
+                return;
+            }
+            liveMirrorSpeechRecog = new SpeechRecognition();
+            liveMirrorSpeechRecog.continuous = true;
+            liveMirrorSpeechRecog.interimResults = true;
+            liveMirrorSpeechRecog.lang = 'en-US';
+            liveMirrorListening = true;
+            btn.textContent = '⏹ Stop';
+            btn.style.background = 'rgba(255,20,147,0.25)';
+            btn.style.borderColor = '#ff69b4';
+            btn.style.color = '#ff69b4';
+            status.textContent = '🎙️ Listening… speak your affirmation';
+
+            var lastSpoken = '';
+            liveMirrorSpeechRecog.onresult = function(e) {
+                var transcript = '';
+                for (var i = e.resultIndex; i < e.results.length; i++) {
+                    transcript += e.results[i][0].transcript;
+                }
+                // Only animate new words
+                if (transcript !== lastSpoken) {
+                    var newPart = transcript.slice(lastSpoken.length).trim();
+                    if (newPart) spawnGlitterWords(newPart);
+                    lastSpoken = transcript;
+                }
+            };
+            liveMirrorSpeechRecog.onend = function() {
+                liveMirrorListening = false;
+                liveMirrorSpeechRecog = null;
+                btn.textContent = '🎤 Say It';
+                btn.style.background = 'rgba(212,175,55,0.15)';
+                btn.style.borderColor = '#d4af37';
+                btn.style.color = '#d4af37';
+                status.textContent = '';
+            };
+            liveMirrorSpeechRecog.onerror = function() {
+                liveMirrorListening = false;
+                liveMirrorSpeechRecog = null;
+                btn.textContent = '🎤 Say It';
+                btn.style.background = 'rgba(212,175,55,0.15)';
+                btn.style.borderColor = '#d4af37';
+                btn.style.color = '#d4af37';
+                status.textContent = '';
+            };
+            liveMirrorSpeechRecog.start();
+        }
+
+        function spawnGlitterWords(text) {
+            var words = text.trim().split(/\s+/);
+            var sizes = [22, 26, 30, 34, 28];
+            var delay = 0;
+            words.forEach(function(word) {
+                if (!word) return;
+                setTimeout(function() {
+                    var el = document.createElement('span');
+                    el.className = 'glitter-word';
+                    el.textContent = word;
+                    var size = sizes[Math.floor(Math.random() * sizes.length)];
+                    var yPos = 20 + Math.random() * 60; // 20–80% of screen height
+                    var duration = 2.8 + Math.random() * 1.4;
+                    el.style.fontSize = size + 'px';
+                    el.style.top = yPos + 'vh';
+                    el.style.left = '-150px';
+                    el.style.animationDuration = duration + 's, 0.6s';
+                    el.style.animationTimingFunction = 'linear, ease-in-out';
+                    el.style.animationFillMode = 'forwards, none';
+                    document.body.appendChild(el);
+                    setTimeout(function() { el.remove(); }, (duration + 0.5) * 1000);
+                }, delay);
+                delay += 280;
+            });
         }
 
         function flipLiveMirrorCamera() {
@@ -12113,11 +12224,13 @@ User's message: ${userMessage}`
             <div style="position:absolute; inset:0; border-radius:50%; pointer-events:none; box-shadow:inset 0 0 40px rgba(212,175,55,0.25);"></div>
         </div>
 
-        <!-- Controls row: flip camera + record session -->
-        <div style="display:flex; gap:14px; margin-top:16px; align-items:center; justify-content:center;">
+        <!-- Controls row: flip camera + record session + say it -->
+        <div style="display:flex; gap:14px; margin-top:16px; align-items:center; justify-content:center; flex-wrap:wrap;">
             <button onclick="flipLiveMirrorCamera()" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;">🔄 Flip Camera</button>
+            <button onclick="startLiveMirrorSpeech()" id="liveMirrorMicBtn" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer; transition:all 0.2s;">🎤 Say It</button>
             <button onclick="recordMirrorSession()" id="mirrorRecordBtn" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;">✅ Mark Complete</button>
         </div>
+        <p id="liveMirrorSpeechStatus" style="color:rgba(212,175,55,0.8); font-size:12px; text-align:center; margin-top:6px; min-height:16px;"></p>
 
         <!-- Affirmation text below -->
         <div style="margin-top:14px; text-align:center; padding:0 24px; max-width:340px;">
