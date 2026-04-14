@@ -40,36 +40,27 @@
         }
         /* Gold glitter word flow animation */
         @keyframes glitterSparkle {
-            0%, 100% { text-shadow: 0 0 8px #ffd700, 0 0 20px #ffec6e, 0 0 40px #d4af37; }
+            0%, 100% { text-shadow: 0 0 10px #ffd700, 0 0 25px #ffec6e, 0 0 50px #d4af37; }
             50%       { text-shadow: 0 0 20px #fff, 0 0 50px #ffd700, 0 0 90px #ffec6e; }
-        }
-        @keyframes glitterWordFadeIn {
-            from { opacity: 0; transform: scale(0.85); }
-            to   { opacity: 1; transform: scale(1); }
         }
         #liveMirrorGlitterLine {
             position: fixed;
-            bottom: 18vh;
-            left: 0; right: 0;
+            bottom: 16vh;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90vw;
             z-index: 999999;
             pointer-events: none;
             text-align: center;
-            padding: 0 24px;
-            font-size: clamp(22px, 5vw, 38px);
+            font-size: clamp(24px, 4.5vw, 42px);
             font-weight: 900;
             font-family: Georgia, serif;
             color: #ffd700;
-            animation: glitterSparkle 1.2s ease-in-out infinite;
-            line-height: 1.4;
-            letter-spacing: 2px;
-            word-spacing: 6px;
+            animation: glitterSparkle 1.4s ease-in-out infinite;
+            line-height: 1.5;
+            letter-spacing: 3px;
             text-shadow: 0 0 12px #ffd700, 0 0 30px #ffec6e, 0 0 60px #d4af37;
-        }
-        #liveMirrorGlitterLine .gw {
-            display: inline-block;
-            opacity: 0;
-            animation: glitterWordFadeIn 0.35s ease forwards;
-            margin: 0 4px;
+            display: none;
         }
         .mirror-frame-wrap {
             position: relative;
@@ -12104,17 +12095,23 @@ User's message: ${userMessage}`
             btn.style.color = '#ff69b4';
             status.textContent = '🎙️ Listening… speak your affirmation';
 
-            var lastSpoken = '';
+            var liveMirrorTranscript = '';
             liveMirrorSpeechRecog.onresult = function(e) {
-                var transcript = '';
-                for (var i = e.resultIndex; i < e.results.length; i++) {
-                    transcript += e.results[i][0].transcript;
+                var line = document.getElementById('liveMirrorGlitterLine');
+                var interim = '';
+                var final = '';
+                for (var i = 0; i < e.results.length; i++) {
+                    if (e.results[i].isFinal) {
+                        final += e.results[i][0].transcript + ' ';
+                    } else {
+                        interim += e.results[i][0].transcript;
+                    }
                 }
-                // Only animate new words
-                if (transcript !== lastSpoken) {
-                    var newPart = transcript.slice(lastSpoken.length).trim();
-                    if (newPart) spawnGlitterWords(newPart);
-                    lastSpoken = transcript;
+                liveMirrorTranscript = final;
+                var display = (final + interim).trim();
+                if (display) {
+                    line.textContent = display;
+                    line.style.display = 'block';
                 }
             };
             liveMirrorSpeechRecog.onend = function() {
@@ -12141,32 +12138,9 @@ User's message: ${userMessage}`
             liveMirrorSpeechRecog.start();
         }
 
-        function spawnGlitterWords(text) {
-            var container = document.getElementById('liveMirrorGlitterLine');
-            if (!container) return;
-            var words = text.trim().split(/\s+/);
-            var delay = 0;
-            words.forEach(function(word) {
-                if (!word) return;
-                setTimeout(function() {
-                    var span = document.createElement('span');
-                    span.className = 'gw';
-                    span.textContent = word;
-                    span.style.animationDelay = '0s';
-                    container.appendChild(span);
-                    // Clear old words if line gets too long (keep last ~8 words)
-                    var all = container.querySelectorAll('.gw');
-                    if (all.length > 10) {
-                        all[0].remove();
-                    }
-                }, delay);
-                delay += 320;
-            });
-        }
-
         function clearGlitterLine() {
-            var container = document.getElementById('liveMirrorGlitterLine');
-            if (container) container.innerHTML = '';
+            var line = document.getElementById('liveMirrorGlitterLine');
+            if (line) { line.textContent = ''; line.style.display = 'none'; }
         }
 
         function flipLiveMirrorCamera() {
