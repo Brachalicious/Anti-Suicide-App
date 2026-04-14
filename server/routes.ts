@@ -15,7 +15,7 @@ let openai: OpenAI | null = null;
 let gemini: GoogleGenerativeAI | null = null;
 
 function getGemini(): GoogleGenerativeAI {
-  const apiKey = process.env.GEMINI_API_KEY || 'AIzaSyCvhxGOdONlpi3rEZBrpgDPpjzj3kB7y4g';
+  const apiKey = process.env.GEMINI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing GEMINI_API_KEY");
   }
