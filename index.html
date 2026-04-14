@@ -2199,17 +2199,17 @@
                     <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
 
                     <!-- 7. Affirmations Mirror (collapsible) -->
-                    <div style="margin-top: 12px; border-radius: 16px; border: 2px solid #d4af37; overflow: hidden; background: linear-gradient(135deg, #1a0a2e, #2d1b4e);">
-                        <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer; background: linear-gradient(135deg, #2d1b4e, #4a2070); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(212,175,55,0.3);">
+                    <div style="margin-top: 12px; border-radius: 16px; border: 2px solid #d4af37; background: linear-gradient(135deg, #1a0a2e, #2d1b4e);">
+                        <div onclick="this.nextElementSibling.style.display = this.nextElementSibling.style.display === 'none' ? 'block' : 'none'" style="cursor:pointer; background: linear-gradient(135deg, #2d1b4e, #4a2070); padding: 14px 16px; display:flex; justify-content:space-between; align-items:center; border-bottom: 1px solid rgba(212,175,55,0.3); border-radius:14px 14px 0 0;">
                             <span style="color:#d4af37; font-size:16px; font-weight:800; letter-spacing:1px;">🪞 Affirmation Mirror</span>
                             <span style="color:#d4af37; font-size:18px;">▾</span>
                         </div>
                         <div style="display:none; padding: 14px;">
                             <p style="color:#fce7f3; font-size:13px; margin-bottom:12px; text-align:center; opacity:0.85;">✨ Read it slowly. Say it out loud. Let it land.</p>
                             <!-- Circular gold mirror display - tap to open live mirror -->
-                            <div onclick="openLiveMirror()" style="width:200px; height:200px; border-radius:50%; margin:0 auto 14px; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 28px rgba(212,175,55,0.6); cursor:pointer; position:relative;" title="Tap to see yourself">
-                                <img src="/public/mirror.png" alt="hello gorgeous mirror" style="width:100%; height:100%; object-fit:cover; display:block;" />
-                                <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.45); color:#d4af37; font-size:11px; font-weight:700; text-align:center; padding:6px 4px; letter-spacing:0.5px;">👆 Tap to see you</div>
+                            <div onclick="openLiveMirror()" style="width:200px; height:200px; border-radius:50%; margin:0 auto 14px; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 28px rgba(212,175,55,0.6); cursor:pointer; position:relative; z-index:10;" title="Tap to see yourself">
+                                <img src="/public/mirror.png" alt="hello gorgeous mirror" style="width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;" />
+                                <div style="position:absolute; bottom:0; left:0; right:0; background:rgba(0,0,0,0.45); color:#d4af37; font-size:11px; font-weight:700; text-align:center; padding:6px 4px; letter-spacing:0.5px; pointer-events:none;">👆 Tap to see you</div>
                             </div>
                             <!-- Nav buttons -->
                             <div style="display:flex; gap:8px; margin-bottom:8px;">
@@ -3792,6 +3792,24 @@
                             <div id="escape-message" style="min-height: 80px; padding: 16px; background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 16px; border: 2px solid #3b82f6; text-align: center; display: none;">
                                 <div style="font-size: 16px; color: #ff1493; font-weight: 600; line-height: 1.6;"></div>
                             </div>
+                        </div>
+                    </div>
+
+                    <!-- Free Association / Talk Gibberish -->
+                    <div style="margin-top: 28px; border-radius: 20px; border: 2px solid #a78bfa; background: linear-gradient(135deg, #1e1b4b, #312e81); overflow: hidden;">
+                        <div onclick="toggleFreeAssoc()" id="freeAssocHeader" style="cursor:pointer; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#312e81,#4c1d95);">
+                            <span style="color:#c4b5fd; font-size:17px; font-weight:800; letter-spacing:0.5px;">🌀 Free Association — Talk Gibberish</span>
+                            <span id="freeAssocArrow" style="color:#a78bfa; font-size:18px;">▾</span>
+                        </div>
+                        <div id="freeAssocBody" style="display:none; padding:18px;">
+                            <p style="color:#ddd6fe; font-size:13px; margin-bottom:16px; line-height:1.7; text-align:center;">No rules. No judgment. Just say <em>anything</em> — words, sounds, nonsense. Let it all out. I'll respond until you feel steadier. 💜</p>
+                            <div id="freeAssocChat" style="min-height:120px; max-height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:14px; padding:4px 2px;"></div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button id="freeAssocMicBtn" onclick="startFreeAssocMic()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:22px; cursor:pointer; flex-shrink:0; box-shadow:0 0 16px rgba(167,139,250,0.5); transition:transform 0.15s;" title="Tap to speak">🎤</button>
+                                <input id="freeAssocInput" type="text" placeholder="Or type anything here…" onkeydown="if(event.key==='Enter')sendFreeAssoc()" style="flex:1; padding:12px 14px; border-radius:12px; border:2px solid rgba(167,139,250,0.4); background:rgba(255,255,255,0.07); color:#f5f3ff; font-size:14px; outline:none;" />
+                                <button onclick="sendFreeAssoc()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:20px; cursor:pointer; flex-shrink:0;">➤</button>
+                            </div>
+                            <p id="freeAssocStatus" style="color:#a78bfa; font-size:12px; text-align:center; margin-top:8px; min-height:16px;"></p>
                         </div>
                     </div>
                 </div>
@@ -9091,6 +9109,135 @@ User's message: ${userMessage}`
             }, 1500);
         }
         // ───── End Escape Your Head Game ─────
+
+        // ───── Free Association / Talk Gibberish ─────
+        let freeAssocMsgCount = 0;
+        let freeAssocSpeechRecog = null;
+        let freeAssocStabilized = false;
+
+        const freeAssocResponses = [
+            ["Say it all. Every word. I'm here.", "Keep going — there are no wrong words here.", "Yes. Let it out. All of it.", "That's it. Just keep going."],
+            ["You're doing something brave right now.", "I hear you. Every word.", "Nothing you say here is too much.", "You're safe to be messy here."],
+            ["Your mind needed somewhere to go. I'm glad it came here.", "I'm not going anywhere. Keep talking.", "There's no rush. No filter needed.", "Whatever comes out — it belongs here."],
+            ["You're starting to breathe through this.", "I can feel you slowing down a little.", "You're still here. That matters so much.", "Every word you said was real and valid."],
+            ["You're doing really well. Seriously.", "The hardest part is just letting it spill — and you did.", "I see you. You're still here. 💜", "You're not alone in this moment."],
+            ["Take a breath. You've been talking and that took courage.", "How are you feeling right now compared to when you started?", "You've released a lot. That's huge.", "I'm proud of you for not keeping it all locked inside."],
+            ["You've worked so hard just now.", "Your feelings are valid — every single one.", "You're still here, and that means everything. 💜", "Rest for a second. You did something good today."]
+        ];
+
+        function toggleFreeAssoc() {
+            var body = document.getElementById('freeAssocBody');
+            var arrow = document.getElementById('freeAssocArrow');
+            if (body.style.display === 'none') {
+                body.style.display = 'block';
+                arrow.textContent = '▴';
+                // Auto-send the opening prompt if first time
+                if (freeAssocMsgCount === 0) {
+                    setTimeout(function() {
+                        addFreeAssocMsg('bot', '💜 Say anything. Words, sounds, nonsense — whatever is in your head right now. Go.');
+                    }, 300);
+                }
+            } else {
+                body.style.display = 'none';
+                arrow.textContent = '▾';
+            }
+        }
+
+        function addFreeAssocMsg(sender, text) {
+            var chat = document.getElementById('freeAssocChat');
+            var msg = document.createElement('div');
+            msg.style.cssText = sender === 'user'
+                ? 'align-self:flex-end; background:rgba(124,58,237,0.35); color:#f5f3ff; border-radius:16px 16px 4px 16px; padding:10px 14px; max-width:82%; font-size:14px; line-height:1.5;'
+                : 'align-self:flex-start; background:rgba(167,139,250,0.18); color:#ddd6fe; border-radius:16px 16px 16px 4px; padding:10px 14px; max-width:82%; font-size:14px; line-height:1.5; border:1px solid rgba(167,139,250,0.25);';
+            msg.textContent = text;
+            chat.appendChild(msg);
+            chat.scrollTop = chat.scrollHeight;
+        }
+
+        function getBotFreeAssocReply(userText, count) {
+            // Pick response tier based on how many exchanges have happened
+            var tier = Math.min(Math.floor(count / 2), freeAssocResponses.length - 1);
+            var options = freeAssocResponses[tier];
+            var reply = options[Math.floor(Math.random() * options.length)];
+            // After enough exchanges, check for stabilization cues
+            if (count >= 10) {
+                var calmWords = ['okay','ok','better','calmer','calm','relief','tired','less','breath','breathe','thanks','thank'];
+                var lower = userText.toLowerCase();
+                if (calmWords.some(function(w) { return lower.indexOf(w) !== -1; })) {
+                    freeAssocStabilized = true;
+                    return '💜 It sounds like you\'re coming back to yourself a little. That took real courage. You showed up for yourself today. I\'m really glad you\'re still here. 🌸';
+                }
+            }
+            return reply;
+        }
+
+        function sendFreeAssoc() {
+            var input = document.getElementById('freeAssocInput');
+            var text = (input.value || '').trim();
+            if (!text) return;
+            input.value = '';
+            addFreeAssocMsg('user', text);
+            freeAssocMsgCount++;
+            var status = document.getElementById('freeAssocStatus');
+            status.textContent = '💜 responding…';
+            setTimeout(function() {
+                var reply = getBotFreeAssocReply(text, freeAssocMsgCount);
+                addFreeAssocMsg('bot', reply);
+                status.textContent = '';
+                if (freeAssocStabilized) {
+                    setTimeout(function() {
+                        addFreeAssocMsg('bot', '✨ When you\'re ready, take one slow breath in… and out. You\'ve got this.');
+                    }, 1800);
+                }
+            }, 700 + Math.random() * 600);
+        }
+
+        function startFreeAssocMic() {
+            var btn = document.getElementById('freeAssocMicBtn');
+            var status = document.getElementById('freeAssocStatus');
+            var SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+            if (!SpeechRecognition) {
+                status.textContent = 'Speech not supported — please type instead';
+                return;
+            }
+            if (freeAssocSpeechRecog) {
+                freeAssocSpeechRecog.stop();
+                freeAssocSpeechRecog = null;
+                btn.textContent = '🎤';
+                btn.style.background = 'linear-gradient(135deg,#7c3aed,#a78bfa)';
+                status.textContent = '';
+                return;
+            }
+            freeAssocSpeechRecog = new SpeechRecognition();
+            freeAssocSpeechRecog.continuous = false;
+            freeAssocSpeechRecog.interimResults = false;
+            freeAssocSpeechRecog.lang = 'en-US';
+            btn.textContent = '⏹';
+            btn.style.background = 'linear-gradient(135deg,#dc2626,#f87171)';
+            btn.style.transform = 'scale(1.15)';
+            status.textContent = '🎙️ Listening…';
+            freeAssocSpeechRecog.onresult = function(e) {
+                var transcript = e.results[0][0].transcript;
+                document.getElementById('freeAssocInput').value = transcript;
+                sendFreeAssoc();
+            };
+            freeAssocSpeechRecog.onend = function() {
+                btn.textContent = '🎤';
+                btn.style.background = 'linear-gradient(135deg,#7c3aed,#a78bfa)';
+                btn.style.transform = 'scale(1)';
+                status.textContent = '';
+                freeAssocSpeechRecog = null;
+            };
+            freeAssocSpeechRecog.onerror = function() {
+                btn.textContent = '🎤';
+                btn.style.background = 'linear-gradient(135deg,#7c3aed,#a78bfa)';
+                btn.style.transform = 'scale(1)';
+                status.textContent = 'Mic error — try typing';
+                freeAssocSpeechRecog = null;
+            };
+            freeAssocSpeechRecog.start();
+        }
+        // ───── End Free Association ─────
 
         // ───── Mushroom Runner Game ─────
         let runnerGameActive = false;
