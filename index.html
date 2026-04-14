@@ -40,30 +40,40 @@
         }
         /* Gold glitter word flow animation */
         @keyframes glitterSparkle {
-            0%, 100% { text-shadow: 0 0 10px #ffd700, 0 0 25px #ffec6e, 0 0 50px #d4af37; }
-            50%       { text-shadow: 0 0 20px #fff, 0 0 50px #ffd700, 0 0 90px #ffec6e; }
+            0%   { text-shadow: 0 0 6px #fff, 0 0 20px #ffd700, 0 0 40px #ffec6e, 0 0 80px #d4af37; filter: brightness(1); }
+            25%  { text-shadow: 0 0 12px #fff, 0 0 30px #fffacd, 0 0 60px #ffd700, 0 0 100px #ffec6e; filter: brightness(1.4); }
+            50%  { text-shadow: 0 0 4px #fff9c4, 0 0 16px #ffd700, 0 0 50px #d4af37; filter: brightness(1.1); }
+            75%  { text-shadow: 0 0 18px #fff, 0 0 35px #fffacd, 0 0 70px #ffd700; filter: brightness(1.5); }
+            100% { text-shadow: 0 0 6px #fff, 0 0 20px #ffd700, 0 0 40px #ffec6e, 0 0 80px #d4af37; filter: brightness(1); }
+        }
+        @keyframes glitterShimmerBg {
+            0%   { background-position: -200% center; }
+            100% { background-position: 200% center; }
         }
         #liveMirrorGlitterLine {
             position: absolute;
-            top: 12%;
+            top: 10%;
             left: 50%;
             transform: translateX(-50%);
-            width: 80%;
+            width: 82%;
             z-index: 10;
             pointer-events: none;
             text-align: center;
-            font-size: clamp(16px, 4vw, 28px);
-            font-weight: 900;
-            font-family: Georgia, serif;
-            color: #ffd700;
-            animation: glitterSparkle 1.4s ease-in-out infinite;
-            line-height: 1.5;
-            letter-spacing: 2px;
-            text-shadow: 0 0 10px #ffd700, 0 0 25px #ffec6e, 0 0 50px #d4af37;
+            font-size: clamp(20px, 5vw, 34px);
+            font-weight: 700;
+            font-family: 'Dancing Script', 'Brush Script MT', cursive;
+            background: linear-gradient(90deg, #fff9c4, #ffd700, #fff, #ffec6e, #d4af37, #fff, #ffd700, #fff9c4);
+            background-size: 300% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: glitterSparkle 0.9s ease-in-out infinite, glitterShimmerBg 2s linear infinite;
+            line-height: 1.6;
+            letter-spacing: 1px;
             display: none;
-            background: rgba(0,0,0,0.35);
-            border-radius: 12px;
-            padding: 6px 10px;
+            background-color: transparent;
+            padding: 6px 12px;
+            text-shadow: none;
         }
         .mirror-frame-wrap {
             position: relative;
