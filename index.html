@@ -12039,12 +12039,12 @@ User's message: ${userMessage}`
 
         <!-- Round camera viewport -->
         <div style="position:relative; width:min(82vw, 82vh); height:min(82vw, 82vh); border-radius:50%; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 60px rgba(212,175,55,0.7), 0 0 120px rgba(212,175,55,0.3);">
-            <video id="mirrorVideo" autoplay playsinline muted style="display:none; width:100%; height:100%; object-fit:cover; transform:scaleX(-1);"></video>
-            <!-- Fallback if camera denied -->
-            <div id="mirrorCameraError" style="display:none; width:100%; height:100%; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center;">
+            <video id="mirrorVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
+            <!-- Fallback if camera denied — hidden by default, shown only on error -->
+            <div id="mirrorCameraError" style="display:none; position:absolute; inset:0; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center;">
                 <div style="font-size:48px; margin-bottom:12px;">🪞</div>
                 <p style="color:#d4af37; font-size:16px; font-weight:700;">Camera access needed</p>
-                <p style="color:#fce7f3; font-size:13px; margin-top:8px;">Allow camera permission to see your reflection</p>
+                <p style="color:#fce7f3; font-size:13px; margin-top:8px;">Allow camera permission in your browser to see your reflection</p>
             </div>
             <!-- Shimmer ring overlay -->
             <div style="position:absolute; inset:0; border-radius:50%; pointer-events:none; box-shadow:inset 0 0 40px rgba(212,175,55,0.25);"></div>
