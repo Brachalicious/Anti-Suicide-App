@@ -2210,6 +2210,8 @@
                         </div>
                         <div style="display:none; padding: 14px;">
                             <p style="color:#fce7f3; font-size:13px; margin-bottom:12px; text-align:center; opacity:0.85;">✨ Read it slowly. Say it out loud. Let it land.</p>
+                            <!-- Mirror session tracker -->
+                            <p id="mirrorPanelTracker" onclick="updateMirrorPanelTracker()" style="color:#d4af37; font-size:11px; text-align:center; margin-bottom:10px; cursor:default;"></p>
                             <!-- Circular gold mirror display - tap to open live mirror -->
                             <div onclick="openLiveMirror()" style="width:200px; height:200px; border-radius:50%; margin:0 auto 14px; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 28px rgba(212,175,55,0.6); cursor:pointer; position:relative; z-index:10;" title="Tap to see yourself">
                                 <img src="/public/mirror.png" alt="hello gorgeous mirror" style="width:100%; height:100%; object-fit:cover; display:block; pointer-events:none;" />
@@ -3746,11 +3748,27 @@
             <div class="grid">
                 <div class="card">
                     <h2 class="section-title">🧠 Escape Your Head</h2>
-                    <p style="margin-bottom: 24px; color: #ff69b4; line-height: 1.6;">
+                    <p style="margin-bottom: 16px; color: #ff69b4; line-height: 1.6;">
                         Throw paint at negative thought bubbles to transform them into glittery positive affirmations!
                     </p>
-                    
-                    <div id="escape-game-container" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 20px; padding: 30px; border: 3px solid #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
+
+                    <!-- Free Association / Talk Gibberish — moved to top -->
+                    <div style="margin-bottom: 24px; border-radius: 20px; border: 2px solid #a78bfa; background: linear-gradient(135deg, #1e1b4b, #312e81); overflow: hidden;">
+                        <div onclick="toggleFreeAssoc()" id="freeAssocHeader" style="cursor:pointer; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#312e81,#4c1d95);">
+                            <span style="color:#c4b5fd; font-size:17px; font-weight:800; letter-spacing:0.5px;">🌀 Free Association — Talk Gibberish</span>
+                            <span id="freeAssocArrow" style="color:#a78bfa; font-size:18px;">▾</span>
+                        </div>
+                        <div id="freeAssocBody" style="display:none; padding:18px;">
+                            <p style="color:#ddd6fe; font-size:13px; margin-bottom:16px; line-height:1.7; text-align:center;">No rules. No judgment. Just say <em>anything</em> — words, sounds, nonsense. Let it all out. I'll respond until you feel steadier. 💜</p>
+                            <div id="freeAssocChat" style="height:240px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:14px; padding:6px 4px; border-radius:12px; background:rgba(0,0,0,0.2);"></div>
+                            <div style="display:flex; gap:8px; align-items:center;">
+                                <button id="freeAssocMicBtn" onclick="startFreeAssocMic()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:22px; cursor:pointer; flex-shrink:0; box-shadow:0 0 16px rgba(167,139,250,0.5); transition:transform 0.15s;" title="Tap to speak">🎤</button>
+                                <input id="freeAssocInput" type="text" placeholder="Or type anything here…" onkeydown="if(event.key==='Enter')sendFreeAssoc()" style="flex:1; padding:12px 14px; border-radius:12px; border:2px solid rgba(167,139,250,0.4); background:rgba(255,255,255,0.07); color:#f5f3ff; font-size:14px; outline:none;" />
+                                <button onclick="sendFreeAssoc()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:20px; cursor:pointer; flex-shrink:0;">➤</button>
+                            </div>
+                            <p id="freeAssocStatus" style="color:#a78bfa; font-size:12px; text-align:center; margin-top:8px; min-height:16px;"></p>
+                        </div>
+                    </div> style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); border-radius: 20px; padding: 30px; border: 3px solid #3b82f6; box-shadow: 0 4px 20px rgba(59,130,246,0.3);">
                         <!-- Game Screen -->
                         <div id="escape-game-screen" style="text-align: center;">
                             <div style="font-size: 24px; font-weight: 700; color: #ff1493; margin-bottom: 20px;">🎨 Paint the Thoughts Away!</div>
@@ -3799,23 +3817,6 @@
                         </div>
                     </div>
 
-                    <!-- Free Association / Talk Gibberish -->
-                    <div style="margin-top: 28px; border-radius: 20px; border: 2px solid #a78bfa; background: linear-gradient(135deg, #1e1b4b, #312e81); overflow: hidden;">
-                        <div onclick="toggleFreeAssoc()" id="freeAssocHeader" style="cursor:pointer; padding:14px 18px; display:flex; justify-content:space-between; align-items:center; background:linear-gradient(135deg,#312e81,#4c1d95);">
-                            <span style="color:#c4b5fd; font-size:17px; font-weight:800; letter-spacing:0.5px;">🌀 Free Association — Talk Gibberish</span>
-                            <span id="freeAssocArrow" style="color:#a78bfa; font-size:18px;">▴</span>
-                        </div>
-                        <div id="freeAssocBody" style="display:block; padding:18px;">
-                            <p style="color:#ddd6fe; font-size:13px; margin-bottom:16px; line-height:1.7; text-align:center;">No rules. No judgment. Just say <em>anything</em> — words, sounds, nonsense. Let it all out. I'll respond until you feel steadier. 💜</p>
-                            <div id="freeAssocChat" style="min-height:120px; max-height:320px; overflow-y:auto; display:flex; flex-direction:column; gap:10px; margin-bottom:14px; padding:4px 2px;"></div>
-                            <div style="display:flex; gap:8px; align-items:center;">
-                                <button id="freeAssocMicBtn" onclick="startFreeAssocMic()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:22px; cursor:pointer; flex-shrink:0; box-shadow:0 0 16px rgba(167,139,250,0.5); transition:transform 0.15s;" title="Tap to speak">🎤</button>
-                                <input id="freeAssocInput" type="text" placeholder="Or type anything here…" onkeydown="if(event.key==='Enter')sendFreeAssoc()" style="flex:1; padding:12px 14px; border-radius:12px; border:2px solid rgba(167,139,250,0.4); background:rgba(255,255,255,0.07); color:#f5f3ff; font-size:14px; outline:none;" />
-                                <button onclick="sendFreeAssoc()" style="width:48px; height:48px; border-radius:50%; background:linear-gradient(135deg,#7c3aed,#a78bfa); border:none; font-size:20px; cursor:pointer; flex-shrink:0;">➤</button>
-                            </div>
-                            <p id="freeAssocStatus" style="color:#a78bfa; font-size:12px; text-align:center; margin-top:8px; min-height:16px;"></p>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -9146,15 +9147,6 @@ User's message: ${userMessage}`
             }
         }
 
-        // Auto-send opening message on page load since panel starts open
-        document.addEventListener('DOMContentLoaded', function() {
-            setTimeout(function() {
-                if (freeAssocMsgCount === 0) {
-                    addFreeAssocMsg('bot', '💜 Say anything. Words, sounds, nonsense — whatever is in your head right now. Go.');
-                }
-            }, 500);
-        });
-
         function addFreeAssocMsg(sender, text) {
             var chat = document.getElementById('freeAssocChat');
             var msg = document.createElement('div');
@@ -11992,18 +11984,21 @@ User's message: ${userMessage}`
         // Show a random chizuk on load
         document.addEventListener('DOMContentLoaded', function() {
             newChizuk();
+            updateMirrorPanelTracker();
         });
 
         /* ===== LIVE MIRROR MODAL ===== */
+        var liveMirrorFacing = 'user';
+
         function openLiveMirror() {
             var modal = document.getElementById('liveMirrorModal');
             modal.style.display = 'flex';
             document.body.style.overflow = 'hidden';
-            // Show current affirmation text in modal
             var modalAff = document.getElementById('mirrorModalAffText');
             if (modalAff && typeof guidedAffList !== 'undefined') {
                 modalAff.textContent = '"' + guidedAffList[guidedAffIndex] + '"';
             }
+            updateMirrorTrackerDisplay();
             startLiveMirrorCamera();
         }
 
@@ -12016,8 +12011,10 @@ User's message: ${userMessage}`
 
         function startLiveMirrorCamera() {
             var video = document.getElementById('liveMirrorVideo');
+            // Front camera: mirror it; back camera: don't mirror
+            video.style.transform = liveMirrorFacing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
             if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-                navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+                navigator.mediaDevices.getUserMedia({ video: { facingMode: liveMirrorFacing }, audio: false })
                     .then(function(stream) {
                         mirrorStream = stream;
                         video.srcObject = stream;
@@ -12042,6 +12039,60 @@ User's message: ${userMessage}`
             var video = document.getElementById('liveMirrorVideo');
             if (video) video.srcObject = null;
         }
+
+        function flipLiveMirrorCamera() {
+            liveMirrorFacing = liveMirrorFacing === 'user' ? 'environment' : 'user';
+            stopLiveMirrorCamera();
+            startLiveMirrorCamera();
+        }
+
+        // ── Mirror Exercise Tracker ──
+        function getMirrorStats() {
+            return JSON.parse(localStorage.getItem('mirrorStats') || '{"total":0,"streak":0,"lastDate":""}');
+        }
+
+        function recordMirrorSession() {
+            var stats = getMirrorStats();
+            var today = new Date().toDateString();
+            if (stats.lastDate === today) {
+                // Already recorded today — just show message
+                var btn = document.getElementById('mirrorRecordBtn');
+                btn.textContent = '🌟 Already logged today!';
+                setTimeout(function() { btn.textContent = '✅ Mark Complete'; }, 2000);
+                return;
+            }
+            var yesterday = new Date(Date.now() - 86400000).toDateString();
+            stats.streak = (stats.lastDate === yesterday) ? stats.streak + 1 : 1;
+            stats.total += 1;
+            stats.lastDate = today;
+            localStorage.setItem('mirrorStats', JSON.stringify(stats));
+            var btn = document.getElementById('mirrorRecordBtn');
+            btn.textContent = '💛 Logged!';
+            setTimeout(function() { btn.textContent = '✅ Mark Complete'; }, 2000);
+            updateMirrorTrackerDisplay();
+            // Also update the in-panel tracker if visible
+            updateMirrorPanelTracker();
+        }
+
+        function updateMirrorTrackerDisplay() {
+            var stats = getMirrorStats();
+            var el = document.getElementById('mirrorSessionDisplay');
+            if (el) {
+                el.textContent = stats.total > 0
+                    ? '🪞 ' + stats.total + ' session' + (stats.total !== 1 ? 's' : '') + ' completed · 🔥 ' + stats.streak + '-day streak'
+                    : 'Complete your first session — tap ✅ when done!';
+            }
+        }
+
+        function updateMirrorPanelTracker() {
+            var stats = getMirrorStats();
+            var el = document.getElementById('mirrorPanelTracker');
+            if (el) {
+                el.textContent = stats.total > 0
+                    ? '🪞 ' + stats.total + ' done · 🔥 ' + stats.streak + '-day streak'
+                    : 'No sessions yet — tap the mirror to start!';
+            }
+        }
     </script>
 
     <!-- ===== LIVE MIRROR FULLSCREEN MODAL ===== -->
@@ -12050,9 +12101,9 @@ User's message: ${userMessage}`
         <button onclick="closeLiveMirror()" style="position:absolute; top:18px; right:20px; background:rgba(212,175,55,0.2); border:2px solid #d4af37; color:#d4af37; border-radius:50%; width:44px; height:44px; font-size:22px; cursor:pointer; z-index:100001; display:flex; align-items:center; justify-content:center;">✕</button>
 
         <!-- Round camera viewport -->
-        <div style="position:relative; width:min(82vw, 82vh); height:min(82vw, 82vh); border-radius:50%; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 60px rgba(212,175,55,0.7), 0 0 120px rgba(212,175,55,0.3);">
+        <div style="position:relative; width:min(80vw, 80vh); height:min(80vw, 80vh); border-radius:50%; overflow:hidden; border:5px solid #d4af37; box-shadow:0 0 60px rgba(212,175,55,0.7), 0 0 120px rgba(212,175,55,0.3);">
             <video id="liveMirrorVideo" autoplay playsinline muted style="width:100%; height:100%; object-fit:cover; transform:scaleX(-1); display:block;"></video>
-            <!-- Fallback if camera denied — hidden by default, shown only on error -->
+            <!-- Fallback if camera denied -->
             <div id="mirrorCameraError" style="display:none; position:absolute; inset:0; background:linear-gradient(135deg,#1a0a2e,#2d1b4e); flex-direction:column; align-items:center; justify-content:center; padding:24px; text-align:center;">
                 <div style="font-size:48px; margin-bottom:12px;">🪞</div>
                 <p style="color:#d4af37; font-size:16px; font-weight:700;">Camera access needed</p>
@@ -12062,10 +12113,21 @@ User's message: ${userMessage}`
             <div style="position:absolute; inset:0; border-radius:50%; pointer-events:none; box-shadow:inset 0 0 40px rgba(212,175,55,0.25);"></div>
         </div>
 
+        <!-- Controls row: flip camera + record session -->
+        <div style="display:flex; gap:14px; margin-top:16px; align-items:center; justify-content:center;">
+            <button onclick="flipLiveMirrorCamera()" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;">🔄 Flip Camera</button>
+            <button onclick="recordMirrorSession()" id="mirrorRecordBtn" style="background:rgba(212,175,55,0.15); border:2px solid #d4af37; color:#d4af37; border-radius:30px; padding:8px 18px; font-size:14px; font-weight:700; cursor:pointer;">✅ Mark Complete</button>
+        </div>
+
         <!-- Affirmation text below -->
-        <div style="margin-top:24px; text-align:center; padding:0 24px; max-width:340px;">
-            <p style="color:#fce7f3; font-size:13px; opacity:0.75; margin-bottom:8px; letter-spacing:0.5px;">✨ Look at yourself and say:</p>
-            <p id="mirrorModalAffText" style="color:#d4af37; font-size:20px; font-weight:800; line-height:1.5; text-shadow:0 0 20px rgba(212,175,55,0.6);"></p>
+        <div style="margin-top:14px; text-align:center; padding:0 24px; max-width:340px;">
+            <p style="color:#fce7f3; font-size:13px; opacity:0.75; margin-bottom:6px; letter-spacing:0.5px;">✨ Look at yourself and say:</p>
+            <p id="mirrorModalAffText" style="color:#d4af37; font-size:19px; font-weight:800; line-height:1.5; text-shadow:0 0 20px rgba(212,175,55,0.6);"></p>
+        </div>
+
+        <!-- Session tracker display -->
+        <div style="margin-top:12px; text-align:center;">
+            <p id="mirrorSessionDisplay" style="color:rgba(212,175,55,0.7); font-size:12px;"></p>
         </div>
     </div>
 
