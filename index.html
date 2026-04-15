@@ -1096,9 +1096,9 @@
         }
         
         .circular-text text {
-            font-size: 13.5px;
+            font-size: 11.5px;
             font-weight: 900;
-            letter-spacing: 4px;
+            letter-spacing: 2.5px;
             text-transform: uppercase;
             fill: #ff1493;
             filter: drop-shadow(0 0 3px rgba(255,20,147,0.5));
@@ -1364,9 +1364,9 @@
                 <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                     <defs>
                         <!-- Top arc: snug just outside the logo circle -->
-                        <path id="topArc" d="M 40,150 a 110,110 0 0,1 220,0"/>
+                        <path id="topArc" d="M 38,150 a 112,112 0 0,1 224,0"/>
                         <!-- Bottom arc: snug just outside the logo circle -->
-                        <path id="bottomArc" d="M 260,150 a 110,110 0 0,1 -220,0"/>
+                        <path id="bottomArc" d="M 262,150 a 112,112 0 0,1 -224,0"/>
                     </defs>
                     <text font-family="Arial, sans-serif">
                         <textPath href="#topArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
@@ -8501,8 +8501,8 @@ User's message: ${userMessage}`
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('safetyPlanOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">📋<br>Safety Plan</button>
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('guidedMeditationOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">🧘<br>Calm Down</button>
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('screamCircleOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">😤<br>Release Anger</button>
-                        <button onclick="document.querySelector('.help-guide-modal').remove();(document.querySelector('[onclick*=crisis],[onclick*=Crisis]')||{click:function(){}}).click()" style="padding:14px 10px;background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:14px;color:#fca5a5;cursor:pointer;font-size:14px;font-weight:700;">🆘<br>I'm in Crisis</button>
-                        <button onclick="document.querySelector('.help-guide-modal').remove();openTalkToSomeoneModal()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">💬<br>Talk to Someone</button>
+                        <button onclick="var _hm=document.querySelector('.help-guide-modal');if(_hm)_hm.remove();(document.querySelector('[onclick*=crisis],[onclick*=Crisis]')||{click:function(){}}).click()" style="padding:14px 10px;background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:14px;color:#fca5a5;cursor:pointer;font-size:14px;font-weight:700;">🆘<br>I'm in Crisis</button>
+                        <button onclick="var _hm=document.querySelector('.help-guide-modal');if(_hm)_hm.remove();openTalkToSomeoneModal()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">💬<br>Talk to Someone</button>
                     </div>
                     <div style="display:flex;gap:8px;">
                         <input id="help-guide-input" placeholder="Tell me what you need..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
