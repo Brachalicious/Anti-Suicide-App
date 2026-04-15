@@ -1080,8 +1080,8 @@
         /* Circular text around logo */
         .logo-container {
             position: relative;
-            width: 236px;
-            height: 236px;
+            width: 220px;
+            height: 220px;
             margin: 0 auto;
             display: flex;
             align-items: center;
@@ -1096,9 +1096,9 @@
         }
         
         .circular-text text {
-            font-size: 11.5px;
+            font-size: 10px;
             font-weight: 900;
-            letter-spacing: 2.5px;
+            letter-spacing: 2px;
             text-transform: uppercase;
             fill: #ff1493;
             filter: drop-shadow(0 0 3px rgba(255,20,147,0.5));
@@ -1107,7 +1107,7 @@
         .logo-container img {
             position: relative;
             z-index: 2;
-            max-width: 168px;
+            width: 190px;
             height: auto;
         }
 
@@ -1363,10 +1363,10 @@
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
                 <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
                     <defs>
-                        <!-- Top arc: snug just outside the logo circle -->
-                        <path id="topArc" d="M 38,150 a 112,112 0 0,1 224,0"/>
-                        <!-- Bottom arc: snug just outside the logo circle -->
-                        <path id="bottomArc" d="M 262,150 a 112,112 0 0,1 -224,0"/>
+                        <!-- Top arc: radius sized to sit right outside the gold ring -->
+                        <path id="topArc" d="M 35,150 a 115,115 0 0,1 230,0"/>
+                        <!-- Bottom arc -->
+                        <path id="bottomArc" d="M 265,150 a 115,115 0 0,1 -230,0"/>
                     </defs>
                     <text font-family="Arial, sans-serif">
                         <textPath href="#topArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
@@ -1433,7 +1433,6 @@
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
                 <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Crisis Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
-                    <button onclick="showSection('mystic-bot'); closeCrisisToolsMenu(); closeMobileNav()">🤖 MysticMinded³³ Bot</button>
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
                     <button onclick="showBreathingTechniques(); closeCrisisToolsMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
                     <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
