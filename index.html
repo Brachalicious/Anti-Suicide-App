@@ -1362,18 +1362,21 @@
     <div class="container">
         <div style="text-align: center; padding: 4px 0 4px;">
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
-                <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="overflow:visible;">
                     <defs>
-                        <!-- Top arc: radius 93 = snug just outside the gold ring -->
+                        <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="2" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Top arc: r=93, snug outside gold ring, half-circle arc length = π*93 ≈ 292 SVG units -->
                         <path id="topArc" d="M 57,150 a 93,93 0 0,1 186,0"/>
-                        <!-- Bottom arc -->
                         <path id="bottomArc" d="M 243,150 a 93,93 0 0,1 -186,0"/>
                     </defs>
-                    <text font-family="Arial, sans-serif">
-                        <textPath href="#topArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                    <text font-family="Arial Black, Arial, sans-serif" font-size="9" font-weight="900" fill="#ff1493" filter="url(#textGlow)" style="text-transform:uppercase;">
+                        <textPath href="#topArc" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
                     </text>
-                    <text font-family="Arial, sans-serif">
-                        <textPath href="#bottomArc" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                    <text font-family="Arial Black, Arial, sans-serif" font-size="9" font-weight="900" fill="#ff1493" filter="url(#textGlow)" style="text-transform:uppercase;">
+                        <textPath href="#bottomArc" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
                     </text>
                 </svg>
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
@@ -1427,6 +1430,7 @@
           </button>
         <nav class="nav" id="mainNav">
             <button class="nav-item active" onclick="showSection('dashboard'); closeMobileNav()">Dashboard</button>
+            <button class="nav-item" onclick="showSection('dedication'); closeMobileNav()">💖 Dedication</button>
             <button class="nav-item" onclick="showSection('crisis'); closeMobileNav()">Crisis Support</button>
             <button class="nav-item" onclick="showSection('crisis-skills'); closeMobileNav()">🛟 Crisis Skills</button>
 
@@ -1452,7 +1456,6 @@
             </div>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
             <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
-            <button class="nav-item" onclick="showSection('dedication'); closeMobileNav()">💖 Dedication</button>
             <button class="nav-item" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
