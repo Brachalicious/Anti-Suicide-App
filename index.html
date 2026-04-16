@@ -1431,7 +1431,7 @@
 
             <!-- Crisis Tools Dropdown -->
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
-                <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Crisis Tools ▾</button>
+                <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Emotional Support Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
                     <button onclick="showBreathingTechniques(); closeCrisisToolsMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
@@ -1452,7 +1452,7 @@
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
             <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" onclick="showSection('dedication'); closeMobileNav()">💖 Dedication</button>
-            <button class="nav-item" onclick="window.open('https://988lifeline.org/get-involved/','_blank'); closeMobileNav()">🤝 Give Back</button>
+            <button class="nav-item" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
 
@@ -8522,6 +8522,27 @@ User's message: ${userMessage}`
 
             document.body.appendChild(modal);
             modal.addEventListener('click', function(e) { if (e.target === modal) modal.remove(); });
+        }
+
+        function showGiveBackModal() {
+            var ex = document.getElementById('giveBackModal'); if (ex) { ex.remove(); return; }
+            var m = document.createElement('div');
+            m.id = 'giveBackModal';
+            m.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.78);z-index:100003;display:flex;align-items:center;justify-content:center;padding:20px;';
+            m.innerHTML = '<div style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:22px;padding:30px 24px;max-width:440px;width:100%;position:relative;border:2px solid rgba(255,20,147,0.45);box-shadow:0 20px 60px rgba(0,0,0,0.6);">'
+                + '<button onclick="document.getElementById(\'giveBackModal\').remove()" style="position:absolute;top:12px;right:14px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;">\u2715</button>'
+                + '<h2 style="color:#ff1493;font-size:20px;font-weight:800;text-align:center;margin:0 0 6px 0;">\uD83E\uDD1D Give Back</h2>'
+                + '<p style="color:#fce7f3;font-size:13px;text-align:center;margin:0 0 20px 0;">Your time and support saves lives. Choose where you want to give back:</p>'
+                + '<div style="display:flex;flex-direction:column;gap:12px;">'
+                + '<a href="https://988lifeline.org/get-involved/" target="_blank" rel="noopener" style="display:block;padding:16px 18px;background:rgba(34,197,94,0.15);border:2px solid #22c55e;border-radius:14px;color:#fce7f3;text-decoration:none;">'
+                + '<div style="font-size:16px;font-weight:800;margin-bottom:4px;">\uD83D\uDCDE 988 Suicide & Crisis Lifeline</div>'
+                + '<div style="font-size:12px;color:#86efac;">Volunteer, donate, or get involved with the US national crisis line</div></a>'
+                + '<a href="https://www.crisistextline.org/volunteer/" target="_blank" rel="noopener" style="display:block;padding:16px 18px;background:rgba(59,130,246,0.15);border:2px solid #3b82f6;border-radius:14px;color:#fce7f3;text-decoration:none;">'
+                + '<div style="font-size:16px;font-weight:800;margin-bottom:4px;">\uD83D\uDCAC Crisis Text Line</div>'
+                + '<div style="font-size:12px;color:#93c5fd;">Volunteer as a Crisis Counselor — text-based support, US/UK/Canada/Ireland</div></a>'
+                + '</div></div>';
+            document.body.appendChild(m);
+            m.addEventListener('click', function(e){ if(e.target===m) m.remove(); });
         }
 
         function openOverlay(id) {
