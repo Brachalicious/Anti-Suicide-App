@@ -1080,12 +1080,13 @@
         /* Circular text around logo */
         .logo-container {
             position: relative;
-            width: 250px;
-            height: 250px;
+            width: 270px;
+            height: 270px;
             margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: center;
+            overflow: visible;
         }
         
         .circular-text {
@@ -1096,9 +1097,9 @@
         }
         
         .circular-text text {
-            font-size: 12px;
+            font-size: 9px;
             font-weight: 900;
-            letter-spacing: 3px;
+            letter-spacing: 1.5px;
             text-transform: uppercase;
             fill: #ff1493;
             filter: drop-shadow(0 0 3px rgba(255,20,147,0.5));
@@ -4701,23 +4702,25 @@
 
                     <!-- Full Tehillim Reader -->
                     <div style="margin-top: 28px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); padding: 28px; border-radius: 20px; border: 2px solid rgba(168,85,247,0.5);">
-                        <h3 style="color:#ffd700; font-size:22px; margin:0 0 6px 0; text-align:center;">📖 ספר תהילים — Full Tehillim</h3>
-                        <p style="color:#d8b4fe; font-size:13px; text-align:center; margin:0 0 18px 0;">All 150 Psalms — tap a chapter to read it</p>
+                        <h3 style="color:#ffd700; font-size:22px; margin:0 0 4px 0; text-align:center;">📖 ספר תהילים — Full Tehillim</h3>
+                        <p style="color:#d8b4fe; font-size:13px; text-align:center; margin:0 0 18px 0;">All 150 Psalms • tap a chapter to read</p>
 
-                        <!-- Chapter grid -->
-                        <div id="tehillimChapterGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(44px,1fr)); gap:7px; margin-bottom:20px;"></div>
+                        <!-- Chapter grid — built by JS -->
+                        <div id="tehillimChapterGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(44px,1fr)); gap:7px; margin-bottom:20px;">
+                            <p style="color:#a78bfa;grid-column:1/-1;text-align:center;font-size:13px;">Loading chapters…</p>
+                        </div>
 
                         <!-- Chapter viewer -->
                         <div id="tehillimViewer" style="display:none; background:rgba(255,255,255,0.05); border-radius:14px; padding:20px; border:1px solid rgba(168,85,247,0.3);">
                             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
                                 <h4 id="tehillimChapterTitle" style="color:#ffd700; font-size:18px; margin:0;"></h4>
-                                <div style="display:flex; gap:8px;">
+                                <div style="display:flex; gap:8px; flex-wrap:wrap;">
                                     <button onclick="tehillimNav(-1)" style="background:rgba(168,85,247,0.3);border:1px solid #a855f7;color:#d8b4fe;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">← Prev</button>
                                     <button onclick="tehillimNav(1)" style="background:rgba(168,85,247,0.3);border:1px solid #a855f7;color:#d8b4fe;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">Next →</button>
-                                    <button onclick="document.getElementById('tehillimViewer').style.display='none'" style="background:rgba(255,20,147,0.2);border:1px solid #ff1493;color:#ff69b4;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">✕ Close</button>
+                                    <button onclick="document.getElementById('tehillimViewer').style.display='none';document.getElementById('tehillimChapterGrid').style.display='grid';" style="background:rgba(255,20,147,0.2);border:1px solid #ff1493;color:#ff69b4;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">✕ Close</button>
                                 </div>
                             </div>
-                            <div id="tehillimVerses" style="color:#fce7f3; font-size:15px; line-height:2; font-family:Georgia,'Times New Roman',serif;"></div>
+                            <div id="tehillimVerses" style="color:#fce7f3; font-size:15px; line-height:2.2; font-family:Georgia,'Times New Roman',serif;"></div>
                         </div>
                     </div>
                 </div>
@@ -10866,25 +10869,16 @@ User's message: ${userMessage}`
         var tehillimCurrentChapter = 1;
 
         function initTehillim() {
-            if (tehillimData) { buildTehillimGrid(); return; }
-            fetch('/public/psalms.json')
-                .then(function(r){ return r.json(); })
-                .then(function(data){
-                    tehillimData = data.text; // array of chapters (1-indexed from 1)
-                    buildTehillimGrid();
-                })
-                .catch(function(){ console.warn('Tehillim JSON not loaded'); });
-        }
-
-        function buildTehillimGrid() {
             var grid = document.getElementById('tehillimChapterGrid');
-            if (!grid || !tehillimData) return;
+            if (!grid) return;
+            if (grid.dataset.built === '1') return; // already built
+            grid.dataset.built = '1';
             grid.innerHTML = '';
             for (var i = 1; i <= 150; i++) {
                 (function(ch){
                     var btn = document.createElement('button');
                     btn.textContent = ch;
-                    btn.style.cssText = 'background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;border-radius:8px;padding:6px 2px;cursor:pointer;font-size:13px;font-weight:700;transition:background 0.15s;';
+                    btn.style.cssText = 'background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;border-radius:8px;padding:6px 2px;cursor:pointer;font-size:13px;font-weight:700;';
                     btn.onmouseover = function(){ this.style.background='rgba(168,85,247,0.5)'; };
                     btn.onmouseout  = function(){ this.style.background='rgba(168,85,247,0.2)'; };
                     btn.onclick = function(){ openTehillimChapter(ch); };
@@ -10894,31 +10888,41 @@ User's message: ${userMessage}`
         }
 
         function openTehillimChapter(ch) {
-            if (!tehillimData) return;
             tehillimCurrentChapter = ch;
-            var verses = tehillimData[ch - 1]; // 0-indexed
+            var grid   = document.getElementById('tehillimChapterGrid');
             var viewer = document.getElementById('tehillimViewer');
             var title  = document.getElementById('tehillimChapterTitle');
             var body   = document.getElementById('tehillimVerses');
-            title.textContent = 'Psalm ' + ch;
+            if (!viewer || !title || !body) return;
+            title.textContent = 'Psalm ' + ch + ' — loading…';
+            grid.style.display = 'none';
             viewer.style.display = 'block';
-            viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            body.innerHTML = '<p style="color:#a78bfa;font-style:italic;text-align:center;">Loading…</p>';
 
-            if (!verses || verses.length === 0) {
-                body.innerHTML = '<p style="color:#a78bfa;font-style:italic;">Translation not available for this chapter.</p>';
-                return;
-            }
-            var html = '';
-            verses.forEach(function(verse, idx) {
-                if (!verse) return;
-                html += '<p style="margin-bottom:10px;"><span style="color:#ffd700;font-weight:700;margin-right:6px;">' + (idx + 1) + '.</span>' + verse + '</p>';
-            });
-            body.innerHTML = html || '<p style="color:#a78bfa;font-style:italic;">Translation not available for this chapter.</p>';
+            fetch('https://www.sefaria.org/api/texts/Psalms.' + ch + '?context=0&pad=0&commentary=0')
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                    title.textContent = 'Psalm ' + ch + (data.he_title ? ' — ' + data.he_title : '');
+                    var verses = data.text || [];
+                    if (!Array.isArray(verses) || verses.length === 0) {
+                        body.innerHTML = '<p style="color:#a78bfa;font-style:italic;">No text available.</p>';
+                        return;
+                    }
+                    var html = '';
+                    verses.forEach(function(v, idx){
+                        html += '<p style="margin-bottom:12px;"><span style="color:#ffd700;font-weight:700;margin-right:8px;">' + (idx+1) + '.</span>' + v + '</p>';
+                    });
+                    body.innerHTML = html;
+                    viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(function(){
+                    body.innerHTML = '<p style="color:#f87171;">Could not load chapter — please check your internet connection.</p>';
+                });
         }
 
         function tehillimNav(dir) {
-            var next = tehillimCurrentChapter + dir;
-            if (next < 1) next = 150;
+            var next = (tehillimCurrentChapter || 1) + dir;
+            if (next < 1)   next = 150;
             if (next > 150) next = 1;
             openTehillimChapter(next);
         }
