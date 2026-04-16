@@ -10899,19 +10899,30 @@ User's message: ${userMessage}`
             viewer.style.display = 'block';
             body.innerHTML = '<p style="color:#a78bfa;font-style:italic;text-align:center;">Loading…</p>';
 
-            fetch('https://www.sefaria.org/api/texts/Psalms.' + ch + '?context=0&pad=0&commentary=0')
+            fetch('https://www.sefaria.org/api/texts/Psalms.' + ch + '?context=0&pad=0&commentary=0&lang=en&version=Tanakh%3A+The+Holy+Scriptures%2C+by+JPS')
                 .then(function(r){ return r.json(); })
                 .then(function(data){
-                    title.textContent = 'Psalm ' + ch + (data.he_title ? ' — ' + data.he_title : '');
-                    var verses = data.text || [];
-                    if (!Array.isArray(verses) || verses.length === 0) {
+                    var heTitle = data.heRef || ('תהילים ' + ch);
+                    title.textContent = 'Psalm ' + ch + ' · ' + heTitle;
+                    var eng = Array.isArray(data.text) ? data.text : [];
+                    var heb = Array.isArray(data.he)   ? data.he   : [];
+                    var len = Math.max(eng.length, heb.length);
+                    if (len === 0) {
                         body.innerHTML = '<p style="color:#a78bfa;font-style:italic;">No text available.</p>';
                         return;
                     }
                     var html = '';
-                    verses.forEach(function(v, idx){
-                        html += '<p style="margin-bottom:12px;"><span style="color:#ffd700;font-weight:700;margin-right:8px;">' + (idx+1) + '.</span>' + v + '</p>';
-                    });
+                    for (var i = 0; i < len; i++) {
+                        var heVerse  = heb[i] || '';
+                        var enVerse  = eng[i] || '';
+                        html += '<div style="margin-bottom:18px;border-bottom:1px solid rgba(168,85,247,0.2);padding-bottom:14px;">'
+                              + '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px;">'
+                              +   '<span style="color:#ffd700;font-weight:700;font-size:13px;min-width:22px;">' + (i+1) + '</span>'
+                              +   '<span style="direction:rtl;text-align:right;font-size:18px;line-height:1.8;color:#fde68a;font-family:\'SBL Hebrew\',\'Ezra SIL\',\'Times New Roman\',serif;flex:1;">' + heVerse + '</span>'
+                              + '</div>'
+                              + (enVerse ? '<div style="color:#fce7f3;font-size:14px;line-height:1.7;padding-left:28px;font-style:italic;">' + enVerse + '</div>' : '')
+                              + '</div>';
+                    }
                     body.innerHTML = html;
                     viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
                 })
