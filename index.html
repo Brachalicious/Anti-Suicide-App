@@ -1363,6 +1363,19 @@
     <div class="container">
         <div style="text-align: center; padding: 4px 0 4px;">
             <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer;" title="Learn about MysticMinded³³">
+                <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:100%;height:100%;overflow:visible;pointer-events:none;">
+                    <defs>
+                        <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
+                            <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                            <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+                        </filter>
+                        <!-- Full circle r=187, center 150,150 — just outside the gold ring (~325px rendered diameter) -->
+                        <path id="ringCircle" d="M 150,-37 a 187,187 0 1,1 -0.001,0"/>
+                    </defs>
+                    <text font-family="Arial Black, Arial, sans-serif" font-size="10" font-weight="900" fill="#ff1493" filter="url(#textGlow)">
+                        <textPath href="#ringCircle" startOffset="0%" textLength="1175" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                    </text>
+                </svg>
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
             </div>
         </div>
