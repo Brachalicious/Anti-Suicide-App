@@ -1369,11 +1369,11 @@
                             <feGaussianBlur stdDeviation="1.5" result="blur"/>
                             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                         </filter>
-                        <!-- Full circle r=187, center 150,150 — just outside the gold ring (~325px rendered diameter) -->
-                        <path id="ringCircle" d="M 150,-37 a 187,187 0 1,1 -0.001,0"/>
+                        <!-- r=93: just outside gold ring (86 SVG units), circumference ≈ 584 units -->
+                        <path id="ringCircle" d="M 150,57 a 93,93 0 1,1 -0.001,0"/>
                     </defs>
                     <text font-family="Arial Black, Arial, sans-serif" font-size="10" font-weight="900" fill="#ff1493" filter="url(#textGlow)">
-                        <textPath href="#ringCircle" startOffset="0%" textLength="1175" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                        <textPath href="#ringCircle" startOffset="0%" textLength="584" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦</textPath>
                     </text>
                 </svg>
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
