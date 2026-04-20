@@ -1110,6 +1110,7 @@
             z-index: 2;
             width: 215px;
             height: auto;
+            margin-left: -2px;
         }
 
         /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
@@ -1368,15 +1369,11 @@
                             <feGaussianBlur stdDeviation="2" result="blur"/>
                             <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
                         </filter>
-                        <!-- Top arc: r=93, snug outside gold ring, half-circle arc length = π*93 ≈ 292 SVG units -->
-                        <path id="topArc" d="M 57,150 a 93,93 0 0,1 186,0"/>
-                        <path id="bottomArc" d="M 243,150 a 93,93 0 0,1 -186,0"/>
+                        <!-- Full circle at r=93, starting top-center, going clockwise -->
+                        <path id="fullCircle" d="M 150,57 a 93,93 0 1,1 -0.01,0"/>
                     </defs>
-                    <text font-family="Arial Black, Arial, sans-serif" font-size="9" font-weight="900" fill="#ff1493" filter="url(#textGlow)" style="text-transform:uppercase;">
-                        <textPath href="#topArc" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
-                    </text>
-                    <text font-family="Arial Black, Arial, sans-serif" font-size="9" font-weight="900" fill="#ff1493" filter="url(#textGlow)" style="text-transform:uppercase;">
-                        <textPath href="#bottomArc" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                    <text font-family="Arial Black, Arial, sans-serif" font-size="9" font-weight="900" fill="#ff1493" filter="url(#textGlow)">
+                        <textPath href="#fullCircle" startOffset="50%" text-anchor="middle" textLength="584" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦  ✦ FIGHT SUICIDE PROJECT ✦</textPath>
                     </text>
                 </svg>
                 <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
