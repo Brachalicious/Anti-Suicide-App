@@ -8485,17 +8485,39 @@ User's message: ${userMessage}`
 
             const modal = document.createElement('div');
             modal.className = 'help-guide-modal';
-            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;';
+            modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.80);z-index:10001;display:flex;align-items:center;justify-content:center;padding:20px;overflow-y:auto;';
 
             modal.innerHTML = `
-                <div style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:24px;padding:32px;max-width:480px;width:100%;position:relative;border:2px solid rgba(255,20,147,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.5);">
-                    <button onclick="this.closest('.help-guide-modal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">\u2715</button>
+                <div style="background:linear-gradient(135deg,#1a0a2e,#2d1b4e);border-radius:24px;padding:32px;max-width:520px;width:100%;position:relative;border:2px solid rgba(255,20,147,0.4);box-shadow:0 20px 60px rgba(0,0,0,0.5);margin:auto;">
+                    <button onclick="this.closest('.help-guide-modal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">✕</button>
+
                     <div style="text-align:center;margin-bottom:20px;">
-                        <h2 style="color:#ff1493;font-size:22px;font-weight:800;margin:0 0 6px 0;">🌸 Fight Suicide Project</h2>
-                        <p style="color:#ff69b4;font-size:14px;margin:0;">You are not alone. We are here 24/7.</p>
-                        <p style="color:#fce7f3;font-size:13px;margin:10px 0 0 0;line-height:1.5;">A safe space built with love \u2014 tools to breathe, cope, plan, and feel heard. Whatever you need right now, we have it.</p>
+                        <h2 style="color:#ff1493;font-size:24px;font-weight:800;margin:0 0 4px 0;">🌸 Fight Suicide Project</h2>
+                        <p style="color:#ff69b4;font-size:15px;margin:0 0 6px 0;font-weight:700;">You are not alone. We are here 24/7.</p>
+                        <p style="color:#fce7f3;font-size:14px;margin:0 0 16px 0;line-height:1.6;">A safe space built with love — tools to breathe, cope, plan, and feel heard. Whatever you need right now, we have it.</p>
                     </div>
-                    <p style="color:#fce7f3;font-size:15px;text-align:center;margin:0 0 16px 0;font-weight:700;">What do you need right now?</p>
+
+                    <!-- Welcome message -->
+                    <div style="background:rgba(255,20,147,0.08);border:1px solid rgba(255,20,147,0.3);border-radius:16px;padding:18px;margin-bottom:20px;">
+                        <p style="color:#fce7f3;font-size:14px;line-height:1.8;margin:0 0 12px 0;">
+                            Welcome to the <strong style="color:#ff69b4;">MysticMinded³³ Fight Suicide Project</strong>. We are so happy you are here!! 💗
+                        </p>
+                        <div style="background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:12px;padding:14px;margin-bottom:12px;">
+                            <p style="color:#fca5a5;font-size:14px;font-weight:700;margin:0 0 6px 0;">🚨 If you are in suicidal crisis or imminent risk of self-harm:</p>
+                            <p style="color:#fce7f3;font-size:14px;line-height:1.7;margin:0;">Please leave this app and <strong>call or text 988</strong>, or <strong>text 741741</strong> immediately. They are a confidential service built to help people in these very painful and difficult situations — I can vouch for them both, they are very helpful!</p>
+                        </div>
+                        <p style="color:#fce7f3;font-size:14px;line-height:1.8;margin:0 0 10px 0;">
+                            It's so hard asking for help — but it's such a strength to do it anyway. 💪
+                        </p>
+                        <p style="color:#d8b4fe;font-size:14px;line-height:1.8;margin:0 0 10px 0;">
+                            If you are <em>not</em> in imminent danger, you can ask 988 to speak with a <strong>peer specialist</strong> who has been through it just like you. You can also ask them to dispatch a <strong>mobile crisis team</strong> if available in your area.
+                        </p>
+                        <p style="color:#fce7f3;font-size:14px;line-height:1.8;margin:0;">
+                            If you are not in imminent danger and would rather stay here with us — <strong style="color:#ff69b4;">we got you!!!</strong> 🌸 Select below what you're looking for, or type into the search bar.
+                        </p>
+                    </div>
+
+                    <p style="color:#fce7f3;font-size:15px;text-align:center;margin:0 0 14px 0;font-weight:700;">What do you need right now?</p>
                     <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:16px;">
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('breathingOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">😮‍💨<br>Breathing</button>
                         <button onclick="document.querySelector('.help-guide-modal').remove();openOverlay('safetyPlanOverlay')" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">📋<br>Safety Plan</button>
@@ -8506,7 +8528,7 @@ User's message: ${userMessage}`
                     </div>
                     <div style="display:flex;gap:8px;">
                         <input id="help-guide-input" placeholder="Tell me what you need..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
-                        <button onclick="handleHelpGuideInput()" style="padding:10px 16px;background:#ff1493;border:none;border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:14px;">\u2192</button>
+                        <button onclick="handleHelpGuideInput()" style="padding:10px 16px;background:#ff1493;border:none;border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:14px;">→</button>
                     </div>
                 </div>`;
 
