@@ -1453,8 +1453,10 @@
                 </div>
             </div>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
-            <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
-            <button class="nav-item" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
+            <div style="display:flex;gap:6px;flex-wrap:nowrap;">
+                <button class="nav-item" style="flex:1;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
+                <button class="nav-item" style="flex:1;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
+            </div>
         </nav>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
