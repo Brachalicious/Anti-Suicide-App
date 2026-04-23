@@ -1456,6 +1456,7 @@
             <button class="nav-item" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
         </nav>
+        </nav>
         </div><!-- end nav-mobile-wrapper -->
 
         <!-- Crisis Skills Section -->
@@ -11104,6 +11105,7 @@ User's message: ${userMessage}`
         // Listen for auth state changes
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
+            window._currentUser = user; // used by per-user localStorage keys
             
             if (user) {
                 // User is signed in
@@ -11647,21 +11649,32 @@ User's message: ${userMessage}`
         }
 
         // ───── Talk to ה' Letter Functions ─────
+        function _lettersKey() {
+            const u = window._currentUser;
+            if (!u) return null;
+            return 'godLetters_' + u.uid;
+        }
+
         function saveGodLetter() {
+            const key = _lettersKey();
+            if (!key) {
+                alert('Please sign in to save your letters privately.');
+                return;
+            }
             const letterText = document.getElementById('godLetter').value.trim();
             if (!letterText) {
                 alert('Please write something before saving.');
                 return;
             }
 
-            const letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            const letters = JSON.parse(localStorage.getItem(key) || '[]');
             const newLetter = {
                 id: Date.now(),
                 date: new Date().toISOString(),
                 text: letterText
             };
             letters.push(newLetter);
-            localStorage.setItem('godLetters', JSON.stringify(letters));
+            localStorage.setItem(key, JSON.stringify(letters));
 
             // Show confirmation
             const confirmation = document.getElementById('letterSaveConfirmation');
@@ -11673,9 +11686,17 @@ User's message: ${userMessage}`
         }
 
         function viewSavedLetters() {
-            const letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            const key = _lettersKey();
             const display = document.getElementById('savedLettersDisplay');
             const list = document.getElementById('savedLettersList');
+
+            if (!key) {
+                list.innerHTML = '<p style="color:#ff69b4;text-align:center;padding:20px;">Please sign in to view your saved letters.</p>';
+                display.style.display = 'block';
+                return;
+            }
+
+            const letters = JSON.parse(localStorage.getItem(key) || '[]');
 
             if (letters.length === 0) {
                 list.innerHTML = '<p style="color: #ff69b4; text-align: center; padding: 20px;">You haven\'t saved any letters yet. Pour out your heart above and save it.</p>';
@@ -11714,13 +11735,15 @@ User's message: ${userMessage}`
         }
 
         function deleteGodLetter(letterId) {
+            const key = _lettersKey();
+            if (!key) return;
             if (!confirm('Are you sure you want to delete this letter? This cannot be undone.')) {
                 return;
             }
 
-            let letters = JSON.parse(localStorage.getItem('godLetters') || '[]');
+            let letters = JSON.parse(localStorage.getItem(key) || '[]');
             letters = letters.filter(letter => letter.id !== letterId);
-            localStorage.setItem('godLetters', JSON.stringify(letters));
+            localStorage.setItem(key, JSON.stringify(letters));
 
             // Refresh the display
             viewSavedLetters();
