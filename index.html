@@ -1478,9 +1478,9 @@
                     <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
                 </div>
             </div>
-            <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
+            <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
@@ -2381,6 +2381,16 @@
                             <div style="padding:14px;">
                                 <p style="color:#15803d; font-weight:700; font-size:14px; margin:0 0 4px 0;">🌟 Words of Chizuk</p>
                                 <p style="color:#6b7280; font-size:12px; margin:0;">Uplifting message to strengthen your emunah</p>
+                            </div>
+                        </div>
+                        <!-- Video 2 -->
+                        <div style="background:white; border-radius:16px; overflow:hidden; box-shadow:0 4px 14px rgba(22,163,74,0.15); border:1.5px solid #86efac;">
+                            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                                <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/z5Iyz76Kj1w" allowfullscreen allow="encrypted-media" loading="lazy"></iframe>
+                            </div>
+                            <div style="padding:14px;">
+                                <p style="color:#15803d; font-weight:700; font-size:14px; margin:0 0 4px 0;">💪 Strength & Hope</p>
+                                <p style="color:#6b7280; font-size:12px; margin:0;">A powerful message to lift your neshama</p>
                             </div>
                         </div>
                     </div>
@@ -8590,7 +8600,7 @@ User's message: ${userMessage}`
                         <button onclick="var _hm=document.querySelector('.help-guide-modal');if(_hm)_hm.remove();openTalkToSomeoneModal()" style="padding:14px 10px;background:rgba(255,20,147,0.15);border:2px solid #ff1493;border-radius:14px;color:#fce7f3;cursor:pointer;font-size:14px;font-weight:700;">💬<br>Talk to Someone</button>
                     </div>
                     <div style="display:flex;gap:8px;">
-                        <input id="help-guide-input" placeholder="Tell me what you need..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
+                        <input id="help-guide-input" placeholder="How are you feeling right now? Tell me..." style="flex:1;padding:10px 14px;border-radius:12px;border:2px solid rgba(255,20,147,0.4);background:rgba(255,255,255,0.08);color:#fce7f3;font-size:14px;outline:none;" onkeydown="if(event.key==='Enter')handleHelpGuideInput()">
                         <button onclick="handleHelpGuideInput()" style="padding:10px 16px;background:#ff1493;border:none;border-radius:12px;color:white;font-weight:700;cursor:pointer;font-size:14px;">→</button>
                     </div>
                 </div>`;
@@ -8632,23 +8642,77 @@ User's message: ${userMessage}`
             if (!input) return;
             const text = input.value.toLowerCase().trim();
             if (!text) return;
-            const modal = document.querySelector('.help-guide-modal');
-            if (/breath|breathe|calm|relax|anxiety|panic|anxious/.test(text)) {
-                modal && modal.remove(); openOverlay('breathingOverlay');
-            } else if (/meditat|guided|peace|quiet|still/.test(text)) {
-                modal && modal.remove(); openOverlay('guidedMeditationOverlay');
-            } else if (/safe|plan|safety|crisis|suicid|harm|hurt|die|dying|end|hopeless/.test(text)) {
-                modal && modal.remove(); openOverlay('safetyPlanOverlay');
-            } else if (/angry|anger|rage|scream|yell|furious|mad/.test(text)) {
-                modal && modal.remove(); openOverlay('screamCircleOverlay');
-            } else if (/talk|chat|speak|listen|someone|help|support/.test(text)) {
-                modal && modal.remove();
-                const inp = document.querySelector('#chat-input, textarea');
-                if (inp) inp.focus();
+            input.value = '';
+
+            // Build response with empathetic message + navigation offer
+            let response = null;
+
+            if (/breath|breathe|chest tight|panic|hypervent/.test(text)) {
+                response = { msg: "I hear you 💗 When everything feels overwhelming, your breath is your anchor. I have a guided breathing exercise right here for you.", section: 'breathingOverlay', label: 'Take me to Breathing' };
+            } else if (/meditat|calm|peace|quiet|ground|overwhelm|settle/.test(text)) {
+                response = { msg: "That makes so much sense 🌸 Sometimes we just need to slow down and feel safe. I have a guided meditation that can help.", section: 'guidedMeditationOverlay', label: 'Take me to Guided Meditation' };
+            } else if (/safe|plan|safety/.test(text)) {
+                response = { msg: "I'm really glad you reached out 💪 Having a safety plan is one of the most powerful things you can do for yourself. Let's build yours together.", section: 'safetyPlanOverlay', label: 'Take me to Safety Plan' };
+            } else if (/suicid|harm|hurt myself|die|dying|end it|hopeless|can't go on|can't do this/.test(text)) {
+                response = { msg: "Thank you for trusting me with this 💗 Please know you are not alone, and this feeling can change. Right now, let's get you a safety plan — or call/text 988 immediately if you're in danger.", section: 'safetyPlanOverlay', label: 'Open Safety Plan' };
+            } else if (/angry|anger|rage|scream|yell|furious|mad|frustrated/.test(text)) {
+                response = { msg: "That anger is valid — you don't have to swallow it 💥 I have a space where you can let it all out safely.", section: 'screamCircleOverlay', label: 'Take me to Release Anger' };
+            } else if (/talk|chat|speak|listen|someone|lonely|alone|no one/.test(text)) {
+                response = { msg: "You deserve to be heard 💬 Let me connect you with real humans who care — available 24/7.", nav: () => { document.querySelector('.help-guide-modal')?.remove(); openTalkToSomeoneModal(); }, label: 'Talk to Someone' };
+            } else if (/chizuk|strength|hope|inspire|motivat|encour|video/.test(text)) {
+                response = { msg: "You came to the right place ✨ I have words of strength, videos, and Jewish wisdom waiting for you in the Chizuk section.", navSection: 'chizuk', label: 'Take me to Chizuk' };
+            } else if (/tehillim|psalm|pray|prayer|daven/.test(text)) {
+                response = { msg: "Turning to Hashem is the most powerful thing 🕊️ The full Tehillim is in our Dedication section.", navSection: 'dedication', label: 'Take me to Tehillim' };
+            } else if (/mood|track|feel|feeling|emotion/.test(text)) {
+                response = { msg: "Checking in with yourself is so important 💜 Our Daily Check-in is on the Dashboard — it only takes a moment.", navSection: 'dashboard', label: 'Take me to Dashboard' };
+            } else if (/resource|hotline|crisis line|help line/.test(text)) {
+                response = { msg: "Here are all the resources and hotlines we have curated for you 📚", navSection: 'resources', label: 'Take me to Resources' };
             } else {
-                input.value = '';
-                input.placeholder = 'Try: breathing, safety plan, calm down, talk...';
+                response = { msg: "I'm here with you 💗 I didn't quite catch that — can you tell me a little more? Are you feeling anxious, angry, hopeless, or something else? I'll point you to exactly the right tool.", label: null };
             }
+
+            // Show response inside modal
+            const modal = document.querySelector('.help-guide-modal .chat-response-area');
+            const container = document.querySelector('.help-guide-modal > div');
+            if (!container) return;
+
+            // Remove previous response
+            const prev = container.querySelector('.bot-response');
+            if (prev) prev.remove();
+
+            const resp = document.createElement('div');
+            resp.className = 'bot-response';
+            resp.style.cssText = 'background:rgba(255,20,147,0.1);border:1px solid rgba(255,20,147,0.35);border-radius:14px;padding:16px;margin-bottom:14px;';
+            resp.innerHTML = `<p style="color:#fce7f3;font-size:14px;line-height:1.7;margin:0 0 ${response.label ? '12px' : '0'} 0;">🤖 ${response.msg}</p>`;
+
+            if (response.label) {
+                const yesBtn = document.createElement('button');
+                yesBtn.textContent = `✅ Yes — ${response.label}`;
+                yesBtn.style.cssText = 'background:#ff1493;border:none;border-radius:10px;color:white;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;width:100%;margin-bottom:8px;';
+                yesBtn.onclick = () => {
+                    document.querySelector('.help-guide-modal')?.remove();
+                    if (response.section) openOverlay(response.section);
+                    else if (response.nav) response.nav();
+                    else if (response.navSection) showSection(response.navSection);
+                };
+
+                const noBtn = document.createElement('button');
+                noBtn.textContent = '🔄 No — show me something else';
+                noBtn.style.cssText = 'background:rgba(255,255,255,0.08);border:1px solid rgba(255,20,147,0.4);border-radius:10px;color:#ff69b4;padding:10px 16px;font-weight:700;font-size:13px;cursor:pointer;width:100%;';
+                noBtn.onclick = () => {
+                    resp.remove();
+                    const inp = document.getElementById('help-guide-input');
+                    if (inp) { inp.placeholder = "Tell me more — what else is going on?"; inp.focus(); }
+                };
+
+                resp.appendChild(yesBtn);
+                resp.appendChild(noBtn);
+            }
+
+            // Insert before the search bar
+            const searchBar = container.querySelector('div[style*="display:flex;gap:8px"]');
+            if (searchBar) container.insertBefore(resp, searchBar);
+            else container.appendChild(resp);
         }
 
                 // Close dropdown when clicking outside
