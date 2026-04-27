@@ -2373,7 +2373,16 @@
                 <!-- Videos panel -->
                 <div id="panelVideos">
                     <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px;" id="curatedVideoGrid">
-                        <!-- curated video cards injected by JS -->
+                        <!-- Video: Shlomo Yehuda Rechnitz -->
+                        <div style="background:white; border-radius:16px; overflow:hidden; box-shadow:0 4px 14px rgba(22,163,74,0.15); border:1.5px solid #86efac;">
+                            <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden;">
+                                <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/9qGIbZBHqnI" allowfullscreen allow="encrypted-media" loading="lazy"></iframe>
+                            </div>
+                            <div style="padding:14px;">
+                                <p style="color:#15803d; font-weight:700; font-size:14px; margin:0 0 4px 0;">🌟 Words of Chizuk</p>
+                                <p style="color:#6b7280; font-size:12px; margin:0;">Uplifting message to strengthen your emunah</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
 
@@ -12183,6 +12192,16 @@ User's message: ${userMessage}`
 
         const allChizuk = Object.values(chizukData).flat();
         let lastChizukIndex = -1;
+
+        function switchChizukTab(tab) {
+            const isVideos = tab === 'videos';
+            document.getElementById('panelVideos').style.display = isVideos ? 'block' : 'none';
+            document.getElementById('panelArticles').style.display = isVideos ? 'none' : 'block';
+            document.getElementById('tabVideosBtn').style.background = isVideos ? 'linear-gradient(135deg,#16a34a,#15803d)' : 'white';
+            document.getElementById('tabVideosBtn').style.color = isVideos ? 'white' : '#16a34a';
+            document.getElementById('tabArticlesBtn').style.background = isVideos ? 'white' : 'linear-gradient(135deg,#16a34a,#15803d)';
+            document.getElementById('tabArticlesBtn').style.color = isVideos ? '#16a34a' : 'white';
+        }
 
         function newChizuk() {
             let idx;
