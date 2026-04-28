@@ -6029,27 +6029,96 @@ User's message: ${userMessage}`
             if (btns[val - 1]) btns[val - 1].classList.add('selected');
         }
 
-        function saveMoodHome() {
+        async function saveMoodHome() {
             const notes = document.getElementById('home-mood-note').value;
             const slider = document.getElementById('home-mood-slider');
             const mood = currentMood || parseInt(slider.value);
             const feelings = getSelectedFeelings('home-feeling-tags');
             const gif = selectedGifs.home;
             const timestamp = new Date().toLocaleString();
-            let msg = `Thank you for checking in! Your mood (${mood}/10 ${moodEmojis[mood-1]}) has been recorded for ${timestamp}.`;
-            if (feelings.length) msg += '\n\nAlso feeling: ' + feelings.join(', ');
-            if (gif) msg += '\n\nGIF attached to your check-in!';
-            if (notes) msg += '\n\nYour note: ' + notes;
-            msg += '\n\nRemember, you\'re taking an important step by tracking your mental health.';
-            alert(msg);
-            document.getElementById('home-mood-note').value = '';
-            slider.value = 5;
-            document.getElementById('home-slider-value').textContent = '5';
-            const card = slider.closest('.card');
-            card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
-            clearFeelings('home-feeling-tags');
-            clearGif('home');
-            currentMood = null;
+            
+            // Get or create user ID
+            let userId = localStorage.getItem('userId');
+            if (!userId) {
+                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+                localStorage.setItem('userId', userId);
+            }
+
+            try {
+                // Save mood entry to backend
+                const moodResponse = await fetch('/api/mood-entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        mood: mood,
+                        emotions: feelings,
+                        notes: notes || undefined,
+                        triggers: [],
+                        copingStrategies: []
+                    })
+                });
+
+                if (!moodResponse.ok) throw new Error('Failed to save mood entry');
+                
+                // Create journal entry from the mood check-in
+                const journalResponse = await fetch('/api/journal-entries', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        userId: userId,
+                        title: 'Daily Check-in - ' + new Date().toLocaleDateString(),
+                        content: `Mood: ${mood}/10 ${moodEmojis[mood-1]}\n\nFeelings: ${feelings.join(', ') || 'None selected'}\n\nNote: ${notes || 'No notes added'}`,
+                        mood: mood,
+                        isPrivate: true,
+                        tags: ['daily-checkin', ...feelings]
+                    })
+                });
+
+                if (!journalResponse.ok) throw new Error('Failed to save journal entry');
+
+                let msg = `Thank you for checking in! Your mood (${mood}/10 ${moodEmojis[mood-1]}) has been recorded for ${timestamp}.`;
+                if (feelings.length) msg += '\n\nAlso feeling: ' + feelings.join(', ');
+                if (gif) msg += '\n\nGIF attached to your check-in!';
+                if (notes) msg += '\n\nYour note: ' + notes;
+                msg += '\n\nRemember, you\'re taking an important step by tracking your mental health.';
+                msg += '\n\n✅ Check-in saved to your journal!';
+                alert(msg);
+
+                // Clear form
+                document.getElementById('home-mood-note').value = '';
+                slider.value = 5;
+                document.getElementById('home-slider-value').textContent = '5';
+                const card = slider.closest('.card');
+                card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+                clearFeelings('home-feeling-tags');
+                clearGif('home');
+                currentMood = null;
+            } catch (error) {
+                console.error('Error saving check-in:', error);
+                alert('Check-in saved locally! (Server sync unavailable)');
+                
+                // Fallback: save to localStorage
+                const checkIns = JSON.parse(localStorage.getItem('dailyCheckIns') || '[]');
+                checkIns.push({
+                    userId: userId,
+                    mood: mood,
+                    emotions: feelings,
+                    notes: notes,
+                    timestamp: new Date().toISOString()
+                });
+                localStorage.setItem('dailyCheckIns', JSON.stringify(checkIns));
+
+                // Clear form
+                document.getElementById('home-mood-note').value = '';
+                slider.value = 5;
+                document.getElementById('home-slider-value').textContent = '5';
+                const card = slider.closest('.card');
+                card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+                clearFeelings('home-feeling-tags');
+                clearGif('home');
+                currentMood = null;
+            }
         }
 
         let diaryPhotoData = null;
