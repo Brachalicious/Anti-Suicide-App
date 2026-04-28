@@ -6104,9 +6104,28 @@ User's message: ${userMessage}`
                 currentMood = null;
             } catch (error) {
                 console.error('Error saving check-in:', error);
-                alert('Check-in saved locally! (Server sync unavailable)');
                 
-                // Fallback: save to localStorage
+                // Fallback: save to localStorage AND display in diary
+                const checkInEntry = {
+                    id: Date.now(),
+                    date: new Date().toISOString().split('T')[0],
+                    time: new Date().toTimeString().slice(0, 5),
+                    mood: mood,
+                    emoji: moodEmojis[mood-1],
+                    feelings: feelings,
+                    note: notes || null,
+                    gif: gif || null,
+                    photo: null,
+                    audio: null,
+                    isCheckIn: true
+                };
+
+                // Save to diary entries
+                const diaryEntries = getDiaryEntries();
+                diaryEntries.unshift(checkInEntry);
+                saveDiaryEntries(diaryEntries);
+
+                // Also save to localStorage backup
                 const checkIns = JSON.parse(localStorage.getItem('dailyCheckIns') || '[]');
                 checkIns.push({
                     userId: userId,
@@ -6116,6 +6135,16 @@ User's message: ${userMessage}`
                     timestamp: new Date().toISOString()
                 });
                 localStorage.setItem('dailyCheckIns', JSON.stringify(checkIns));
+
+                let msg = `✅ Check-in saved to your diary!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
+                if (feelings.length) msg += '\nFeelings: ' + feelings.join(', ');
+                if (notes) msg += '\nNote: ' + notes;
+                alert(msg);
+
+                // Refresh diary display if it's visible
+                if (document.getElementById('diary-entries-list')) {
+                    renderDiaryEntries();
+                }
 
                 // Clear form
                 document.getElementById('home-mood-note').value = '';
