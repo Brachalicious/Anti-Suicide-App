@@ -6059,7 +6059,11 @@ User's message: ${userMessage}`
                     })
                 });
 
-                if (!moodResponse.ok) throw new Error('Failed to save mood entry');
+                if (!moodResponse.ok) {
+                    const errorData = await moodResponse.text();
+                    console.error('Mood API error:', moodResponse.status, errorData);
+                    throw new Error(`Failed to save mood entry: ${moodResponse.status}`);
+                }
                 
                 // Create journal entry from the mood check-in
                 const journalResponse = await fetch('/api/journal-entries', {
@@ -6075,7 +6079,11 @@ User's message: ${userMessage}`
                     })
                 });
 
-                if (!journalResponse.ok) throw new Error('Failed to save journal entry');
+                if (!journalResponse.ok) {
+                    const errorData = await journalResponse.text();
+                    console.error('Journal API error:', journalResponse.status, errorData);
+                    throw new Error(`Failed to save journal entry: ${journalResponse.status}`);
+                }
 
                 let msg = `Thank you for checking in! Your mood (${mood}/10 ${moodEmojis[mood-1]}) has been recorded for ${timestamp}.`;
                 if (feelings.length) msg += '\n\nAlso feeling: ' + feelings.join(', ');
@@ -6963,21 +6971,21 @@ User's message: ${userMessage}`
         }
 
         async function loadSafetyPlan() {
-            const user = auth.currentUser;
             let data = null;
             
             // Try to load from Firebase first if user is logged in
-            if (user) {
-                try {
+            try {
+                if (typeof auth !== 'undefined' && auth.currentUser) {
+                    const user = auth.currentUser;
                     const docRef = doc(db, 'users', user.uid, 'safetyPlan', 'current');
                     const docSnap = await getDoc(docRef);
                     if (docSnap.exists()) {
                         data = docSnap.data();
                         console.log('Safety plan loaded from Firebase');
                     }
-                } catch (error) {
-                    console.error('Error loading safety plan from Firebase:', error);
                 }
+            } catch (error) {
+                console.error('Error loading safety plan from Firebase:', error);
             }
             
             // Fall back to localStorage if no Firebase data
