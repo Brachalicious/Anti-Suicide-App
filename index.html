@@ -6035,113 +6035,51 @@ User's message: ${userMessage}`
             const mood = currentMood || parseInt(slider.value);
             const feelings = getSelectedFeelings('home-feeling-tags');
             const gif = selectedGifs.home;
-            const timestamp = new Date().toLocaleString();
             
-            // Get or create user ID
-            let userId = localStorage.getItem('userId');
-            if (!userId) {
-                userId = 'user_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
-                localStorage.setItem('userId', userId);
+            // Check if user is authenticated with Firebase
+            if (typeof auth === 'undefined' || !auth.currentUser) {
+                alert('Please sign in with Google to save your check-in to your account.');
+                document.getElementById('google-signin-btn')?.click();
+                return;
             }
 
+            const userId = auth.currentUser.uid;
+            const timestamp = new Date().toISOString();
+
             try {
-                // Save mood entry to backend
-                const moodResponse = await fetch('/api/mood-entries', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: userId,
-                        mood: mood,
-                        emotions: feelings,
-                        notes: notes || undefined,
-                        triggers: [],
-                        copingStrategies: []
-                    })
-                });
-
-                if (!moodResponse.ok) {
-                    const errorData = await moodResponse.text();
-                    console.error('Mood API error:', moodResponse.status, errorData);
-                    throw new Error(`Failed to save mood entry: ${moodResponse.status}`);
-                }
-                
-                // Create journal entry from the mood check-in
-                const journalResponse = await fetch('/api/journal-entries', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        userId: userId,
-                        title: 'Daily Check-in - ' + new Date().toLocaleDateString(),
-                        content: `Mood: ${mood}/10 ${moodEmojis[mood-1]}\n\nFeelings: ${feelings.join(', ') || 'None selected'}\n\nNote: ${notes || 'No notes added'}`,
-                        mood: mood,
-                        isPrivate: true,
-                        tags: ['daily-checkin', ...feelings]
-                    })
-                });
-
-                if (!journalResponse.ok) {
-                    const errorData = await journalResponse.text();
-                    console.error('Journal API error:', journalResponse.status, errorData);
-                    throw new Error(`Failed to save journal entry: ${journalResponse.status}`);
-                }
-
-                let msg = `Thank you for checking in! Your mood (${mood}/10 ${moodEmojis[mood-1]}) has been recorded for ${timestamp}.`;
-                if (feelings.length) msg += '\n\nAlso feeling: ' + feelings.join(', ');
-                if (gif) msg += '\n\nGIF attached to your check-in!';
-                if (notes) msg += '\n\nYour note: ' + notes;
-                msg += '\n\nRemember, you\'re taking an important step by tracking your mental health.';
-                msg += '\n\n✅ Check-in saved to your journal!';
-                alert(msg);
-
-                // Clear form
-                document.getElementById('home-mood-note').value = '';
-                slider.value = 5;
-                document.getElementById('home-slider-value').textContent = '5';
-                const card = slider.closest('.card');
-                card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
-                clearFeelings('home-feeling-tags');
-                clearGif('home');
-                currentMood = null;
-            } catch (error) {
-                console.error('Error saving check-in:', error);
-                
-                // Fallback: save to localStorage AND display in diary
-                const checkInEntry = {
+                // Create diary entry object
+                const entryData = {
                     id: Date.now(),
-                    date: new Date().toISOString().split('T')[0],
-                    time: new Date().toTimeString().slice(0, 5),
+                    date: timestamp.split('T')[0],
+                    time: timestamp.split('T')[1].slice(0, 5),
                     mood: mood,
-                    emoji: moodEmojis[mood-1],
+                    emoji: moodEmojis[mood - 1],
                     feelings: feelings,
-                    note: notes || null,
+                    note: notes,
                     gif: gif || null,
                     photo: null,
                     audio: null,
-                    isCheckIn: true
+                    isCheckIn: true,
+                    timestamp: timestamp,
+                    userId: userId
                 };
 
-                // Save to diary entries
-                const diaryEntries = getDiaryEntries();
-                diaryEntries.unshift(checkInEntry);
-                saveDiaryEntries(diaryEntries);
+                // Save to Firebase Firestore
+                const entryRef = doc(db, 'users', userId, 'diaryEntries', String(entryData.id));
+                await setDoc(entryRef, entryData);
+                console.log('Check-in saved to Firebase:', entryData.id);
 
-                // Also save to localStorage backup
-                const checkIns = JSON.parse(localStorage.getItem('dailyCheckIns') || '[]');
-                checkIns.push({
-                    userId: userId,
-                    mood: mood,
-                    emotions: feelings,
-                    notes: notes,
-                    timestamp: new Date().toISOString()
-                });
-                localStorage.setItem('dailyCheckIns', JSON.stringify(checkIns));
-
-                let msg = `✅ Check-in saved to your diary!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
+                let msg = `✅ Check-in saved to your account!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
                 if (feelings.length) msg += '\nFeelings: ' + feelings.join(', ');
                 if (notes) msg += '\nNote: ' + notes;
                 alert(msg);
 
-                // Refresh diary display if it's visible
+                // Also save locally for immediate display
+                const diaryEntries = getDiaryEntries();
+                diaryEntries.unshift(entryData);
+                saveDiaryEntries(diaryEntries);
+                
+                // Refresh diary display if visible
                 if (document.getElementById('diary-entries-list')) {
                     renderDiaryEntries();
                 }
@@ -6155,6 +6093,9 @@ User's message: ${userMessage}`
                 clearFeelings('home-feeling-tags');
                 clearGif('home');
                 currentMood = null;
+            } catch (error) {
+                console.error('Error saving check-in to Firebase:', error);
+                alert('⚠️ Error saving to Firebase:\n\n' + error.message + '\n\nCheck browser console for details.');
             }
         }
 
@@ -6287,13 +6228,26 @@ User's message: ${userMessage}`
                 note: notes,
                 gif: gif || null,
                 photo: diaryPhotoData || null,
-                audio: diaryAudioData || null
+                audio: diaryAudioData || null,
+                timestamp: new Date().toISOString()
             };
 
+            // Save to localStorage first
             const entries = getDiaryEntries();
             entries.unshift(entry);
             saveDiaryEntries(entries);
             renderDiaryEntries();
+
+            // Try to save to Firebase if user is logged in
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                const userId = auth.currentUser.uid;
+                const entryRef = doc(db, 'users', userId, 'diaryEntries', String(entry.id));
+                setDoc(entryRef, entry).then(() => {
+                    console.log('Diary entry saved to Firebase:', entry.id);
+                }).catch(err => {
+                    console.error('Error saving to Firebase:', err);
+                });
+            }
 
             document.getElementById('mood-note').value = '';
             slider.value = 5;
