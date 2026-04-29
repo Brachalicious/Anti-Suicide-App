@@ -6038,12 +6038,15 @@ User's message: ${userMessage}`
             
             // Check if user is authenticated with Firebase
             if (typeof auth === 'undefined' || !auth.currentUser) {
-                alert('Please sign in with Google to save your check-in to your account.');
-                document.getElementById('google-signin-btn')?.click();
-                return;
+                alert('📱 Sign in to save check-ins to your account!\n\nWithout signing in, check-ins will be saved locally only.');
+                // Try to click sign in button
+                const signInBtn = document.getElementById('google-signin-btn');
+                if (signInBtn) {
+                    signInBtn.click();
+                    return;
+                }
             }
 
-            const userId = auth.currentUser.uid;
             const timestamp = new Date().toISOString();
 
             try {
@@ -6060,21 +6063,25 @@ User's message: ${userMessage}`
                     photo: null,
                     audio: null,
                     isCheckIn: true,
-                    timestamp: timestamp,
-                    userId: userId
+                    timestamp: timestamp
                 };
 
-                // Save to Firebase Firestore
-                const entryRef = doc(db, 'users', userId, 'diaryEntries', String(entryData.id));
-                await setDoc(entryRef, entryData);
-                console.log('Check-in saved to Firebase:', entryData.id);
+                // If user is logged in, save to Firebase Firestore
+                if (auth && auth.currentUser) {
+                    const userId = auth.currentUser.uid;
+                    entryData.userId = userId;
+                    const entryRef = doc(db, 'users', userId, 'diaryEntries', String(entryData.id));
+                    await setDoc(entryRef, entryData);
+                    console.log('Check-in saved to Firebase:', entryData.id);
+                }
 
-                let msg = `✅ Check-in saved to your account!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
+                let msg = `✅ Check-in saved!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
                 if (feelings.length) msg += '\nFeelings: ' + feelings.join(', ');
                 if (notes) msg += '\nNote: ' + notes;
+                if (!auth?.currentUser) msg += '\n\n📱 Sign in to sync across devices!';
                 alert(msg);
 
-                // Also save locally for immediate display
+                // Save locally for immediate display
                 const diaryEntries = getDiaryEntries();
                 diaryEntries.unshift(entryData);
                 saveDiaryEntries(diaryEntries);
@@ -6094,8 +6101,41 @@ User's message: ${userMessage}`
                 clearGif('home');
                 currentMood = null;
             } catch (error) {
-                console.error('Error saving check-in to Firebase:', error);
-                alert('⚠️ Error saving to Firebase:\n\n' + error.message + '\n\nCheck browser console for details.');
+                console.error('Error saving check-in:', error);
+                
+                // Fallback: save to localStorage anyway
+                const timestamp = new Date().toISOString();
+                const entryData = {
+                    id: Date.now(),
+                    date: timestamp.split('T')[0],
+                    time: timestamp.split('T')[1].slice(0, 5),
+                    mood: mood,
+                    emoji: moodEmojis[mood - 1],
+                    feelings: feelings,
+                    note: notes,
+                    gif: gif || null,
+                    photo: null,
+                    audio: null,
+                    isCheckIn: true,
+                    timestamp: timestamp
+                };
+                
+                const diaryEntries = getDiaryEntries();
+                diaryEntries.unshift(entryData);
+                saveDiaryEntries(diaryEntries);
+                renderDiaryEntries();
+                
+                alert('⚠️ Saved locally (Firebase unavailable)\n\n' + error.message);
+                
+                // Clear form
+                document.getElementById('home-mood-note').value = '';
+                slider.value = 5;
+                document.getElementById('home-slider-value').textContent = '5';
+                const card = slider.closest('.card');
+                card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+                clearFeelings('home-feeling-tags');
+                clearGif('home');
+                currentMood = null;
             }
         }
 
