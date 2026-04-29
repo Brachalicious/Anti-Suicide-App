@@ -6030,14 +6030,19 @@ User's message: ${userMessage}`
         }
 
         async function saveMoodHome() {
+            console.log('🔵 saveMoodHome() CALLED');
             const notes = document.getElementById('home-mood-note').value;
             const slider = document.getElementById('home-mood-slider');
             const mood = currentMood || parseInt(slider.value);
             const feelings = getSelectedFeelings('home-feeling-tags');
             const gif = selectedGifs.home;
             
+            console.log('Form data:', { mood, feelings: feelings.length, hasNotes: !!notes, hasGif: !!gif });
+            console.log('Auth check:', { authDefined: typeof auth !== 'undefined', hasCurrentUser: auth?.currentUser ? true : false, uid: auth?.currentUser?.uid });
+            
             // Check if user is authenticated with Firebase
             if (typeof auth === 'undefined' || !auth.currentUser) {
+                console.warn('⚠️ User not authenticated - saving to localStorage only');
                 alert('📱 Sign in to save check-ins to your account!\n\nWithout signing in, check-ins will be saved locally only.');
                 // Try to click sign in button
                 const signInBtn = document.getElementById('google-signin-btn');
@@ -6069,10 +6074,14 @@ User's message: ${userMessage}`
                 // If user is logged in, save to Firebase Firestore
                 if (auth && auth.currentUser) {
                     const userId = auth.currentUser.uid;
+                    console.log('🔥 Saving to Firebase for user:', userId);
                     entryData.userId = userId;
                     const entryRef = doc(db, 'users', userId, 'diaryEntries', String(entryData.id));
+                    console.log('Firebase path:', `users/${userId}/diaryEntries/${entryData.id}`);
                     await setDoc(entryRef, entryData);
-                    console.log('Check-in saved to Firebase:', entryData.id);
+                    console.log('✅ Check-in saved to Firebase:', entryData.id);
+                } else {
+                    console.log('ℹ️ Not logged in - Firebase save skipped');
                 }
 
                 let msg = `✅ Check-in saved!\n\nMood: ${mood}/10 ${moodEmojis[mood-1]}`;
@@ -6085,10 +6094,12 @@ User's message: ${userMessage}`
                 const diaryEntries = getDiaryEntries();
                 diaryEntries.unshift(entryData);
                 saveDiaryEntries(diaryEntries);
+                console.log('💾 Saved to localStorage. Total entries:', diaryEntries.length);
                 
                 // Refresh diary display if visible
                 if (document.getElementById('diary-entries-list')) {
                     renderDiaryEntries();
+                    console.log('🔄 Diary re-rendered');
                 }
 
                 // Clear form
@@ -6101,7 +6112,9 @@ User's message: ${userMessage}`
                 clearGif('home');
                 currentMood = null;
             } catch (error) {
-                console.error('Error saving check-in:', error);
+                console.error('❌ ERROR in saveMoodHome:', error);
+                console.error('Error code:', error.code);
+                console.error('Error message:', error.message);
                 
                 // Fallback: save to localStorage anyway
                 const timestamp = new Date().toISOString();
@@ -6124,6 +6137,7 @@ User's message: ${userMessage}`
                 diaryEntries.unshift(entryData);
                 saveDiaryEntries(diaryEntries);
                 renderDiaryEntries();
+                console.log('✅ Fallback: Saved to localStorage');
                 
                 alert('⚠️ Saved locally (Firebase unavailable)\n\n' + error.message);
                 
