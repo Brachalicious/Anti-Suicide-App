@@ -6985,7 +6985,7 @@ User's message: ${userMessage}`
                 if (data.selections) {
                     Object.keys(data.selections).forEach(key => {
                         safetyPlanSelections[key] = new Set(data.selections[key]);
-                        updateChipSummary(key);
+                        updateSafetySummary(key);
                     });
                 }
                 if (data.notes) {
