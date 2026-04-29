@@ -11222,6 +11222,13 @@ User's message: ${userMessage}`
         const db = getFirestore(app);
         const googleProvider = new GoogleAuthProvider();
 
+        // IMPORTANT: Expose to global scope for use in inline scripts
+        window.auth = auth;
+        window.db = db;
+        window.setDoc = setDoc;
+        window.doc = doc;
+        window.getDoc = getDoc;
+
         let currentUser = null;
 
         // Sign in with Google
