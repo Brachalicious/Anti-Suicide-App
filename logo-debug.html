@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+<style>
+body { background: #1a0a2e; display:flex; gap:40px; flex-wrap:wrap; padding:40px; }
+.test { text-align:center; color:white; font-size:12px; }
+.box { position:relative; width:270px; height:270px; margin:0 auto; display:flex; align-items:center; justify-content:center; }
+.box img { width:215px; height:auto; position:relative; z-index:2; }
+.box svg { position:absolute; width:100%; height:100%; overflow:visible; }
+</style>
+</head>
+<body>
+
+<!-- TEST A: r=93, textLength=272 (current) -->
+<div class="test">
+<p>A: r=93, textLength=272</p>
+<div class="box">
+  <svg viewBox="0 0 300 300" overflow="visible">
+    <defs>
+      <path id="topA" d="M 57,150 a 93,93 0 0,1 186,0"/>
+      <path id="botA" d="M 243,150 a 93,93 0 0,1 -186,0"/>
+    </defs>
+    <!-- show the arc itself in gold so we can see it -->
+    <use href="#topA" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <use href="#botA" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900" fill="#ff1493">
+      <textPath href="#topA" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900" fill="#ff1493">
+      <textPath href="#botA" startOffset="50%" text-anchor="middle" textLength="272" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+    <!-- show center cross -->
+    <line x1="148" y1="145" x2="152" y2="155" stroke="cyan" stroke-width="0.5"/>
+    <line x1="145" y1="148" x2="155" y2="152" stroke="cyan" stroke-width="0.5"/>
+  </svg>
+  <img src="/my%20logo%20updated.svg" />
+</div>
+</div>
+
+<!-- TEST B: r=105, no textLength -->
+<div class="test">
+<p>B: r=105, no textLength</p>
+<div class="box">
+  <svg viewBox="0 0 300 300" overflow="visible">
+    <defs>
+      <path id="topB" d="M 45,150 a 105,105 0 0,1 210,0"/>
+      <path id="botB" d="M 255,150 a 105,105 0 0,1 -210,0"/>
+    </defs>
+    <use href="#topB" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <use href="#botB" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="10" font-weight="900" fill="#ff1493">
+      <textPath href="#topB" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="10" font-weight="900" fill="#ff1493">
+      <textPath href="#botB" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+  </svg>
+  <img src="/my%20logo%20updated.svg" />
+</div>
+</div>
+
+<!-- TEST C: full circle, one line of text top only -->
+<div class="test">
+<p>C: Full circle r=105, top only</p>
+<div class="box">
+  <svg viewBox="0 0 300 300" overflow="visible">
+    <defs>
+      <!-- Full circle starting at top (150, 45) clockwise -->
+      <path id="fullC" d="M 150,45 a 105,105 0 1,1 -0.001,0"/>
+    </defs>
+    <use href="#fullC" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="10" font-weight="900" fill="#ff1493">
+      <textPath href="#fullC" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+  </svg>
+  <img src="/my%20logo%20updated.svg" />
+</div>
+</div>
+
+<!-- TEST D: r=120 (just outside the image boundary) -->
+<div class="test">
+<p>D: r=120, font-size 9</p>
+<div class="box">
+  <svg viewBox="0 0 300 300" overflow="visible">
+    <defs>
+      <path id="topD" d="M 30,150 a 120,120 0 0,1 240,0"/>
+      <path id="botD" d="M 270,150 a 120,120 0 0,1 -240,0"/>
+    </defs>
+    <use href="#topD" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <use href="#botD" fill="none" stroke="#ffd700" stroke-width="1" opacity="0.4"/>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900" fill="#ff1493">
+      <textPath href="#topD" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+    <text font-family="Arial Black,Arial,sans-serif" font-size="9" font-weight="900" fill="#ff1493">
+      <textPath href="#botD" startOffset="50%" text-anchor="middle">✦ FIGHT SUICIDE PROJECT ✦</textPath>
+    </text>
+  </svg>
+  <img src="/my%20logo%20updated.svg" />
+</div>
+</div>
+
+</body>
+</html>
