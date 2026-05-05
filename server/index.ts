@@ -23,7 +23,30 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json({ limit: "50mb" }));
-app.use(express.static(path.resolve(__dirname, "..", "public")));
+
+const publicPath = path.resolve(__dirname, "..", "public");
+// Same files at /file and /public/file so static hosts (Netlify root publish) and Express match
+app.use(
+  express.static(publicPath, {
+    maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".html") || filePath.endsWith(".svg")) {
+        res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+      }
+    },
+  })
+);
+app.use(
+  "/public",
+  express.static(publicPath, {
+    maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".svg")) {
+        res.setHeader("Cache-Control", "public, max-age=0, must-revalidate");
+      }
+    },
+  })
+);
 
 app.get("/health", (_req, res) => {
   res.status(200).json({ status: "ok" });
@@ -35,6 +58,7 @@ app.use(router);
 
 app.use((req, res) => {
   console.log("Catch-all route hit for:", req.path);
+  res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
   res.sendFile(path.resolve(__dirname, "..", "index.html"));
 });
 

@@ -1,0 +1,37 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Signed-in user's profile document and nested diary entry docs
+    match /users/{userId} {
+      allow read, write: if request.auth != null && request.auth.uid == userId;
+
+      match /diaryEntries/{entryId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+    }
+
+    // Public read: anyone with the link can view the snapshot.
+    match /diaryShareLinks/{shareId} {
+      allow read: if true;
+      allow create: if request.auth != null
+        && request.resource.data.ownerUid == request.auth.uid;
+      allow update, delete: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+    }
+
+    // Owner or requester may read; authenticated users may create pending requests for others.
+    match /diaryAccessRequests/{reqId} {
+      allow read: if request.auth != null
+        && (resource.data.ownerUid == request.auth.uid
+            || resource.data.requesterUid == request.auth.uid);
+      allow create: if request.auth != null
+        && request.resource.data.requesterUid == request.auth.uid
+        && request.resource.data.ownerUid != request.auth.uid
+        && request.resource.data.status == 'pending';
+      allow update: if request.auth != null
+        && resource.data.ownerUid == request.auth.uid;
+      allow delete: if false;
+    }
+  }
+}
