@@ -521,7 +521,7 @@ export default function Resources() {
       {/* Footer */}
       <div className="mt-8 text-center p-6 bg-card rounded-lg border">
         <p className="text-sm text-muted-foreground">
-          MysticMinded³³ is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the soul aspect of healing—mind, body, and soul.{" "}
+          Anti Suicide App is built with spiritually-informed care, focusing on the whole person — mind, body, and soul.{" "}
           If you're in crisis, please call{" "}
           <a href="tel:988" className="text-primary hover:underline font-medium">988</a>{" "}
           or Hatzoloh{" "}
@@ -529,7 +529,7 @@ export default function Resources() {
           immediately.
         </p>
         <p className="text-xs text-muted-foreground mt-2">
-          © 2026 MysticMinded³³. Not a substitute for professional medical advice, diagnosis, or treatment.
+          © 2026 Anti Suicide App. Not a substitute for professional medical advice, diagnosis, or treatment.
         </p>
       </div>
     </div>

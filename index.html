@@ -6,9 +6,9 @@
     <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
-    <title>MysticMinded³³ - Mental Health Support & Crisis Prevention</title>
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=9">
-    <link rel="icon" type="image/png" href="/favicon.svg?v=9">
+    <title>Anti Suicide App — Mental Health Support & Crisis Prevention</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=13">
+    <link rel="icon" type="image/png" href="/favicon.svg?v=13">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
@@ -339,6 +339,7 @@
             display: block;
             margin: 0 auto;
             object-fit: contain;
+            image-rendering: auto;
         }
         @keyframes waterRipple {
             0%,  100% { clip-path: ellipse(50% 46% at 50% 50%); filter: blur(0.3px) brightness(1.35) saturate(0.25) hue-rotate(200deg) contrast(0.85); opacity: 0.62; }
@@ -1360,11 +1361,10 @@
             }
         }
 
-        /* High DPI displays (Retina, high-res Android) */
+        /* HiDPI: do not use crisp-edges on SVG logos — it quantizes colors and looks wrong vs production CDN */
         @media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
-            .logo-container img {
-                image-rendering: -webkit-optimize-contrast;
-                image-rendering: crisp-edges;
+            .logo-container img.logo-reflection {
+                image-rendering: auto;
             }
         }
 
@@ -1398,7 +1398,7 @@
     <div class="container">
         <div class="logo-tap-row" style="display:flex; align-items:center; justify-content:center; padding: 4px 0 4px; flex-wrap:nowrap;">
             <div style="display:inline-flex; align-items:center; flex-shrink:0; transform:translateX(40px);">
-                <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer; flex-shrink:0;" title="Learn about MysticMinded³³">
+                <div class="logo-container" onclick="showAboutMysticMinded()" style="cursor: pointer; flex-shrink:0;" title="Learn about Anti Suicide App">
                     <svg class="circular-text" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg" style="position:absolute;width:100%;height:100%;overflow:visible;pointer-events:none;">
                         <defs>
                             <filter id="textGlow" x="-20%" y="-20%" width="140%" height="140%">
@@ -1409,12 +1409,12 @@
                             <path id="ringCircle" d="M 150,57 a 93,93 0 1,1 -0.001,0"/>
                         </defs>
                         <text font-family="Arial Black, Arial, sans-serif" font-size="11" font-weight="900" fill="#ff1493" stroke="#ff1493" stroke-width="0.4" filter="url(#textGlow)" style="paint-order:stroke fill;">
-                            <textPath href="#ringCircle" startOffset="0%" textLength="584" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦</textPath>
+                            <textPath href="#ringCircle" startOffset="0%" textLength="584" lengthAdjust="spacing">✦ ANTI SUICIDE APP ✦   ✦ ANTI SUICIDE APP ✦   ✦ ANTI SUICIDE APP ✦</textPath>
                         </text>
                     </svg>
-                    <img src="/logo.svg?v=9" alt="MysticMinded³³ Logo" class="logo-reflection" width="215" height="215" decoding="async" fetchpriority="high" />
+                    <img src="/logo.svg?v=13" alt="Anti Suicide App Logo" class="logo-reflection" width="215" height="215" decoding="async" fetchpriority="high" />
                 </div>
-                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#ff1493; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(255,20,147,0.5); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with MysticMinded³³ chatbot!</p>
+                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#ff1493; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(255,20,147,0.5); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with Anti Suicide App chatbot!</p>
             </div>
         </div>
 
@@ -1627,12 +1627,12 @@
             </div>
         </div>
 
-        <!-- MysticMinded Bot Section -->
+        <!-- Anti Suicide App bot -->
         <div id="mystic-bot" class="section hidden">
             <div class="card">
                 <h2 class="section-title">💬 Scream Your Heart Out</h2>
                 <p style="text-align: center; color: #ff69b4; margin-bottom: 20px; line-height: 1.6;">
-                    Let it all out. MysticBot is here to listen — no judgment, no shame, just a safe space to express everything you're feeling. 
+                    Let it all out. Anti Suicide App is here to listen — no judgment, no shame, just a safe space to express everything you're feeling. 
                     Scream, vent, cry, share. Whatever you need to release, this is your space.
                 </p>
 
@@ -1683,7 +1683,7 @@
                     <div class="chat-message assistant">
                         <div class="chat-avatar" style="background: linear-gradient(135deg, #8b5cf6, #7c3aed);">🤖</div>
                         <div class="chat-bubble">
-                            Hey there! I'm MysticBot, and this is YOUR space to scream your heart out. 💜 Whatever you're going through — rage, pain, fear, confusion — let it out. I'm here to listen, and nothing you say will shock or judge me. What do you need to get off your chest?
+                            Hey there! I'm your Anti Suicide App companion — this is YOUR space to scream your heart out. 💜 Whatever you're going through — rage, pain, fear, confusion — let it out. I'm here to listen, and nothing you say will shock or judge me. What do you need to get off your chest?
                         </div>
                     </div>
                 </div>
@@ -1699,7 +1699,7 @@
                 </div>
 
                 <div class="reminder-box">
-                    <strong>Remember:</strong> MysticBot provides a safe space to vent and supportive conversation, but if you're in crisis or experiencing thoughts of self-harm, 
+                    <strong>Remember:</strong> This chat provides a safe space to vent and supportive conversation, but if you're in crisis or experiencing thoughts of self-harm, 
                     please reach out to professional help:<br>
                     <span class="crisis-link">📞 Call/Text 988 (Suicide & Crisis Lifeline) | 💬 Text HOME to 741741</span>
                 </div>
@@ -1939,16 +1939,16 @@
                     
                     <div id="silentScreamCheckIn" style="display:none; margin-top:20px;">
                         <p style="color:#e9d5ff; font-size:18px; font-weight:600; margin-bottom:12px;">How are you feeling? 💜</p>
-                        <p style="color:#c4b5fd; font-size:14px; margin-bottom:16px;">Please type your response below. MysticMinded33 is here to support you.</p>
+                        <p style="color:#c4b5fd; font-size:14px; margin-bottom:16px;">Please type your response below. Anti Suicide App is here to support you.</p>
                         
                         <textarea id="silentScreamResponse" placeholder="I'm feeling..." style="width:100%; min-height:100px; padding:12px; border-radius:8px; background:rgba(0,0,0,0.3); border:2px solid #8b5cf6; color:white; font-size:14px; margin-bottom:12px; resize:vertical;"></textarea>
                         
                         <button onclick="sendSilentScreamCheckIn()" style="background:#22c55e; color:white; border:none; padding:12px 28px; border-radius:12px; font-size:16px; font-weight:700; cursor:pointer; box-shadow: 0 4px 12px rgba(34, 197, 94, 0.4);">
-                            💬 Send to MysticMinded33
+                            💬 Send to Anti Suicide App
                         </button>
                         
                         <div id="mysticBotResponse" style="display:none; margin-top:16px; padding:16px; background:rgba(34, 197, 94, 0.15); border:2px solid #22c55e; border-radius:12px; color:#d1fae5; text-align:left; line-height:1.6;">
-                            <div style="color:#6ee7b7; font-weight:600; margin-bottom:8px;">💜 MysticMinded33:</div>
+                            <div style="color:#6ee7b7; font-weight:600; margin-bottom:8px;">💜 Anti Suicide App:</div>
                             <div id="mysticBotText"></div>
                         </div>
                     </div>
@@ -4980,7 +4980,7 @@
                         <h3 style="color: #16a34a;">📧 Email Support</h3>
                         <p style="margin: 12px 0;">For general inquiries, feedback, or support:</p>
                         <div class="phone" style="color: #16a34a; font-size: 18px;">mysticminded33@gmail.com</div>
-                        <button class="btn" style="background: #22c55e; margin-top: 12px;" onclick="window.open('mailto:mysticminded33@gmail.com?subject=MysticMinded³³ Support Request', '_blank')">
+                        <button class="btn" style="background: #22c55e; margin-top: 12px;" onclick="window.open('mailto:mysticminded33@gmail.com?subject=Anti Suicide App Support Request', '_blank')">
                             Send Us an Email
                         </button>
                     </div>
@@ -5013,9 +5013,9 @@
                     </div>
 
                     <div class="hotline">
-                        <h3>🙏 About MysticMinded³³</h3>
+                        <h3>🙏 About Anti Suicide App</h3>
                         <p style="margin-top: 8px; line-height: 1.8;">
-                            MysticMinded³³—which will be publicly released soon—was founded on my 33rd birthday as a deeply personal mission. 
+                            Anti Suicide App—which will be publicly released soon—was founded on my 33rd birthday as a deeply personal mission. 
                             It is a spiritually-based platform rooted in Kabbalistic teachings, with a growing network of websites, channels, 
                             apps, and resources.
                         </p>
@@ -5029,7 +5029,7 @@
                         </p>
                         <p style="margin-top: 12px; line-height: 1.8;">
                             This platform provides crisis resources, mood tracking, safety planning, and emotional support tools—all free and confidential 
-                            for the Jewish community. The full <a href="https://mysticminded33.com" target="_blank" style="color: #16a34a; font-weight: 600; text-decoration: underline;"></a>MysticMinded³³.com</a> site will be available to the public soon.
+                            for the Jewish community. The full companion hub at <a href="https://mysticminded33.com" target="_blank" style="color: #16a34a; font-weight: 600; text-decoration: underline;">mysticminded33.com</a> will remain available; additional public releases are coming soon.
                         </p>
                         <p style="margin-top: 12px; font-style: italic; color: #ff69b4;">
                             "You are not alone. You are loved. You matter."
@@ -5042,7 +5042,7 @@
                     <div class="hotline">
                         <h3>📱 Follow Us &amp; Stay Connected</h3>
                         <p style="margin-bottom:10px;">Stay updated with new features, spiritual resources, and services across all our platforms.</p>
-                        <p style="margin-bottom:10px;">🌐 All things <strong>MysticMinded³³</strong> — our full website hub — is coming soon to the public. It will feature all of our apps and resources in one place.</p>
+                        <p style="margin-bottom:10px;">🌐 All things <strong>Anti Suicide App</strong> — our full website hub — is coming soon to the public. It will feature all of our apps and resources in one place.</p>
                         <p style="margin-bottom:14px;">🌍 Find us &amp; follow our journey at:<br>
                             <a href="https://www.mysticminded33.com" target="_blank" style="color:#16a34a; font-weight:700; text-decoration:underline;">mysticminded33.com</a>
                         </p>
@@ -5803,7 +5803,7 @@
             }
         }
 
-        // MysticMinded³³ Bot Functions
+        // Anti Suicide App Bot Functions
         let isMysticChatLoading = false;
 
         async function sendMysticMessage() {
@@ -5848,7 +5848,7 @@
                     body: JSON.stringify({
                         contents: [{
                             parts: [{
-                                text: `You are MysticMinded³³, a compassionate AI companion for the Fight Suicide Project. Your role is to provide empathetic, non-judgmental support to people who may be struggling with suicidal thoughts, mental health challenges, or difficult life situations.
+                                text: `You are the Anti Suicide App companion — a compassionate AI helper. Your role is to provide empathetic, non-judgmental support to people who may be struggling with suicidal thoughts, mental health challenges, or difficult life situations.
 
 CRITICAL GUIDELINES:
 - Always be warm, understanding, and supportive
@@ -5897,7 +5897,7 @@ User's message: ${userMessage}`
                     </div>
                 `;
             } catch (error) {
-                console.error('MysticMinded chat error:', error);
+                console.error('Anti Suicide App chat error:', error);
                 document.getElementById(typingId)?.remove();
                 const fallbackMsg = error.message === 'no_key'
                     ? `I'm here for you, and I want to help. 💜 However, to enable AI responses, you'll need to add your Google Gemini API key in ⚙️ Account Settings.<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
@@ -6445,7 +6445,7 @@ User's message: ${userMessage}`
             text += `Mood: ${entry.emoji} ${entry.mood}/10\n`;
             if (entry.feelings && entry.feelings.length) text += `Feeling: ${entry.feelings.join(', ')}\n`;
             if (entry.note) text += `\n${entry.note}\n`;
-            text += `\n— From MysticMinded³³`;
+            text += `\n— From Anti Suicide App`;
             return text;
         }
 
@@ -6456,7 +6456,7 @@ User's message: ${userMessage}`
             } else if (method === 'sms') {
                 window.open(`sms:?body=${encoded}`, '_blank');
             } else if (method === 'email') {
-                window.open(`mailto:?subject=${encodeURIComponent('From MysticMinded³³')}&body=${encoded}`, '_blank');
+                window.open(`mailto:?subject=${encodeURIComponent('From Anti Suicide App')}&body=${encoded}`, '_blank');
             }
         }
 
@@ -6476,13 +6476,13 @@ User's message: ${userMessage}`
             if (!e) return;
             let text = `📖 Affirmation\n\n${e.text}`;
             if (e.message) text += `\n\n${e.message}`;
-            text += `\n\n— From MysticMinded³³`;
+            text += `\n\n— From Anti Suicide App`;
             shareContent(text, method);
         }
 
         function shareCurrentAffirmation(method) {
             const a = affirmations[currentAffirmationIndex];
-            let text = `📖 Daily Affirmation\n\n${a.verse}\n\n${a.message}\n\n— From MysticMinded³³`;
+            let text = `📖 Daily Affirmation\n\n${a.verse}\n\n${a.message}\n\n— From Anti Suicide App`;
             shareContent(text, method);
         }
 
@@ -6494,7 +6494,7 @@ User's message: ${userMessage}`
             text += `📞 SAMHSA Helpline: 1-800-662-4357\n`;
             text += `📞 NAMI Helpline: 1-800-950-6264\n`;
             text += `📞 the.helpline (Frum): 929-801-2301\n\n`;
-            text += `You are not alone. Help is available 24/7.\n\n— From MysticMinded³³`;
+            text += `You are not alone. Help is available 24/7.\n\n— From Anti Suicide App`;
             shareContent(text, method);
         }
 
@@ -6669,7 +6669,7 @@ User's message: ${userMessage}`
                 return;
             }
             
-            const text = `${currentCard.verse}\n\n${currentCard.message}\n\n— From MysticMinded³³`;
+            const text = `${currentCard.verse}\n\n${currentCard.message}\n\n— From Anti Suicide App`;
             const encoded = encodeURIComponent(text);
             
             if (platform === 'whatsapp') {
@@ -6677,7 +6677,7 @@ User's message: ${userMessage}`
             } else if (platform === 'sms') {
                 window.open(`sms:?&body=${encoded}`, '_blank');
             } else if (platform === 'email') {
-                window.open(`mailto:?subject=${encodeURIComponent('Affirmation from MysticMinded³³')}&body=${encoded}`, '_blank');
+                window.open(`mailto:?subject=${encodeURIComponent('Affirmation from Anti Suicide App')}&body=${encoded}`, '_blank');
             }
         }
 
@@ -7221,7 +7221,7 @@ User's message: ${userMessage}`
                 showBreath: false
             },
             talk: {
-                title: "Talk to MysticMinded³³ Bot",
+                title: "Talk to Anti Suicide App Bot",
                 message: "If you want to talk, I'm here. Use the chat to share what's on your mind.",
                 steps: "Open the chat and start with: <strong>\"I'm feeling overwhelmed\"</strong> or <strong>\"I need someone to listen\"</strong>.",
                 showBreath: false
@@ -7238,7 +7238,7 @@ User's message: ${userMessage}`
                     + "<button class=\"btn\" style=\"background:#0ea5e9; color:white; font-weight:600;\" onclick=\"selectStopAction('vent')\">🗣️ Vent</button>"
                     + "<button class=\"btn\" style=\"background:#22c55e; color:white; font-weight:600;\" onclick=\"selectStopAction('scream')\">😱 Scream</button>"
                     + "<button class=\"btn\" style=\"background:#8b5cf6; color:white; font-weight:600;\" onclick=\"selectStopAction('cry')\">😭 Cry</button>"
-                    + "<button class=\"btn\" style=\"background:#10b981; color:white; font-weight:600;\" onclick=\"selectStopAction('talk')\">💬 Talk to MysticMinded³³ Bot</button>"
+                    + "<button class=\"btn\" style=\"background:#10b981; color:white; font-weight:600;\" onclick=\"selectStopAction('talk')\">💬 Talk to Anti Suicide App Bot</button>"
                     + "</div>",
                 hideButton: true,
                 showBreath: false
@@ -7400,7 +7400,7 @@ User's message: ${userMessage}`
             guideStep = 1;
             updateGuideDisplay();
             
-            // If user selects "Talk to MysticMinded³³ Bot", show the bot section
+            // If user selects "Talk to Anti Suicide App Bot", show the bot section
             if (action === 'talk') {
                 closeGuide();
                 showSection('mystic-bot');
@@ -7825,7 +7825,7 @@ User's message: ${userMessage}`
             const responseDiv = document.getElementById('mysticBotResponse');
             const textDiv = document.getElementById('mysticBotText');
             responseDiv.style.display = 'block';
-            textDiv.textContent = '💭 MysticMinded33 is listening and responding...';
+            textDiv.textContent = '💭 Anti Suicide App is listening and responding...';
             
             try {
                 const chatResponse = await fetch('/api/virtual-parent/chat', {
@@ -8719,7 +8719,7 @@ User's message: ${userMessage}`
                     <button onclick="this.closest('.help-guide-modal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">✕</button>
 
                     <div style="text-align:center;margin-bottom:20px;">
-                        <h2 style="color:#ff1493;font-size:24px;font-weight:800;margin:0 0 4px 0;">Fight Suicide Project</h2>
+                        <h2 style="color:#ff1493;font-size:24px;font-weight:800;margin:0 0 4px 0;">Anti Suicide App</h2>
                         <p style="color:#ff69b4;font-size:15px;margin:0 0 6px 0;font-weight:700;">We got you!</p>
                         <p style="color:#fce7f3;font-size:14px;margin:0 0 16px 0;line-height:1.6;">A safe space built with love — tools to breathe, cope, plan, and feel heard. Whatever you need right now, we have it.</p>
                     </div>
@@ -8727,7 +8727,7 @@ User's message: ${userMessage}`
                     <!-- Welcome message -->
                     <div style="background:rgba(255,20,147,0.08);border:1px solid rgba(255,20,147,0.3);border-radius:16px;padding:18px;margin-bottom:20px;">
                         <p style="color:#fce7f3;font-size:14px;line-height:1.8;margin:0 0 12px 0;">
-                            Welcome to the <strong style="color:#ff69b4;">MysticMinded³³ Fight Suicide Project</strong>. We are so happy you are here!! 💗
+                            Welcome to <strong style="color:#ff69b4;">Anti Suicide App</strong>. We are so happy you are here!! 💗
                         </p>
                         <div style="background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:12px;padding:14px;margin-bottom:12px;">
                             <p style="color:#fca5a5;font-size:14px;font-weight:700;margin:0 0 6px 0;">🚨 If you are in suicidal crisis or imminent risk of self-harm:</p>
@@ -11917,7 +11917,7 @@ User's message: ${userMessage}`
     <div style="position: fixed !important; bottom: 0 !important; left: 0; right: 0; background:#065f46; color:white; text-align:center; padding:20px 20px; border-top:3px solid #22c55e; z-index: 1000; width: 100%;">
         <div style="max-width:1200px; margin:0 auto;">
             <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
-                <strong>MysticMinded³³</strong> is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the <em>soul</em> aspect of healing—mind, body, and soul. If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
+                <strong>Anti Suicide App</strong> is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the <em>soul</em> aspect of healing—mind, body, and soul. If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
             </p>
             <div style="display:flex; justify-content:center; gap:20px; flex-wrap:wrap; margin:20px 0;">
                 <button onclick="showPrivacyPolicy()" style="background:transparent; border:1px solid rgba(255,255,255,0.3); color:white; padding:8px 16px; border-radius:6px; cursor:pointer; font-size:13px;">
@@ -11928,7 +11928,7 @@ User's message: ${userMessage}`
                 </button>
             </div>
             <p style="font-size:12px; opacity:0.7; margin-top:16px;">
-                &copy; 2026 MysticMinded³³. Not a substitute for professional medical advice, diagnosis, or treatment.
+                &copy; 2026 Anti Suicide App. Not a substitute for professional medical advice, diagnosis, or treatment.
             </p>
         </div>
     </div>

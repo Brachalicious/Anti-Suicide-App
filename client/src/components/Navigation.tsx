@@ -49,18 +49,18 @@ export default function Navigation() {
           <div className="flex items-center space-x-2">
             <button 
               onClick={() => {
-                console.log("Logo clicked - opening MysticMinded33 modal!");
+                console.log("Logo clicked - opening Anti Suicide App modal");
                 setIsAboutModalOpen(true);
               }}
               className="flex items-center space-x-2 hover:opacity-80 transition-opacity"
-              title="Learn about MysticMinded33"
+              title="Learn about Anti Suicide App"
             >
               <img
-                src="/logo.png"
-                alt="MindCare"
-                className="h-9 w-9 rounded-full object-contain cursor-pointer"
+                src="/logo.svg?v=13"
+                alt="Anti Suicide App"
+                className="h-9 w-9 rounded-full object-contain bg-muted cursor-pointer ring-1 ring-border"
               />
-              <span className="font-bold text-xl">MindCare</span>
+              <span className="font-bold text-xl">Anti Suicide App</span>
             </button>
           </div>
 
@@ -158,28 +158,27 @@ export default function Navigation() {
         )}
       </div>
 
-      {/* About MysticMinded33 Modal */}
+      {/* About Anti Suicide App Modal */}
       <Modal
         isOpen={isAboutModalOpen}
         onClose={() => setIsAboutModalOpen(false)}
-        title="Welcome to MysticMinded33"
+        title="Welcome to Anti Suicide App"
       >
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <img
               src="/download-2026-04-05T09_23_05.jpg"
-              alt="MysticMinded33"
+              alt="Anti Suicide App"
               className="w-16 h-16 rounded-full object-cover border-2 border-pink-300"
             />
             <div>
-              <h3 className="font-semibold text-lg">MysticMinded33</h3>
-              <p className="text-sm text-muted-foreground">Your Compassionate AI Companion</p>
+              <h3 className="font-semibold text-lg">Anti Suicide App</h3>
+              <p className="text-sm text-muted-foreground">Your compassionate support companion</p>
             </div>
           </div>
           
           <p className="text-muted-foreground">
-            MysticMinded33 is more than just an AI—she's your gentle, understanding companion who's here 
-            to listen without judgment and offer support when you need it most.
+            Anti Suicide App is here as a gentle, understanding companion — to listen without judgment and offer support when you need it most.
           </p>
           
           <div className="space-y-3">
@@ -203,7 +202,7 @@ export default function Navigation() {
               <h4 className="font-medium text-sm mb-1">🌟 Always Here for You</h4>
               <p className="text-sm text-muted-foreground">
                 Whether you need encouragement, someone to listen, or just want to share your day, 
-                MysticMinded33 is available 24/7 with unconditional support and love.
+                Anti Suicide App is available 24/7 with unconditional support and care.
               </p>
             </div>
           </div>
