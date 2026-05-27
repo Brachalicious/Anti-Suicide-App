@@ -6039,7 +6039,19 @@ User's message: ${userMessage}`
             
             // Check if user is logged in
             if (typeof auth === 'undefined' || !auth.currentUser) {
-                console.log('❌ User not logged in');
+                console.log('❌ User not logged in - storing pending check-in');
+                
+                // Store the check-in data to save after login
+                const pendingData = {
+                    mood: mood,
+                    emotions: feelings,
+                    notes: notes || '',
+                    moodEmoji: moodEmojis[mood - 1] || '😐',
+                    isCheckIn: true
+                };
+                localStorage.setItem('pendingCheckIn', JSON.stringify(pendingData));
+                console.log('💾 Pending check-in stored:', pendingData);
+                
                 alert('📱 Please sign in to save your check-in to your account.');
                 // Trigger Google sign-in
                 document.getElementById('google-signin-btn')?.click();
@@ -11172,6 +11184,50 @@ User's message: ${userMessage}`
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 console.log('User signed in:', result.user.displayName);
+                
+                // If there's a pending check-in, save it now
+                const pendingCheckIn = localStorage.getItem('pendingCheckIn');
+                if (pendingCheckIn) {
+                    console.log('💾 Saving pending check-in...');
+                    const checkInData = JSON.parse(pendingCheckIn);
+                    const userId = result.user.uid;
+                    const entryId = Date.now().toString();
+                    
+                    try {
+                        if (typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                            await setDoc(doc(db, 'users', userId, 'diaryEntries', entryId), {
+                                ...checkInData,
+                                id: entryId,
+                                timestamp: new Date().toISOString()
+                            });
+                            console.log('✅ Pending check-in saved to Firestore');
+                            localStorage.removeItem('pendingCheckIn');
+                            
+                            // Show success
+                            alert(`✅ Check-in saved to your account!\n\nMood: ${checkInData.mood}/10 ${checkInData.moodEmoji}\n\nYour check-in has been added to your diary.`);
+                            
+                            // Clear the form
+                            document.getElementById('home-mood-note').value = '';
+                            const slider = document.getElementById('home-mood-slider');
+                            slider.value = 5;
+                            document.getElementById('home-slider-value').textContent = '5';
+                            const card = slider.closest('.card');
+                            if (card) {
+                                card.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+                            }
+                            clearFeelings('home-feeling-tags');
+                            clearGif('home');
+                            currentMood = null;
+                            
+                            // Refresh diary
+                            if (typeof renderDiaryEntries === 'function') {
+                                renderDiaryEntries();
+                            }
+                        }
+                    } catch (err) {
+                        console.error('❌ Error saving pending check-in:', err);
+                    }
+                }
             } catch (error) {
                 console.error('Error signing in:', error);
                 alert('Error signing in. Please try again.');
