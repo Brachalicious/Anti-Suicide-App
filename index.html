@@ -6275,17 +6275,51 @@ User's message: ${userMessage}`
             alert('Diary entry saved! 📓');
         }
 
-        function renderDiaryEntries() {
-            const entries = getDiaryEntries();
+        async function renderDiaryEntries() {
+            let entries = [];
+            
+            // Try to load from Firebase if user is logged in
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof db !== 'undefined') {
+                console.log('📚 Loading diary entries from Firebase...');
+                try {
+                    const userId = auth.currentUser.uid;
+                    const q = query(
+                        collection(db, 'users', userId, 'diaryEntries'),
+                        orderBy('timestamp', 'desc')
+                    );
+                    const snapshot = await getDocs(q);
+                    entries = snapshot.docs.map(doc => ({
+                        ...doc.data(),
+                        id: doc.id,
+                        date: doc.data().timestamp?.split('T')[0] || new Date().toISOString().split('T')[0],
+                        time: doc.data().timestamp ? new Date(doc.data().timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
+                        emoji: doc.data().moodEmoji || moodEmojis[doc.data().mood - 1] || '😐'
+                    }));
+                    console.log('✅ Loaded', entries.length, 'entries from Firebase');
+                } catch (error) {
+                    console.error('❌ Error loading from Firebase:', error);
+                    entries = getDiaryEntries();
+                }
+            } else {
+                // Fall back to localStorage
+                console.log('📱 Loading diary entries from localStorage');
+                entries = getDiaryEntries();
+            }
+
             const container = document.getElementById('diary-entries-list');
             const emptyMsg = document.getElementById('diary-empty-msg');
+            
             if (entries.length === 0) {
                 container.innerHTML = '';
-                container.appendChild(emptyMsg);
-                emptyMsg.style.display = 'block';
+                if (emptyMsg) {
+                    container.appendChild(emptyMsg);
+                    emptyMsg.style.display = 'block';
+                }
                 return;
             }
+            
             if (emptyMsg) emptyMsg.style.display = 'none';
+            
             let html = '';
             entries.forEach((entry, idx) => {
                 const d = new Date(entry.date + 'T' + (entry.time || '12:00'));
@@ -11601,6 +11635,20 @@ User's message: ${userMessage}`
                 loadHopeMessages();
             }
         };
+
+        // Expose Firebase functions to global scope for use in inline scripts
+        window.auth = auth;
+        window.db = db;
+        window.setDoc = setDoc;
+        window.getDoc = getDoc;
+        window.doc = doc;
+        window.collection = collection;
+        window.query = query;
+        window.orderBy = orderBy;
+        window.getDocs = getDocs;
+        window.addDoc = addDoc;
+        window.deleteDoc = deleteDoc;
+        window.onSnapshot = onSnapshot;
     </script>
 
     <!-- Footer with Privacy & Terms -->
