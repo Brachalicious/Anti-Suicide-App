@@ -1480,6 +1480,7 @@
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
+            <button class="nav-item" onclick="showSection('mood'); closeMobileNav()">📓 My Diary</button>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
         </nav>
@@ -6046,6 +6047,7 @@ User's message: ${userMessage}`
                     mood: mood,
                     emotions: feelings,
                     notes: notes || '',
+                    gif: gif || null,
                     moodEmoji: moodEmojis[mood - 1] || '😐',
                     isCheckIn: true
                 };
@@ -6069,6 +6071,7 @@ User's message: ${userMessage}`
                     mood: mood,
                     emotions: feelings,
                     notes: notes || '',
+                    gif: gif || null,
                     timestamp: timestamp,
                     isCheckIn: true,
                     moodEmoji: moodEmojis[mood - 1] || '😐'
@@ -6097,6 +6100,7 @@ User's message: ${userMessage}`
                 let msg = `✅ Check-in saved!\n\nMood: ${mood}/10 ${checkInData.moodEmoji}`;
                 if (feelings.length) msg += `\nFeelings: ${feelings.join(', ')}`;
                 if (notes) msg += `\nNote: "${notes}"`;
+                if (gif) msg += `\n🎬 GIF attached!`;
                 msg += `\n\nYour check-in has been added to your diary and will appear under Emotional Support Tools.`;
                 alert(msg);
 
@@ -6228,7 +6232,7 @@ User's message: ${userMessage}`
             localStorage.setItem('diaryEntries', JSON.stringify(entries));
         }
 
-        function saveDiaryEntry() {
+        async function saveDiaryEntry() {
             const notes = document.getElementById('mood-note').value;
             const slider = document.getElementById('mood-slider');
             const mood = currentMood || parseInt(slider.value);
@@ -6239,19 +6243,39 @@ User's message: ${userMessage}`
             const now = new Date();
             const date = dateVal || now.toISOString().split('T')[0];
             const time = timeVal || now.toTimeString().slice(0, 5);
+            const timestamp = new Date(`${date}T${time}:00`).toISOString();
+            const entryId = Date.now().toString();
 
             const entry = {
-                id: Date.now(),
-                date: date,
-                time: time,
-                mood: mood,
-                emoji: moodEmojis[mood - 1],
-                feelings: feelings,
+                id: entryId,
+                date,
+                time,
+                timestamp,
+                mood,
+                emoji: moodEmojis[mood - 1] || '😐',
+                moodEmoji: moodEmojis[mood - 1] || '😐',
+                feelings,
                 note: notes,
                 gif: gif || null,
                 photo: diaryPhotoData || null,
-                audio: diaryAudioData || null
+                audio: diaryAudioData || null,
+                isDiaryEntry: true
             };
+
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                try {
+                    const userId = auth.currentUser.uid;
+                    if (typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                        await setDoc(doc(db, 'users', userId, 'diaryEntries', entryId), {
+                            ...entry,
+                            userId
+                        });
+                        console.log('✅ Diary entry saved to Firestore');
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to save diary entry to Firestore:', error);
+                }
+            }
 
             const entries = getDiaryEntries();
             entries.unshift(entry);
@@ -11238,7 +11262,12 @@ User's message: ${userMessage}`
                             localStorage.removeItem('pendingCheckIn');
                             
                             // Show success
-                            alert(`✅ Check-in saved to your account!\n\nMood: ${checkInData.mood}/10 ${checkInData.moodEmoji}\n\nYour check-in has been added to your diary.`);
+                            let msg = `✅ Check-in saved to your account!\n\nMood: ${checkInData.mood}/10 ${checkInData.moodEmoji}`;
+                            if (checkInData.emotions && checkInData.emotions.length) msg += `\nFeelings: ${checkInData.emotions.join(', ')}`;
+                            if (checkInData.notes) msg += `\nNote: "${checkInData.notes}"`;
+                            if (checkInData.gif) msg += `\n🎬 GIF attached!`;
+                            msg += `\n\nYour check-in has been added to your diary.`;
+                            alert(msg);
                             
                             // Clear the form
                             document.getElementById('home-mood-note').value = '';
