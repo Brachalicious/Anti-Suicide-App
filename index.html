@@ -2809,9 +2809,38 @@
                     <div style="background: rgba(15,23,42,0.7); border:1px solid #334155; border-radius:16px; padding:18px;">
                         <h3 style="margin-bottom:4px; color:#38bdf8; font-size:18px;">Step 5: Professionals & Agencies I Can Contact</h3>
                         <p style="font-size:13px; color:#94a3b8; margin-bottom:10px;">Mental health professionals or agencies to contact during a crisis (include contact information)</p>
+                        
+                        <!-- Quick Dial Contacts -->
+                        <div id="quick-dial-contacts" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px;">
+                            <button style="background:#22c55e; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600;" onclick="window.open('tel:988')">📞 988<br><span style="font-size:10px;">Lifeline</span></button>
+                            <button style="background:#3b82f6; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600;" onclick="window.open('sms:741741?body=HOME')">💬 741741<br><span style="font-size:10px;">Crisis Text</span></button>
+                            <button style="background:#8b5cf6; color:white; border:none; padding:8px 12px; border-radius:8px; cursor:pointer; font-size:12px; font-weight:600;" onclick="window.open('tel:9298012301')">📞 929-801<br><span style="font-size:10px;">Helpline</span></button>
+                        </div>
+                        
+                        <!-- Professional Contacts List -->
+                        <div style="background:rgba(2,6,23,0.4); border-radius:12px; padding:12px; margin-bottom:12px;">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <strong style="color:#bae6fd; font-size:13px;">📞 My Saved Contacts</strong>
+                                <button onclick="addProfessionalContact()" style="background:#38bdf8; color:white; border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px; font-weight:600;">➕ Add</button>
+                            </div>
+                            <div id="saved-professional-contacts" style="display:flex; flex-direction:column; gap:8px;"></div>
+                        </div>
+                        
+                        <!-- Add New Contact Form -->
+                        <div id="add-contact-form" style="display:none; background:rgba(56,189,248,0.1); border:1px solid #38bdf8; border-radius:12px; padding:12px; margin-bottom:12px;">
+                            <div style="display:flex; gap:8px; margin-bottom:8px;">
+                                <input id="contact-name" type="text" placeholder="Name/Type (e.g., Therapist)" style="flex:1; padding:6px; border-radius:6px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white; font-size:12px;">
+                                <input id="contact-phone" type="tel" placeholder="Phone #" style="flex:1; padding:6px; border-radius:6px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white; font-size:12px;">
+                            </div>
+                            <div style="display:flex; gap:8px;">
+                                <button onclick="saveProfessionalContact()" style="flex:1; background:#22c55e; color:white; border:none; padding:6px; border-radius:6px; cursor:pointer; font-size:12px; font-weight:600;">Save</button>
+                                <button onclick="cancelAddContact()" style="flex:1; background:#6b7280; color:white; border:none; padding:6px; border-radius:6px; cursor:pointer; font-size:12px;">Cancel</button>
+                            </div>
+                        </div>
+                        
+                        <!-- Original chips for quick selection -->
                         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
                             <button class="safety-chip" onclick="toggleSafetyChip('professional','988 Lifeline', this)">988 Lifeline</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','the.helpline 929-801-2301', this)">the.helpline</button>
                             <button class="safety-chip" onclick="toggleSafetyChip('professional','Crisis Text 741741', this)">Crisis Text 741741</button>
                             <button class="safety-chip" onclick="toggleSafetyChip('professional','My therapist', this)">My therapist</button>
                             <button class="safety-chip" onclick="toggleSafetyChip('professional','Psychiatrist', this)">Psychiatrist</button>
@@ -6997,9 +7026,92 @@ User's message: ${userMessage}`
             window.open(`https://wa.me/?text=${text}`);
         }
 
+        // Professional Contact Management
+        function loadProfessionalContacts() {
+            const saved = localStorage.getItem('professionalContacts');
+            return saved ? JSON.parse(saved) : [];
+        }
+
+        function saveProfessionalContactsToStorage(contacts) {
+            localStorage.setItem('professionalContacts', JSON.stringify(contacts));
+        }
+
+        function renderProfessionalContacts() {
+            const contacts = loadProfessionalContacts();
+            const container = document.getElementById('saved-professional-contacts');
+            if (!container) return;
+            
+            if (contacts.length === 0) {
+                container.innerHTML = '<div style="color:#94a3b8; font-size:12px;">No saved contacts yet. Add one with the ➕ button.</div>';
+                return;
+            }
+            
+            container.innerHTML = contacts.map((contact, idx) => `
+                <div style="display:flex; justify-content:space-between; align-items:center; background:rgba(38,189,248,0.1); border:1px solid #0ea5e9; border-radius:8px; padding:8px 10px;">
+                    <div style="flex:1;">
+                        <div style="color:#38bdf8; font-weight:600; font-size:12px;">${contact.name}</div>
+                        <button onclick="window.open('tel:${contact.phone.replace(/[^0-9]/g, '')}')" style="background:none; border:none; color:#22c55e; cursor:pointer; font-size:11px; text-decoration:underline; padding:0;">📞 ${contact.phone}</button>
+                    </div>
+                    <button onclick="deleteProfessionalContact(${idx})" style="background:#ef4444; color:white; border:none; padding:4px 8px; border-radius:6px; cursor:pointer; font-size:11px;">🗑️</button>
+                </div>
+            `).join('');
+        }
+
+        function addProfessionalContact() {
+            const form = document.getElementById('add-contact-form');
+            if (form) {
+                form.style.display = form.style.display === 'none' ? 'block' : 'none';
+                if (form.style.display === 'block') {
+                    document.getElementById('contact-name').focus();
+                }
+            }
+        }
+
+        function saveProfessionalContact() {
+            const name = document.getElementById('contact-name').value.trim();
+            const phone = document.getElementById('contact-phone').value.trim();
+            
+            if (!name || !phone) {
+                alert('Please enter both name and phone number');
+                return;
+            }
+            
+            const contacts = loadProfessionalContacts();
+            contacts.push({ name, phone });
+            saveProfessionalContactsToStorage(contacts);
+            
+            // Clear form and close it
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+            document.getElementById('add-contact-form').style.display = 'none';
+            
+            renderProfessionalContacts();
+            persistSafetyPlan();
+            console.log('✅ Professional contact saved:', name, phone);
+        }
+
+        function deleteProfessionalContact(index) {
+            if (!confirm('Delete this contact?')) return;
+            
+            const contacts = loadProfessionalContacts();
+            contacts.splice(index, 1);
+            saveProfessionalContactsToStorage(contacts);
+            renderProfessionalContacts();
+            persistSafetyPlan();
+        }
+
+        function cancelAddContact() {
+            document.getElementById('add-contact-form').style.display = 'none';
+            document.getElementById('contact-name').value = '';
+            document.getElementById('contact-phone').value = '';
+        }
+
         async function initSafetyPlan() {
             // Load saved data from Firebase or localStorage
             await loadSafetyPlan();
+            
+            // Render professional contacts
+            renderProfessionalContacts();
 
             // Update the UI with loaded data
             Object.keys(safetyPlanSelections).forEach(key => {
