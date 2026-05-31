@@ -6940,61 +6940,61 @@ User's message: ${userMessage}`
             
             // Step 1: Warning Signs
             planText += "1️⃣ WARNING SIGNS\n";
-            if (safetyPlanNotes['warning-signs']) {
-                planText += safetyPlanNotes['warning-signs'] + "\n";
+            if (safetyPlanNotes['warning']) {
+                planText += safetyPlanNotes['warning'] + "\n";
             }
-            if (safetyPlanSelections['warning-signs'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['warning-signs']).join(", ") + "\n";
+            if (safetyPlanSelections['warning'] && safetyPlanSelections['warning'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['warning']).join(", ") + "\n";
             }
             planText += "\n";
             
-            // Step 2: Internal Coping
+            // Step 2: Coping Strategies
             planText += "2️⃣ INTERNAL COPING STRATEGIES\n";
-            if (safetyPlanNotes['internal-coping']) {
-                planText += safetyPlanNotes['internal-coping'] + "\n";
+            if (safetyPlanNotes['coping']) {
+                planText += safetyPlanNotes['coping'] + "\n";
             }
-            if (safetyPlanSelections['internal-coping'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['internal-coping']).join(", ") + "\n";
+            if (safetyPlanSelections['coping'] && safetyPlanSelections['coping'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['coping']).join(", ") + "\n";
             }
             planText += "\n";
             
             // Step 3: People & Places
             planText += "3️⃣ PEOPLE & PLACES FOR DISTRACTION\n";
-            if (safetyPlanNotes['people-places']) {
-                planText += safetyPlanNotes['people-places'] + "\n";
+            if (safetyPlanNotes['distractions']) {
+                planText += safetyPlanNotes['distractions'] + "\n";
             }
-            if (safetyPlanSelections['people-places'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['people-places']).join(", ") + "\n";
+            if (safetyPlanSelections['distractions'] && safetyPlanSelections['distractions'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['distractions']).join(", ") + "\n";
             }
             planText += "\n";
             
             // Step 4: Support People
             planText += "4️⃣ PEOPLE TO ASK FOR HELP\n";
-            if (safetyPlanNotes['support-people']) {
-                planText += safetyPlanNotes['support-people'] + "\n";
+            if (safetyPlanNotes['personal']) {
+                planText += safetyPlanNotes['personal'] + "\n";
             }
-            if (safetyPlanSelections['support-people'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['support-people']).join(", ") + "\n";
+            if (safetyPlanSelections['personal'] && safetyPlanSelections['personal'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['personal']).join(", ") + "\n";
             }
             planText += "\n";
             
             // Step 5: Professionals
             planText += "5️⃣ PROFESSIONALS & AGENCIES\n";
-            if (safetyPlanNotes['professionals']) {
-                planText += safetyPlanNotes['professionals'] + "\n";
+            if (safetyPlanNotes['professional']) {
+                planText += safetyPlanNotes['professional'] + "\n";
             }
-            if (safetyPlanSelections['professionals'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['professionals']).join(", ") + "\n";
+            if (safetyPlanSelections['professional'] && safetyPlanSelections['professional'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['professional']).join(", ") + "\n";
             }
             planText += "\n";
             
             // Step 6: Safe Environment
             planText += "6️⃣ MAKING MY ENVIRONMENT SAFE\n";
-            if (safetyPlanNotes['safe-environment']) {
-                planText += safetyPlanNotes['safe-environment'] + "\n";
+            if (safetyPlanNotes['safer']) {
+                planText += safetyPlanNotes['safer'] + "\n";
             }
-            if (safetyPlanSelections['safe-environment'].size > 0) {
-                planText += "Selected: " + Array.from(safetyPlanSelections['safe-environment']).join(", ") + "\n";
+            if (safetyPlanSelections['safer'] && safetyPlanSelections['safer'].size > 0) {
+                planText += "Selected: " + Array.from(safetyPlanSelections['safer']).join(", ") + "\n";
             }
             planText += "\n";
             
@@ -7206,10 +7206,14 @@ User's message: ${userMessage}`
                         if (docSnap.exists()) {
                             data = docSnap.data();
                             console.log('✅ Safety plan loaded from Firebase');
+                        } else {
+                            console.log('ℹ️ No safety plan in Firebase yet, creating new one');
                         }
                     }
                 } catch (error) {
-                    console.error('❌ Error loading safety plan from Firebase:', error);
+                    // Silently fail and fall back to localStorage
+                    // Permission errors are expected if using test credentials
+                    console.log('📱 Falling back to localStorage for safety plan');
                 }
             }
             
