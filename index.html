@@ -6366,20 +6366,72 @@ User's message: ${userMessage}`
                         <button onclick="shareDiary(${idx}, 'whatsapp')" style="flex: 1; padding: 6px; background: #25D366; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">WhatsApp</button>
                         <button onclick="shareDiary(${idx}, 'sms')" style="flex: 1; padding: 6px; background: #3b82f6; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">Text</button>
                         <button onclick="shareDiary(${idx}, 'email')" style="flex: 1; padding: 6px; background: #22c55e; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600;">Email</button>
-                        <button onclick="deleteDiaryEntry(${entry.id})" style="padding: 6px 10px; background: #16a34a; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🗑️</button>
+                        <button onclick='deleteDiaryEntry(${JSON.stringify(String(entry.id))})' style="padding: 6px 10px; background: #16a34a; color: white; border: none; border-radius: 8px; cursor: pointer; font-size: 12px;">🗑️</button>
                     </div>
                 </div>`;
             });
             container.innerHTML = html;
         }
 
-        function deleteDiaryEntry(id) {
+        async function deleteDiaryEntry(id) {
+            console.log('🗑️ deleteDiaryEntry called', {
+                id,
+                idType: typeof id,
+                localStorageCount: JSON.parse(localStorage.getItem('diaryEntries') || '[]').length,
+                isAuthDefined: typeof auth !== 'undefined',
+                currentUser: typeof auth !== 'undefined' ? auth.currentUser : null,
+                isDbDefined: typeof db !== 'undefined'
+            });
+
             if (!confirm('Delete this diary entry?')) return;
+
+            let deleted = false;
+
+            // Delete from Firebase if user is logged in
+            if (typeof auth !== 'undefined' && auth.currentUser) {
+                try {
+                    const userId = auth.currentUser.uid;
+                    console.log('🗑️ Deleting Firestore diary entry', { userId, id: String(id) });
+                    if (typeof deleteDoc !== 'undefined' && typeof doc !== 'undefined') {
+                        await deleteDoc(doc(db, 'users', userId, 'diaryEntries', String(id)));
+                        console.log('✅ Firestore diary entry deleted');
+                        deleted = true;
+                    } else {
+                        console.warn('⚠️ deleteDoc/doc not available, skipping Firestore delete');
+                    }
+                } catch (error) {
+                    console.error('❌ Failed to delete diary entry from Firestore:', error);
+                    alert('Error deleting from Firebase. Trying localStorage...');
+                }
+            } else {
+                console.log('ℹ️ No signed-in user, deleting from localStorage only');
+            }
+
+            // Delete from localStorage as well
             let entries = getDiaryEntries();
-            entries = entries.filter(e => e.id !== id);
+            console.log('🗑️ Local diary entries before filter', entries.map(e => ({ id: e.id, idType: typeof e.id })));
+            entries = entries.filter(e => String(e.id) !== String(id));
+            console.log('🗑️ Local diary entries after filter', entries.map(e => ({ id: e.id, idType: typeof e.id })));
             saveDiaryEntries(entries);
+            
+            if (deleted) {
+                alert('✅ Diary entry deleted successfully!');
+            }
+            
             renderDiaryEntries();
         }
+
+        window.deleteDiaryEntry = deleteDiaryEntry;
+        window.getDiaryDebugData = function() {
+            return {
+                diaryEntriesInLocalStorage: localStorage.getItem('diaryEntries'),
+                sampleEntryId: JSON.parse(localStorage.getItem('diaryEntries') || '[]')[0]?.id,
+                isAuthDefined: typeof auth !== 'undefined',
+                currentUser: typeof auth !== 'undefined' ? auth.currentUser : null,
+                isDbDefined: typeof db !== 'undefined',
+                deleteDiaryEntrySrc: typeof deleteDiaryEntry !== 'undefined' ? deleteDiaryEntry.toString() : 'not found in global'
+            };
+        };
 
         function shareDiary(idx, method) {
             const entries = getDiaryEntries();
