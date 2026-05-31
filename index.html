@@ -7061,32 +7061,43 @@ User's message: ${userMessage}`
             localStorage.setItem('safetyPlanData', JSON.stringify(data));
             
             // Save to Firebase if user is logged in
-            const user = auth.currentUser;
+            const user = typeof auth !== 'undefined' ? auth.currentUser : null;
             if (user) {
                 try {
-                    await setDoc(doc(db, 'users', user.uid, 'safetyPlan', 'current'), data);
-                    console.log('Safety plan saved to Firebase');
+                    if (typeof setDoc === 'undefined' || typeof doc === 'undefined') {
+                        console.warn('⚠️ Firebase functions not ready, saved to localStorage only');
+                    } else {
+                        await setDoc(doc(db, 'users', user.uid, 'safetyPlan', 'current'), data);
+                        console.log('✅ Safety plan saved to Firebase');
+                    }
                 } catch (error) {
-                    console.error('Error saving safety plan to Firebase:', error);
+                    console.error('❌ Error saving safety plan to Firebase:', error);
+                    console.log('📝 Safety plan saved to localStorage as backup');
                 }
+            } else {
+                console.log('📝 User not logged in, safety plan saved to localStorage');
             }
         }
 
         async function loadSafetyPlan() {
-            const user = auth.currentUser;
+            const user = typeof auth !== 'undefined' ? auth.currentUser : null;
             let data = null;
             
             // Try to load from Firebase first if user is logged in
             if (user) {
                 try {
-                    const docRef = doc(db, 'users', user.uid, 'safetyPlan', 'current');
-                    const docSnap = await getDoc(docRef);
-                    if (docSnap.exists()) {
-                        data = docSnap.data();
-                        console.log('Safety plan loaded from Firebase');
+                    if (typeof getDoc === 'undefined' || typeof doc === 'undefined') {
+                        console.warn('⚠️ Firebase functions not ready, using localStorage');
+                    } else {
+                        const docRef = doc(db, 'users', user.uid, 'safetyPlan', 'current');
+                        const docSnap = await getDoc(docRef);
+                        if (docSnap.exists()) {
+                            data = docSnap.data();
+                            console.log('✅ Safety plan loaded from Firebase');
+                        }
                     }
                 } catch (error) {
-                    console.error('Error loading safety plan from Firebase:', error);
+                    console.error('❌ Error loading safety plan from Firebase:', error);
                 }
             }
             
@@ -7095,7 +7106,7 @@ User's message: ${userMessage}`
                 const stored = localStorage.getItem('safetyPlanData');
                 if (stored) {
                     data = JSON.parse(stored);
-                    console.log('Safety plan loaded from localStorage');
+                    console.log('📱 Safety plan loaded from localStorage');
                 }
             }
             
@@ -7104,7 +7115,7 @@ User's message: ${userMessage}`
                 if (data.selections) {
                     Object.keys(data.selections).forEach(key => {
                         safetyPlanSelections[key] = new Set(data.selections[key]);
-                        updateChipSummary(key);
+                        updateSafetySummary(key);
                     });
                 }
                 if (data.notes) {
