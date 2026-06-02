@@ -2734,6 +2734,13 @@
                 <p style="font-size:15px; color:#f8fafc; margin-bottom:8px;">A safety plan is a personalized, practical plan that can help you navigate through a suicidal crisis or difficult emotions.</p>
                 <p style="font-size:13px; color:#94a3b8; margin-bottom:18px;">Based on the 988 Suicide & Crisis Lifeline Safety Planning model</p>
 
+                <!-- Name Field -->
+                <div style="background: rgba(15,23,42,0.7); border:2px solid #38bdf8; border-radius:16px; padding:18px; margin-bottom:18px;">
+                    <label style="display:block; font-size:14px; font-weight:600; color:#38bdf8; margin-bottom:8px;">👤 My Name</label>
+                    <input id="safety-plan-name" type="text" placeholder="Enter your name (so people know whose plan this is)" style="width:100%; padding:10px; border-radius:12px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white; font-size:14px; box-sizing:border-box;" oninput="updateSafetyNotes('name')">
+                    <p style="font-size:12px; color:#94a3b8; margin-top:6px;">Your name will appear at the top when you share your safety plan</p>
+                </div>
+
                 <div style="display:flex; flex-direction:column; gap:18px;">
                     <div style="background: rgba(15,23,42,0.7); border:1px solid #334155; border-radius:16px; padding:18px;">
                         <h3 style="margin-bottom:4px; color:#86efac; font-size:18px;">Step 1: My Warning Signs</h3>
@@ -6905,6 +6912,7 @@ User's message: ${userMessage}`
             safer: new Set()
         };
         const safetyPlanNotes = {
+            name: '',
             warning: '',
             coping: '',
             distractions: '',
@@ -6937,6 +6945,11 @@ User's message: ${userMessage}`
         function shareSafetyPlan() {
             // Build safety plan text
             let planText = "🛡️ MY SAFETY PLAN\n\n";
+            
+            // Add name at the top
+            if (safetyPlanNotes['name']) {
+                planText += `📝 Safety Plan for: ${safetyPlanNotes['name']}\n\n`;
+            }
             
             // Step 1: Warning Signs
             planText += "1️⃣ WARNING SIGNS\n";
@@ -7110,6 +7123,12 @@ User's message: ${userMessage}`
             // Load saved data from Firebase or localStorage
             await loadSafetyPlan();
             
+            // Restore name field
+            const nameInput = document.getElementById('safety-plan-name');
+            if (nameInput) {
+                nameInput.value = safetyPlanNotes['name'] || '';
+            }
+            
             // Render professional contacts
             renderProfessionalContacts();
 
@@ -7149,9 +7168,15 @@ User's message: ${userMessage}`
         }
 
         function updateSafetyNotes(category) {
-            const notes = document.getElementById(`safety-${category}-notes`);
-            if (!notes) return;
-            safetyPlanNotes[category] = notes.value.trim();
+            if (category === 'name') {
+                const nameInput = document.getElementById('safety-plan-name');
+                if (!nameInput) return;
+                safetyPlanNotes['name'] = nameInput.value.trim();
+            } else {
+                const notes = document.getElementById(`safety-${category}-notes`);
+                if (!notes) return;
+                safetyPlanNotes[category] = notes.value.trim();
+            }
             persistSafetyPlan();
         }
 
@@ -7237,9 +7262,17 @@ User's message: ${userMessage}`
                 if (data.notes) {
                     Object.keys(data.notes).forEach(key => {
                         safetyPlanNotes[key] = data.notes[key];
-                        const textarea = document.querySelector(`textarea[data-category="${key}"]`);
-                        if (textarea) {
-                            textarea.value = data.notes[key];
+                        // Restore name field
+                        if (key === 'name') {
+                            const nameInput = document.getElementById('safety-plan-name');
+                            if (nameInput) {
+                                nameInput.value = data.notes[key];
+                            }
+                        } else {
+                            const textarea = document.querySelector(`textarea[data-category="${key}"]`);
+                            if (textarea) {
+                                textarea.value = data.notes[key];
+                            }
                         }
                     });
                 }
@@ -7630,12 +7663,59 @@ User's message: ${userMessage}`
                 return;
             }
 
+            // If we're on the action stage and the user chose venting, show venting-specific support
+            if (currentStage && currentStage.id === 'action' && selectedStopAction === 'vent') {
+                showVentingSupport();
+                return;
+            }
+
             guideStep++;
             if (guideStep >= guideStages.length) {
                 closeStopOverlay();
                 return;
             }
             updateGuideDisplay();
+        }
+
+        function showVentingSupport() {
+            const ventSupportMessages = [
+                "Thank you for being brave enough to express your feelings. That takes real courage. 💙",
+                "Your feelings are valid and important. I hear you, and I'm glad you're expressing them. 💙",
+                "It's okay to feel this way. You're human, and emotions are a natural part of being alive. 💙",
+                "Thank you for trusting me with this. Your feelings matter deeply. 💙",
+                "I see your pain, and it's real. You deserve compassion—especially from yourself. 💙",
+                "Expressing your feelings is an act of self-love. You're taking care of yourself right now. 💙",
+                "Your voice matters. Your feelings matter. You matter. 💙"
+            ];
+            
+            const randomMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
+            
+            const guideTitle = document.getElementById('guideTitle');
+            const guideMessage = document.getElementById('guideMessage');
+            const guideSteps = document.getElementById('guideSteps');
+            const btn = document.getElementById('guideNextBtn');
+            
+            guideTitle.textContent = '💜 You Did That';
+            guideMessage.textContent = randomMessage;
+            guideSteps.innerHTML = `
+                <div style="text-align:left; color:#e9d5ff; line-height:1.8; margin-top:16px;">
+                    <p style="font-weight:600; margin-bottom:12px;">💡 Next Steps:</p>
+                    <ul style="margin-left:20px; list-style:disc;">
+                        <li>Take a moment to acknowledge your feelings</li>
+                        <li>If you're ready, explore breathing or grounding exercises (in their separate tabs)</li>
+                        <li>Reach out to someone you trust if you need to talk</li>
+                        <li>Save this moment to your diary to track your emotions over time</li>
+                    </ul>
+                    <p style="margin-top:16px; font-size:14px; color:#d1fae5; font-style:italic;">
+                        Remember: Processing your feelings is a sign of strength, not weakness.
+                    </p>
+                </div>
+            `;
+            
+            btn.textContent = 'Done';
+            btn.onclick = function() {
+                closeStopOverlay();
+            };
         }
 
         function closeStopOverlay() {
