@@ -36,6 +36,58 @@
             scrollbar-color: #ff1493 rgba(0, 0, 0, 0.3);
         }
         
+        /* Explicit scrollbar styling for modal overlays */
+        #stopOverlay,
+        #safetyPlanOverlay,
+        #guidedMeditationOverlay,
+        #screamCircleOverlay,
+        #breathingOverlay,
+        #liveMirrorModal {
+            scrollbar-width: auto;
+            scrollbar-color: #ff1493 rgba(0, 0, 0, 0.5);
+            overflow-y: scroll !important;
+        }
+        
+        #stopOverlay::-webkit-scrollbar,
+        #safetyPlanOverlay::-webkit-scrollbar,
+        #guidedMeditationOverlay::-webkit-scrollbar,
+        #screamCircleOverlay::-webkit-scrollbar,
+        #breathingOverlay::-webkit-scrollbar,
+        #liveMirrorModal::-webkit-scrollbar {
+            width: 14px;
+        }
+        
+        #stopOverlay::-webkit-scrollbar-track,
+        #safetyPlanOverlay::-webkit-scrollbar-track,
+        #guidedMeditationOverlay::-webkit-scrollbar-track,
+        #screamCircleOverlay::-webkit-scrollbar-track,
+        #breathingOverlay::-webkit-scrollbar-track,
+        #liveMirrorModal::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.6);
+            border-radius: 10px;
+        }
+        
+        #stopOverlay::-webkit-scrollbar-thumb,
+        #safetyPlanOverlay::-webkit-scrollbar-thumb,
+        #guidedMeditationOverlay::-webkit-scrollbar-thumb,
+        #screamCircleOverlay::-webkit-scrollbar-thumb,
+        #breathingOverlay::-webkit-scrollbar-thumb,
+        #liveMirrorModal::-webkit-scrollbar-thumb {
+            background: linear-gradient(180deg, #ff1493, #ec4899);
+            border-radius: 10px;
+            border: 2px solid rgba(0, 0, 0, 0.6);
+        }
+        
+        #stopOverlay::-webkit-scrollbar-thumb:hover,
+        #safetyPlanOverlay::-webkit-scrollbar-thumb:hover,
+        #guidedMeditationOverlay::-webkit-scrollbar-thumb:hover,
+        #screamCircleOverlay::-webkit-scrollbar-thumb:hover,
+        #breathingOverlay::-webkit-scrollbar-thumb:hover,
+        #liveMirrorModal::-webkit-scrollbar-thumb:hover {
+            background: linear-gradient(180deg, #ec4899, #ff1493);
+            box-shadow: 0 0 15px rgba(255, 20, 147, 0.8);
+        }
+        
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
