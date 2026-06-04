@@ -2,9 +2,9 @@ import OpenAI, { toFile } from "openai";
 import { Buffer } from "node:buffer";
 import { spawn } from "child_process";
 
-let openai: OpenAI | null = null;
+export let openai: OpenAI | null = null;
 
-function getOpenAI(): OpenAI {
+export function getOpenAIClient(): OpenAI {
   const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing AI_INTEGRATIONS_OPENAI_API_KEY");
@@ -75,7 +75,7 @@ export async function voiceChat(
   outputFormat: "wav" | "mp3" = "mp3"
 ): Promise<{ transcript: string; audioResponse: Buffer }> {
   const audioBase64 = audioBuffer.toString("base64");
-  const response = await getOpenAI().chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: "gpt-audio-mini",
     modalities: ["text", "audio"],
     audio: { voice, format: outputFormat },
@@ -111,7 +111,7 @@ export async function voiceChatStream(
   inputFormat: "wav" | "mp3" = "wav"
 ): Promise<AsyncIterable<{ type: "transcript" | "audio"; data: string }>> {
   const audioBase64 = audioBuffer.toString("base64");
-  const stream = await getOpenAI().chat.completions.create({
+  const stream = await getOpenAIClient().chat.completions.create({
     model: "gpt-audio-mini",
     modalities: ["text", "audio"],
     audio: { voice, format: "pcm16" },
@@ -147,7 +147,7 @@ export async function textToSpeech(
   voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer" = "alloy",
   format: "wav" | "mp3" | "flac" | "opus" | "pcm16" = "wav"
 ): Promise<Buffer> {
-  const response = await getOpenAI().chat.completions.create({
+  const response = await getOpenAIClient().chat.completions.create({
     model: "gpt-audio-mini",
     modalities: ["text", "audio"],
     audio: { voice, format },
@@ -169,7 +169,7 @@ export async function textToSpeechStream(
   text: string,
   voice: "alloy" | "echo" | "fable" | "onyx" | "nova" | "shimmer" = "alloy"
 ): Promise<AsyncIterable<string>> {
-  const stream = await getOpenAI().chat.completions.create({
+  const stream = await getOpenAIClient().chat.completions.create({
     model: "gpt-audio-mini",
     modalities: ["text", "audio"],
     audio: { voice, format: "pcm16" },
@@ -200,7 +200,7 @@ export async function speechToText(
   format: "wav" | "mp3" | "webm" = "wav"
 ): Promise<string> {
   const file = await toFile(audioBuffer, `audio.${format}`);
-  const response = await getOpenAI().audio.transcriptions.create({
+  const response = await getOpenAIClient().audio.transcriptions.create({
     file,
     model: "gpt-4o-mini-transcribe",
   });
@@ -216,7 +216,7 @@ export async function speechToTextStream(
   format: "wav" | "mp3" | "webm" = "wav"
 ): Promise<AsyncIterable<string>> {
   const file = await toFile(audioBuffer, `audio.${format}`);
-  const stream = await getOpenAI().audio.transcriptions.create({
+  const stream = await getOpenAIClient().audio.transcriptions.create({
     file,
     model: "gpt-4o-mini-transcribe",
     stream: true,
@@ -239,15 +239,23 @@ export async function speechToTextStream(
  * Extracts complete sentences from streaming text using Intl.Segmenter.
  * Supports multilingual text (handles CJK, Arabic, etc. properly).
  */
+type SegmenterLike = { segment: (input: string) => Iterable<{ segment: string }> };
+
 export class SentenceParser {
   private buffer = "";
   private seq = 0;
-  private segmenter: Intl.Segmenter;
+  private segmenter: SegmenterLike | null;
 
   constructor(locale = "en") {
-    // Intl.Segmenter handles sentence boundaries for all Unicode languages
-    // Falls back gracefully if locale not supported
-    this.segmenter = new Intl.Segmenter(locale, { granularity: "sentence" });
+    // Some TS lib configs don't include Intl.Segmenter typings.
+    // Runtime may still support it, so we guard dynamically.
+    const SegmenterCtor = (Intl as unknown as { Segmenter?: new (...args: unknown[]) => SegmenterLike }).Segmenter;
+
+    if (SegmenterCtor) {
+      this.segmenter = new SegmenterCtor(locale, { granularity: "sentence" });
+    } else {
+      this.segmenter = null;
+    }
   }
 
   /**
@@ -258,24 +266,31 @@ export class SentenceParser {
     this.buffer += token;
     const sentences: Array<{ seq: number; text: string }> = [];
 
-    // Segment current buffer
-    const segments = [...this.segmenter.segment(this.buffer)];
+    const segments = this.segmenter
+      ? Array.from(this.segmenter.segment(this.buffer))
+      : this.fallbackSegments(this.buffer);
 
     // All segments except the last are complete sentences
     // (last segment might be incomplete, still accumulating tokens)
     for (let i = 0; i < segments.length - 1; i++) {
       const text = segments[i].segment.trim();
-      if (text) {
-        sentences.push({ seq: this.seq++, text });
-      }
+      if (text) sentences.push({ seq: this.seq++, text });
     }
 
     // Keep only the last (potentially incomplete) segment in buffer
-    if (segments.length > 0) {
-      this.buffer = segments[segments.length - 1].segment;
-    }
+    if (segments.length > 0) this.buffer = segments[segments.length - 1].segment;
 
     return sentences;
+  }
+
+  private fallbackSegments(input: string): Array<{ segment: string }> {
+    // Minimal fallback: split on common sentence-ending punctuation.
+    // Keep the last incomplete chunk in buffer.
+    const sentenceRegex = /.+?[.!?。！？](?:\s|$)/g;
+    const matches = input.match(sentenceRegex) ?? [];
+    const remainder = input.replace(sentenceRegex, "");
+    const segments = matches.map((m) => ({ segment: m }));
+    return [...segments, { segment: remainder }];
   }
 
   /** Flush any remaining text as final sentence */
@@ -351,7 +366,7 @@ export async function* voiceChatWithTextModel(
   ];
 
   // 3. Stream text from LLM
-  const textStream = await openai.chat.completions.create({
+  const textStream = await getOpenAIClient().chat.completions.create({
     model: textModel,
     messages,
     stream: true,

@@ -7429,6 +7429,7 @@ User's message: ${userMessage}`
         let breathModTimer = null;
         let guideStep = 0;
         let selectedStopAction = null;
+        let ventSupportLocked = false;
     let screamRecorder = null;
     let screamStream = null;
     let screamAudioCtx = null;
@@ -7741,8 +7742,9 @@ User's message: ${userMessage}`
                 return;
             }
 
-            // If we're on the action stage and the user chose venting, show venting-specific support
-            if (currentStage && currentStage.id === 'action' && selectedStopAction === 'vent') {
+            // Vent mode stays locked on support and never advances to the close branch
+            if (selectedStopAction === 'vent') {
+                ventSupportLocked = true;
                 showVentingSupport();
                 return;
             }
@@ -7790,9 +7792,10 @@ User's message: ${userMessage}`
                 </div>
             `;
             
-            btn.textContent = 'Done';
+            btn.textContent = 'Stay Here';
             btn.onclick = function() {
-                closeStopOverlay();
+                ventSupportLocked = true;
+                showVentingSupport();
             };
         }
 

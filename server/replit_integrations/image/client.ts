@@ -4,7 +4,7 @@ import { Buffer } from "node:buffer";
 
 let openai: OpenAI | null = null;
 
-function getOpenAI(): OpenAI {
+export function getOpenAIClient(): OpenAI {
   const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
   if (!apiKey) {
     throw new Error("Missing AI_INTEGRATIONS_OPENAI_API_KEY");
@@ -26,12 +26,12 @@ export async function generateImageBuffer(
   prompt: string,
   size: "1024x1024" | "512x512" | "256x256" = "1024x1024"
 ): Promise<Buffer> {
-  const response = await getOpenAI().images.generate({
+  const response = await getOpenAIClient().images.generate({
     model: "gpt-image-1",
     prompt,
     size,
   });
-  const base64 = response.data[0]?.b64_json ?? "";
+  const base64 = response.data?.[0]?.b64_json ?? "";
   return Buffer.from(base64, "base64");
 }
 
@@ -52,13 +52,13 @@ export async function editImages(
     )
   );
 
-  const response = await getOpenAI().images.edit({
+  const response = await getOpenAIClient().images.edit({
     model: "gpt-image-1",
     image: images,
     prompt,
   });
 
-  const imageBase64 = response.data[0]?.b64_json ?? "";
+  const imageBase64 = response.data?.[0]?.b64_json ?? "";
   const imageBytes = Buffer.from(imageBase64, "base64");
 
   if (outputPath) {
@@ -67,4 +67,3 @@ export async function editImages(
 
   return imageBytes;
 }
-

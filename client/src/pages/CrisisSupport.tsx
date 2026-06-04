@@ -1,20 +1,32 @@
 import { useQuery } from "@tanstack/react-query";
+import { useRef } from "react";
+import { useLocation } from "wouter";
 import { Phone, MessageCircle, Globe, Clock, Volume2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiUrl } from "@/lib/apiBase";
 import type { CrisisHotline } from "@shared/schema";
 
 export default function CrisisSupport() {
+  const [, setLocation] = useLocation();
+  const ventLaunchRef = useRef(false);
+
   const { data: hotlines, isLoading } = useQuery<CrisisHotline[]>({
     queryKey: ['/api/crisis-hotlines'],
   });
 
   const { data: emergencyResources } = useQuery({
     queryKey: ['/api/resources', 'emergency'],
-    queryFn: () => fetch('/api/resources?emergency=true').then(res => res.json()),
+    queryFn: () => fetch(apiUrl("/api/resources?emergency=true")).then((res) => res.json()),
   });
 
   const callHotline = (phoneNumber: string) => {
     window.location.href = `tel:${phoneNumber}`;
+  };
+
+  const handleStartTalking = () => {
+    if (ventLaunchRef.current) return;
+    ventLaunchRef.current = true;
+    setLocation("/virtual-parent");
   };
 
   if (isLoading) {
@@ -26,7 +38,7 @@ export default function CrisisSupport() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-4xl">
+    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-4xl flex-col overflow-y-auto px-4 py-6 pb-24">
       {/* Crisis Banner */}
       <div className="crisis-banner p-6 rounded-lg mb-8 text-left">
         <h1 className="text-3xl font-bold mb-2">You Are Not Alone</h1>
@@ -178,7 +190,7 @@ export default function CrisisSupport() {
             respond to you, and help you regulate when you need a gentle place to land.
           </p>
           <div className="flex flex-wrap items-center gap-3">
-            <Button className="bg-primary hover:bg-primary/90">
+            <Button className="bg-primary hover:bg-primary/90" onClick={handleStartTalking}>
               <MessageCircle className="mr-2 h-4 w-4" />
               Start Talking
             </Button>

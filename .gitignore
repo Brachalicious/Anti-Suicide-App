@@ -7,3 +7,7 @@ node_modules
 # Local Netlify folder
 .netlify
 index.html.backup
+dist/
+*.png
+*.jpg
+.DS_Store

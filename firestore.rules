@@ -9,6 +9,18 @@ service cloud.firestore {
       match /diaryEntries/{entryId} {
         allow read, write: if request.auth != null && request.auth.uid == userId;
       }
+
+      // Safety Plan (loaded by the inline script in root index.html)
+      // Path used:
+      //   users/{uid}/safetyPlan/current
+      match /safetyPlan/{docId} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
+      
+      // Catch-all for any other sub-collections
+      match /{document=**} {
+        allow read, write: if request.auth != null && request.auth.uid == userId;
+      }
     }
 
     // Public read: anyone with the link can view the snapshot.

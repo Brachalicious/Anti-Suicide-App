@@ -22,6 +22,7 @@ export function registerChatRoutes(app: Express): void {
   // Get all conversations
   app.get("/api/conversations", async (req: Request, res: Response) => {
     try {
+      void req;
       const conversations = await chatStorage.getAllConversations();
       res.json(conversations);
     } catch (error) {
@@ -126,4 +127,3 @@ export function registerChatRoutes(app: Express): void {
     }
   });
 }
-

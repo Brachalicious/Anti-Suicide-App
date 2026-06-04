@@ -1,20 +1,40 @@
 import { useState } from "react";
 import { useQuery, useMutation } from "@tanstack/react-query";
-import { Calendar, TrendingUp, Heart, Plus } from "lucide-react";
+import { Heart, ImagePlus, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { MoodEntry, InsertMoodEntry } from "@shared/schema";
 
 const emotions = [
-  "Happy", "Sad", "Anxious", "Calm", "Angry", "Excited", 
-  "Overwhelmed", "Hopeful", "Lonely", "Grateful", "Stressed", "Peaceful"
+  "Happy",
+  "Sad",
+  "Anxious",
+  "Calm",
+  "Angry",
+  "Excited",
+  "Overwhelmed",
+  "Hopeful",
+  "Lonely",
+  "Grateful",
+  "Stressed",
+  "Peaceful",
 ];
 
 const copingStrategies = [
-  "Deep breathing", "Exercise", "Meditation", "Music", "Talking to someone",
-  "Journaling", "Taking a walk", "Creative activities", "Reading", "Rest"
+  "Deep breathing",
+  "Exercise",
+  "Meditation",
+  "Music",
+  "Talking to someone",
+  "Journaling",
+  "Taking a walk",
+  "Creative activities",
+  "Reading",
+  "Rest",
 ];
+
+const emojiChoices = ["😊", "🥰", "😂", "😌", "🤍", "🌷", "✨", "💖", "🌈", "🐦"];
 
 export default function MoodTracking() {
   const [currentUserId] = useState("user-1");
@@ -22,34 +42,61 @@ export default function MoodTracking() {
   const [selectedMood, setSelectedMood] = useState<number>(5);
   const [selectedEmotions, setSelectedEmotions] = useState<string[]>([]);
   const [selectedCoping, setSelectedCoping] = useState<string[]>([]);
+  const [selectedEmoji, setSelectedEmoji] = useState("😊");
+  const [gifUrl, setGifUrl] = useState("");
   const [notes, setNotes] = useState("");
   const { toast } = useToast();
 
   const { data: moodEntries, isLoading } = useQuery<MoodEntry[]>({
-    queryKey: ['/api/mood-entries', currentUserId],
+    queryKey: ["/api/mood-entries", currentUserId],
+    queryFn: () =>
+      apiRequest(`/api/mood-entries/${currentUserId}`, {
+        method: "GET",
+      }),
   });
 
   const createMoodMutation = useMutation({
-    mutationFn: (newMood: InsertMoodEntry) => 
-      apiRequest('/api/mood-entries', {
-        method: 'POST',
+    mutationFn: (newMood: InsertMoodEntry) =>
+      apiRequest("/api/mood-entries", {
+        method: "POST",
         body: JSON.stringify(newMood),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/mood-entries', currentUserId] });
-      toast({ 
-        title: "Mood recorded", 
-        description: "Your mood entry has been saved successfully." 
+      queryClient.invalidateQueries({ queryKey: ["/api/mood-entries", currentUserId] });
+      toast({
+        title: "Mood recorded",
+        description: "Your mood entry has been saved successfully.",
       });
       resetForm();
     },
     onError: () => {
-      toast({ 
-        title: "Error", 
+      toast({
+        title: "Error",
         description: "Failed to save mood entry. Please try again.",
-        variant: "destructive"
+        variant: "destructive",
       });
-    }
+    },
+  });
+
+  const deleteMoodMutation = useMutation({
+    mutationFn: (id: string) =>
+      apiRequest(`/api/mood-entries/${id}`, {
+        method: "DELETE",
+      }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["/api/mood-entries", currentUserId] });
+      toast({
+        title: "Mood entry deleted",
+        description: "Your mood entry has been removed.",
+      });
+    },
+    onError: () => {
+      toast({
+        title: "Error",
+        description: "Failed to delete mood entry. Please try again.",
+        variant: "destructive",
+      });
+    },
   });
 
   const resetForm = () => {
@@ -57,13 +104,40 @@ export default function MoodTracking() {
     setSelectedMood(5);
     setSelectedEmotions([]);
     setSelectedCoping([]);
+    setSelectedEmoji("😊");
+    setGifUrl("");
     setNotes("");
   };
 
+  const normalizeGifUrl = (value: string): string | undefined | null => {
+    const trimmed = value.trim();
+    if (!trimmed) return undefined;
+
+    try {
+      new URL(trimmed);
+      return trimmed;
+    } catch {
+      return null;
+    }
+  };
+
   const handleSubmit = () => {
+    const normalizedGifUrl = normalizeGifUrl(gifUrl);
+
+    if (normalizedGifUrl === null) {
+      toast({
+        title: "Invalid GIF URL",
+        description: "Please enter a valid GIF link or leave the field blank.",
+        variant: "destructive",
+      });
+      return;
+    }
+
     const moodEntry: InsertMoodEntry = {
       userId: currentUserId,
       mood: selectedMood,
+      emoji: selectedEmoji,
+      gifUrl: normalizedGifUrl,
       emotions: selectedEmotions,
       notes: notes.trim() || undefined,
       copingStrategies: selectedCoping,
@@ -98,18 +172,14 @@ export default function MoodTracking() {
   };
 
   const toggleEmotion = (emotion: string) => {
-    setSelectedEmotions(prev => 
-      prev.includes(emotion) 
-        ? prev.filter(e => e !== emotion)
-        : [...prev, emotion]
+    setSelectedEmotions((prev) =>
+      prev.includes(emotion) ? prev.filter((e) => e !== emotion) : [...prev, emotion],
     );
   };
 
   const toggleCoping = (strategy: string) => {
-    setSelectedCoping(prev => 
-      prev.includes(strategy) 
-        ? prev.filter(s => s !== strategy)
-        : [...prev, strategy]
+    setSelectedCoping((prev) =>
+      prev.includes(strategy) ? prev.filter((s) => s !== strategy) : [...prev, strategy],
     );
   };
 
@@ -130,22 +200,16 @@ export default function MoodTracking() {
         </p>
       </div>
 
-      {/* Add New Mood Entry */}
       <div className="mb-8">
         {!showNewEntry ? (
-          <Button 
-            onClick={() => setShowNewEntry(true)}
-            className="w-full md:w-auto"
-            size="lg"
-          >
+          <Button onClick={() => setShowNewEntry(true)} className="w-full md:w-auto" size="lg">
             <Plus className="mr-2 h-5 w-5" />
             Record Today's Mood
           </Button>
         ) : (
           <div className="bg-card p-6 rounded-lg border">
             <h2 className="text-xl font-semibold mb-6">How are you feeling today?</h2>
-            
-            {/* Mood Scale */}
+
             <div className="mb-6">
               <label className="block text-sm font-medium mb-3">
                 Mood Level: {selectedMood}/10 - {getMoodLabel(selectedMood)} {getMoodEmoji(selectedMood)}
@@ -163,26 +227,64 @@ export default function MoodTracking() {
                 className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
               />
               <div className="flex justify-between text-xs text-muted-foreground mt-1">
-                {Array.from({ length: 10 }, (_, i) => i + 1).map(num => (
+                {Array.from({ length: 10 }, (_, i) => i + 1).map((num) => (
                   <span key={num}>{num}</span>
                 ))}
               </div>
             </div>
 
-            {/* Emotions */}
+            <div className="mb-6">
+              <label className="block text-sm font-medium mb-3">Choose an emoji for this entry</label>
+              <div className="flex flex-wrap gap-2">
+                {emojiChoices.map((emoji) => (
+                  <button
+                    key={emoji}
+                    type="button"
+                    onClick={() => setSelectedEmoji(emoji)}
+                    className={`px-3 py-2 rounded-full text-lg border transition-colors ${
+                      selectedEmoji === emoji
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border hover:bg-muted"
+                    }`}
+                    aria-pressed={selectedEmoji === emoji}
+                  >
+                    {emoji}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="mb-6">
+              <label className="flex items-center gap-2 text-sm font-medium mb-3">
+                <ImagePlus className="h-4 w-4" />
+                Add a GIF link (optional)
+              </label>
+              <input
+                type="url"
+                value={gifUrl}
+                onChange={(e) => setGifUrl(e.target.value)}
+                placeholder="https://media.giphy.com/media/..."
+                className="w-full p-3 border rounded-lg bg-background"
+              />
+              <p className="mt-2 text-xs text-muted-foreground">
+                Paste a direct GIF URL to attach it to this entry.
+              </p>
+            </div>
+
             <div className="mb-6">
               <label className="block text-sm font-medium mb-3">
                 What emotions are you experiencing? (Select all that apply)
               </label>
               <div className="flex flex-wrap gap-2">
-                {emotions.map(emotion => (
+                {emotions.map((emotion) => (
                   <button
                     key={emotion}
+                    type="button"
                     onClick={() => toggleEmotion(emotion)}
                     className={`px-3 py-2 rounded-full text-sm border transition-colors ${
                       selectedEmotions.includes(emotion)
-                        ? 'bg-primary text-primary-foreground border-primary'
-                        : 'bg-background border-border hover:bg-muted'
+                        ? "bg-primary text-primary-foreground border-primary"
+                        : "bg-background border-border hover:bg-muted"
                     }`}
                   >
                     {emotion}
@@ -191,20 +293,20 @@ export default function MoodTracking() {
               </div>
             </div>
 
-            {/* Coping Strategies */}
             <div className="mb-6">
               <label className="block text-sm font-medium mb-3">
                 What coping strategies have you used or plan to use today?
               </label>
               <div className="flex flex-wrap gap-2">
-                {copingStrategies.map(strategy => (
+                {copingStrategies.map((strategy) => (
                   <button
                     key={strategy}
+                    type="button"
                     onClick={() => toggleCoping(strategy)}
                     className={`px-3 py-2 rounded-full text-sm border transition-colors ${
                       selectedCoping.includes(strategy)
-                        ? 'bg-secondary text-secondary-foreground border-secondary'
-                        : 'bg-background border-border hover:bg-muted'
+                        ? "bg-secondary text-secondary-foreground border-secondary"
+                        : "bg-background border-border hover:bg-muted"
                     }`}
                   >
                     {strategy}
@@ -213,11 +315,8 @@ export default function MoodTracking() {
               </div>
             </div>
 
-            {/* Notes */}
             <div className="mb-6">
-              <label className="block text-sm font-medium mb-3">
-                Additional notes (optional)
-              </label>
+              <label className="block text-sm font-medium mb-3">Additional notes (optional)</label>
               <textarea
                 value={notes}
                 onChange={(e) => setNotes(e.target.value)}
@@ -226,20 +325,11 @@ export default function MoodTracking() {
               />
             </div>
 
-            {/* Actions */}
             <div className="flex gap-3">
-              <Button 
-                onClick={handleSubmit}
-                disabled={createMoodMutation.isPending}
-                className="flex-1"
-              >
+              <Button onClick={handleSubmit} disabled={createMoodMutation.isPending} className="flex-1">
                 {createMoodMutation.isPending ? "Saving..." : "Save Mood Entry"}
               </Button>
-              <Button 
-                variant="outline" 
-                onClick={resetForm}
-                disabled={createMoodMutation.isPending}
-              >
+              <Button variant="outline" onClick={resetForm} disabled={createMoodMutation.isPending}>
                 Cancel
               </Button>
             </div>
@@ -247,7 +337,6 @@ export default function MoodTracking() {
         )}
       </div>
 
-      {/* Mood History */}
       <div>
         <h2 className="text-2xl font-semibold mb-6">Your Mood History</h2>
         {moodEntries && moodEntries.length > 0 ? (
@@ -256,7 +345,9 @@ export default function MoodTracking() {
               <div key={entry.id} className="bg-card p-6 rounded-lg border">
                 <div className="flex items-start justify-between mb-4">
                   <div className="flex items-center gap-3">
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${getMoodColor(entry.mood)}`}>
+                    <div
+                      className={`w-12 h-12 rounded-full flex items-center justify-center text-white font-bold ${getMoodColor(entry.mood)}`}
+                    >
                       {entry.mood}
                     </div>
                     <div>
@@ -264,23 +355,33 @@ export default function MoodTracking() {
                         {getMoodLabel(entry.mood)} ({entry.mood}/10)
                       </div>
                       <div className="text-sm text-muted-foreground">
-                        {new Date(entry.timestamp).toLocaleDateString('en-US', {
-                          weekday: 'long',
-                          year: 'numeric',
-                          month: 'long',
-                          day: 'numeric'
+                        {new Date(entry.timestamp).toLocaleDateString("en-US", {
+                          weekday: "long",
+                          year: "numeric",
+                          month: "long",
+                          day: "numeric",
                         })}
                       </div>
                     </div>
                   </div>
-                  <span className="text-2xl">{getMoodEmoji(entry.mood)}</span>
+                  <span className="text-2xl">{entry.emoji || getMoodEmoji(entry.mood)}</span>
                 </div>
+
+                {entry.gifUrl && (
+                  <div className="mb-4">
+                    <img
+                      src={entry.gifUrl}
+                      alt="Mood GIF"
+                      className="max-h-64 w-full rounded-lg border object-cover"
+                    />
+                  </div>
+                )}
 
                 {entry.emotions && entry.emotions.length > 0 && (
                   <div className="mb-3">
                     <div className="text-sm font-medium mb-2">Emotions:</div>
                     <div className="flex flex-wrap gap-2">
-                      {entry.emotions.map(emotion => (
+                      {entry.emotions.map((emotion) => (
                         <span key={emotion} className="px-2 py-1 bg-muted rounded text-sm">
                           {emotion}
                         </span>
@@ -293,7 +394,7 @@ export default function MoodTracking() {
                   <div className="mb-3">
                     <div className="text-sm font-medium mb-2">Coping Strategies:</div>
                     <div className="flex flex-wrap gap-2">
-                      {entry.copingStrategies.map(strategy => (
+                      {entry.copingStrategies.map((strategy) => (
                         <span key={strategy} className="px-2 py-1 bg-secondary/20 rounded text-sm">
                           {strategy}
                         </span>
@@ -310,6 +411,20 @@ export default function MoodTracking() {
                     </div>
                   </div>
                 )}
+
+                <div className="mt-4 flex justify-end">
+                  <Button
+                    variant="destructive"
+                    size="sm"
+                    onClick={() => deleteMoodMutation.mutate(entry.id)}
+                    disabled={deleteMoodMutation.isPending}
+                    className="gap-2"
+                    aria-label={`Delete mood entry from ${new Date(entry.timestamp).toLocaleDateString()}`}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                    Delete
+                  </Button>
+                </div>
               </div>
             ))}
           </div>

@@ -1,6 +1,6 @@
 import type { Express, Request, Response } from "express";
 import { chatStorage } from "../chat/storage";
-import { openai, speechToText, voiceChatWithTextModel, convertWebmToWav } from "./client";
+import { getOpenAIClient, speechToText, voiceChatWithTextModel } from "./client";
 
 // Note: Set express.json({ limit: "50mb" }) for audio payloads.
 // Note: Use convertWebmToWav() to convert browser WebM to WAV before API calls.
@@ -8,6 +8,7 @@ export function registerAudioRoutes(app: Express): void {
   // Get all conversations
   app.get("/api/conversations", async (req: Request, res: Response) => {
     try {
+      void req;
       const conversations = await chatStorage.getAllConversations();
       res.json(conversations);
     } catch (error) {
@@ -90,7 +91,7 @@ export function registerAudioRoutes(app: Express): void {
       res.write(`data: ${JSON.stringify({ type: "user_transcript", data: userTranscript })}\n\n`);
 
       // 5. Stream audio response from gpt-audio-mini
-      const stream = await openai.chat.completions.create({
+      const stream = await getOpenAIClient().chat.completions.create({
         model: "gpt-audio-mini",
         modalities: ["text", "audio"],
         audio: { voice, format: "pcm16" },

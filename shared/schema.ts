@@ -1,5 +1,4 @@
 import { z } from "zod";
-import { createInsertSchema } from "drizzle-zod";
 
 // Crisis Hotlines
 export const crisisHotlineSchema = z.object({
@@ -20,6 +19,8 @@ export const moodEntrySchema = z.object({
   id: z.string(),
   userId: z.string(),
   mood: z.number().min(1).max(10), // 1-10 scale
+  emoji: z.string().optional(),
+  gifUrl: z.string().url().optional(),
   emotions: z.array(z.string()),
   notes: z.string().optional(),
   triggers: z.array(z.string()).optional(),

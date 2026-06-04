@@ -1,6 +1,5 @@
 import { Router } from "express";
 import { z } from "zod";
-import OpenAI from "openai";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import type { IStorage } from "./storage";
 import {
@@ -11,7 +10,6 @@ import {
   insertSafetyPlanSchema,
 } from "../shared/schema.js";
 
-let openai: OpenAI | null = null;
 let gemini: GoogleGenerativeAI | null = null;
 
 function getGemini(): GoogleGenerativeAI {
@@ -23,20 +21,6 @@ function getGemini(): GoogleGenerativeAI {
     gemini = new GoogleGenerativeAI(apiKey);
   }
   return gemini;
-}
-
-function getOpenAI(): OpenAI {
-  const apiKey = process.env.AI_INTEGRATIONS_OPENAI_API_KEY;
-  if (!apiKey) {
-    throw new Error("Missing AI_INTEGRATIONS_OPENAI_API_KEY");
-  }
-  if (!openai) {
-    openai = new OpenAI({
-      apiKey,
-      baseURL: process.env.AI_INTEGRATIONS_OPENAI_BASE_URL,
-    });
-  }
-  return openai;
 }
 
 export function createRouter(storage: IStorage): Router {
@@ -356,6 +340,7 @@ export function createRouter(storage: IStorage): Router {
 
   // Test route
   router.get("/api/test", (req, res) => {
+    void req;
     console.log("Test route hit!");
     res.json({ status: "ok", geminiKeyExists: !!process.env.GEMINI_API_KEY });
   });
@@ -436,15 +421,6 @@ Important guidelines:
 - ${isPet ? "Stay in character as a loving pet companion - use actions in asterisks and occasional animal sounds" : (isFriend ? "Be authentic and genuine like a real friend would be" : "Remember you're playing a nurturing parental role - provide the emotional support they need")}
 - Keep responses warm but not too long
 - ${isPet ? "React to their emotions with appropriate pet behavior - excited when they're happy, cuddly when they're sad" : "Ask follow-up questions to show you care about their wellbeing"}`;
-
-      const messages: Array<{ role: "system" | "user" | "assistant"; content: string }> = [
-        { role: "system", content: systemPrompt },
-        ...conversationHistory.map((msg: { role: string; content: string }) => ({
-          role: msg.role as "user" | "assistant",
-          content: msg.content,
-        })),
-        { role: "user", content: message },
-      ];
 
       // Set up SSE for streaming
       res.setHeader("Content-Type", "text/event-stream");

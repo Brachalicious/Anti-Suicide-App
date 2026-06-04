@@ -1,43 +1,79 @@
-import { db } from "../../db";
-import { conversations, messages } from "@shared/schema";
-import { eq, desc } from "drizzle-orm";
+export interface ChatConversation {
+  id: number;
+  title: string;
+  createdAt: Date;
+}
+
+export interface ChatMessageRow {
+  id: number;
+  conversationId: number;
+  role: string;
+  content: string;
+  createdAt: Date;
+}
 
 export interface IChatStorage {
-  getConversation(id: number): Promise<typeof conversations.$inferSelect | undefined>;
-  getAllConversations(): Promise<(typeof conversations.$inferSelect)[]>;
-  createConversation(title: string): Promise<typeof conversations.$inferSelect>;
+  getConversation(id: number): Promise<ChatConversation | undefined>;
+  getAllConversations(): Promise<ChatConversation[]>;
+  createConversation(title: string): Promise<ChatConversation>;
   deleteConversation(id: number): Promise<void>;
-  getMessagesByConversation(conversationId: number): Promise<(typeof messages.$inferSelect)[]>;
-  createMessage(conversationId: number, role: string, content: string): Promise<typeof messages.$inferSelect>;
+  getMessagesByConversation(conversationId: number): Promise<ChatMessageRow[]>;
+  createMessage(
+    conversationId: number,
+    role: string,
+    content: string
+  ): Promise<ChatMessageRow>;
 }
+
+let nextConversationId = 1;
+let nextMessageId = 1;
+
+const conversations: ChatConversation[] = [];
+const messages: ChatMessageRow[] = [];
 
 export const chatStorage: IChatStorage = {
   async getConversation(id: number) {
-    const [conversation] = await db.select().from(conversations).where(eq(conversations.id, id));
-    return conversation;
+    return conversations.find((c) => c.id === id);
   },
 
   async getAllConversations() {
-    return db.select().from(conversations).orderBy(desc(conversations.createdAt));
+    return [...conversations].sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());
   },
 
   async createConversation(title: string) {
-    const [conversation] = await db.insert(conversations).values({ title }).returning();
+    const conversation: ChatConversation = {
+      id: nextConversationId++,
+      title,
+      createdAt: new Date(),
+    };
+    conversations.push(conversation);
     return conversation;
   },
 
   async deleteConversation(id: number) {
-    await db.delete(messages).where(eq(messages.conversationId, id));
-    await db.delete(conversations).where(eq(conversations.id, id));
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].conversationId === id) messages.splice(i, 1);
+    }
+    for (let i = conversations.length - 1; i >= 0; i--) {
+      if (conversations[i].id === id) conversations.splice(i, 1);
+    }
   },
 
   async getMessagesByConversation(conversationId: number) {
-    return db.select().from(messages).where(eq(messages.conversationId, conversationId)).orderBy(messages.createdAt);
+    return messages
+      .filter((m) => m.conversationId === conversationId)
+      .sort((a, b) => a.createdAt.getTime() - b.createdAt.getTime());
   },
 
   async createMessage(conversationId: number, role: string, content: string) {
-    const [message] = await db.insert(messages).values({ conversationId, role, content }).returning();
+    const message: ChatMessageRow = {
+      id: nextMessageId++,
+      conversationId,
+      role,
+      content,
+      createdAt: new Date(),
+    };
+    messages.push(message);
     return message;
   },
 };
-

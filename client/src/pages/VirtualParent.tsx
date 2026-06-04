@@ -1,15 +1,32 @@
-import { useState, useRef, useEffect } from "react";
-import { Heart, Send, User, Loader2, Paperclip, X } from "lucide-react";
+import { useEffect, useRef, useState, type ChangeEvent, type KeyboardEvent } from "react";
+import {
+  Heart,
+  Send,
+  User,
+  Loader2,
+  Paperclip,
+  X,
+  Play,
+  Pause,
+  Square,
+  Save,
+  Share2,
+  Trash2,
+  RotateCcw,
+  MessageCircleHeart,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { Modal } from "@/components/ui/modal";
+import { apiUrl } from "@/lib/apiBase";
 
 interface AttachedImage {
-  dataUrl: string;   // base64 data URL for preview
-  base64: string;    // raw base64 for API
+  dataUrl: string;
+  base64: string;
   mimeType: string;
   name: string;
 }
@@ -17,66 +34,105 @@ interface AttachedImage {
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  images?: string[]; // preview URLs shown in the bubble
+  images?: string[];
 }
+
+interface SavedSession {
+  id: string;
+  title: string;
+  parentType: "mommy" | "daddy";
+  createdAt: string;
+  updatedAt: string;
+  affirmationTheme: string;
+  transcript: string;
+  messages: ChatMessage[];
+}
+
+interface PlaybackState {
+  sessionId: string | null;
+  isPlaying: boolean;
+  isPaused: boolean;
+  utteranceIndex: number;
+}
+
+const SESSION_STORAGE_KEY = "virtual-parent-sessions";
 
 const dailyAffirmations = [
   {
     theme: "Your Existence",
     text: "The day you were born was the day Hashem decided the world could not exist without you",
-    source: "Rabbi Nachman of Breslov"
+    source: "Rabbi Nachman of Breslov",
   },
   {
     theme: "Choice & Purpose",
     text: "I have set before you life and death... Choose life",
-    source: "Deuteronomy 30:19"
+    source: "Deuteronomy 30:19",
   },
   {
-    theme: "Trust & Faith", 
+    theme: "Trust & Faith",
     text: "The footsteps of humans are directed by G‑d",
-    source: "Psalm 37:23"
+    source: "Psalm 37:23",
   },
   {
     theme: "Resilience",
     text: "A righteous person falls down seven times and gets up",
-    source: "Proverbs 24:16"
+    source: "Proverbs 24:16",
   },
   {
     theme: "Self-Care & Action",
     text: "If I am not for myself, who is for me? And if I am only for myself, what am I? And if not now, when?",
-    source: "Hillel, Pirkei Avot 1:14"
+    source: "Hillel, Pirkei Avot 1:14",
   },
   {
     theme: "Identity",
     text: "Every human being is created in the image of God",
-    source: "Genesis 1:26"
+    source: "Genesis 1:26",
   },
   {
     theme: "Courage",
     text: "Be strong and courageous",
-    source: "Joshua 1:9"
+    source: "Joshua 1:9",
   },
   {
     theme: "Gratitude",
     text: "I am grateful for being able to hear/talk",
-    source: "Based on morning blessings"
+    source: "Based on morning blessings",
   },
   {
     theme: "Perspective",
     text: "Who is rich? The one who rejoices in his portion",
-    source: "Pirkei Avot 4:1"
+    source: "Pirkei Avot 4:1",
   },
   {
     theme: "Presence",
     text: "In all your speech, deeds and thoughts... you are standing in front of G-d",
-    source: "Letter of Nachmonides"
+    source: "Letter of Nachmonides",
   },
   {
     theme: "Love & Connection",
     text: "Let the good in me connect with the good in others, until all the world is transformed through the compelling power of love",
-    source: "Rabbi Nachman"
-  }
+    source: "Rabbi Nachman",
+  },
 ];
+
+function createId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function formatTimestamp(iso: string) {
+  try {
+    return new Date(iso).toLocaleString();
+  } catch {
+    return iso;
+  }
+}
+
+function isSpeechSupported() {
+  return typeof window !== "undefined" && "speechSynthesis" in window;
+}
 
 export default function VirtualParent() {
   const [parentType, setParentType] = useState<"mommy" | "daddy">("mommy");
@@ -84,9 +140,30 @@ export default function VirtualParent() {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isStarted, setIsStarted] = useState(false);
-  const [attachedImages, setAttachedImages] = useState<{ dataUrl: string; base64: string; mimeType: string; name: string }[]>([]);
+  const [isRecordingSession, setIsRecordingSession] = useState(false);
+  const [sessionTitle, setSessionTitle] = useState("");
+  const [savedSessions, setSavedSessions] = useState<SavedSession[]>([]);
+  const [hasLoadedSavedSessions, setHasLoadedSavedSessions] = useState(false);
+  const [isSessionsModalOpen, setIsSessionsModalOpen] = useState(false);
+  const [attachedImages, setAttachedImages] = useState<AttachedImage[]>([]);
+  const [playbackState, setPlaybackState] = useState<PlaybackState>({
+    sessionId: null,
+    isPlaying: false,
+    isPaused: false,
+    utteranceIndex: 0,
+  });
+  const [statusMessage, setStatusMessage] = useState("");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
+  const messagesRef = useRef<ChatMessage[]>([]);
+  const liveSessionIdRef = useRef<string | null>(null);
+  const playbackCancelRef = useRef(false);
+  const speechQueueRef = useRef<SpeechSynthesisUtterance[]>([]);
+
+  useEffect(() => {
+    messagesRef.current = messages;
+  }, [messages]);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -94,29 +171,313 @@ export default function VirtualParent() {
     }
   }, [messages]);
 
-  // Convert a File to base64 and data URL
-  const readFile = (file: File): Promise<{ dataUrl: string; base64: string; mimeType: string; name: string }> =>
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(SESSION_STORAGE_KEY);
+      if (!raw) {
+        setHasLoadedSavedSessions(true);
+        return;
+      }
+
+      const parsed = JSON.parse(raw) as SavedSession[];
+      if (Array.isArray(parsed)) {
+        const cleaned = parsed
+          .filter((session): session is SavedSession => {
+            return (
+              session &&
+              typeof session.id === "string" &&
+              typeof session.title === "string" &&
+              (session.parentType === "mommy" || session.parentType === "daddy") &&
+              typeof session.createdAt === "string" &&
+              typeof session.affirmationTheme === "string" &&
+              typeof session.transcript === "string" &&
+              Array.isArray(session.messages)
+            );
+          })
+          .map((session) => ({
+            ...session,
+            messages: session.messages.filter(
+              (entry): entry is ChatMessage =>
+                entry &&
+                (entry.role === "user" || entry.role === "assistant") &&
+                typeof entry.content === "string"
+            ),
+          }));
+
+        setSavedSessions(cleaned);
+      }
+    } catch {
+      // Ignore malformed saved sessions.
+    } finally {
+      setHasLoadedSavedSessions(true);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (!hasLoadedSavedSessions) return;
+    try {
+      localStorage.setItem(SESSION_STORAGE_KEY, JSON.stringify(savedSessions));
+    } catch {
+      // Ignore storage errors.
+    }
+  }, [savedSessions, hasLoadedSavedSessions]);
+
+  const readFile = (file: File): Promise<AttachedImage> =>
     new Promise((resolve, reject) => {
       const reader = new FileReader();
       reader.onload = () => {
         const dataUrl = reader.result as string;
-        const base64 = dataUrl.split(",")[1];
+        const base64 = dataUrl.split(",")[1] ?? "";
         resolve({ dataUrl, base64, mimeType: file.type, name: file.name });
       };
       reader.onerror = reject;
       reader.readAsDataURL(file);
     });
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(e.target.files ?? []).slice(0, 10);
     const results = await Promise.all(files.map(readFile));
     setAttachedImages((prev) => [...prev, ...results].slice(0, 10));
-    // reset so same file can be re-attached
     e.target.value = "";
   };
 
-  const removeImage = (idx: number) => {
-    setAttachedImages((prev) => prev.filter((_, i) => i !== idx));
+  const removeImage = (index: number) => {
+    setAttachedImages((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  const getTodaysAffirmation = () => {
+    const today = new Date();
+    const dayOfYear = Math.floor(
+      (today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24)
+    );
+    return dailyAffirmations[dayOfYear % dailyAffirmations.length];
+  };
+
+  const todaysAffirmation = getTodaysAffirmation();
+  const parentName = parentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
+  const parentEmoji = parentType === "mommy" ? "👩‍👧" : "👨‍👧";
+  const parentAvatarSrc = "/download-2026-04-05T09_23_05.jpg";
+
+  const buildTranscript = (sessionMessages: ChatMessage[], sessionParentType: "mommy" | "daddy") => {
+    const speakerName = sessionParentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
+    return sessionMessages
+      .map((entry) => `${entry.role === "user" ? "You" : speakerName}: ${entry.content}`)
+      .join("\n\n");
+  };
+
+  const snapshotSession = (
+    title: string,
+    sessionParentType: "mommy" | "daddy",
+    sessionMessages: ChatMessage[],
+    sessionId?: string
+  ): SavedSession => ({
+    id: sessionId ?? createId(),
+    title,
+    parentType: sessionParentType,
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString(),
+    affirmationTheme: todaysAffirmation.theme,
+    transcript: buildTranscript(sessionMessages, sessionParentType),
+    messages: sessionMessages,
+  });
+
+  const upsertSession = (session: SavedSession) => {
+    setSavedSessions((current) => {
+      const next = [session, ...current.filter((item) => item.id !== session.id)];
+      return next;
+    });
+  };
+
+  const syncRecordingSession = () => {
+    if (!isRecordingSession) return;
+    if (messagesRef.current.length === 0) return;
+
+    const nextTitle = sessionTitle.trim() || `${todaysAffirmation.theme} session`;
+    const session = snapshotSession(nextTitle, parentType, messagesRef.current);
+    liveSessionIdRef.current = session.id;
+    upsertSession(session);
+  };
+
+  useEffect(() => {
+    syncRecordingSession();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [messages, isRecordingSession, parentType, sessionTitle]);
+
+  const stopPlayback = () => {
+    if (!isSpeechSupported()) return;
+    playbackCancelRef.current = true;
+    window.speechSynthesis.cancel();
+    speechQueueRef.current = [];
+    setPlaybackState({ sessionId: null, isPlaying: false, isPaused: false, utteranceIndex: 0 });
+  };
+
+  const speakSessionMessages = (session: SavedSession) => {
+    if (!isSpeechSupported()) {
+      setStatusMessage("Speech playback is not supported in this browser.");
+      return;
+    }
+
+    stopPlayback();
+    playbackCancelRef.current = false;
+
+    const queue = session.messages
+      .filter((entry) => entry.content.trim().length > 0)
+      .map((entry) => {
+        const utterance = new SpeechSynthesisUtterance(
+          `${entry.role === "user" ? "You said" : session.parentType === "mommy" ? "Virtual Mommy said" : "Virtual Daddy said"}: ${entry.content}`
+        );
+        utterance.rate = 1;
+        utterance.pitch = entry.role === "user" ? 1 : 1.05;
+        return utterance;
+      });
+
+    if (queue.length === 0) {
+      setStatusMessage("This session has no transcript to play.");
+      return;
+    }
+
+    speechQueueRef.current = queue;
+    setPlaybackState({
+      sessionId: session.id,
+      isPlaying: true,
+      isPaused: false,
+      utteranceIndex: 0,
+    });
+    setStatusMessage(`Playing "${session.title}".`);
+
+    const speakNext = (index: number) => {
+      if (playbackCancelRef.current) return;
+      const nextUtterance = speechQueueRef.current[index];
+      if (!nextUtterance) {
+        setPlaybackState((current) => ({
+          ...current,
+          isPlaying: false,
+          isPaused: false,
+          utteranceIndex: index,
+        }));
+        setStatusMessage(`Finished playing "${session.title}".`);
+        return;
+      }
+
+      setPlaybackState((current) => ({
+        ...current,
+        isPlaying: true,
+        isPaused: false,
+        utteranceIndex: index,
+      }));
+
+      nextUtterance.onend = () => speakNext(index + 1);
+      nextUtterance.onerror = () => speakNext(index + 1);
+      window.speechSynthesis.speak(nextUtterance);
+    };
+
+    speakNext(0);
+  };
+
+  const handlePlaybackToggle = (session: SavedSession) => {
+    if (playbackState.sessionId !== session.id || !playbackState.isPlaying) {
+      speakSessionMessages(session);
+      return;
+    }
+
+    if (!isSpeechSupported()) return;
+
+    if (window.speechSynthesis.paused) {
+      window.speechSynthesis.resume();
+      setPlaybackState((current) => ({ ...current, isPaused: false }));
+      setStatusMessage(`Resumed "${session.title}".`);
+    } else {
+      window.speechSynthesis.pause();
+      setPlaybackState((current) => ({ ...current, isPaused: true }));
+      setStatusMessage(`Paused "${session.title}".`);
+    }
+  };
+
+  const handleToggleRecording = () => {
+    if (isRecordingSession) {
+      setIsRecordingSession(false);
+      liveSessionIdRef.current = null;
+      if (messagesRef.current.length > 0) {
+        setStatusMessage("Recording stopped. This log remains saved and you can start a fresh one anytime.");
+      } else {
+        setStatusMessage("Recording stopped.");
+      }
+      return;
+    }
+
+    liveSessionIdRef.current = createId();
+    setIsRecordingSession(true);
+    setStatusMessage("Recording on. New messages will be saved into this log.");
+  };
+
+  const handleSaveSession = () => {
+    if (messages.length === 0) return;
+
+    const nextTitle = sessionTitle.trim() || `${todaysAffirmation.theme} session`;
+    const session = snapshotSession(nextTitle, parentType, messages, createId());
+    upsertSession(session);
+    setSessionTitle(nextTitle);
+    setStatusMessage(`Saved "${session.title}" as a new log entry.`);
+  };
+
+  const handleRestoreSession = (session: SavedSession) => {
+    setParentType(session.parentType);
+    setMessages(session.messages);
+    setIsStarted(session.messages.length > 0);
+    setMessage("");
+    setAttachedImages([]);
+    setSessionTitle(session.title);
+    liveSessionIdRef.current = null;
+    setIsRecordingSession(false);
+    setIsSessionsModalOpen(false);
+    stopPlayback();
+    setStatusMessage(`Restored "${session.title}". Saving now will create a new log entry.`);
+  };
+
+  const handleShareSession = async (session?: SavedSession) => {
+    const selectedSession =
+      session ??
+      (messages.length > 0
+        ? snapshotSession(sessionTitle.trim() || `${todaysAffirmation.theme} session`, parentType, messages)
+        : null);
+
+    if (!selectedSession) {
+      setStatusMessage("Nothing to share yet.");
+      return;
+    }
+
+    const payload = [
+      `MysticMinded33 session: ${selectedSession.title}`,
+      `Theme: ${selectedSession.affirmationTheme}`,
+      `Parent mode: ${selectedSession.parentType}`,
+      "",
+      selectedSession.transcript,
+    ].join("\n");
+
+    try {
+      if (navigator.share) {
+        await navigator.share({
+          title: selectedSession.title,
+          text: payload,
+        });
+      } else {
+        await navigator.clipboard.writeText(payload);
+      }
+      setStatusMessage(`Shared "${selectedSession.title}".`);
+    } catch {
+      setStatusMessage("Sharing was cancelled or unavailable.");
+    }
+  };
+
+  const handleDeleteSession = (sessionId: string) => {
+    setSavedSessions((current) => current.filter((session) => session.id !== sessionId));
+    if (liveSessionIdRef.current === sessionId) {
+      liveSessionIdRef.current = null;
+    }
+    if (playbackState.sessionId === sessionId) {
+      stopPlayback();
+    }
+    setStatusMessage("Session deleted.");
   };
 
   const handleSendMessage = async () => {
@@ -124,28 +485,28 @@ export default function VirtualParent() {
 
     const userMessage = message.trim();
     const imagesToSend = [...attachedImages];
+    const nextUserMessage: ChatMessage = {
+      role: "user",
+      content: userMessage,
+      images: imagesToSend.map((img) => img.dataUrl),
+    };
+
     setMessage("");
     setAttachedImages([]);
     setIsLoading(true);
     setIsStarted(true);
-
-    setMessages((prev) => [
-      ...prev,
-      {
-        role: "user",
-        content: userMessage,
-        images: imagesToSend.map((img) => img.dataUrl),
-      },
-    ]);
+    setMessages((prev) => [...prev, nextUserMessage]);
 
     try {
-      const response = await fetch("/api/virtual-parent/chat", {
+      const response = await fetch(apiUrl("/api/virtual-parent/chat"), {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          message: userMessage || "(User attached image(s), please describe and respond to what you see with warmth and care.)",
+          message:
+            userMessage ||
+            "(User attached image(s), please describe and respond to what you see with warmth and care.)",
           parentType,
-          conversationHistory: messages,
+          conversationHistory: messagesRef.current,
           images: imagesToSend.map(({ base64, mimeType }) => ({ base64, mimeType })),
         }),
       });
@@ -174,12 +535,12 @@ export default function VirtualParent() {
             if (data.content) {
               assistantMessage += data.content;
               setMessages((prev) => {
-                const newMessages = [...prev];
-                newMessages[newMessages.length - 1] = {
+                const next = [...prev];
+                next[next.length - 1] = {
                   role: "assistant",
                   content: assistantMessage,
                 };
-                return newMessages;
+                return next;
               });
             }
           } catch {
@@ -193,63 +554,266 @@ export default function VirtualParent() {
         ...prev.slice(0, -1),
         {
           role: "assistant",
-          content: parentType === "mommy"
-            ? "Oh sweetheart, I'm having trouble connecting right now. Please know that I'm here for you, and you can always reach out to real support at 988 if you need to talk to someone. I love you."
-            : "Hey champ, something went wrong on my end. But remember, I'm always proud of you, and if you need to talk to someone right now, you can always call 988. I believe in you, kiddo.",
+          content:
+            parentType === "mommy"
+              ? "Oh sweetheart, I'm having trouble connecting right now. Please know that I'm here for you, and you can always reach out to real support at 988 if you need to talk to someone. I love you."
+              : "Hey champ, something went wrong on my end. But remember, I'm always proud of you, and if you need to talk to someone right now, you can always call 988. I believe in you, kiddo.",
         },
       ]);
+      setStatusMessage("The parent response failed to load, but your conversation is still safe.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleKeyDown = (e: React.KeyboardEvent) => {
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
-      handleSendMessage();
+      void handleSendMessage();
     }
   };
 
-  const parentName = parentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
-  const parentEmoji = parentType === "mommy" ? "👩‍👧" : "👨‍👧";
+  const currentSessionSummary = messages.length
+    ? `${messages.length} messages captured · ${todaysAffirmation.theme} · ${
+        isRecordingSession ? "recording" : "not recording"
+      }`
+    : "No conversation captured yet. Start chatting, then save this mirror session when you're ready.";
 
-  // Avatar image for the mysticminded33 virtual parent chatbot.
-  // Place the provided girl image at: /public/download-2026-04-05T09_23_05.jpg
-  // (or update the path below if you use a different filename).
-  const parentAvatarSrc = "/download-2026-04-05T09_23_05.jpg";
+  const currentPreviewSession =
+    messages.length > 0 ? snapshotSession(sessionTitle.trim() || `${todaysAffirmation.theme} session`, parentType, messages) : null;
 
-  // Get today's affirmation (changes daily based on date)
-  const getTodaysAffirmation = () => {
-    const today = new Date();
-    const dayOfYear = Math.floor((today.getTime() - new Date(today.getFullYear(), 0, 0).getTime()) / (1000 * 60 * 60 * 24));
-    return dailyAffirmations[dayOfYear % dailyAffirmations.length];
-  };
+  const liveSessionPreview = isRecordingSession
+    ? snapshotSession(
+        sessionTitle.trim() || `${todaysAffirmation.theme} session`,
+        parentType,
+        messages,
+        liveSessionIdRef.current ?? undefined
+      )
+    : null;
 
-  const todaysAffirmation = getTodaysAffirmation();
+  const recentSavedSessions = savedSessions.slice(0, 3);
 
   return (
     <div className="container mx-auto px-4 py-6 max-w-4xl">
-  <Card className="mb-6 bg-gradient-to-r from-pink-50 to-green-50 dark:from-pink-950/20 dark:to-green-950/20 border-pink-200 dark:border-pink-800">
+      <Card className="mb-6 border-pink-200 dark:border-pink-800 bg-gradient-to-r from-pink-50 to-green-50 dark:from-pink-950/20 dark:to-green-950/20">
         <CardHeader>
           <CardTitle className="flex items-center gap-3 text-2xl">
             <span className="text-3xl">{parentEmoji}</span>
             {parentName}
-            <Heart className="h-6 w-6 text-pink-500 fill-pink-500" />
+            <Heart className="h-6 w-6 fill-pink-500 text-pink-500" />
           </CardTitle>
           <CardDescription className="text-base">
-            Sometimes we all need a loving, supportive voice. Talk to your virtual parent who 
-            will always listen, never judge, and remind you how loved and valued you are.
+            Sometimes we all need a loving, supportive voice. Talk to your virtual parent who will
+            always listen, never judge, and remind you how loved and valued you are.
           </CardDescription>
         </CardHeader>
       </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessageCircleHeart className="h-5 w-5" />
+            Mirror Affirmation
+          </CardTitle>
+          <CardDescription>
+            Save the mirror as a log, replay saved logs anytime, and share the ones that help.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid gap-3 sm:grid-cols-2">
+            <Button
+              variant={isRecordingSession ? "secondary" : "outline"}
+              onClick={handleToggleRecording}
+              className="justify-start"
+            >
+              {isRecordingSession ? (
+                <>
+                  <Square className="mr-2 h-4 w-4" />
+                  Stop Recording
+                </>
+              ) : (
+                <>
+                  <Save className="mr-2 h-4 w-4" />
+                  Record Session
+                </>
+              )}
+            </Button>
+            <Button variant="outline" onClick={handleSaveSession} disabled={messages.length === 0} className="justify-start">
+              <Save className="mr-2 h-4 w-4" />
+              Save Session
+            </Button>
+            <Button variant="outline" onClick={() => setIsSessionsModalOpen(true)} className="justify-start">
+              <Play className="mr-2 h-4 w-4" />
+              View Logs
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => handleShareSession(currentPreviewSession ?? undefined)}
+              disabled={messages.length === 0}
+              className="justify-start"
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Share Session
+            </Button>
+          </div>
+
+          <div className="rounded-lg border bg-muted/30 px-4 py-3 text-center text-xs text-muted-foreground">
+            {isRecordingSession
+              ? "Session is being recorded and will update the live mirror log."
+              : "No active session being recorded."}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-[1fr_auto]">
+            <input
+              value={sessionTitle}
+              onChange={(e) => setSessionTitle(e.target.value)}
+              placeholder={`${todaysAffirmation.theme} session`}
+              className="w-full rounded-lg border bg-background px-3 py-2 text-sm"
+            />
+            <Button onClick={handleSaveSession} disabled={messages.length === 0}>
+              Name Log
+            </Button>
+          </div>
+
+          <div className="rounded-lg border bg-muted/30 p-3 text-sm text-muted-foreground">
+            <p className="font-medium text-foreground">Current mirror log summary</p>
+            <p>{currentSessionSummary}</p>
+            {statusMessage ? <p className="mt-2 text-xs">{statusMessage}</p> : null}
+          </div>
+
+          <div className="grid gap-3 md:grid-cols-2">
+            <div className="rounded-lg border bg-background p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-sm font-medium">Live session preview</p>
+                <span className={`text-xs ${isRecordingSession ? "text-green-600" : "text-muted-foreground"}`}>
+                  {isRecordingSession ? "Recording" : "Idle"}
+                </span>
+              </div>
+              {liveSessionPreview ? (
+                <div className="space-y-2 text-sm text-muted-foreground">
+                  <p className="text-foreground">{liveSessionPreview.title}</p>
+                  <p>{liveSessionPreview.messages.length} messages · {liveSessionPreview.affirmationTheme}</p>
+                  <p className="line-clamp-2">
+                    {liveSessionPreview.transcript.slice(0, 120)}
+                    {liveSessionPreview.transcript.length > 120 ? "..." : ""}
+                  </p>
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">
+                  Start recording and chatting to see the live mirror log update here.
+                </p>
+              )}
+            </div>
+
+            <div className="rounded-lg border bg-background p-3">
+              <div className="mb-2 flex items-center justify-between gap-2">
+                <p className="text-sm font-medium">Recent saved logs</p>
+                <button
+                  type="button"
+                  onClick={() => setIsSessionsModalOpen(true)}
+                  className="text-xs font-medium text-primary hover:underline"
+                >
+                  View all
+                </button>
+              </div>
+              {recentSavedSessions.length > 0 ? (
+                <div className="space-y-2 text-sm">
+                  {recentSavedSessions.map((session) => (
+                    <button
+                      key={session.id}
+                      type="button"
+                      onClick={() => handleRestoreSession(session)}
+                      className="w-full rounded-md border px-3 py-2 text-left transition-colors hover:bg-muted"
+                    >
+                      <p className="font-medium text-foreground">{session.title}</p>
+                      <p className="text-xs text-muted-foreground">
+                        {formatTimestamp(session.createdAt)} · {session.messages.length} messages
+                      </p>
+                    </button>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-muted-foreground">No saved logs yet. Your first saved session will appear here.</p>
+              )}
+            </div>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Modal
+        isOpen={isSessionsModalOpen}
+        onClose={() => setIsSessionsModalOpen(false)}
+        title="Saved Mirror Sessions"
+      >
+        <div className="space-y-4">
+          <p className="text-sm text-muted-foreground">
+            Restore, replay, share, or delete each saved session separately. New saves always create a fresh log, even on the same day.
+          </p>
+
+          {savedSessions.length > 0 ? (
+            <div className="space-y-3">
+              {savedSessions.map((session) => {
+                const isCurrentPlayback = playbackState.sessionId === session.id;
+                return (
+                  <div key={session.id} className="rounded-lg border p-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                      <div className="min-w-0">
+                        <p className="font-medium truncate">{session.title}</p>
+                        <p className="text-xs text-muted-foreground">
+                          Created {formatTimestamp(session.createdAt)} · Updated {formatTimestamp(session.updatedAt)} · {session.affirmationTheme} ·{" "}
+                          {session.messages.length} messages
+                        </p>
+                        <p className="mt-2 text-xs text-muted-foreground line-clamp-2">
+                          {session.transcript.slice(0, 140)}
+                          {session.transcript.length > 140 ? "..." : ""}
+                        </p>
+                      </div>
+
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleRestoreSession(session)}>
+                          <RotateCcw className="mr-2 h-4 w-4" />
+                          Restore
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handlePlaybackToggle(session)}>
+                          {isCurrentPlayback && playbackState.isPlaying && !playbackState.isPaused ? (
+                            <>
+                              <Pause className="mr-2 h-4 w-4" />
+                              Pause
+                            </>
+                          ) : (
+                            <>
+                              <Play className="mr-2 h-4 w-4" />
+                              Play
+                            </>
+                          )}
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handleShareSession(session)}>
+                          <Share2 className="mr-2 h-4 w-4" />
+                          Share
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteSession(session.id)}>
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground">
+              No saved sessions yet. Save your first mirror session and it will appear here.
+            </p>
+          )}
+        </div>
+      </Modal>
 
       {!isStarted && (
         <Card className="mb-6">
           <CardHeader>
             <CardTitle className="text-lg">Choose Your Virtual Parent</CardTitle>
-            <CardDescription>
-              Select the supportive figure you'd like to talk with today
-            </CardDescription>
+            <CardDescription>Select the supportive figure you'd like to talk with today</CardDescription>
           </CardHeader>
           <CardContent>
             <RadioGroup
@@ -263,9 +827,7 @@ export default function VirtualParent() {
                   <span className="text-2xl">👩‍👧</span>
                   <div>
                     <div className="font-medium">Virtual Mommy</div>
-                    <div className="text-sm text-muted-foreground">
-                      Warm, nurturing, gentle comfort
-                    </div>
+                    <div className="text-sm text-muted-foreground">Warm, nurturing, gentle comfort</div>
                   </div>
                 </Label>
               </div>
@@ -275,9 +837,7 @@ export default function VirtualParent() {
                   <span className="text-2xl">👨‍👧</span>
                   <div>
                     <div className="font-medium">Virtual Daddy</div>
-                    <div className="text-sm text-muted-foreground">
-                      Supportive, protective, encouraging
-                    </div>
+                    <div className="text-sm text-muted-foreground">Supportive, protective, encouraging</div>
                   </div>
                 </Label>
               </div>
@@ -286,61 +846,51 @@ export default function VirtualParent() {
         </Card>
       )}
 
-      <Card className="h-[500px] flex flex-col">
-        <CardContent className="flex-1 flex flex-col p-4 pt-4">
+      <Card className="flex h-[500px] flex-col">
+        <CardContent className="flex flex-1 flex-col p-4 pt-4">
           <ScrollArea className="flex-1 pr-4" ref={scrollRef}>
             <div className="space-y-4">
               {!isStarted && (
-                <div className="text-center text-muted-foreground py-8">
-                  <p className="text-lg mb-2">
-                    {parentType === "mommy" 
+                <div className="py-8 text-center text-muted-foreground">
+                  <p className="mb-2 text-lg">
+                    {parentType === "mommy"
                       ? "Hi sweetheart, I'm here whenever you need me. 💕"
                       : "Hey there, champ! I'm here for you whenever you're ready. 💪"}
                   </p>
-                  <p className="text-sm">
-                    Share what's on your mind, and I'll listen with all my heart.
-                  </p>
+                  <p className="text-sm">Share what's on your mind, and I'll listen with all my heart.</p>
                 </div>
               )}
 
               {messages.map((msg, index) => (
-                <div
-                  key={index}
-                  className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
-                >
+                <div key={index} className={`flex gap-3 ${msg.role === "user" ? "justify-end" : "justify-start"}`}>
                   {msg.role === "assistant" && (
-                    <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-pink-300 shadow-sm shrink-0 bg-gradient-to-br from-pink-100 to-green-100">
-                      <img
-                        src={parentAvatarSrc}
-                        alt={parentName}
-                        className="w-full h-full object-cover"
-                      />
+                    <div className="h-10 w-10 shrink-0 overflow-hidden rounded-full border-2 border-pink-300 bg-gradient-to-br from-pink-100 to-green-100 shadow-sm">
+                      <img src={parentAvatarSrc} alt={parentName} className="h-full w-full object-cover" />
                     </div>
                   )}
+
                   <div
-                    className={`max-w-[80%] p-4 rounded-2xl ${
-                      msg.role === "user"
-                        ? "bg-primary text-primary-foreground rounded-br-md"
-                        : "bg-muted rounded-bl-md"
+                    className={`max-w-[80%] rounded-2xl p-4 ${
+                      msg.role === "user" ? "rounded-br-md bg-primary text-primary-foreground" : "rounded-bl-md bg-muted"
                     }`}
                   >
-                    {/* Show attached images inside the bubble */}
                     {msg.images && msg.images.length > 0 && (
-                      <div className="flex flex-wrap gap-2 mb-2">
+                      <div className="mb-2 flex flex-wrap gap-2">
                         {msg.images.map((src, i) => (
                           <img
                             key={i}
                             src={src}
                             alt={`attachment ${i + 1}`}
-                            className="w-20 h-20 object-cover rounded-lg border"
+                            className="h-20 w-20 rounded-lg border object-cover"
                           />
                         ))}
                       </div>
                     )}
                     <p className="whitespace-pre-wrap">{msg.content}</p>
                   </div>
+
                   {msg.role === "user" && (
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-400 to-cyan-400 flex items-center justify-center shrink-0">
+                    <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-blue-400 to-cyan-400">
                       <User className="h-5 w-5 text-white" />
                     </div>
                   )}
@@ -349,10 +899,10 @@ export default function VirtualParent() {
 
               {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
                 <div className="flex gap-3 justify-start">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-br from-pink-400 to-green-400 flex items-center justify-center text-white text-lg shrink-0">
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-pink-400 to-green-400 text-lg text-white">
                     {parentEmoji}
                   </div>
-                  <div className="bg-muted p-4 rounded-2xl rounded-bl-md">
+                  <div className="rounded-2xl rounded-bl-md bg-muted p-4">
                     <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />
                   </div>
                 </div>
@@ -360,22 +910,17 @@ export default function VirtualParent() {
             </div>
           </ScrollArea>
 
-          <div className="flex gap-2 mt-4 pt-4 border-t flex-col">
-            {/* Image preview strip */}
+          <div className="mt-4 flex flex-col gap-2 border-t pt-4">
             {attachedImages.length > 0 && (
               <div className="flex flex-wrap gap-2">
                 {attachedImages.map((img, i) => (
                   <div key={i} className="relative">
-                    <img
-                      src={img.dataUrl}
-                      alt={img.name}
-                      className="w-16 h-16 object-cover rounded-lg border"
-                    />
+                    <img src={img.dataUrl} alt={img.name} className="h-16 w-16 rounded-lg border object-cover" />
                     <button
                       onClick={() => removeImage(i)}
-                      className="absolute -top-1 -right-1 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs leading-none"
+                      className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-xs leading-none text-white"
                     >
-                      <X className="w-3 h-3" />
+                      <X className="h-3 w-3" />
                     </button>
                   </div>
                 ))}
@@ -383,7 +928,6 @@ export default function VirtualParent() {
             )}
 
             <div className="flex gap-2">
-              {/* Hidden file input */}
               <input
                 ref={fileInputRef}
                 type="file"
@@ -392,7 +936,6 @@ export default function VirtualParent() {
                 className="hidden"
                 onChange={handleFileChange}
               />
-              {/* Attach button */}
               <Button
                 type="button"
                 variant="outline"
@@ -417,42 +960,35 @@ export default function VirtualParent() {
                 disabled={isLoading}
               />
               <Button
-                onClick={handleSendMessage}
+                onClick={() => void handleSendMessage()}
                 disabled={(!message.trim() && attachedImages.length === 0) || isLoading}
                 className="h-auto px-6"
               >
-                {isLoading ? (
-                  <Loader2 className="h-5 w-5 animate-spin" />
-                ) : (
-                  <Send className="h-5 w-5" />
-                )}
+                {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
               </Button>
             </div>
           </div>
         </CardContent>
       </Card>
 
-      <Card className="mt-6 bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-800">
+      <Card className="mt-6 border-blue-200 bg-blue-50 dark:border-blue-800 dark:bg-blue-950/20">
         <CardContent className="pt-6">
-          <p className="text-sm text-muted-foreground text-left">
-            <strong>Remember:</strong> While your virtual parent is here to provide comfort and support, 
-            if you're experiencing a crisis or thoughts of self-harm, please reach out to real help: 
+          <p className="text-left text-sm text-muted-foreground">
+            <strong>Remember:</strong> While your virtual parent is here to provide comfort and support,
+            if you're experiencing a crisis or thoughts of self-harm, please reach out to real help:
             <br />
-            <span className="text-red-600 dark:text-red-400 font-semibold">
+            <span className="font-semibold text-red-600 dark:text-red-400">
               📞 Call/Text 988 (Suicide & Crisis Lifeline) | 💬 Text HOME to 741741
             </span>
           </p>
         </CardContent>
       </Card>
 
-      {/* Daily Affirmation */}
-      <Card className="mt-6 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
+      <Card className="mt-6 border-amber-200 bg-gradient-to-r from-amber-50 to-orange-50 dark:border-amber-800 dark:from-amber-950/20 dark:to-orange-950/20">
         <CardContent className="pt-6">
-          <h3 className="text-lg font-semibold mb-3 text-center">Daily Affirmation • {todaysAffirmation.theme}</h3>
-          <p className="text-center text-muted-foreground italic mb-3">
-            "{todaysAffirmation.text}"
-          </p>
-          <p className="text-xs text-muted-foreground text-center">— {todaysAffirmation.source}</p>
+          <h3 className="mb-3 text-center text-lg font-semibold">Daily Affirmation • {todaysAffirmation.theme}</h3>
+          <p className="mb-3 text-center italic text-muted-foreground">"{todaysAffirmation.text}"</p>
+          <p className="text-center text-xs text-muted-foreground">— {todaysAffirmation.source}</p>
         </CardContent>
       </Card>
     </div>

@@ -2,16 +2,33 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Heart, BookOpen, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import type { MoodEntry, JournalEntry } from "@shared/schema";
 
 export default function Dashboard() {
   const [currentUserId] = useState("user-1"); // In a real app, this would come from auth
 
-  const { data: recentMoods } = useQuery({
-    queryKey: ['/api/mood-entries', currentUserId],
+  const { data: recentMoods } = useQuery<MoodEntry[]>({
+    queryKey: ["/api/mood-entries", currentUserId],
+    queryFn: async () => {
+      const response = await fetch(`/api/mood-entries/${currentUserId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load mood entries (${response.status})`);
+      }
+      return (await response.json()) as MoodEntry[];
+    },
+    enabled: !!currentUserId,
   });
 
-  const { data: recentJournals } = useQuery({
-    queryKey: ['/api/journal-entries', currentUserId],
+  const { data: recentJournals } = useQuery<JournalEntry[]>({
+    queryKey: ["/api/journal-entries", currentUserId],
+    queryFn: async () => {
+      const response = await fetch(`/api/journal-entries/${currentUserId}`);
+      if (!response.ok) {
+        throw new Error(`Failed to load journal entries (${response.status})`);
+      }
+      return (await response.json()) as JournalEntry[];
+    },
+    enabled: !!currentUserId,
   });
 
   const getMoodEmoji = (mood: number) => {

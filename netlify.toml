@@ -1,8 +1,7 @@
 [build]
-  # Flatten brand SVGs to site root so /logo.svg matches Express (served from public/) and works on Netlify.
-  command = "cp -f public/logo.svg ./logo.svg && cp -f public/favicon.svg ./favicon.svg"
-  publish = "."
-  
+  command = "npm run build"
+  publish = "dist"
+
 [build.environment]
   NODE_VERSION = "20"
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
@@ -14,11 +13,6 @@
 
 [[headers]]
   for = "/favicon.svg"
-  [headers.values]
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-[[headers]]
-  for = "/public/*"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
