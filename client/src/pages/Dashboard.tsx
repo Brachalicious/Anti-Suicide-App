@@ -3,12 +3,14 @@ import { useQuery } from "@tanstack/react-query";
 import { Heart, BookOpen, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import type { MoodEntry, JournalEntry } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function Dashboard() {
-  const [currentUserId] = useState("user-1"); // In a real app, this would come from auth
+  const [currentUserId] = useState("user-1");
+  const [, setLocation] = useLocation();
 
   const { data: recentMoods } = useQuery<MoodEntry[]>({
-    queryKey: ["/api/mood-entries", currentUserId],
+    queryKey: ["/api/mood-entries/" + currentUserId],
     queryFn: async () => {
       const response = await fetch(`/api/mood-entries/${currentUserId}`);
       if (!response.ok) {
@@ -20,7 +22,7 @@ export default function Dashboard() {
   });
 
   const { data: recentJournals } = useQuery<JournalEntry[]>({
-    queryKey: ["/api/journal-entries", currentUserId],
+    queryKey: ["/api/journal-entries/" + currentUserId],
     queryFn: async () => {
       const response = await fetch(`/api/journal-entries/${currentUserId}`);
       if (!response.ok) {
@@ -40,7 +42,7 @@ export default function Dashboard() {
   };
 
   return (
-    <div className="container mx-auto px-4 py-6 max-w-6xl">
+    <div className="container mx-auto px-4 py-6 max-w-5xl">
       {/* Welcome Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold mb-2">Welcome to Your Mental Health Support Hub</h1>
@@ -53,7 +55,7 @@ export default function Dashboard() {
       <div className="crisis-banner p-4 rounded-lg mb-8 text-left">
         <p className="font-medium mb-2">Need immediate help?</p>
         <Button 
-          onClick={() => window.location.href = '/crisis'}
+          onClick={() => setLocation('/crisis')}
           className="bg-red-600 hover:bg-red-700 text-white"
         >
           <Phone className="mr-2 h-4 w-4" />
@@ -89,7 +91,7 @@ export default function Dashboard() {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => window.location.href = '/mood'}
+                onClick={() => setLocation('/mood')}
               >
                 View All Mood Entries
               </Button>
@@ -98,7 +100,7 @@ export default function Dashboard() {
             <div className="text-center py-8">
               <Heart className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
               <p className="text-muted-foreground mb-4">No mood check-ins yet</p>
-              <Button onClick={() => window.location.href = '/mood'}>
+              <Button onClick={() => setLocation('/mood')}>
                 Record Your First Mood
               </Button>
             </div>
@@ -126,7 +128,7 @@ export default function Dashboard() {
               <Button 
                 variant="outline" 
                 className="w-full mt-3"
-                onClick={() => window.location.href = '/journal'}
+                onClick={() => setLocation('/journal')}
               >
                 View All Entries
               </Button>
@@ -135,7 +137,7 @@ export default function Dashboard() {
             <div className="text-center py-8">
               <BookOpen className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
               <p className="text-muted-foreground mb-4">No journal entries yet</p>
-              <Button onClick={() => window.location.href = '/journal'}>
+              <Button onClick={() => setLocation('/journal')}>
                 Start Writing
               </Button>
             </div>

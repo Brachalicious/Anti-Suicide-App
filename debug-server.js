@@ -1,7 +1,7 @@
 const http = require('http');
 const fs = require('fs');
 
-const PORT = 3000;
+const PORT = parseInt(process.env.PORT || "3000", 10);
 
 console.log('Starting debug server...');
 

@@ -1,7 +1,10 @@
 import { PhoneCall, MessageCircleHeart, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useLocation } from "wouter";
 
 export default function Support() {
+  const [, setLocation] = useLocation();
+
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6">
       <div className="mb-8">
@@ -24,11 +27,11 @@ export default function Support() {
             If you are in danger or might act on suicidal thoughts, use crisis support immediately.
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Button className="bg-red-600 text-white hover:bg-red-700" onClick={() => window.location.href = "/crisis"}>
+            <Button className="bg-red-600 text-white hover:bg-red-700" onClick={() => setLocation("/crisis")}>
               <PhoneCall className="mr-2 h-4 w-4" />
               Open Crisis Support
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = "/safety-plan"}>
+            <Button variant="outline" onClick={() => setLocation("/safety-plan")}>
               View Safety Plan
             </Button>
           </div>
@@ -53,13 +56,13 @@ export default function Support() {
             Make a short list of people you can reach out to when your feelings get heavy.
           </p>
           <div className="mt-4 flex flex-wrap gap-3">
-            <Button variant="outline" onClick={() => window.location.href = "/journal"}>
+            <Button variant="outline" onClick={() => setLocation("/journal")}>
               Write what you need
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = "/virtual-parent"}>
+            <Button variant="outline" onClick={() => setLocation("/virtual-parent")}>
               Talk to Virtual Parent
             </Button>
-            <Button variant="outline" onClick={() => window.location.href = "/resources"}>
+            <Button variant="outline" onClick={() => setLocation("/resources")}>
               Open Resources
             </Button>
           </div>

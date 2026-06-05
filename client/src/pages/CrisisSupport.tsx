@@ -12,6 +12,7 @@ export default function CrisisSupport() {
 
   const { data: hotlines, isLoading } = useQuery<CrisisHotline[]>({
     queryKey: ['/api/crisis-hotlines'],
+    queryFn: () => fetch(apiUrl("/api/crisis-hotlines")).then((res) => res.json()),
   });
 
   const { data: emergencyResources } = useQuery({
@@ -38,7 +39,7 @@ export default function CrisisSupport() {
   }
 
   return (
-    <div className="mx-auto flex min-h-[calc(100vh-4rem)] max-w-4xl flex-col overflow-y-auto px-4 py-6 pb-24">
+    <div className="container mx-auto px-4 py-6 max-w-5xl">
       {/* Crisis Banner */}
       <div className="crisis-banner p-6 rounded-lg mb-8 text-left">
         <h1 className="text-3xl font-bold mb-2">You Are Not Alone</h1>
@@ -71,7 +72,7 @@ export default function CrisisSupport() {
           <Button
             variant="outline"
             className="justify-start h-auto py-4"
-            onClick={() => (window.location.href = "/safety-plan")}
+            onClick={() => setLocation("/safety-plan")}
           >
             🛡️ My Safety Plan
           </Button>

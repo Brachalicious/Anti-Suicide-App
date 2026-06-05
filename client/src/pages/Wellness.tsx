@@ -3,6 +3,7 @@ import { Brain, Clock, Sparkles, WandSparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { apiUrl } from "@/lib/apiBase";
 import type { WellnessActivity } from "@shared/schema";
+import { useLocation } from "wouter";
 
 export default function Wellness() {
   const { data: activities, isLoading } = useQuery<WellnessActivity[]>({
@@ -15,6 +16,7 @@ export default function Wellness() {
       return (await response.json()) as WellnessActivity[];
     },
   });
+  const [, setLocation] = useLocation();
 
   return (
     <div className="container mx-auto max-w-5xl px-4 py-6">
@@ -37,9 +39,9 @@ export default function Wellness() {
           Pause, unclench your jaw, and take three slow breaths before choosing a next step.
         </p>
         <div className="mt-4 flex flex-wrap gap-3">
-          <Button onClick={() => window.location.href = "/mood"}>Check In Mood</Button>
-          <Button variant="outline" onClick={() => window.location.href = "/journal"}>Write in Journal</Button>
-          <Button variant="outline" onClick={() => window.location.href = "/crisis"}>Open Crisis Support</Button>
+          <Button onClick={() => setLocation("/mood")}>Check In Mood</Button>
+          <Button variant="outline" onClick={() => setLocation("/journal")}>Write in Journal</Button>
+          <Button variant="outline" onClick={() => setLocation("/crisis")}>Open Crisis Support</Button>
         </div>
       </section>
 
