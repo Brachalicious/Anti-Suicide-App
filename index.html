@@ -42,7 +42,8 @@
         #guidedMeditationOverlay,
         #screamCircleOverlay,
         #breathingOverlay,
-        #liveMirrorModal {
+        #liveMirrorModal,
+        #ventSupportLog {
             scrollbar-width: auto;
             scrollbar-color: #ff1493 rgba(0, 0, 0, 0.8);
             overflow-y: scroll !important;
@@ -53,7 +54,8 @@
         #guidedMeditationOverlay::-webkit-scrollbar,
         #screamCircleOverlay::-webkit-scrollbar,
         #breathingOverlay::-webkit-scrollbar,
-        #liveMirrorModal::-webkit-scrollbar {
+        #liveMirrorModal::-webkit-scrollbar,
+        #ventSupportLog::-webkit-scrollbar {
             width: 16px;
         }
         
@@ -62,7 +64,8 @@
         #guidedMeditationOverlay::-webkit-scrollbar-track,
         #screamCircleOverlay::-webkit-scrollbar-track,
         #breathingOverlay::-webkit-scrollbar-track,
-        #liveMirrorModal::-webkit-scrollbar-track {
+        #liveMirrorModal::-webkit-scrollbar-track,
+        #ventSupportLog::-webkit-scrollbar-track {
             background: rgba(0, 0, 0, 0.9);
             border-radius: 10px;
         }
@@ -72,7 +75,8 @@
         #guidedMeditationOverlay::-webkit-scrollbar-thumb,
         #screamCircleOverlay::-webkit-scrollbar-thumb,
         #breathingOverlay::-webkit-scrollbar-thumb,
-        #liveMirrorModal::-webkit-scrollbar-thumb {
+        #liveMirrorModal::-webkit-scrollbar-thumb,
+        #ventSupportLog::-webkit-scrollbar-thumb {
             background: linear-gradient(180deg, #ff1493, #ec4899, #ff1493);
             border-radius: 10px;
             border: 3px solid rgba(0, 0, 0, 0.9);
@@ -84,7 +88,8 @@
         #guidedMeditationOverlay::-webkit-scrollbar-thumb:hover,
         #screamCircleOverlay::-webkit-scrollbar-thumb:hover,
         #breathingOverlay::-webkit-scrollbar-thumb:hover,
-        #liveMirrorModal::-webkit-scrollbar-thumb:hover {
+        #liveMirrorModal::-webkit-scrollbar-thumb:hover,
+        #ventSupportLog::-webkit-scrollbar-thumb:hover {
             background: linear-gradient(180deg, #ec4899, #ff1493, #ec4899);
             box-shadow: 0 0 20px rgba(255, 20, 147, 1), inset 0 0 10px rgba(255, 255, 255, 0.2);
         }
@@ -7453,7 +7458,7 @@ User's message: ${userMessage}`
             vent: {
                 title: "Vent It Out",
                 message: "Say it in your head or out loud. Get it out without judging yourself.",
-                steps: "Try saying: <strong>\"This is what I'm carrying right now...\"</strong><br>Write it down, whisper it, or just think it. Let it move through you.",
+                steps: '<textarea id="ventInput" placeholder="Type what you\'re carrying right now... let it move through you." style="width:100%; min-height:120px; background:rgba(255,255,255,0.05); color:white; border:1px solid #0ea5e9; border-radius:12px; padding:15px; margin-bottom:12px; font-family:inherit; font-size:15px; outline:none; resize:vertical;"></textarea><p style="color:#c4b5fd; font-size:14px;">Write it down, whisper it, or just think it. When you are ready to hear from me, hit continue.</p>',
                 showBreath: false
             },
             scream: {
@@ -7758,6 +7763,13 @@ User's message: ${userMessage}`
         }
 
         function showVentingSupport() {
+            const ventInput = document.getElementById('ventInput');
+            let userText = '';
+            if (ventInput) {
+                userText = ventInput.value.trim();
+                // Input is cleared later after being added to log
+            }
+
             const ventSupportMessages = [
                 "Thank you for being brave enough to express your feelings. That takes real courage. 💙",
                 "Your feelings are valid and important. I hear you, and I'm glad you're expressing them. 💙",
@@ -7765,7 +7777,10 @@ User's message: ${userMessage}`
                 "Thank you for trusting me with this. Your feelings matter deeply. 💙",
                 "I see your pain, and it's real. You deserve compassion—especially from yourself. 💙",
                 "Expressing your feelings is an act of self-love. You're taking care of yourself right now. 💙",
-                "Your voice matters. Your feelings matter. You matter. 💙"
+                "Your voice matters. Your feelings matter. You matter. 💙",
+                "I am here holding space for you. Take as much time as you need. 💙",
+                "You are stronger than you feel in this moment. 💙",
+                "Processing your emotions is hard work. You're doing great. 💙"
             ];
             
             const randomMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
@@ -7775,24 +7790,45 @@ User's message: ${userMessage}`
             const guideSteps = document.getElementById('guideSteps');
             const btn = document.getElementById('guideNextBtn');
             
-            guideTitle.textContent = '💜 You Did That';
-            guideMessage.textContent = randomMessage;
-            guideSteps.innerHTML = `
-                <div style="text-align:left; color:#e9d5ff; line-height:1.8; margin-top:16px;">
-                    <p style="font-weight:600; margin-bottom:12px;">💡 Next Steps:</p>
-                    <ul style="margin-left:20px; list-style:disc;">
-                        <li>Take a moment to acknowledge your feelings</li>
-                        <li>If you're ready, explore breathing or grounding exercises (in their separate tabs)</li>
-                        <li>Reach out to someone you trust if you need to talk</li>
-                        <li>Save this moment to your diary to track your emotions over time</li>
-                    </ul>
-                    <p style="margin-top:16px; font-size:14px; color:#d1fae5; font-style:italic;">
-                        Remember: Processing your feelings is a sign of strength, not weakness.
+            guideTitle.textContent = '💜 Venting Support';
+            guideMessage.textContent = 'I hear you. Keep letting it out.';
+
+            let ventLog = document.getElementById('ventSupportLog');
+            if (!ventLog) {
+                guideSteps.innerHTML = `
+                    <div id="ventSupportLog" style="text-align:left; color:#e9d5ff; line-height:1.8; margin-top:16px; max-height:240px; overflow-y:auto; border:1px solid rgba(255,255,255,0.15); border-radius:12px; padding:12px; margin-bottom:16px; background:rgba(0,0,0,0.2);">
+                    </div>
+                    <textarea id="ventInput" placeholder="Continue letting it out here..." style="width:100%; min-height:80px; background:rgba(255,255,255,0.05); color:white; border:1px solid #0ea5e9; border-radius:12px; padding:12px; margin-bottom:12px; font-family:inherit; font-size:14px; outline:none; resize:none;"></textarea>
+                    <p style="margin-top:8px; font-size:14px; color:#d1fae5; font-style:italic; text-align:center;">
+                        Processing your feelings is a sign of strength.
                     </p>
-                </div>
-            `;
+                `;
+                ventLog = document.getElementById('ventSupportLog');
+            }
+
+            if (userText) {
+                const userMsgDiv = document.createElement('div');
+                userMsgDiv.style.marginBottom = '8px';
+                userMsgDiv.style.color = '#c4b5fd';
+                userMsgDiv.innerHTML = `<strong>You:</strong> ${escapeHtml(userText)}`;
+                ventLog.appendChild(userMsgDiv);
+                // Clear input
+                if (ventInput) ventInput.value = '';
+            }
+
+            const randomMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
+            const botMsgDiv = document.createElement('div');
+            botMsgDiv.style.marginBottom = '12px';
+            botMsgDiv.style.padding = '10px';
+            botMsgDiv.style.background = 'rgba(255,20,147,0.15)';
+            botMsgDiv.style.borderRadius = '8px';
+            botMsgDiv.innerHTML = `<span>🤖</span> ${randomMessage}`;
+            ventLog.appendChild(botMsgDiv);
             
-            btn.textContent = 'Stay Here';
+            // Auto-scroll to the bottom of the log
+            setTimeout(() => { ventLog.scrollTop = ventLog.scrollHeight; }, 50);
+            
+            btn.textContent = 'Continue Venting';
             btn.onclick = function() {
                 ventSupportLocked = true;
                 showVentingSupport();
