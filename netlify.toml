@@ -16,7 +16,7 @@
     Cache-Control = "public, max-age=0, must-revalidate"
 
 [[headers]]
-  for = "/logo.svg"
+  for = "/my logo updated.svg"
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
