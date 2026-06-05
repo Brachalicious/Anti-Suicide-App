@@ -1566,7 +1566,6 @@
             <button class="nav-item" onclick="showSection('mood'); closeMobileNav()">📓 My Diary</button>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
-        </nav>
         </div><!-- end nav-mobile-wrapper -->
 
         <!-- Crisis Skills Section -->
@@ -5764,7 +5763,9 @@
             selectedParent = type;
             const options = document.querySelectorAll('.parent-option');
             options.forEach(opt => opt.classList.remove('selected'));
-            event.currentTarget.classList.add('selected');
+            // Safe event handling
+            const e = (typeof event !== 'undefined') ? event : window.event;
+            if (e && e.currentTarget) e.currentTarget.classList.add('selected');
             
             const parent = parentMessages[type];
             document.getElementById('welcomeMessage').textContent = parent.welcome;
@@ -7671,7 +7672,7 @@ User's message: ${userMessage}`
             
             // If user selects "Talk to MysticMinded³³ Bot", show the bot section
             if (action === 'talk') {
-                closeGuide();
+                closeStopOverlay();
                 showSection('mystic-bot');
                 return;
             }
@@ -7736,7 +7737,7 @@ User's message: ${userMessage}`
 
                 // Prefer Virtual Parent as default chat space
                 if (typeof showSection === 'function') {
-                    showSection('virtual-parent');
+                    showSection('mystic-bot');
                 }
                 // Optionally highlight Virtual Therapist tile too
                 const vtBtn = document.querySelector("button[onclick*='showSection(\\'virtual-therapist\\')']");
@@ -7826,8 +7827,8 @@ User's message: ${userMessage}`
             ventLog.appendChild(botMsgDiv);
             
             // Auto-scroll to the bottom of the log
-            setTimeout(() => { ventLog.scrollTop = ventLog.scrollHeight; }, 50);
-            
+            setTimeout(() => { if(ventLog) ventLog.scrollTop = ventLog.scrollHeight; }, 50);
+
             btn.textContent = 'Continue Venting';
             btn.onclick = function() {
                 ventSupportLocked = true;
@@ -8991,11 +8992,14 @@ User's message: ${userMessage}`
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             // Mark dropdown btn active if the section belongs to it
             const dropBtn = document.getElementById('crisisToolsBtn');
-            if (crisisToolsSections.includes(section)) {
+            const isDropdownSection = crisisToolsSections.includes(section);
+            if (isDropdownSection) {
                 dropBtn && dropBtn.classList.add('active');
             } else {
                 dropBtn && dropBtn.classList.remove('active');
-                const clickedBtn = event && event.target && event.target.closest('.nav-item');
+                // Safe event handling for active states
+                const e = (typeof event !== 'undefined') ? event : window.event;
+                const clickedBtn = e && e.target && e.target.closest('.nav-item');
                 if (clickedBtn) clickedBtn.classList.add('active');
             }
 
