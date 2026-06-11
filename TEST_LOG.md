@@ -20,6 +20,8 @@ This log tracks the feature checks performed from the current React/Vite + Expre
 | `npm audit --audit-level=moderate` | Pass | `npm audit fix` resolved the previously reported advisories; npm reports 0 vulnerabilities. |
 | Asset reference scan | Pass | No remaining React references to missing `/logo.png` or `/download-2026-04-05T09_23_05.jpg`. |
 | Built Express runtime smoke | Pass | `npm start` served `/health`, `/`, `/logo.svg`, `/favicon.svg`, and SPA fallback route `/mood` from the built app. |
+| Crisis call/text link smoke | Pass | Tests assert hotline calls are dialability-checked and Crisis Text Line uses `sms:741741?body=HOME`. |
+| Scroll/cutoff smoke | Pass | Tests assert modal content has vertical scrolling and the app prevents accidental horizontal overflow. |
 
 ## API smoke test results
 
@@ -33,6 +35,7 @@ Executed an in-process Express smoke test with `MemStorage`.
 | Wellness activities | Pass | `/api/wellness-activities` returns seeded activities. |
 | Mood entries | Pass | Create, list by user, and delete all succeeded. |
 | Journal entries | Pass | Create, update, and delete all succeeded at the API layer. |
+| Journal history | Pass | Smoke test confirms a saved journal entry is returned by the history/list endpoint. |
 | Emergency contacts | Pass | Create, update, and delete all succeeded. |
 | Safety plans | Pass | Missing plan returns 404; create and update succeeded. |
 | User profiles | Pass | Create and update succeeded. |
@@ -53,7 +56,7 @@ Executed an in-process Express smoke test with `MemStorage`.
 | Virtual Parent session log | Pass with source/build verification | Existing save/restore/share/play/delete logic is now exposed in the UI and compiles. Browser localStorage and speech playback should still be manually tested. |
 | Resources | Pass with source/build verification | Static route builds. External links were not opened from this environment. |
 | Safety Plan | Pass with API verification; browser pending | Create/update API passed. UI has five editable sections plus emergency guidance; browser persistence flow needs manual/browser automation. |
-| Journal | Pass | Journal API CRUD passed and the React Journal page now supports create, edit, delete, and history display. |
+| Journal | Pass | Journal API CRUD passed and the React Journal page now supports create, edit, delete, history display, and browser localStorage mirroring for deployment reliability. |
 | Wellness | Pass with API/source verification | Seeded wellness activities returned and route builds. |
 | Support | Pass with source/build verification | Static support route and navigation actions build; button clicks need browser verification. |
 | Legacy root `index.html` app | Pass script parse check | Existing `check-all-scripts.js` reports all inline script blocks OK. |
@@ -75,6 +78,9 @@ Executed an in-process Express smoke test with `MemStorage`.
 9. Added a working Crisis Support volume button using browser speech synthesis.
 10. Updated environment/deploy documentation for `GEMINI_API_KEY` and optional `VITE_API_BASE_URL`.
 11. Resolved npm audit findings; current audit reports 0 vulnerabilities.
+12. Sanitized crisis call links so only dialable numbers use `tel:`; text-only resources use SMS and directory resources show as non-call labels.
+13. Added browser-side diary mirroring so Journal entries remain visible on-device even if serverless memory resets.
+14. Hardened modal/global overflow behavior so content can scroll instead of cutting off controls.
 
 ## Remaining risks and follow-ups
 
