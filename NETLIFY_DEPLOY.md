@@ -10,14 +10,19 @@ Add these in: Site Settings → Environment Variables
    - Get your key from Google AI Studio: https://makersuite.google.com/app/apikey
    - Keep it in your `.env` file (already in .gitignore)
 
+### Optional:
+2. **VITE_API_BASE_URL** = `https://your-api-host.example.com`
+   - Leave unset for Netlify deploys that use the included `netlify/functions/api.ts` function.
+   - Set this only when the React frontend is hosted separately from the API.
+
 ### For Google Authentication (To Be Added):
-2. **GOOGLE_CLIENT_ID** = `your_google_client_id_here`
+3. **GOOGLE_CLIENT_ID** = `your_google_client_id_here`
    - Get from: https://console.cloud.google.com/apis/credentials
    
-3. **GOOGLE_CLIENT_SECRET** = `your_google_client_secret_here`
+4. **GOOGLE_CLIENT_SECRET** = `your_google_client_secret_here`
    - Get from: https://console.cloud.google.com/apis/credentials
 
-4. **SESSION_SECRET** = `generate_a_random_32_character_string`
+5. **SESSION_SECRET** = `generate_a_random_32_character_string`
    - Generate with: `openssl rand -base64 32`
 
 ## Build Settings
@@ -39,8 +44,8 @@ These are already configured in `netlify.toml`:
 ### Issue 2: API Routes Don't Work
 **Cause:** Serverless functions not properly configured
 **Solution:**
-- Netlify automatically converts Express routes to serverless functions
-- API routes redirect to `/.netlify/functions/server` (configured in netlify.toml)
+- API routes redirect to the included `/.netlify/functions/api` wrapper (configured in netlify.toml)
+- Confirm the deploy includes `netlify/functions/api.ts`
 
 ### Issue 3: Environment Variables Not Working
 **Cause:** Variables not set in Netlify dashboard

@@ -30,6 +30,16 @@ export default function CrisisSupport() {
     setLocation("/virtual-parent");
   };
 
+  const handleReadSupportMessage = () => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(
+      "You are not alone. If you are in immediate danger, call 988, text HOME to 741741, or call emergency services now. You can also use the coping strategies and safety plan on this page to get through the next few minutes."
+    );
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
+  };
+
   if (isLoading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
@@ -195,7 +205,7 @@ export default function CrisisSupport() {
               <MessageCircle className="mr-2 h-4 w-4" />
               Start Talking
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleReadSupportMessage}>
               <Volume2 className="mr-2 h-4 w-4" />
               Volume
             </Button>

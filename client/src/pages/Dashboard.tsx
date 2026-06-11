@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Heart, BookOpen, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { apiUrl } from "@/lib/apiBase";
 import type { MoodEntry, JournalEntry } from "@shared/schema";
 import { useLocation } from "wouter";
 
@@ -12,7 +13,7 @@ export default function Dashboard() {
   const { data: recentMoods } = useQuery<MoodEntry[]>({
     queryKey: ["/api/mood-entries/" + currentUserId],
     queryFn: async () => {
-      const response = await fetch(`/api/mood-entries/${currentUserId}`);
+      const response = await fetch(apiUrl(`/api/mood-entries/${currentUserId}`));
       if (!response.ok) {
         throw new Error(`Failed to load mood entries (${response.status})`);
       }
@@ -24,7 +25,7 @@ export default function Dashboard() {
   const { data: recentJournals } = useQuery<JournalEntry[]>({
     queryKey: ["/api/journal-entries/" + currentUserId],
     queryFn: async () => {
-      const response = await fetch(`/api/journal-entries/${currentUserId}`);
+      const response = await fetch(apiUrl(`/api/journal-entries/${currentUserId}`));
       if (!response.ok) {
         throw new Error(`Failed to load journal entries (${response.status})`);
       }
