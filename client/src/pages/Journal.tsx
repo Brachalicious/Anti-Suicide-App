@@ -8,6 +8,62 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import type { InsertJournalEntry, JournalEntry } from "@shared/schema";
 
+const LOCAL_JOURNAL_KEY = "mindcare-journal-entries";
+
+function createLocalId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `journal-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
+}
+
+function loadLocalEntries(userId: string): JournalEntry[] {
+  try {
+    const raw = localStorage.getItem(LOCAL_JOURNAL_KEY);
+    if (!raw) return [];
+    const parsed = JSON.parse(raw) as JournalEntry[];
+    if (!Array.isArray(parsed)) return [];
+    return parsed
+      .filter((entry): entry is JournalEntry => {
+        return (
+          entry &&
+          typeof entry.id === "string" &&
+          entry.userId === userId &&
+          typeof entry.content === "string" &&
+          typeof entry.timestamp === "string"
+        );
+      })
+      .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+  } catch {
+    return [];
+  }
+}
+
+function saveLocalEntries(entries: JournalEntry[]) {
+  try {
+    localStorage.setItem(LOCAL_JOURNAL_KEY, JSON.stringify(entries));
+  } catch {
+    // Local storage can be unavailable in private modes; API save still handles the primary path.
+  }
+}
+
+function upsertLocalEntry(entry: JournalEntry) {
+  const allEntries = loadLocalEntries(entry.userId);
+  saveLocalEntries([entry, ...allEntries.filter((item) => item.id !== entry.id)]);
+}
+
+function removeLocalEntry(userId: string, id: string) {
+  saveLocalEntries(loadLocalEntries(userId).filter((entry) => entry.id !== id));
+}
+
+function mergeJournalEntries(apiEntries: JournalEntry[], localEntries: JournalEntry[]) {
+  const byId = new Map<string, JournalEntry>();
+  [...localEntries, ...apiEntries].forEach((entry) => byId.set(entry.id, entry));
+  return Array.from(byId.values()).sort(
+    (a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime()
+  );
+}
+
 export default function Journal() {
   const [currentUserId] = useState("user-1");
   const [title, setTitle] = useState("");
@@ -18,10 +74,17 @@ export default function Journal() {
 
   const { data: entries, isLoading } = useQuery<JournalEntry[]>({
     queryKey: ["/api/journal-entries", currentUserId],
-    queryFn: () =>
-      apiRequest(`/api/journal-entries/${currentUserId}`, {
-        method: "GET",
-      }),
+    queryFn: async () => {
+      const localEntries = loadLocalEntries(currentUserId);
+      try {
+        const apiEntries = await apiRequest(`/api/journal-entries/${currentUserId}`, {
+          method: "GET",
+        });
+        return mergeJournalEntries(apiEntries as JournalEntry[], localEntries);
+      } catch {
+        return localEntries;
+      }
+    },
   });
 
   const resetForm = () => {
@@ -32,19 +95,32 @@ export default function Journal() {
   };
 
   const saveJournalMutation = useMutation({
-    mutationFn: (entry: InsertJournalEntry) => {
+    mutationFn: async (entry: InsertJournalEntry): Promise<JournalEntry> => {
+      const localEntry: JournalEntry = {
+        ...entry,
+        id: editingEntry?.id ?? createLocalId(),
+      };
       if (editingEntry) {
-        return apiRequest(`/api/journal-entries/${editingEntry.id}`, {
-          method: "PATCH",
+        try {
+          return await apiRequest(`/api/journal-entries/${editingEntry.id}`, {
+            method: "PATCH",
+            body: JSON.stringify(entry),
+          });
+        } catch {
+          return localEntry;
+        }
+      }
+      try {
+        return await apiRequest("/api/journal-entries", {
+          method: "POST",
           body: JSON.stringify(entry),
         });
+      } catch {
+        return localEntry;
       }
-      return apiRequest("/api/journal-entries", {
-        method: "POST",
-        body: JSON.stringify(entry),
-      });
     },
-    onSuccess: async () => {
+    onSuccess: async (savedEntry) => {
+      upsertLocalEntry(savedEntry);
       await queryClient.invalidateQueries({ queryKey: ["/api/journal-entries", currentUserId] });
       toast({
         title: editingEntry ? "Journal entry updated" : "Journal entry saved",
@@ -62,11 +138,18 @@ export default function Journal() {
   });
 
   const deleteJournalMutation = useMutation({
-    mutationFn: (id: string) =>
-      apiRequest(`/api/journal-entries/${id}`, {
-        method: "DELETE",
-      }),
-    onSuccess: async () => {
+    mutationFn: async (id: string) => {
+      try {
+        await apiRequest(`/api/journal-entries/${id}`, {
+          method: "DELETE",
+        });
+      } catch {
+        // Local mirror still removes the entry if the serverless API is unavailable or reset.
+      }
+      return id;
+    },
+    onSuccess: async (id) => {
+      removeLocalEntry(currentUserId, id);
       await queryClient.invalidateQueries({ queryKey: ["/api/journal-entries", currentUserId] });
       toast({
         title: "Journal entry deleted",

@@ -20,8 +20,16 @@ export default function CrisisSupport() {
     queryFn: () => fetch(apiUrl("/api/resources?emergency=true")).then((res) => res.json()),
   });
 
+  const getDialHref = (phoneNumber: string) => {
+    const normalized = phoneNumber.replace(/[^\d+]/g, "");
+    if (!normalized || normalized === "+") return null;
+    return `tel:${normalized}`;
+  };
+
   const callHotline = (phoneNumber: string) => {
-    window.location.href = `tel:${phoneNumber}`;
+    const href = getDialHref(phoneNumber);
+    if (!href) return;
+    window.location.href = href;
   };
 
   const handleStartTalking = () => {
@@ -169,13 +177,27 @@ export default function CrisisSupport() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => callHotline(hotline.phoneNumber)}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    <Phone className="mr-2 h-4 w-4" />
-                    {hotline.phoneNumber}
-                  </Button>
+                  {getDialHref(hotline.phoneNumber) ? (
+                    <Button
+                      onClick={() => callHotline(hotline.phoneNumber)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      <Phone className="mr-2 h-4 w-4" />
+                      {hotline.phoneNumber}
+                    </Button>
+                  ) : hotline.phoneNumber.toLowerCase().includes("text") ? (
+                    <Button
+                      onClick={() => window.location.href = "sms:741741?body=HOME"}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Text 741741
+                    </Button>
+                  ) : (
+                    <div className="rounded-md border px-3 py-2 text-center text-sm text-muted-foreground">
+                      {hotline.phoneNumber}
+                    </div>
+                  )}
                   {hotline.website && (
                     <Button
                       variant="outline"

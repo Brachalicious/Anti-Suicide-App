@@ -13,9 +13,9 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center p-4">
-      <div className="bg-card rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
-        <div className="flex items-center justify-between p-6 border-b">
+    <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center overflow-y-auto p-4">
+      <div className="bg-card rounded-lg max-w-md w-full max-h-[90vh] overflow-hidden flex flex-col">
+        <div className="flex shrink-0 items-center justify-between p-6 border-b">
           <h2 className="text-xl font-semibold">{title}</h2>
           <Button
             variant="ghost"
@@ -26,7 +26,7 @@ export function Modal({ isOpen, onClose, title, children }: ModalProps) {
             <X className="h-4 w-4" />
           </Button>
         </div>
-        <div className="p-6">
+        <div className="overflow-y-auto p-6">
           {children}
         </div>
       </div>

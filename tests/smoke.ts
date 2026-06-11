@@ -60,6 +60,17 @@ function assertDeployConfig() {
   assert.ok(fs.existsSync(path.resolve("public/logo.svg")), "logo.svg must exist");
   assert.ok(fs.existsSync(path.resolve("public/favicon.svg")), "favicon.svg must exist");
   assert.ok(fs.existsSync(path.resolve("netlify/functions/api.ts")), "Netlify API function must exist");
+
+  const crisisPage = fs.readFileSync(path.resolve("client/src/pages/CrisisSupport.tsx"), "utf8");
+  assert.doesNotMatch(crisisPage, /tel:\$\{phoneNumber\}/, "Hotlines must not create unsanitized tel links");
+  assert.match(crisisPage, /sms:741741\?body=HOME/, "Crisis Text Line must use an sms link");
+  assert.match(crisisPage, /getDialHref/, "Crisis hotline calls must be dialability-checked");
+
+  const modal = fs.readFileSync(path.resolve("client/src/components/ui/modal.tsx"), "utf8");
+  assert.match(modal, /overflow-y-auto/, "Modal content must scroll vertically");
+
+  const globalCss = fs.readFileSync(path.resolve("client/src/index.css"), "utf8");
+  assert.match(globalCss, /overflow-x: hidden/, "App should prevent accidental horizontal cut-off");
 }
 
 async function assertApiSmoke(baseUrl: string) {
@@ -120,6 +131,12 @@ async function assertApiSmoke(baseUrl: string) {
   });
   assert.equal(journalCreate.response.status, 201);
   const journal = requireObject(journalCreate.body);
+
+  const journalList = await request(baseUrl, "/api/journal-entries/smoke-user");
+  assert.equal(journalList.response.status, 200);
+  assert.ok(
+    requireArray(journalList.body).some((entry) => (entry as Record<string, unknown>).id === journal.id)
+  );
 
   const journalPatch = await request(baseUrl, `/api/journal-entries/${journal.id}`, {
     method: "PATCH",
