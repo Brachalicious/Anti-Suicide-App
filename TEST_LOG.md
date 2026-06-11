@@ -12,13 +12,14 @@ This log tracks the feature checks performed from the current React/Vite + Expre
 
 | Check | Result | Notes |
 | --- | --- | --- |
-| `npm ci` | Pass | Installed dependencies from `package-lock.json`. npm reported 9 dependency audit findings. |
-| `npm test` | Fail - no test script | Current script is `echo "Error: no test specified" && exit 1`; no automated unit test runner exists yet. |
+| `npm ci` | Pass | Installed dependencies from `package-lock.json`. |
+| `npm test` | Pass | Runs `tsx tests/smoke.ts` against deploy config and core API behavior. |
 | `npx tsc --noEmit` | Pass | Initially failed on unused Virtual Parent session-log code; fixed by surfacing the session-log UI. |
 | `npm run build` | Pass | Vite production build completed successfully. Warnings remain for module type and stale Browserslist data. |
 | `node check-all-scripts.js` | Pass | Legacy inline scripts in root `index.html` parse successfully. |
-| `npm audit --audit-level=moderate` | Fail | 9 advisories: 3 moderate, 5 high, 1 critical. `npm audit fix` is available but was not run in this pass. |
+| `npm audit --audit-level=moderate` | Pass | `npm audit fix` resolved the previously reported advisories; npm reports 0 vulnerabilities. |
 | Asset reference scan | Pass | No remaining React references to missing `/logo.png` or `/download-2026-04-05T09_23_05.jpg`. |
+| Built Express runtime smoke | Pass | `npm start` served `/health`, `/`, `/logo.svg`, `/favicon.svg`, and SPA fallback route `/mood` from the built app. |
 
 ## API smoke test results
 
@@ -52,7 +53,7 @@ Executed an in-process Express smoke test with `MemStorage`.
 | Virtual Parent session log | Pass with source/build verification | Existing save/restore/share/play/delete logic is now exposed in the UI and compiles. Browser localStorage and speech playback should still be manually tested. |
 | Resources | Pass with source/build verification | Static route builds. External links were not opened from this environment. |
 | Safety Plan | Pass with API verification; browser pending | Create/update API passed. UI has five editable sections plus emergency guidance; browser persistence flow needs manual/browser automation. |
-| Journal | Partial pass | Journal API CRUD passed. The React journal page currently provides prompts and navigation only; no entry create/edit UI is present on that route. |
+| Journal | Pass | Journal API CRUD passed and the React Journal page now supports create, edit, delete, and history display. |
 | Wellness | Pass with API/source verification | Seeded wellness activities returned and route builds. |
 | Support | Pass with source/build verification | Static support route and navigation actions build; button clicks need browser verification. |
 | Legacy root `index.html` app | Pass script parse check | Existing `check-all-scripts.js` reports all inline script blocks OK. |
@@ -67,11 +68,16 @@ Executed an in-process Express smoke test with `MemStorage`.
 2. Exposed the Virtual Parent session-log controls so saved conversation tracking is reachable from the UI.
 3. Kept active recording updates on a stable session id so live recording updates replace the same saved log instead of creating duplicate log entries.
 4. Regenerated tracked `dist/index.html` from the updated source.
+5. Fixed Netlify deployment settings to build the Vite app, publish `dist`, and route `/api/*` to a serverless API function.
+6. Added `netlify/functions/api.ts` so the existing Express router can run on Netlify Functions.
+7. Added a real `npm test` smoke suite for deploy config and core API behavior.
+8. Updated the Journal route with working create/edit/delete/list UI.
+9. Added a working Crisis Support volume button using browser speech synthesis.
+10. Updated environment/deploy documentation for `GEMINI_API_KEY` and optional `VITE_API_BASE_URL`.
+11. Resolved npm audit findings; current audit reports 0 vulnerabilities.
 
 ## Remaining risks and follow-ups
 
-- Add a real `npm test` script and test runner so CI can exercise unit/component tests.
-- Resolve `npm audit` advisories, especially the critical `protobufjs` advisory and high-severity `vite`, `rollup`, `drizzle-orm`, `picomatch`, and `path-to-regexp` advisories.
 - Provide `GEMINI_API_KEY` in a safe environment before testing live Virtual Parent AI responses.
 - Add browser automation or manual QA for UI interactions, localStorage persistence, tel/sms links, responsive layout, and cross-browser behavior.
-- Decide whether the Journal route should include full entry create/edit/delete UI, since API support exists but the current React page is informational.
+- Netlify Functions currently use in-memory storage, so mood/journal/safety data is suitable for MVP smoke testing but will reset across cold starts/redeploys. Persistent storage should be added before relying on saved user data in production.
