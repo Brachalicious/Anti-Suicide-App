@@ -56,7 +56,7 @@ export default function Navigation() {
               title="Learn about MysticMinded33"
             >
               <img
-                src="/logo.png"
+                src="/logo.svg"
                 alt="MindCare"
                 className="h-9 w-9 rounded-full object-contain cursor-pointer"
               />
@@ -167,7 +167,7 @@ export default function Navigation() {
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <img
-              src="/download-2026-04-05T09_23_05.jpg"
+              src="/logo.svg"
               alt="MysticMinded33"
               className="w-16 h-16 rounded-full object-cover border-2 border-pink-300"
             />
