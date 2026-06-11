@@ -1,5 +1,6 @@
 import "dotenv/config";
 import express from "express";
+import fs from "fs";
 import path from "path";
 import { fileURLToPath } from "url";
 import { createRouter } from "./routes.js";
@@ -12,6 +13,11 @@ const app = express();
 const PORT = parseInt(process.env.PORT || "3000");
 
 const storage = new MemStorage();
+const distPath = path.resolve(__dirname, "..", "dist");
+const distIndexPath = path.join(distPath, "index.html");
+const fallbackIndexPath = fs.existsSync(distIndexPath)
+  ? distIndexPath
+  : path.resolve(__dirname, "..", "index.html");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", "*");
@@ -23,6 +29,17 @@ app.use((req, res, next) => {
   next();
 });
 app.use(express.json({ limit: "50mb" }));
+
+app.use(
+  express.static(distPath, {
+    maxAge: process.env.NODE_ENV === "production" ? "1h" : 0,
+    setHeaders(res, filePath) {
+      if (filePath.endsWith(".html")) {
+        res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
+      }
+    },
+  })
+);
 
 const publicPath = path.resolve(__dirname, "..", "public");
 // Same files at /file and /public/file so static hosts (Netlify root publish) and Express match
@@ -59,7 +76,7 @@ app.use(router);
 app.use((req, res) => {
   console.log("Catch-all route hit for:", req.path);
   res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, max-age=0");
-  res.sendFile(path.resolve(__dirname, "..", "index.html"));
+  res.sendFile(fallbackIndexPath);
 });
 
 app.listen(PORT, "0.0.0.0", () => {

@@ -20,14 +20,32 @@ export default function CrisisSupport() {
     queryFn: () => fetch(apiUrl("/api/resources?emergency=true")).then((res) => res.json()),
   });
 
+  const getDialHref = (phoneNumber: string) => {
+    const normalized = phoneNumber.replace(/[^\d+]/g, "");
+    if (!normalized || normalized === "+") return null;
+    return `tel:${normalized}`;
+  };
+
   const callHotline = (phoneNumber: string) => {
-    window.location.href = `tel:${phoneNumber}`;
+    const href = getDialHref(phoneNumber);
+    if (!href) return;
+    window.location.href = href;
   };
 
   const handleStartTalking = () => {
     if (ventLaunchRef.current) return;
     ventLaunchRef.current = true;
     setLocation("/virtual-parent");
+  };
+
+  const handleReadSupportMessage = () => {
+    if (!("speechSynthesis" in window)) return;
+    window.speechSynthesis.cancel();
+    const utterance = new SpeechSynthesisUtterance(
+      "You are not alone. If you are in immediate danger, call 988, text HOME to 741741, or call emergency services now. You can also use the coping strategies and safety plan on this page to get through the next few minutes."
+    );
+    utterance.rate = 0.95;
+    window.speechSynthesis.speak(utterance);
   };
 
   if (isLoading) {
@@ -159,13 +177,27 @@ export default function CrisisSupport() {
                   </div>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Button
-                    onClick={() => callHotline(hotline.phoneNumber)}
-                    className="bg-primary hover:bg-primary/90"
-                  >
-                    <Phone className="mr-2 h-4 w-4" />
-                    {hotline.phoneNumber}
-                  </Button>
+                  {getDialHref(hotline.phoneNumber) ? (
+                    <Button
+                      onClick={() => callHotline(hotline.phoneNumber)}
+                      className="bg-primary hover:bg-primary/90"
+                    >
+                      <Phone className="mr-2 h-4 w-4" />
+                      {hotline.phoneNumber}
+                    </Button>
+                  ) : hotline.phoneNumber.toLowerCase().includes("text") ? (
+                    <Button
+                      onClick={() => window.location.href = "sms:741741?body=HOME"}
+                      className="bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <MessageCircle className="mr-2 h-4 w-4" />
+                      Text 741741
+                    </Button>
+                  ) : (
+                    <div className="rounded-md border px-3 py-2 text-center text-sm text-muted-foreground">
+                      {hotline.phoneNumber}
+                    </div>
+                  )}
                   {hotline.website && (
                     <Button
                       variant="outline"
@@ -195,7 +227,7 @@ export default function CrisisSupport() {
               <MessageCircle className="mr-2 h-4 w-4" />
               Start Talking
             </Button>
-            <Button variant="outline">
+            <Button variant="outline" onClick={handleReadSupportMessage}>
               <Volume2 className="mr-2 h-4 w-4" />
               Volume
             </Button>

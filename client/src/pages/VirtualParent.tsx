@@ -256,7 +256,7 @@ export default function VirtualParent() {
   const todaysAffirmation = getTodaysAffirmation();
   const parentName = parentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
   const parentEmoji = parentType === "mommy" ? "👩‍👧" : "👨‍👧";
-  const parentAvatarSrc = "/download-2026-04-05T09_23_05.jpg";
+  const parentAvatarSrc = "/logo.svg";
 
   const buildTranscript = (sessionMessages: ChatMessage[], sessionParentType: "mommy" | "daddy") => {
     const speakerName = sessionParentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
@@ -293,7 +293,7 @@ export default function VirtualParent() {
     if (messagesRef.current.length === 0) return;
 
     const nextTitle = sessionTitle.trim() || `${todaysAffirmation.theme} session`;
-    const session = snapshotSession(nextTitle, parentType, messagesRef.current);
+    const session = snapshotSession(nextTitle, parentType, messagesRef.current, liveSessionIdRef.current ?? undefined);
     liveSessionIdRef.current = session.id;
     upsertSession(session);
   };
@@ -791,6 +791,140 @@ export default function VirtualParent() {
           <p className="text-center text-xs text-muted-foreground">— {todaysAffirmation.source}</p>
         </CardContent>
       </Card>
+
+      <Card className="mt-6">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessageCircleHeart className="h-5 w-5 text-primary" />
+            Session log
+          </CardTitle>
+          <CardDescription>{currentSessionSummary}</CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor="session-title">Session title</Label>
+            <input
+              id="session-title"
+              value={sessionTitle}
+              onChange={(e) => setSessionTitle(e.target.value)}
+              placeholder={`${todaysAffirmation.theme} session`}
+              className="mt-2 w-full rounded-lg border bg-background px-3 py-2 text-sm"
+            />
+          </div>
+
+          <div className="flex flex-wrap gap-3">
+            <Button variant={isRecordingSession ? "destructive" : "outline"} onClick={handleToggleRecording}>
+              <Square className="mr-2 h-4 w-4" />
+              {isRecordingSession ? "Stop Recording" : "Record Session"}
+            </Button>
+            <Button onClick={handleSaveSession} disabled={messages.length === 0}>
+              <Save className="mr-2 h-4 w-4" />
+              Save Log
+            </Button>
+            <Button
+              variant="outline"
+              onClick={() => void handleShareSession(currentPreviewSession ?? undefined)}
+              disabled={!currentPreviewSession}
+            >
+              <Share2 className="mr-2 h-4 w-4" />
+              Share Current
+            </Button>
+            <Button variant="outline" onClick={() => setIsSessionsModalOpen(true)}>
+              View Saved Logs ({savedSessions.length})
+            </Button>
+          </div>
+
+          {statusMessage && (
+            <p className="rounded-lg bg-muted px-3 py-2 text-sm text-muted-foreground" role="status">
+              {statusMessage}
+            </p>
+          )}
+
+          {liveSessionPreview && (
+            <div className="rounded-lg border border-primary/20 bg-primary/5 p-3 text-sm text-muted-foreground">
+              Recording "{liveSessionPreview.title}" with {liveSessionPreview.messages.length} messages.
+            </div>
+          )}
+
+          {recentSavedSessions.length > 0 && (
+            <div className="space-y-3">
+              <h4 className="text-sm font-medium">Recent saved logs</h4>
+              {recentSavedSessions.map((session) => {
+                const isPlayingSession = playbackState.sessionId === session.id && playbackState.isPlaying;
+                return (
+                  <div key={session.id} className="rounded-lg border p-3">
+                    <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                      <div>
+                        <div className="font-medium">{session.title}</div>
+                        <div className="text-xs text-muted-foreground">
+                          {formatTimestamp(session.updatedAt)} • {session.messages.length} messages • {session.parentType}
+                        </div>
+                      </div>
+                      <div className="flex flex-wrap gap-2">
+                        <Button variant="outline" size="sm" onClick={() => handleRestoreSession(session)}>
+                          <RotateCcw className="mr-2 h-3 w-3" />
+                          Restore
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => handlePlaybackToggle(session)}>
+                          {isPlayingSession && !playbackState.isPaused ? (
+                            <Pause className="mr-2 h-3 w-3" />
+                          ) : (
+                            <Play className="mr-2 h-3 w-3" />
+                          )}
+                          {isPlayingSession && !playbackState.isPaused ? "Pause" : "Play"}
+                        </Button>
+                        <Button variant="outline" size="sm" onClick={() => void handleShareSession(session)}>
+                          <Share2 className="mr-2 h-3 w-3" />
+                          Share
+                        </Button>
+                        <Button variant="destructive" size="sm" onClick={() => handleDeleteSession(session.id)}>
+                          <Trash2 className="mr-2 h-3 w-3" />
+                          Delete
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
+      <Modal isOpen={isSessionsModalOpen} onClose={() => setIsSessionsModalOpen(false)} title="Saved session logs">
+        {savedSessions.length === 0 ? (
+          <p className="text-sm text-muted-foreground">No saved logs yet. Start a conversation, then save it here.</p>
+        ) : (
+          <div className="space-y-3">
+            {savedSessions.map((session) => (
+              <div key={session.id} className="rounded-lg border p-3">
+                <div className="font-medium">{session.title}</div>
+                <div className="text-xs text-muted-foreground">
+                  {formatTimestamp(session.updatedAt)} • {session.messages.length} messages • {session.affirmationTheme}
+                </div>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Button variant="outline" size="sm" onClick={() => handleRestoreSession(session)}>
+                    <RotateCcw className="mr-2 h-3 w-3" />
+                    Restore
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => handlePlaybackToggle(session)}>
+                    <Play className="mr-2 h-3 w-3" />
+                    Play
+                  </Button>
+                  <Button variant="outline" size="sm" onClick={() => void handleShareSession(session)}>
+                    <Share2 className="mr-2 h-3 w-3" />
+                    Share
+                  </Button>
+                  <Button variant="destructive" size="sm" onClick={() => handleDeleteSession(session.id)}>
+                    <Trash2 className="mr-2 h-3 w-3" />
+                    Delete
+                  </Button>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </Modal>
     </div>
   );
 }

@@ -5,8 +5,7 @@ import path from 'path';
 export default defineConfig({
   plugins: [react()],
   root: 'client',
-  // Default publicDir is `<root>/public`. Use a symlink `client/public` → `../public`
-  // so dev server's public allowlist matches paths like `/logo.svg` (publicDir outside root breaks this on some setups).
+  publicDir: '../public',
   build: {
     outDir: '../dist',
     emptyOutDir: true,
