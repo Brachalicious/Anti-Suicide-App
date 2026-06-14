@@ -1208,11 +1208,12 @@
         .logo-container img {
             position: absolute;
             z-index: 2;
-            width: 215px;
-            height: auto;
+            width: 80%;
+            height: 80%;
             left: 50%;
             top: 50%;
             transform: translate(calc(-50% - 14px), -50%);
+            object-fit: contain;
         }
 
         /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
@@ -1459,6 +1460,10 @@
 
         /* Logo + tap text: stack on very small phones */
         @media screen and (max-width: 480px) {
+            .logo-tap-row > div {
+                flex-direction: column !important;
+                transform: none !important;
+            }
             .logo-tap-row {
                 flex-direction: column !important;
                 align-items: center !important;
