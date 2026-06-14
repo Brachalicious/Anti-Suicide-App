@@ -12,6 +12,8 @@ No environment variables are required for the current non-AI Netlify deploy.
    - Leave unset for Netlify deploys that use the included `netlify/functions/api.ts` function.
    - Set this only when the React frontend is hosted separately from the API.
 
+See `API_FEATURE_AUDIT.md` for the full list of active and inactive API-backed features.
+
 ### For Google Authentication (To Be Added):
 2. **GOOGLE_CLIENT_ID** = `your_google_client_id_here`
    - Get from: https://console.cloud.google.com/apis/credentials

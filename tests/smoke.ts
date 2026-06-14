@@ -70,6 +70,15 @@ function assertDeployConfig() {
   const serverRoutes = fs.readFileSync(path.resolve("server/routes.ts"), "utf8");
   assert.doesNotMatch(serverRoutes, /virtual-parent|GEMINI_API_KEY|GoogleGenerativeAI/i);
 
+  const apiAudit = fs.readFileSync(path.resolve("API_FEATURE_AUDIT.md"), "utf8");
+  assert.match(apiAudit, /Required for current deploy\s*\n\s*None\./);
+  assert.match(apiAudit, /AI_INTEGRATIONS_OPENAI_API_KEY/);
+  assert.match(apiAudit, /not active/i);
+
+  const legacyIndex = fs.readFileSync(path.resolve("index.html"), "utf8");
+  const diaryNavMatches = legacyIndex.match(/showSection\('mood'\)[^>]*>📓 My Diary<\/button>/g) ?? [];
+  assert.equal(diaryNavMatches.length, 1, "My Diary should only appear under Emotional Support Tools");
+
   const crisisPage = fs.readFileSync(path.resolve("client/src/pages/CrisisSupport.tsx"), "utf8");
   assert.doesNotMatch(crisisPage, /tel:\$\{phoneNumber\}/, "Hotlines must not create unsanitized tel links");
   assert.match(crisisPage, /sms:741741\?body=HOME/, "Crisis Text Line must use an sms link");
