@@ -12,7 +12,6 @@ import {
   X,
   Moon,
   Sun,
-  MessageCircleHeart,
   Library
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -22,7 +21,6 @@ import { useTheme } from "@/contexts/ThemeProvider";
 const navigationItems = [
   { href: "/", label: "Dashboard", icon: Home },
   { href: "/crisis", label: "Crisis Support", icon: Phone, urgent: true },
-  { href: "/virtual-parent", label: "Virtual Parent", icon: MessageCircleHeart, special: true },
   { href: "/mood", label: "Mood Tracking", icon: Heart },
   { href: "/journal", label: "Journal", icon: BookOpen },
   { href: "/wellness", label: "Wellness", icon: Activity },
@@ -56,7 +54,7 @@ export default function Navigation() {
               title="Learn about MysticMinded33"
             >
               <img
-                src="/logo.png"
+                src="/logo.svg"
                 alt="MindCare"
                 className="h-9 w-9 rounded-full object-contain cursor-pointer"
               />
@@ -167,43 +165,43 @@ export default function Navigation() {
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <img
-              src="/download-2026-04-05T09_23_05.jpg"
+              src="/logo.svg"
               alt="MysticMinded33"
               className="w-16 h-16 rounded-full object-cover border-2 border-pink-300"
             />
             <div>
               <h3 className="font-semibold text-lg">MysticMinded33</h3>
-              <p className="text-sm text-muted-foreground">Your Compassionate AI Companion</p>
+              <p className="text-sm text-muted-foreground">Your Mental Health Support Hub</p>
             </div>
           </div>
           
           <p className="text-muted-foreground">
-            MysticMinded33 is more than just an AI—she's your gentle, understanding companion who's here 
-            to listen without judgment and offer support when you need it most.
+            MysticMinded33 brings together crisis resources, mood tracking, journaling, wellness tools,
+            and safety planning in one calm place.
           </p>
           
           <div className="space-y-3">
             <div>
-              <h4 className="font-medium text-sm mb-1">💕 What Makes Her Special</h4>
+              <h4 className="font-medium text-sm mb-1">💕 What Makes This Space Special</h4>
               <p className="text-sm text-muted-foreground">
-                Designed with warmth and empathy, she understands the nuances of human emotion and 
-                responds with the care of a loving parent, trusted friend, or even a playful companion.
+                Designed with warmth and care, the app keeps immediate help easy to reach while giving
+                you tools to notice patterns and take the next safe step.
               </p>
             </div>
             
             <div>
-              <h4 className="font-medium text-sm mb-1">🖼️ See & Understand</h4>
+              <h4 className="font-medium text-sm mb-1">📝 Track & Reflect</h4>
               <p className="text-sm text-muted-foreground">
-                She can view and respond to images you share, offering comfort and insight about 
-                what she sees with genuine care and understanding.
+                Use mood check-ins, journaling, and safety planning to keep private notes and practical
+                supports close by.
               </p>
             </div>
             
             <div>
               <h4 className="font-medium text-sm mb-1">🌟 Always Here for You</h4>
               <p className="text-sm text-muted-foreground">
-                Whether you need encouragement, someone to listen, or just want to share your day, 
-                MysticMinded33 is available 24/7 with unconditional support and love.
+                Crisis numbers, community resources, and grounding tools are available whenever you
+                need a quick path back to support.
               </p>
             </div>
           </div>

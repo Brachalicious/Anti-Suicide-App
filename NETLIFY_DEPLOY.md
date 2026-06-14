@@ -5,10 +5,14 @@
 Add these in: Site Settings → Environment Variables
 
 ### Required:
-1. **GEMINI_API_KEY** = `[Your API key from .env file]`
-   - ⚠️ **NEVER commit this to GitHub!**
-   - Get your key from Google AI Studio: https://makersuite.google.com/app/apikey
-   - Keep it in your `.env` file (already in .gitignore)
+No environment variables are required for the current non-AI Netlify deploy.
+
+### Optional:
+1. **VITE_API_BASE_URL** = `https://your-api-host.example.com`
+   - Leave unset for Netlify deploys that use the included `netlify/functions/api.ts` function.
+   - Set this only when the React frontend is hosted separately from the API.
+
+See `API_FEATURE_AUDIT.md` for the full list of active and inactive API-backed features.
 
 ### For Google Authentication (To Be Added):
 2. **GOOGLE_CLIENT_ID** = `your_google_client_id_here`
@@ -39,14 +43,14 @@ These are already configured in `netlify.toml`:
 ### Issue 2: API Routes Don't Work
 **Cause:** Serverless functions not properly configured
 **Solution:**
-- Netlify automatically converts Express routes to serverless functions
-- API routes redirect to `/.netlify/functions/server` (configured in netlify.toml)
+- API routes redirect to the included `/.netlify/functions/api` wrapper (configured in netlify.toml)
+- Confirm the deploy includes `netlify/functions/api.ts`
 
 ### Issue 3: Environment Variables Not Working
 **Cause:** Variables not set in Netlify dashboard
 **Solution:**
 - Go to: Site Settings → Environment Variables
-- Add all required variables listed above
+  - Add any optional variables you use
 - Redeploy after adding variables
 
 ## Deployment Steps
@@ -61,7 +65,7 @@ These are already configured in `netlify.toml`:
 2. **In Netlify Dashboard:**
    - Go to your site settings
    - Navigate to "Environment Variables"
-   - Add `GEMINI_API_KEY` with your API key
+   - Leave environment variables empty unless you are using optional split hosting or future auth
    - Click "Deploy" → "Trigger deploy" → "Deploy site"
 
 3. **After Google Auth Setup:**

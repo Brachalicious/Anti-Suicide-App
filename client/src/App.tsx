@@ -6,7 +6,6 @@ import Navigation from "@/components/Navigation";
 import Dashboard from "@/pages/Dashboard";
 import CrisisSupport from "@/pages/CrisisSupport";
 import MoodTracking from "@/pages/MoodTracking";
-import VirtualParent from "@/pages/VirtualParent";
 import Resources from "@/pages/Resources";
 import SafetyPlan from "@/pages/SafetyPlan";
 import Journal from "@/pages/Journal";
@@ -25,7 +24,6 @@ function App() {
               <Route path="/" component={Dashboard} />
               <Route path="/crisis" component={CrisisSupport} />
               <Route path="/mood" component={MoodTracking} />
-              <Route path="/virtual-parent" component={VirtualParent} />
               <Route path="/resources" component={Resources} />
               <Route path="/journal" component={Journal} />
               <Route path="/wellness" component={Wellness} />

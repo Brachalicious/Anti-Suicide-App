@@ -290,8 +290,8 @@ export default function SafetyPlan() {
             <Link href="/resources">
               <Button variant="outline">Open Resources</Button>
             </Link>
-            <Link href="/virtual-parent">
-              <Button variant="outline">Talk to Virtual Parent</Button>
+            <Link href="/support">
+              <Button variant="outline">Open Support</Button>
             </Link>
           </div>
         </section>

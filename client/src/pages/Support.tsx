@@ -1,4 +1,4 @@
-import { PhoneCall, MessageCircleHeart, ShieldCheck, Users } from "lucide-react";
+import { BookOpen, PhoneCall, ShieldCheck, Users } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
@@ -39,7 +39,7 @@ export default function Support() {
 
         <section className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-2">
-            <MessageCircleHeart className="h-5 w-5 text-primary" />
+            <BookOpen className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold">Gentle next steps</h2>
           </div>
           <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
@@ -59,8 +59,8 @@ export default function Support() {
             <Button variant="outline" onClick={() => setLocation("/journal")}>
               Write what you need
             </Button>
-            <Button variant="outline" onClick={() => setLocation("/virtual-parent")}>
-              Talk to Virtual Parent
+            <Button variant="outline" onClick={() => setLocation("/journal")}>
+              Write in Journal
             </Button>
             <Button variant="outline" onClick={() => setLocation("/resources")}>
               Open Resources
