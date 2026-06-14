@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Heart, BookOpen, Phone } from "lucide-react";
+import { Heart, Phone } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { MoodEntry, JournalEntry } from "@shared/schema";
+import type { MoodEntry } from "@shared/schema";
 import { useLocation } from "wouter";
 
 export default function Dashboard() {
@@ -17,18 +17,6 @@ export default function Dashboard() {
         throw new Error(`Failed to load mood entries (${response.status})`);
       }
       return (await response.json()) as MoodEntry[];
-    },
-    enabled: !!currentUserId,
-  });
-
-  const { data: recentJournals } = useQuery<JournalEntry[]>({
-    queryKey: ["/api/journal-entries/" + currentUserId],
-    queryFn: async () => {
-      const response = await fetch(`/api/journal-entries/${currentUserId}`);
-      if (!response.ok) {
-        throw new Error(`Failed to load journal entries (${response.status})`);
-      }
-      return (await response.json()) as JournalEntry[];
     },
     enabled: !!currentUserId,
   });
@@ -64,7 +52,7 @@ export default function Dashboard() {
       </div>
 
       {/* Recent Activity */}
-      <div className="grid md:grid-cols-2 gap-8">
+      <div className="grid gap-8">
         {/* Recent Mood Entries */}
         <div className="bg-card p-6 rounded-lg border">
           <h3 className="text-lg font-semibold mb-4">Recent Mood Check-ins</h3>
@@ -102,43 +90,6 @@ export default function Dashboard() {
               <p className="text-muted-foreground mb-4">No mood check-ins yet</p>
               <Button onClick={() => setLocation('/mood')}>
                 Record Your First Mood
-              </Button>
-            </div>
-          )}
-        </div>
-
-        {/* Recent Journal Entries */}
-        <div className="bg-card p-6 rounded-lg border">
-          <h3 className="text-lg font-semibold mb-4">Recent Journal Entries</h3>
-          {recentJournals && recentJournals.length > 0 ? (
-            <div className="space-y-3">
-              {recentJournals.slice(0, 3).map((journal: any) => (
-                <div key={journal.id} className="p-3 bg-muted rounded-lg">
-                  <div className="font-medium mb-1">
-                    {journal.title || "Untitled Entry"}
-                  </div>
-                  <div className="text-sm text-muted-foreground mb-2">
-                    {new Date(journal.timestamp).toLocaleDateString()}
-                  </div>
-                  <div className="text-sm line-clamp-2">
-                    {journal.content.substring(0, 100)}...
-                  </div>
-                </div>
-              ))}
-              <Button 
-                variant="outline" 
-                className="w-full mt-3"
-                onClick={() => setLocation('/journal')}
-              >
-                View All Entries
-              </Button>
-            </div>
-          ) : (
-            <div className="text-center py-8">
-              <BookOpen className="h-12 w-12 mx-auto mb-3 text-muted-foreground" />
-              <p className="text-muted-foreground mb-4">No journal entries yet</p>
-              <Button onClick={() => setLocation('/journal')}>
-                Start Writing
               </Button>
             </div>
           )}

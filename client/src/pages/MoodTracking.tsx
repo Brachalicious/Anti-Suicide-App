@@ -207,7 +207,7 @@ export default function MoodTracking() {
             Record Today's Mood
           </Button>
         ) : (
-          <div className="bg-card p-6 rounded-lg border">
+          <div className="bg-card p-6 rounded-lg border max-h-[70vh] overflow-y-auto pr-2">
             <h2 className="text-xl font-semibold mb-6">How are you feeling today?</h2>
 
             <div className="mb-6">

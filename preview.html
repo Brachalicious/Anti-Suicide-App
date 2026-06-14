@@ -203,24 +203,35 @@
     </div>
 
     <script>
-        // Simple mood tracking interaction
-        document.querySelectorAll('.mood-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.mood-btn').forEach(b => b.style.background = 'white');
-                btn.style.background = '#3b82f6';
-                btn.style.color = 'white';
-                btn.style.borderColor = '#3b82f6';
+        document.addEventListener('DOMContentLoaded', function() {
+            // Simple mood tracking interaction
+            document.querySelectorAll('.mood-btn').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    // Remove 'selected' class from all mood buttons
+                    document.querySelectorAll('.mood-btn').forEach(b => {
+                        b.classList.remove('selected');
+                        b.style.background = 'white'; // Reset background
+                        b.style.color = 'black'; // Reset text color
+                        b.style.borderColor = '#ddd'; // Reset border color
+                    });
+                    // Add 'selected' class to the clicked button
+                    btn.classList.add('selected');
+                    btn.style.background = '#3b82f6'; // Apply selected background
+                    btn.style.color = 'white'; // Apply selected text color
+                    btn.style.borderColor = '#3b82f6'; // Apply selected border color
+                    console.log('Mood selected:', btn.textContent);
+                });
+            });
+
+            // Navigation
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
+                    item.classList.add('active');
+                    console.log('Nav item clicked:', item.textContent);
+                });
             });
         });
-
-        // Navigation
-        document.querySelectorAll('.nav-item').forEach(item => {
-            item.addEventListener('click', () => {
-                document.querySelectorAll('.nav-item').forEach(i => i.classList.remove('active'));
-                item.classList.add('active');
-            });
-        });
-
         console.log('Mental Health Support App Preview - Backend API running on port 3000');
     </script>
 </body>

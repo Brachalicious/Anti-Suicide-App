@@ -210,7 +210,7 @@ export default function SafetyPlan() {
       </div>
 
       <div className="space-y-4">
-        <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             <h2 className="text-lg font-semibold">If you are in immediate danger</h2>
@@ -231,7 +231,7 @@ export default function SafetyPlan() {
           </div>
         </section>
 
-        <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
           <h2 className="text-lg font-semibold">Your safety plan</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Write one item per line in each section. You can leave a section blank if it does not apply right now.
@@ -270,7 +270,7 @@ export default function SafetyPlan() {
           )}
         </section>
 
-        <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
           <h2 className="text-lg font-semibold">What a safety plan usually includes</h2>
           <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
             <li>Warning signs that tell you you’re slipping.</li>

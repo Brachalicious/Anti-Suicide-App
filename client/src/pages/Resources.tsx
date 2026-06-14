@@ -11,7 +11,7 @@ export default function Resources() {
       </div>
 
       {/* ── Wellness Tools ── */}
-      <section className="mb-10">
+      <section className="mb-10 max-h-[70vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2 mb-5">
           <Music className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">Wellness Tools</h2>
@@ -137,7 +137,7 @@ export default function Resources() {
       </section>
 
       {/* ── Educational Resources ── */}
-      <section className="mb-10">
+      <section className="mb-10 max-h-[70vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2 mb-5">
           <BookOpen className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">Educational Resources</h2>
@@ -207,7 +207,7 @@ export default function Resources() {
       </section>
 
       {/* ── Hospitals & IOPs ── */}
-      <section className="mb-10">
+      <section className="mb-10 max-h-[70vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2 mb-5">
           <Building2 className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">Hospitals &amp; IOPs</h2>
@@ -370,7 +370,7 @@ export default function Resources() {
       </section>
 
       {/* ── Postpartum & Maternal Mental Health ── */}
-      <section className="mb-10">
+      <section className="mb-10 max-h-[70vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2 mb-5">
           <Baby className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">🤱 Postpartum &amp; Maternal Mental Health</h2>
@@ -464,7 +464,7 @@ export default function Resources() {
       </section>
 
       {/* ── Additional Mental Health Resources ── */}
-      <section className="mb-10">
+      <section className="mb-10 max-h-[70vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2 mb-5">
           <Brain className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">🧠 Additional Mental Health Resources</h2>

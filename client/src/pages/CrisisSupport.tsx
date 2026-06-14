@@ -101,7 +101,10 @@ export default function CrisisSupport() {
       </div>
 
   {/* Immediate Action Section */}
-  <div id="emergency-contacts" className="grid md:grid-cols-2 gap-6 mb-8">
+  <div
+    id="emergency-contacts"
+    className="grid md:grid-cols-2 gap-6 mb-8 max-h-[65vh] overflow-y-auto pr-2"
+  >
         <div className="bg-card p-6 rounded-lg border shadow-sm">
           <h2 className="text-xl font-semibold mb-4 text-center">Emergency Services</h2>
           <div className="space-y-3">
@@ -140,7 +143,7 @@ export default function CrisisSupport() {
       {/* Crisis Hotlines */}
       <div className="mb-8">
         <h2 className="text-2xl font-semibold mb-6">Crisis Hotlines</h2>
-        <div className="space-y-4">
+        <div className="space-y-4 max-h-[65vh] overflow-y-auto pr-2">
           {hotlines?.map((hotline) => (
             <div key={hotline.id} className="bg-card p-6 rounded-lg border shadow-sm">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
@@ -208,7 +211,7 @@ export default function CrisisSupport() {
 
       {/* Emergency Coping Resources */}
       {emergencyResources && emergencyResources.length > 0 && (
-        <div id="coping-strategies">
+        <div id="coping-strategies" className="max-h-[65vh] overflow-y-auto pr-2">
           <h2 className="text-2xl font-semibold mb-6">Immediate Coping Strategies</h2>
           <div className="space-y-4">
             {emergencyResources.map((resource: any) => (
@@ -228,19 +231,19 @@ export default function CrisisSupport() {
 
       {/* Regulation Exercises */}
       <div className="mt-8 space-y-4">
-        <div id="breathing-exercises" className="bg-card p-6 rounded-lg border shadow-sm">
+        <div id="breathing-exercises" className="bg-card p-6 rounded-lg border shadow-sm max-h-[40vh] overflow-y-auto pr-2">
           <h3 className="text-lg font-semibold mb-2">Breathing Exercises</h3>
           <p className="text-muted-foreground">
             Try 4-4-6 breathing: inhale for 4, hold for 4, exhale for 6. Repeat until your body softens.
           </p>
         </div>
-        <div id="progressive-muscle-relaxation" className="bg-card p-6 rounded-lg border shadow-sm">
+        <div id="progressive-muscle-relaxation" className="bg-card p-6 rounded-lg border shadow-sm max-h-[40vh] overflow-y-auto pr-2">
           <h3 className="text-lg font-semibold mb-2">Progressive Muscle Relaxation</h3>
           <p className="text-muted-foreground">
             Tense and release one muscle group at a time (hands, shoulders, jaw, legs) to help your body unwind.
           </p>
         </div>
-        <div id="guided-meditation" className="bg-card p-6 rounded-lg border shadow-sm">
+        <div id="guided-meditation" className="bg-card p-6 rounded-lg border shadow-sm max-h-[40vh] overflow-y-auto pr-2">
           <h3 className="text-lg font-semibold mb-2">Guided Meditation</h3>
           <p className="text-muted-foreground">
             Focus on a calming voice or short visualization. Even 2–3 minutes can help you reset.

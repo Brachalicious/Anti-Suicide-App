@@ -883,6 +883,23 @@
             background: rgba(190,24,93,0.08);
         }
         .section.hidden { display: none; }
+        /* Universal scrollable class for any dynamic content container */
+        .card-content {
+            max-height: 70vh; /* Limits height to 70% of the viewport */
+            overflow-y: auto !important; /* Enables vertical scrolling */
+            scrollbar-width: thin;
+            scrollbar-color: #ff1493 rgba(0, 0, 0, 0.3);
+            padding-right: 10px;
+            margin-right: -10px;
+        }
+        /* Give every opened section/tool its own scroll area instead of only the page scroll */
+        .section {
+            max-height: calc(100vh - 150px);
+            overflow-y: auto;
+            overflow-x: hidden;
+            scrollbar-width: thin;
+            scrollbar-color: #ff1493 rgba(0, 0, 0, 0.3);
+        }
         .parent-card {
             background: linear-gradient(135deg, #ecfdf5, #d1fae5);
             border: 2px solid #86efac;
@@ -1550,15 +1567,11 @@
                     <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
-                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu(); closeMobileNav()">🎨 Color & Paint</button>
-                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav()">🎵 My Music</button>
-                    <button onclick="showSection('release'); closeCrisisToolsMenu(); closeMobileNav()">😤 Release &amp; Let Go</button>
-                    <button onclick="showSection('mood'); closeCrisisToolsMenu(); closeMobileNav()">📓 My Diary</button>
-                    <button onclick="showSection('hope-wall'); closeCrisisToolsMenu(); closeMobileNav()">💚 Wall of Hope</button>
-                    <button onclick="showSection('affirmation-book'); closeCrisisToolsMenu(); closeMobileNav()">📖 My Affirmation Book</button>
-                    <button onclick="showSection('jar-of-hearts'); closeCrisisToolsMenu(); closeMobileNav()">💝 Jar of Hearts</button>
-                    <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu(); closeMobileNav()">🧠 Escape Your Head</button>
-                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
+                    <button onclick="window.location.href='activities.html#color-paint'">🎨 Color & Paint</button>
+                    <button onclick="window.location.href='activities.html#music'">🎵 My Music</button>
+                    <button onclick="window.location.href='activities.html#release'">😤 Release &amp; Let Go</button>
+                    <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
+                    <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
                 </div>
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
@@ -5562,6 +5575,8 @@
             }
         };
 
+        // Duplicate variable declarations removed — already declared with let above
+
         const petStoreAnimals = [
             { id: 'dog', emoji: '🐕', name: 'Buddy', type: 'Dog', desc: 'Loyal, playful, always happy to see you', welcome: "*wags tail excitedly and nuzzles up to you* 🐾 Woof woof! I'm Buddy! I'm SO happy you adopted me! I'll be your best friend forever! Tell me anything!", placeholder: "Talk to Buddy..." },
             { id: 'cat', emoji: '🐈', name: 'Luna', type: 'Cat', desc: 'Calm, independent, softly purring comfort', welcome: "*purrs softly and curls up beside you* 🐱 Meow... I'm Luna. I chose you, you know. I'll be right here, purring and keeping you warm. What's on your mind?", placeholder: "Talk to Luna..." },
@@ -7784,7 +7799,7 @@ User's message: ${userMessage}`
                 "Processing your emotions is hard work. You're doing great. 💙"
             ];
             
-            const randomMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
+            const ventIntroMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
             
             const guideTitle = document.getElementById('guideTitle');
             const guideMessage = document.getElementById('guideMessage');
@@ -7817,13 +7832,13 @@ User's message: ${userMessage}`
                 if (ventInput) ventInput.value = '';
             }
 
-            const randomMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
+            const ventBotMessage = ventSupportMessages[Math.floor(Math.random() * ventSupportMessages.length)];
             const botMsgDiv = document.createElement('div');
             botMsgDiv.style.marginBottom = '12px';
             botMsgDiv.style.padding = '10px';
             botMsgDiv.style.background = 'rgba(255,20,147,0.15)';
             botMsgDiv.style.borderRadius = '8px';
-            botMsgDiv.innerHTML = `<span>🤖</span> ${randomMessage}`;
+            botMsgDiv.innerHTML = `<span>🤖</span> ${ventBotMessage}`;
             ventLog.appendChild(botMsgDiv);
             
             // Auto-scroll to the bottom of the log
@@ -8870,7 +8885,8 @@ User's message: ${userMessage}`
             const container = document.getElementById(section + '-gif-results');
             container.innerHTML = '<p style="color: #ff69b4; font-size: 13px;">Searching...</p>';
             try {
-                const res = await fetch('https://api.giphy.com/v1/gifs/search?api_key=wPRdvFvMfriKnCOK9TAjQpKZofRBeRjt&q=' + encodeURIComponent(query) + '&limit=12&rating=g');
+                const apiKey = window.GIPHY_API_KEY || '';
+                const res = await fetch('https://api.giphy.com/v1/gifs/search?api_key=' + apiKey + '&q=' + encodeURIComponent(query) + '&limit=12&rating=g');
                 const data = await res.json();
                 if (data.data.length === 0) {
                     container.innerHTML = '<p style="color: #ff69b4; font-size: 13px;">No GIFs found. Try a different search.</p>';
@@ -11597,17 +11613,8 @@ User's message: ${userMessage}`
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, deleteUser } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, deleteDoc, collection, addDoc, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
-        // Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyBbVt6AmWRi61VHZVF12ernzt8nJR0uaDM",
-            authDomain: "antisuicideapp.firebaseapp.com",
-            databaseURL: "https://antisuicideapp-default-rtdb.firebaseio.com",
-            projectId: "antisuicideapp",
-            storageBucket: "antisuicideapp.firebasestorage.app",
-            messagingSenderId: "149935134747",
-            appId: "1:149935134747:web:8e128c56c0b4005e7d00be",
-            measurementId: "G-GYX63Q43EJ"
-        };
+        // Import configuration from external file
+        import { firebaseConfig } from './firebase-config.js';
 
         // Initialize Firebase
         const app = initializeApp(firebaseConfig);

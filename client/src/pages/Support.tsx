@@ -18,7 +18,7 @@ export default function Support() {
       </div>
 
       <div className="grid gap-4 md:grid-cols-2">
-        <section className="rounded-lg border bg-card p-6 shadow-sm">
+        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[45vh] overflow-y-auto pr-2">
           <div className="flex items-center gap-2">
             <ShieldCheck className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-semibold">Immediate support</h2>
@@ -50,7 +50,7 @@ export default function Support() {
           </ul>
         </section>
 
-        <section className="rounded-lg border bg-card p-6 shadow-sm md:col-span-2">
+        <section className="rounded-lg border bg-card p-6 shadow-sm md:col-span-2 max-h-[45vh] overflow-y-auto pr-2">
           <h2 className="text-lg font-semibold">Who can you contact?</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Make a short list of people you can reach out to when your feelings get heavy.

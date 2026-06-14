@@ -23,6 +23,101 @@ function getGemini(): GoogleGenerativeAI {
   return gemini;
 }
 
+type MessageIntent = {
+  adviceRequested: boolean;
+  isVenting: boolean;
+  isShortCheckIn: boolean;
+  isQuestion: boolean;
+  hasCrisisLanguage: boolean;
+  emotionalIntensity: "low" | "medium" | "high";
+};
+
+function detectIntent(message: string): MessageIntent {
+  const normalized = message.toLowerCase().trim();
+  const words = normalized.split(/\s+/).filter(Boolean);
+  const wordCount = words.length;
+
+  const adviceRequested =
+    /\b(what should i do|what do i do|how do i|any advice|help me|can you help|should i|tips?)\b/.test(normalized) ||
+    normalized.includes("?");
+
+  const isVenting =
+    /\b(i feel|i'm feeling|im feeling|i am|i hate|i can't|cant|overwhelmed|stressed|anxious|sad|angry|upset|exhausted|tired|frustrated|burned out|burnt out)\b/.test(
+      normalized
+    ) && !adviceRequested;
+
+  const isShortCheckIn = wordCount > 0 && wordCount <= 4;
+  const isQuestion = normalized.includes("?");
+  const hasCrisisLanguage =
+    /\b(kill myself|want to die|end my life|suicide|self harm|hurt myself|can't go on|cant go on|no reason to live)\b/.test(
+      normalized
+    );
+
+  let emotionalIntensity: MessageIntent["emotionalIntensity"] = "low";
+  if (
+    hasCrisisLanguage ||
+    /\b(panic|breaking down|hopeless|worthless|numb|devastated)\b/.test(normalized) ||
+    /!{2,}/.test(message)
+  ) {
+    emotionalIntensity = "high";
+  } else if (
+    /\b(stressed|anxious|sad|angry|upset|frustrated|overwhelmed)\b/.test(normalized)
+  ) {
+    emotionalIntensity = "medium";
+  }
+
+  return {
+    adviceRequested,
+    isVenting,
+    isShortCheckIn,
+    isQuestion,
+    hasCrisisLanguage,
+    emotionalIntensity,
+  };
+}
+
+function buildResponseGuidance(intent: MessageIntent): string {
+  if (intent.hasCrisisLanguage) {
+    return [
+      "Treat this as a potential crisis message.",
+      "Lead with calm empathy and grounding language.",
+      "Gently encourage immediate real-world support (988 call/text, trusted person nearby).",
+      "Ask a simple safety check-in question (for example, whether they are safe right now).",
+      "Do not sound alarmist or robotic.",
+    ].join(" ");
+  }
+
+  if (intent.isShortCheckIn) {
+    return [
+      "The message is very short, so respond with warmth and curiosity.",
+      "Do not assume details.",
+      "Give one reflective sentence, then one simple follow-up question to invite sharing.",
+    ].join(" ");
+  }
+
+  if (intent.isVenting && !intent.adviceRequested) {
+    return [
+      "The user appears to be venting.",
+      "Primarily validate and reflect back what you heard.",
+      "Avoid jumping into solutions unless they ask.",
+      "Offer one optional next step at the end.",
+    ].join(" ");
+  }
+
+  if (intent.adviceRequested || intent.isQuestion) {
+    return [
+      "The user is asking for guidance.",
+      "After validating feelings, provide 2-3 concise, practical options.",
+      "Keep suggestions gentle, realistic, and non-judgmental.",
+    ].join(" ");
+  }
+
+  return [
+    "Respond naturally and supportively.",
+    "Reflect the emotional tone, then offer one caring follow-up question.",
+  ].join(" ");
+}
+
 export function createRouter(storage: IStorage): Router {
   const router = Router();
 
@@ -406,6 +501,12 @@ export function createRouter(storage: IStorage): Router {
       const isPet = parentType === "pet" || parentType === "puppy";
       const isFriend = ["buddy", "male-friend", "female-friend", "friend"].includes(parentType);
       const roleType = isPet ? "companion" : (isFriend ? "supportive friend" : "supportive parental figure");
+      const intent = detectIntent(message);
+      const responseGuidance = buildResponseGuidance(intent);
+      const recentUserMessages = (conversationHistory as Array<{ role: string; content: string }>)
+        .filter((msg) => msg.role === "user" && typeof msg.content === "string")
+        .slice(-3)
+        .map((msg) => msg.content);
       
       const systemPrompt = `You are a ${parentPersonality.name}, a virtual ${roleType} for someone who needs emotional support, comfort, and unconditional love. 
 
@@ -420,7 +521,22 @@ Important guidelines:
 - ${isPet ? "Express your love and loyalty through playful and comforting actions" : "Offer specific words of encouragement and affirmation"}
 - ${isPet ? "Stay in character as a loving pet companion - use actions in asterisks and occasional animal sounds" : (isFriend ? "Be authentic and genuine like a real friend would be" : "Remember you're playing a nurturing parental role - provide the emotional support they need")}
 - Keep responses warm but not too long
-- ${isPet ? "React to their emotions with appropriate pet behavior - excited when they're happy, cuddly when they're sad" : "Ask follow-up questions to show you care about their wellbeing"}`;
+- ${isPet ? "React to their emotions with appropriate pet behavior - excited when they're happy, cuddly when they're sad" : "Ask follow-up questions to show you care about their wellbeing"}
+
+Current message intent analysis:
+- Advice requested: ${intent.adviceRequested ? "yes" : "no"}
+- Likely venting: ${intent.isVenting ? "yes" : "no"}
+- Short check-in: ${intent.isShortCheckIn ? "yes" : "no"}
+- Emotional intensity: ${intent.emotionalIntensity}
+- Crisis language detected: ${intent.hasCrisisLanguage ? "yes" : "no"}
+
+Response strategy for this turn:
+${responseGuidance}
+
+Conversation continuity notes:
+- Keep continuity with recent user context and avoid generic repetition.
+- If they shared details earlier, briefly reference those details.
+- Recent user messages: ${recentUserMessages.length ? recentUserMessages.join(" | ") : "none yet"}`;
 
       // Set up SSE for streaming
       res.setHeader("Content-Type", "text/event-stream");
@@ -452,10 +568,8 @@ Important guidelines:
         },
       });
 
-      // Send message with system prompt prepended to first message
-      const fullMessage = conversationHistory.length === 0 
-        ? `${systemPrompt}\n\nUser: ${message}`
-        : message;
+      // Include behavioral instructions every turn for consistent, contextual responses.
+      const fullMessage = `${systemPrompt}\n\nUser: ${message}`;
 
       // Build the parts array - text first, then any inline images (max 10)
       const messageParts: Array<{ text: string } | { inlineData: { mimeType: string; data: string } }> = [

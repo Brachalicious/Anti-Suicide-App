@@ -30,7 +30,7 @@ export default function Wellness() {
         </p>
       </div>
 
-      <section className="mb-8 rounded-lg border bg-card p-6 shadow-sm">
+      <section className="mb-8 rounded-lg border bg-card p-6 shadow-sm max-h-[60vh] overflow-y-auto pr-2">
         <div className="flex items-center gap-2">
           <Sparkles className="h-5 w-5 text-primary" />
           <h2 className="text-lg font-semibold">Quick reset</h2>
@@ -45,7 +45,7 @@ export default function Wellness() {
         </div>
       </section>
 
-      <section>
+      <section className="max-h-[70vh] overflow-y-auto pr-2">
         <div className="mb-4 flex items-center gap-2">
           <Brain className="h-6 w-6 text-primary" />
           <h2 className="text-2xl font-semibold">Wellness activities</h2>

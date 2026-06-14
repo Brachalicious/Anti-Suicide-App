@@ -1,13 +1,2 @@
-node_modules
-.config/
-.local/
-.upm/
-.env
-
-# Local Netlify folder
-.netlify
-index.html.backup
-dist/
-*.png
-*.jpg
-.DS_Store
+# Secret configuration files
+secrets.js
