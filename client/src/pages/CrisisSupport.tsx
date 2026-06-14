@@ -35,7 +35,7 @@ export default function CrisisSupport() {
   const handleStartTalking = () => {
     if (ventLaunchRef.current) return;
     ventLaunchRef.current = true;
-    setLocation("/virtual-parent");
+    setLocation("/journal");
   };
 
   const handleReadSupportMessage = () => {
@@ -219,13 +219,13 @@ export default function CrisisSupport() {
         <h2 className="text-2xl font-semibold mb-6">Talk It Out</h2>
         <div className="bg-card p-6 rounded-lg border shadow-sm">
           <p className="text-muted-foreground mb-4">
-            Just talk. Say whatever comes to mind — even gobbledegook. The bot will go with it,
-            respond to you, and help you regulate when you need a gentle place to land.
+            Write whatever comes to mind in your private journal, even if it feels messy.
+            Getting it out can help you regulate when you need a gentle place to land.
           </p>
           <div className="flex flex-wrap items-center gap-3">
             <Button className="bg-primary hover:bg-primary/90" onClick={handleStartTalking}>
               <MessageCircle className="mr-2 h-4 w-4" />
-              Start Talking
+              Open Journal
             </Button>
             <Button variant="outline" onClick={handleReadSupportMessage}>
               <Volume2 className="mr-2 h-4 w-4" />

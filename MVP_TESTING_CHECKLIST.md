@@ -38,14 +38,6 @@
     - [ ] Stop button works and shows green circle
     - [ ] Close button resets everything
 
-- [ ] **Virtual Parent**
-  - [ ] Opens chat interface
-  - [ ] Can type messages
-  - [ ] AI responds with supportive messages
-  - [ ] Gemini API is working
-  - [ ] Responses are appropriate and safe
-  - [ ] Chat history is saved
-
 - [ ] **Affirmations**
   - [ ] "Today's Affirmation" displays random affirmation
   - [ ] Can click to see new affirmation
@@ -136,8 +128,7 @@
 2. ✅ Safety Plan saves data
 3. ✅ User authentication works
 4. ✅ Mobile version is usable
-5. ✅ No inappropriate AI responses from Virtual Parent
-6. ✅ Privacy Policy and Terms are accessible
+5. ✅ Privacy Policy and Terms are accessible
 
 ---
 

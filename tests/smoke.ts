@@ -61,6 +61,15 @@ function assertDeployConfig() {
   assert.ok(fs.existsSync(path.resolve("public/favicon.svg")), "favicon.svg must exist");
   assert.ok(fs.existsSync(path.resolve("netlify/functions/api.ts")), "Netlify API function must exist");
 
+  const appRoutes = fs.readFileSync(path.resolve("client/src/App.tsx"), "utf8");
+  assert.doesNotMatch(appRoutes, /virtual-parent/i, "Removed Virtual Parent route must stay absent");
+
+  const navigation = fs.readFileSync(path.resolve("client/src/components/Navigation.tsx"), "utf8");
+  assert.doesNotMatch(navigation, /Virtual Parent|virtual-parent/i, "Removed Virtual Parent nav must stay absent");
+
+  const serverRoutes = fs.readFileSync(path.resolve("server/routes.ts"), "utf8");
+  assert.doesNotMatch(serverRoutes, /virtual-parent|GEMINI_API_KEY|GoogleGenerativeAI/i);
+
   const crisisPage = fs.readFileSync(path.resolve("client/src/pages/CrisisSupport.tsx"), "utf8");
   assert.doesNotMatch(crisisPage, /tel:\$\{phoneNumber\}/, "Hotlines must not create unsanitized tel links");
   assert.match(crisisPage, /sms:741741\?body=HOME/, "Crisis Text Line must use an sms link");
@@ -213,12 +222,6 @@ async function assertApiSmoke(baseUrl: string) {
   });
   assert.equal(userPatch.response.status, 200);
   assert.equal(requireObject(userPatch.body).nickname, "Updated Tester");
-
-  const invalidChat = await request(baseUrl, "/api/virtual-parent/chat", {
-    method: "POST",
-    body: JSON.stringify({ message: "" }),
-  });
-  assert.equal(invalidChat.response.status, 400);
 }
 
 async function main() {
