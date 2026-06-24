@@ -1505,107 +1505,96 @@
         </div>
     </div>
 
-    <!-- Sign-in/Sign-out buttons (example placement) -->
-    <div style="text-align: center; margin-top: 20px;">
-        <button id="google-signin-btn" style="padding: 10px 20px; font-size: 16px; background-color: #4285F4; color: white; border: none; border-radius: 5px; cursor: pointer;">Sign in with Google</button>
-        <button id="google-signout-btn" style="padding: 10px 20px; font-size: 16px; background-color: #DB4437; color: white; border: none; border-radius: 5px; cursor: pointer; display: none;">Sign Out</button>
+    <!-- Add this right inside your <body> tag at the top -->
+    <div class="account-bar" style="display: flex; justify-content: flex-end; align-items: center; gap: 15px; margin: 20px auto; max-width: 1200px; padding: 0 20px;">
+        <span id="user-status-text" style="color: rgba(255,255,255,0.7); font-size: 0.9rem;">Checking connection...</span>
+        <button id="auth-btn" class="btn" style="margin-top: 0; padding: 8px 16px; background: #ff1493; display: none;">Sign In</button>
     </div>
 
-    <!-- Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <!-- Replace your existing <script> section at the bottom with this module script -->
+    <script type="module">
+        // Import Firebase v10 SDK modules dynamically
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 
-    <script>
-        // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+        // REPLACE THIS WITH YOUR ACTUAL FIREBASE CONFIGURATION
         const firebaseConfig = {
-            apiKey: "AIzaSyBbVt6AmWRi61VHZVF12ernzt8nJR0uaDM",
-            authDomain: "antisuicideapp.firebaseapp.com",
-            databaseURL: "https://antisuicideapp-default-rtdb.firebaseio.com",
-            projectId: "antisuicideapp",
-            storageBucket: "antisuicideapp.firebasestorage.app",
-            messagingSenderId: "149935134747",
-            appId: "1:149935134747:web:8fa44fcb4205d9e47d00be",
-            measurementId: "G-1DZLJNRS3D"
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT.appspot.com",
+            messagingSenderId: "YOUR_SENDER_ID",
+            appId: "YOUR_APP_ID"
         };
 
         // Initialize Firebase
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore(); // Initialize Firestore
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
-        // Google Sign-In function
-        async function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            try {
-                // Try signing in with a popup
-                await auth.signInWithPopup(provider);
-                console.log("Signed in successfully with Google (popup)");
-                // Redirect or update UI after successful sign-in
-                window.location.href = "/dashboard.html"; // Example redirect
-            } catch (error) {
-                if (error.code === 'auth/popup-blocked' || error.code === 'auth/cancelled-popup-request') {
-                    console.warn("Popup blocked or cancelled, trying redirect sign-in...");
-                    // Fallback to redirect sign-in if popup is blocked or cancelled
-                    await auth.signInWithRedirect(provider);
-                } else {
-                    console.error("Error during Google sign-in:", error);
-                    alert("Error signing in with Google: " + error.message);
+        const authBtn = document.getElementById('auth-btn');
+        const statusText = document.getElementById('user-status-text');
+
+        // Monitor Authentication State change
+        onAuthStateChanged(auth, (user) => {
+            authBtn.style.display = "inline-block"; // Show button once state loads
+            if (user) {
+                statusText.textContent = `Logged in as: ${user.displayName || user.email}`;
+                authBtn.textContent = "Sign Out";
+                authBtn.style.background = "#d90429"; 
+            } else {
+                statusText.textContent = "Sign in to save your personal entries securely across devices.";
+                authBtn.textContent = "Sign In with Google";
+                authBtn.style.background = "#ff1493";
+            }
+        });
+
+        // Handle button interaction
+        authBtn.addEventListener('click', async () => {
+            if (auth.currentUser) {
+                try {
+                    await signOut(auth);
+                    alert("Signed out successfully.");
+                } catch (error) {
+                    console.error("Logout Error:", error);
+                }
+            } else {
+                try {
+                    await signInWithPopup(auth, provider);
+                    alert("Signed in successfully!");
+                } catch (error) {
+                    console.error("Login Error:", error);
+                    alert("Failed to sign in: " + error.message);
                 }
             }
-        }
-
-        // Handle redirect result (if signInWithRedirect was used)
-        auth.getRedirectResult().then((result) => {
-            if (result.credential) {
-                // This gives you a Google Access Token. You can use it to access the Google API.
-                const token = result.credential.accessToken;
-                console.log("Signed in successfully with Google (redirect)");
-                // The signed-in user info.
-                const user = result.user;
-                // Redirect or update UI after successful sign-in
-                window.location.href = "/dashboard.html"; // Example redirect
-            }
-        }).catch((error) => {
-            console.error("Error during Google redirect sign-in:", error);
-            alert("Error signing in with Google: " + error.message);
         });
 
-        // Listen for authentication state changes
-        auth.onAuthStateChanged(user => {
-            const signInButton = document.querySelector('#google-signin-btn');
-            const signOutButton = document.querySelector('#google-signout-btn');
-            if (user) {
-                console.log("User is signed in:", user.displayName);
-                if (signInButton) signInButton.style.display = 'none';
-                if (signOutButton) signOutButton.style.display = 'block';
-                // You might want to update UI elements here, e.g., show user's name
-            } else {
-                console.log("User is signed out.");
-                if (signInButton) signInButton.style.display = 'block';
-                if (signOutButton) signOutButton.style.display = 'none';
-            }
-        });
-
-        // Sign-out function
-        async function signOutUser() {
+        // Your existing loadHotlines framework logic below...
+        async function loadHotlines() {
             try {
-                await auth.signOut();
-                console.log("User signed out.");
-                window.location.href = "/"; // Redirect to home or sign-in page
+                const response = await fetch('/api/crisis-hotlines');
+                if (!response.ok) throw new Error('Network issue');
+                const data = await response.json();
+                if(data && data.length > 0) {
+                    const container = document.getElementById('hotline-container');
+                    container.innerHTML = '';
+                    data.forEach(item => {
+                        const card = document.createElement('div');
+                        card.className = 'hotline-card';
+                        card.innerHTML = `
+                            <h3>${item.name}</h3>
+                            <p class="hotline-number">${item.phoneNumber}</p>
+                            <p>${item.description}</p>
+                            <a href="${item.website}" target="_blank" style="color: #ff1493; text-decoration: none; font-size: 0.9rem;">Visit Website →</a>
+                        `;
+                        container.appendChild(card);
+                    });
+                }
             } catch (error) {
-                console.error("Error signing out:", error);
-                alert("Error signing out: " + error.message);
+                console.log("Using local static data display as fallback.", error);
             }
         }
-
-        // Attach event listeners to buttons (assuming these buttons exist in your HTML)
-        document.addEventListener('DOMContentLoaded', () => {
-            const signInButton = document.querySelector('#google-signin-btn');
-            if (signInButton) signInButton.addEventListener('click', signInWithGoogle);
-            const signOutButton = document.querySelector('#google-signout-btn');
-            if (signOutButton) signOutButton.addEventListener('click', signOutUser);
-        });
+        window.addEventListener('DOMContentLoaded', loadHotlines);
     </script>
 </body>
 </html>
