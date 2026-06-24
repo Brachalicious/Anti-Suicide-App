@@ -11626,6 +11626,12 @@ User's message: ${userMessage}`
 
         // Sign in with Google
         document.getElementById('google-signin-btn').addEventListener('click', async () => {
+            // Guard: ensure Firebase config is present
+            if (!firebaseConfig || !firebaseConfig.apiKey) {
+                alert('Sign-in is not configured on this host. To enable Google sign-in, set firebase config in the hosting environment.');
+                console.warn('Attempted sign-in but firebaseConfig.apiKey is missing.');
+                return;
+            }
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 console.log('User signed in:', result.user.displayName);
