@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Diary - Fight Suicide Project</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html" class="nav-item">← Hub</a>
+            <a href="activities.html" class="nav-item">Activities</a>
+        </nav>
+
+        <div class="card" style="background: linear-gradient(135deg, #f5e6d3, #e8d5b7); border: 3px solid #c4a87c;">
+            <h2 class="section-title">📓 My Diary</h2>
+            <p style="color: #ff1493; font-family: 'Georgia', serif; font-size: 14px; margin-bottom: 6px;">How are you feeling?</p>
+            <div class="mood-scale">
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 2)" data-label="Really Sad">😢</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 3)" data-label="Down">😞</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 4)" data-label="Low">😔</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 5)" data-label="Neutral">😐</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 6)" data-label="Okay">🙂</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 7)" data-label="Good">😊</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 8)" data-label="Happy">😄</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 9)" data-label="Really Happy">😁</div>
+                <div class="mood-btn" onclick="selectMoodEmoji(this, 10)" data-label="Amazing!">🤩</div>
+            </div>
+
+            <p style="margin-top: 8px; font-size: 13px; color: #8d6e63; font-family: 'Georgia', serif;">I'm also feeling:</p>
+            <div class="feeling-tags" id="mood-feeling-tags">
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">💔</span> Heartbroken</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😡</span> Angry</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😰</span> Anxious</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😴</span> Tired</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😶</span> Numb</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">🤯</span> Overwhelmed</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">🥰</span> Loved</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😌</span> Peaceful</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">🤗</span> Grateful</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">💪</span> Strong</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">🤔</span> Confused</div>
+                <div class="feeling-tag" onclick="toggleFeeling(this)"><span class="tag-emoji">😇</span> Hopeful</div>
+            </div>
+
+            <p style="margin-top: 12px; color: #ff1493; font-family: 'Georgia', serif; font-size: 14px;">Mood level (1-10):</p>
+            <div class="mood-slider-container">
+                <div class="mood-slider-value" id="mood-slider-value">5</div>
+                <input type="range" min="1" max="10" value="5" id="mood-slider" oninput="updateMoodSlider(this.value)">
+            </div>
+
+            <textarea class="mood-note-area" id="mood-note" placeholder="Dear Diary..." style="min-height: 150px;"></textarea>
+            
+            <div style="margin: 15px 0;">
+                 <button class="btn" id="diary-record-btn">🎤 Voice Note</button>
+                 <input type="file" id="diary-photo-upload" accept="image/*">
+            </div>
+
+            <button class="btn" onclick="saveDiaryEntry()">📝 Save Entry</button>
+        </div>
+
+        <div class="card">
+            <h2 class="section-title">📖 Previous Entries</h2>
+            <div id="diary-entries-list"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        // Import common Firebase logic if needed, 
+        // or use shared script.js
+    </script>
+    <script>
+        let currentMood = 5;
+        function selectMoodEmoji(el, mood) {
+            currentMood = mood;
+            document.querySelectorAll('.mood-btn').forEach(btn => btn.classList.remove('selected'));
+            el.classList.add('selected');
+            document.getElementById('mood-slider').value = mood;
+            document.getElementById('mood-slider-value').textContent = mood;
+        }
+
+        function toggleFeeling(el) {
+            el.classList.toggle('selected');
+        }
+
+        function updateMoodSlider(val) {
+            currentMood = parseInt(val);
+            document.getElementById('mood-slider-value').textContent = val;
+        }
+
+        function saveDiaryEntry() {
+            alert('Saving entry...'); 
+            // Add logic here to save to Firebase or LocalStorage
+        }
+    </script>
+</body>
+</html>

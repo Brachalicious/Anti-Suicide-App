@@ -8,6 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { apiRequest, queryClient } from "@/lib/queryClient";
 import { apiUrl } from "@/lib/apiBase";
 import type { InsertSafetyPlan, SafetyPlan } from "@shared/schema";
+import { getAuth, onAuthStateChanged } from "firebase/auth";
 
 type SafetyPlanFormState = {
   warningSignals: string;
@@ -37,9 +38,24 @@ function textToList(text: string): string[] {
 }
 
 export default function SafetyPlan() {
-  const [currentUserId] = useState("user-1");
+  const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [form, setForm] = useState<SafetyPlanFormState>(emptyFormState);
   const { toast } = useToast();
+
+  // Get current user from Firebase
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      if (user) {
+        setCurrentUserId(user.uid);
+        console.log('🔐 User logged in:', user.uid);
+      } else {
+        setCurrentUserId(null);
+        console.log('🔐 No user logged in');
+      }
+    });
+    return () => unsubscribe();
+  }, []);
 
   const { data: safetyPlan, isLoading } = useQuery<SafetyPlan | null>({
     queryKey: ["/api/safety-plans", currentUserId],
@@ -190,8 +206,30 @@ export default function SafetyPlan() {
     );
   }
 
+  if (!currentUserId) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-6">
+        <div className="mb-8">
+          <Link href="/">
+            <Button variant="ghost" className="mb-4 px-0 hover:bg-transparent">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Button>
+          </Link>
+        </div>
+        <div className="rounded-lg border border-amber-200 bg-amber-50 p-6 text-center">
+          <AlertTriangle className="mx-auto mb-4 h-8 w-8 text-amber-600" />
+          <h2 className="mb-2 text-xl font-semibold text-amber-900">Login Required</h2>
+          <p className="text-amber-800">
+            Please log in to save and access your safety plan. Your safety plan is personal to you and will be securely stored with your account.
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="container mx-auto max-w-5xl px-4 py-6">
+    <div className="container mx-auto max-w-4xl px-4 py-6">
       <div className="mb-8">
         <Link href="/">
           <Button variant="ghost" className="mb-4 px-0 hover:bg-transparent">
@@ -210,7 +248,7 @@ export default function SafetyPlan() {
       </div>
 
       <div className="space-y-4">
-        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
+        <section className="rounded-lg border bg-card p-6 shadow-sm">
           <div className="flex items-center gap-2">
             <AlertTriangle className="h-5 w-5 text-red-500" />
             <h2 className="text-lg font-semibold">If you are in immediate danger</h2>
@@ -231,7 +269,7 @@ export default function SafetyPlan() {
           </div>
         </section>
 
-        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
+        <section className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="text-lg font-semibold">Your safety plan</h2>
           <p className="mt-2 text-sm text-muted-foreground">
             Write one item per line in each section. You can leave a section blank if it does not apply right now.
@@ -270,7 +308,7 @@ export default function SafetyPlan() {
           )}
         </section>
 
-        <section className="rounded-lg border bg-card p-6 shadow-sm max-h-[65vh] overflow-y-auto pr-2">
+        <section className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="text-lg font-semibold">What a safety plan usually includes</h2>
           <ul className="mt-4 list-disc space-y-2 pl-5 text-sm text-muted-foreground">
             <li>Warning signs that tell you you’re slipping.</li>

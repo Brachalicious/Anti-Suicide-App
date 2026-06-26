@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Activities Hub - Fight Suicide Project</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <!-- Reuse the exact same styles for consistency -->
+    <link rel="stylesheet" href="style.css"> <!-- I recommend extracting common styles to style.css next -->
+    <style>
+        /* Including critical styles here for the split to work immediately */
+        body { font-family: sans-serif; background: #1a0a2e; color: #ff1493; margin: 0; }
+        .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+        .card { background: rgba(255, 252, 240, 0.1); border-radius: 24px; padding: 32px; margin-bottom: 24px; border: 2px solid rgba(180,160,120,0.3); backdrop-filter: blur(10px); }
+        .section.hidden { display: none; }
+        .btn { background: #40916c; color: white; border: none; padding: 12px 24px; border-radius: 12px; cursor: pointer; font-weight: 700; margin: 5px 0; }
+        .nav { display: flex; gap: 10px; margin-bottom: 30px; justify-content: center; }
+        .nav-item { padding: 10px 20px; border-radius: 20px; cursor: pointer; border: 2px solid #ff1493; background: #fff; color: #ff1493; }
+        /* ... (Copying other specific tool styles from index.html) ... */
+    </style>
+</head>
+<body>
+    <div class="container">
+        <nav class="nav">
+            <a href="index.html" class="nav-item">← Back to Hub</a>
+            <button class="nav-item active" onclick="showSection('release')">Release</button>
+            <button class="nav-item" onclick="showSection('color-paint')">Paint</button>
+            <button class="nav-item" onclick="showSection('music')">Music</button>
+            <button class="nav-item" onclick="showSection('escape-your-head')">Escape</button>
+            <button class="nav-item" onclick="showSection('mushroom-runner')">Runner</button>
+        </nav>
+
+        <!-- Color & Paint Section -->
+        <div id="color-paint" class="section hidden">
+            <!-- (Paste the full content of color-paint section here) -->
+        </div>
+
+        <!-- Music Player Section -->
+        <div id="music" class="section hidden">
+             <!-- (Paste the full content of music section here) -->
+        </div>
+
+        <!-- Release & Let Go Section -->
+        <div id="release" class="section">
+             <!-- (Paste the full content of release section here) -->
+        </div>
+
+        <!-- Escape Your Head Section -->
+        <div id="escape-your-head" class="section hidden">
+             <!-- (Paste the full content of escape-your-head section here) -->
+        </div>
+
+        <!-- Mushroom Runner Section -->
+        <div id="mushroom-runner" class="section hidden">
+             <!-- (Paste the full content of mushroom-runner section here) -->
+        </div>
+    </div>
+
+    <script>
+        // Navigation logic for the new file
+        function showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(id).classList.remove('hidden');
+            // Highlight button
+            const btn = document.querySelector(`button[onclick*='${id}']`);
+            if(btn) btn.classList.add('active');
+        }
+
+        // Handle deep-linking from index.html
+        window.addEventListener('load', () => {
+            const hash = window.location.hash.substring(1);
+            if (hash) showSection(hash);
+            // Initialize specific tool logic (rage room, paint, etc.)
+            if (typeof initPaintCanvas === 'function') initPaintCanvas();
+        });
+
+        // ... (Paste all JavaScript functions for the tools moved above) ...
+        // (e.g., rage room logic, paint logic, game loops)
+    </script>
+</body>
+</html>
