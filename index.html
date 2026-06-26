@@ -1562,6 +1562,7 @@
             <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
                 <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Emotional Support Tools ▾</button>
                 <div class="nav-dropdown-menu" id="crisisToolsMenu">
+                    <button onclick="showSection('mood'); closeCrisisToolsMenu(); closeMobileNav()">📓 My Diary</button>
                     <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
                     <button onclick="showBreathingTechniques(); closeCrisisToolsMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
                     <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
@@ -1576,7 +1577,6 @@
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
-            <button class="nav-item" onclick="showSection('mood'); closeMobileNav()">📓 My Diary</button>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
