@@ -11609,24 +11609,52 @@ User's message: ${userMessage}`
 
     <!-- Firebase SDK -->
     <script type="module">
+        console.info('[auth-module] starting…');
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js';
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged, deleteUser } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, signOut, onAuthStateChanged, deleteUser } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js';
         import { getFirestore, doc, setDoc, getDoc, onSnapshot, deleteDoc, collection, addDoc, query, orderBy, limit, getDocs } from 'https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js';
 
         // Import configuration from external file
         import { firebaseConfig } from './firebase-config.js';
 
-        // Initialize Firebase
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const googleProvider = new GoogleAuthProvider();
+        // ---------- Defensive bootstrap ----------
+        // Tiny helper so a single missing element can't kill the whole module.
+        const on = (id, ev, fn) => {
+            const el = document.getElementById(id);
+            if (!el) { console.warn(`[auth-module] #${id} not found — skipping ${ev} listener`); return; }
+            el.addEventListener(ev, fn);
+        };
+
+        // Initialize Firebase (wrapped so a bad config surfaces clearly instead of silently dying)
+        let app, auth, db, googleProvider;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            googleProvider = new GoogleAuthProvider();
+            window.__firebaseAuth = auth; // handy for DevTools
+            console.info('[auth-module] Firebase initialized', { projectId: firebaseConfig.projectId });
+        } catch (initErr) {
+            console.error('[auth-module] Firebase init failed:', initErr);
+            on('google-signin-btn', 'click', () => alert('Sign-in is temporarily unavailable (Firebase init failed). Check the console for details.'));
+        }
 
         let currentUser = null;
 
-        // Sign in with Google
-        document.getElementById('google-signin-btn').addEventListener('click', async () => {
-            // Guard: ensure Firebase config is present
+        // If we returned from a redirect sign-in (popup-blocked browsers), pick up the result.
+        if (auth) {
+            getRedirectResult(auth)
+                .then((result) => { if (result && result.user) console.info('[auth-module] redirect sign-in OK:', result.user.displayName); })
+                .catch((err) => console.warn('[auth-module] getRedirectResult error:', err));
+        }
+
+        // Shared sign-in logic — popup first, redirect fallback when popup is blocked/closed.
+        async function startGoogleSignIn() {
+            console.info('[auth-module] Sign-in click received');
+            if (!auth || !googleProvider) {
+                alert('Sign-in is not ready yet. Please refresh and try again.');
+                return;
+            }
             if (!firebaseConfig || !firebaseConfig.apiKey) {
                 alert('Sign-in is not configured on this host. To enable Google sign-in, set firebase config in the hosting environment.');
                 console.warn('Attempted sign-in but firebaseConfig.apiKey is missing.');
@@ -11686,34 +11714,47 @@ User's message: ${userMessage}`
                 }
             } catch (error) {
                 console.error('Error signing in:', error);
-                alert('Error signing in. Please try again.');
+                // Popup blocked / closed → fall back to full-page redirect (which always works).
+                const fallbackCodes = ['auth/popup-blocked', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
+                if (error && fallbackCodes.includes(error.code)) {
+                    console.info('[auth-module] popup unavailable, falling back to redirect');
+                    try { await signInWithRedirect(auth, googleProvider); return; }
+                    catch (redirErr) { console.error('[auth-module] redirect fallback failed:', redirErr); }
+                }
+                // Surface the real reason instead of a generic message — makes diagnosis 10x faster.
+                const reason = (error && (error.code || error.message)) || 'unknown error';
+                alert('Sign-in failed: ' + reason + '\n\n(Check the browser console for details.)');
             }
-        });
+        }
+
+        // Wire up the sign-in button (null-safe; survives missing element).
+        on('google-signin-btn', 'click', startGoogleSignIn);
 
         // Sign out
-        document.getElementById('signout-btn').addEventListener('click', async () => {
+        on('signout-btn', 'click', async () => {
             try {
                 await signOut(auth);
                 console.log('User signed out');
                 // Close dropdown
-                document.getElementById('account-dropdown').style.display = 'none';
+                const dd = document.getElementById('account-dropdown');
+                if (dd) dd.style.display = 'none';
             } catch (error) {
                 console.error('Error signing out:', error);
             }
         });
 
         // Account dropdown toggle
-        document.getElementById('account-toggle').addEventListener('click', (e) => {
+        on('account-toggle', 'click', (e) => {
             e.stopPropagation();
             const dropdown = document.getElementById('account-dropdown');
-            dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
+            if (dropdown) dropdown.style.display = dropdown.style.display === 'none' ? 'block' : 'none';
         });
 
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             const dropdown = document.getElementById('account-dropdown');
             const accountToggle = document.getElementById('account-toggle');
-            if (dropdown && !accountToggle.contains(e.target) && !dropdown.contains(e.target)) {
+            if (dropdown && accountToggle && !accountToggle.contains(e.target) && !dropdown.contains(e.target)) {
                 dropdown.style.display = 'none';
             }
         });
