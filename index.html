@@ -6165,6 +6165,20 @@ User's message: ${userMessage}`
             if (btns[val - 1]) btns[val - 1].classList.add('selected');
         }
 
+        // ---------- Local-time date/time helper ----------
+        // Why: `new Date().toISOString()` returns UTC. Splitting it for the
+        // user-visible "date" of an entry caused entries logged late in the
+        // evening to jump to the next calendar day. This helper returns the
+        // date AND time in the user's *local* timezone so what they see in
+        // the diary matches when they actually wrote it.
+        function getLocalDateTime(d) {
+            const now = d || new Date();
+            const pad = (n) => String(n).padStart(2, '0');
+            const date = `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+            const time = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            return { date, time, timestamp: now.toISOString() };
+        }
+
         async function saveMoodHome() {
             console.log('🔵 saveMoodHome() called');
             const notes = document.getElementById('home-mood-note').value;
@@ -6172,7 +6186,9 @@ User's message: ${userMessage}`
             const mood = currentMood || parseInt(slider.value);
             const feelings = getSelectedFeelings('home-feeling-tags');
             const gif = selectedGifs.home;
-            
+            // Capture local date/time NOW (not UTC) — see getLocalDateTime() above.
+            const { date, time, timestamp } = getLocalDateTime();
+
             // Check if user is logged in
             if (typeof auth === 'undefined' || !auth.currentUser) {
                 console.log('❌ User not logged in - storing pending check-in');
@@ -6181,10 +6197,14 @@ User's message: ${userMessage}`
                 const pendingData = {
                     mood: mood,
                     emotions: feelings,
-                    notes: notes || '',
+                    note: notes || '',      // renderer reads `note`
+                    notes: notes || '',     // legacy/back-compat
                     gif: gif || null,
                     moodEmoji: moodEmojis[mood - 1] || '😐',
-                    isCheckIn: true
+                    isCheckIn: true,
+                    date,
+                    time,
+                    timestamp
                 };
                 localStorage.setItem('pendingCheckIn', JSON.stringify(pendingData));
                 console.log('💾 Pending check-in stored:', pendingData);
@@ -6197,7 +6217,6 @@ User's message: ${userMessage}`
 
             try {
                 const userId = auth.currentUser.uid;
-                const timestamp = new Date().toISOString();
                 const entryId = Date.now().toString();
                 
                 // Create check-in entry object
@@ -6205,9 +6224,12 @@ User's message: ${userMessage}`
                     id: entryId,
                     mood: mood,
                     emotions: feelings,
-                    notes: notes || '',
+                    note: notes || '',      // renderer reads `note`
+                    notes: notes || '',     // legacy/back-compat
                     gif: gif || null,
-                    timestamp: timestamp,
+                    date,                   // local YYYY-MM-DD (was missing → wrong day on render)
+                    time,                   // local HH:MM
+                    timestamp,              // ISO (UTC) for sorting
                     isCheckIn: true,
                     moodEmoji: moodEmojis[mood - 1] || '😐'
                 };
@@ -6436,6 +6458,20 @@ User's message: ${userMessage}`
 
         async function renderDiaryEntries() {
             let entries = [];
+
+            // Derive a *local* YYYY-MM-DD / HH:MM from a stored ISO timestamp.
+            // Using `.split('T')[0]` would give the UTC date, which makes
+            // entries written late at night appear on the wrong day.
+            const localFromTimestamp = (ts) => {
+                if (!ts) return { date: '', time: '' };
+                const d = new Date(ts);
+                if (isNaN(d.getTime())) return { date: '', time: '' };
+                const pad = (n) => String(n).padStart(2, '0');
+                return {
+                    date: `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`,
+                    time: `${pad(d.getHours())}:${pad(d.getMinutes())}`
+                };
+            };
             
             // Try to load from Firebase if user is logged in
             if (typeof auth !== 'undefined' && auth.currentUser && typeof db !== 'undefined') {
@@ -6447,13 +6483,22 @@ User's message: ${userMessage}`
                         orderBy('timestamp', 'desc')
                     );
                     const snapshot = await getDocs(q);
-                    entries = snapshot.docs.map(doc => ({
-                        ...doc.data(),
-                        id: doc.id,
-                        date: doc.data().timestamp?.split('T')[0] || new Date().toISOString().split('T')[0],
-                        time: doc.data().timestamp ? new Date(doc.data().timestamp).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false }) : '',
-                        emoji: doc.data().moodEmoji || moodEmojis[doc.data().mood - 1] || '😐'
-                    }));
+                    entries = snapshot.docs.map(doc => {
+                        const data = doc.data();
+                        const derived = localFromTimestamp(data.timestamp);
+                        return {
+                            ...data,
+                            id: doc.id,
+                            // Prefer the stored local date/time captured at save time;
+                            // fall back to a *local* derivation of the UTC timestamp.
+                            date: data.date || derived.date || (() => { const p = (n)=>String(n).padStart(2,'0'); const n=new Date(); return `${n.getFullYear()}-${p(n.getMonth()+1)}-${p(n.getDate())}`; })(),
+                            time: data.time || derived.time || '',
+                            // Map legacy `notes` (plural) onto `note` so the render works for
+                            // entries saved before the dual-key fix.
+                            note: data.note || data.notes || '',
+                            emoji: data.moodEmoji || moodEmojis[data.mood - 1] || '😐'
+                        };
+                    });
                     console.log('✅ Loaded', entries.length, 'entries from Firebase');
                 } catch (error) {
                     console.error('❌ Error loading from Firebase:', error);
@@ -6462,7 +6507,10 @@ User's message: ${userMessage}`
             } else {
                 // Fall back to localStorage
                 console.log('📱 Loading diary entries from localStorage');
-                entries = getDiaryEntries();
+                entries = getDiaryEntries().map(e => ({
+                    ...e,
+                    note: e.note || e.notes || ''
+                }));
             }
 
             const container = document.getElementById('diary-entries-list');
@@ -11674,10 +11722,19 @@ User's message: ${userMessage}`
                     
                     try {
                         if (typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                            // Preserve the local date/time captured at the moment the user
+                            // clicked Save (before the sign-in popup detoured them). If a
+                            // legacy pending payload doesn't have them, derive in local time.
+                            const noteText = checkInData.note || checkInData.notes || '';
+                            const stamped = checkInData.date && checkInData.time
+                                ? checkInData
+                                : { ...checkInData, ...(typeof getLocalDateTime === 'function' ? getLocalDateTime() : {}) };
                             await setDoc(doc(db, 'users', userId, 'diaryEntries', entryId), {
-                                ...checkInData,
+                                ...stamped,
                                 id: entryId,
-                                timestamp: new Date().toISOString()
+                                note: noteText,    // renderer reads `note`
+                                notes: noteText,   // legacy/back-compat
+                                timestamp: stamped.timestamp || new Date().toISOString()
                             });
                             console.log('✅ Pending check-in saved to Firestore');
                             localStorage.removeItem('pendingCheckIn');
@@ -11685,7 +11742,7 @@ User's message: ${userMessage}`
                             // Show success
                             let msg = `✅ Check-in saved to your account!\n\nMood: ${checkInData.mood}/10 ${checkInData.moodEmoji}`;
                             if (checkInData.emotions && checkInData.emotions.length) msg += `\nFeelings: ${checkInData.emotions.join(', ')}`;
-                            if (checkInData.notes) msg += `\nNote: "${checkInData.notes}"`;
+                            if (noteText) msg += `\nNote: "${noteText}"`;
                             if (checkInData.gif) msg += `\n🎬 GIF attached!`;
                             msg += `\n\nYour check-in has been added to your diary.`;
                             alert(msg);
