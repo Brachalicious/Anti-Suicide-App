@@ -7,8 +7,11 @@
     <meta http-equiv="Pragma" content="no-cache">
     <meta http-equiv="Expires" content="0">
     <title>Fight Suicide Project - Mental Health Support & Crisis Prevention</title>
+    <!-- Favicon: real SVG first, then an inline data-URL fallback so we NEVER 404. -->
+    <!-- Some browsers (and old bookmarks) still request /favicon.ico by default; the data-URL ICO below silences that 404 too. -->
     <link rel="icon" type="image/svg+xml" href="/favicon.svg">
-    <link rel="icon" type="image/png" href="/favicon.svg">
+    <link rel="alternate icon" type="image/svg+xml" href="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'><circle cx='32' cy='32' r='30' fill='%23ec4899'/><text x='50%25' y='55%25' text-anchor='middle' font-size='38' font-family='Arial' fill='white'>♥</text></svg>">
+    <link rel="shortcut icon" href="/favicon.svg">
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         
@@ -11712,6 +11715,26 @@ User's message: ${userMessage}`
                 console.warn('Attempted sign-in but firebaseConfig.apiKey is missing.');
                 return;
             }
+
+            // ---------- Proactive redirect for environments where popup is doomed ----------
+            // The popup flow needs to set state in storage before opening the popup and
+            // read it back when the popup posts the OAuth result. Several environments
+            // break that round-trip and produce Google's confusing
+            // "Unable to process request due to missing initial state" error
+            // from handler.js:221. Detect those up front and go straight to redirect.
+            const inIframe = (() => { try { return window.self !== window.top; } catch (_) { return true; } })();
+            const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const cookiesOff = (typeof navigator.cookieEnabled === 'boolean') && !navigator.cookieEnabled;
+            if (inIframe || cookiesOff) {
+                console.info('[auth-module] popup will fail here (iframe/cookies-disabled) → using redirect', { inIframe, cookiesOff, isSafari });
+                try { await signInWithRedirect(auth, googleProvider); return; }
+                catch (redirErr) {
+                    console.error('[auth-module] proactive redirect failed:', redirErr);
+                    alert('Sign-in failed: ' + (redirErr.code || redirErr.message || 'unknown') + '\n\nIf you are viewing this page in an embed/preview, open it in a new tab and try again.');
+                    return;
+                }
+            }
+
             try {
                 const result = await signInWithPopup(auth, googleProvider);
                 console.log('User signed in:', result.user.displayName);
@@ -11775,16 +11798,38 @@ User's message: ${userMessage}`
                 }
             } catch (error) {
                 console.error('Error signing in:', error);
-                // Popup blocked / closed → fall back to full-page redirect (which always works).
-                const fallbackCodes = ['auth/popup-blocked', 'auth/popup-closed-by-user', 'auth/cancelled-popup-request'];
-                if (error && fallbackCodes.includes(error.code)) {
-                    console.info('[auth-module] popup unavailable, falling back to redirect');
+                // Decide whether to fall back to a full-page redirect.
+                // 1) Known popup-life-cycle errors.
+                const popupCodes = [
+                    'auth/popup-blocked',
+                    'auth/popup-closed-by-user',
+                    'auth/cancelled-popup-request'
+                ];
+                // 2) Errors that surface when the popup→opener round-trip is broken
+                //    (3rd-party cookies blocked, storage partitioning, GIS internal
+                //    "missing initial state", web-storage unavailable, etc.).
+                const stateLossCodes = [
+                    'auth/internal-error',
+                    'auth/web-storage-unsupported',
+                    'auth/operation-not-supported-in-this-environment',
+                    'auth/network-request-failed'
+                ];
+                const msg = String((error && error.message) || '');
+                const looksLikeStateLoss = /missing initial state|Unable to process request|cookies|web storage|sessionStorage|localStorage/i.test(msg);
+                const shouldFallback = !!error && (
+                    popupCodes.includes(error.code) ||
+                    stateLossCodes.includes(error.code) ||
+                    looksLikeStateLoss
+                );
+
+                if (shouldFallback) {
+                    console.info('[auth-module] popup path unusable, falling back to redirect', { code: error.code, msg });
                     try { await signInWithRedirect(auth, googleProvider); return; }
                     catch (redirErr) { console.error('[auth-module] redirect fallback failed:', redirErr); }
                 }
                 // Surface the real reason instead of a generic message — makes diagnosis 10x faster.
                 const reason = (error && (error.code || error.message)) || 'unknown error';
-                alert('Sign-in failed: ' + reason + '\n\n(Check the browser console for details.)');
+                alert('Sign-in failed: ' + reason + '\n\nTips:\n• Make sure 3rd-party cookies are allowed for this site.\n• If you are viewing this inside an embed/preview, open it in a new tab.\n• Try a regular (non-incognito) window.');
             }
         }
 

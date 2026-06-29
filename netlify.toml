@@ -25,6 +25,13 @@
   [headers.values]
     Cache-Control = "public, max-age=0, must-revalidate"
 
+# Old browsers (and lots of bots) ask for /favicon.ico regardless of <link> tags.
+# Quietly serve the SVG so the console stops 404-ing.
+[[redirects]]
+  from = "/favicon.ico"
+  to = "/favicon.svg"
+  status = 200
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
