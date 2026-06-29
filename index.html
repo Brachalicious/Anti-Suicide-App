@@ -2189,6 +2189,8 @@
         </div>
 
         <div id="dashboard" class="section">
+            <!-- Personalized greeting (filled by applyDisplayNamePersonalization() when a display name is set in Account Settings). -->
+            <div id="home-greeting" style="display:none; max-width: 720px; margin: 0 auto 16px; padding: 14px 22px; background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(236,72,153,0.12)); border: 1px solid rgba(34,197,94,0.45); border-radius: 16px; color: #ff1493; font-family: 'Georgia', serif; font-size: 18px; font-weight: 700; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.12);"></div>
             <div class="grid">
                 <div class="card">
                     <h2 class="section-title">Quick Crisis Support</h2>
@@ -11652,6 +11654,8 @@ User's message: ${userMessage}`
         window.addEventListener('load', () => {
             console.log('Mental Health Support App loaded successfully');
             console.log('Crisis resources: 988 Suicide Lifeline, Crisis Text Line');
+            // First paint of personalization (guest scope until Firebase confirms a user).
+            try { if (typeof applyDisplayNamePersonalization === 'function') applyDisplayNamePersonalization(); } catch (e) {}
         });
     </script>
 
@@ -11877,7 +11881,13 @@ User's message: ${userMessage}`
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             window._currentUser = user; // used by per-user localStorage keys
-            
+
+            // Refresh any personalized DOM (greeting banner, parent welcome,
+            // .js-user-name elements) for the now-active account. Has to run on
+            // BOTH sign-in and sign-out so the name from one account never leaks
+            // into another's view.
+            try { if (typeof applyDisplayNamePersonalization === 'function') applyDisplayNamePersonalization(); } catch (e) { console.warn('personalization refresh failed:', e); }
+
             if (user) {
                 // User is signed in
                 document.getElementById('logged-out-view').style.display = 'none';
@@ -12406,20 +12416,105 @@ User's message: ${userMessage}`
         };
 
         // ── Account Settings ──────────────────────────────────────
+        // ---------- Per-account scoping helpers ----------
+        // BUG these fix: previously settings like displayName, userPrefs, and the
+        // Gemini API key were stored under flat localStorage keys ('displayName',
+        // 'userPrefs', 'openai_api_key') with no user namespacing. Two accounts on
+        // the same browser would clobber each other and the wrong name appeared
+        // after a sign-out → sign-in. We now namespace every account-settings key
+        // by the signed-in user's uid (or '_guest' when nobody is signed in), and
+        // migrate any pre-existing global values into the active user's namespace
+        // on first read so nothing is lost.
+        const ACCOUNT_KEYS = ['displayName', 'userPrefs', 'openai_api_key'];
+
+        function userScope() {
+            const u = (typeof window !== 'undefined' && window._currentUser) || null;
+            return u && u.uid ? ('_' + u.uid) : '_guest';
+        }
+
+        function scopedKey(base) {
+            return base + userScope();
+        }
+
+        // First time a signed-in user lands, copy any legacy global values into
+        // their per-user slot (but never overwrite an existing per-user value).
+        function _migrateGlobalsToScope() {
+            if (userScope() === '_guest') return;
+            ACCOUNT_KEYS.forEach((base) => {
+                const scoped = scopedKey(base);
+                if (localStorage.getItem(scoped) === null) {
+                    const legacy = localStorage.getItem(base);
+                    if (legacy !== null && legacy !== '') {
+                        localStorage.setItem(scoped, legacy);
+                    }
+                }
+            });
+        }
+
+        // Returns the user's chosen display name, falling back to the first word
+        // of their Google profile name, then to 'friend'.
+        function getDisplayName() {
+            _migrateGlobalsToScope();
+            const stored = (localStorage.getItem(scopedKey('displayName')) || '').trim();
+            if (stored) return stored;
+            const u = window._currentUser;
+            if (u && u.displayName) return String(u.displayName).split(' ')[0];
+            return '';
+        }
+
+        // Apply the display name to every spot that should be personalized.
+        // Anything else in the future can just add the class `js-user-name` and
+        // it'll be filled automatically — no extra wiring needed.
+        function applyDisplayNamePersonalization() {
+            const name = getDisplayName();
+            const safeName = name || 'friend';
+
+            // Dashboard greeting banner
+            const greet = document.getElementById('home-greeting');
+            if (greet) {
+                if (name) {
+                    const hour = new Date().getHours();
+                    const partOfDay = hour < 12 ? 'morning' : hour < 18 ? 'afternoon' : 'evening';
+                    greet.textContent = `Good ${partOfDay}, ${name} 💕`;
+                    greet.style.display = 'block';
+                } else {
+                    greet.textContent = '';
+                    greet.style.display = 'none';
+                }
+            }
+
+            // Virtual Parent welcome message
+            const welcome = document.getElementById('welcomeMessage');
+            if (welcome && !welcome.dataset.userEdited) {
+                welcome.textContent = name
+                    ? `Hi ${name}, sweetheart — I'm here whenever you need me. 💕 Share what's on your mind, and I'll listen with all my heart.`
+                    : `Hi sweetheart, I'm here whenever you need me. 💕 Share what's on your mind, and I'll listen with all my heart.`;
+            }
+
+            // Any element with class `js-user-name` gets the name (or 'friend')
+            document.querySelectorAll('.js-user-name').forEach((el) => {
+                el.textContent = safeName;
+            });
+        }
+        // Expose for the auth state listener.
+        window.applyDisplayNamePersonalization = applyDisplayNamePersonalization;
+        window.getDisplayName = getDisplayName;
+
         function loadAccountSettings() {
-            const name = localStorage.getItem('displayName') || '';
+            _migrateGlobalsToScope();
+            const name = localStorage.getItem(scopedKey('displayName')) || '';
             document.getElementById('displayNameInput').value = name;
-            const prefs = JSON.parse(localStorage.getItem('userPrefs') || '{}');
+            const prefs = JSON.parse(localStorage.getItem(scopedKey('userPrefs')) || '{}');
             document.getElementById('prefSoundEffects').checked = prefs.soundEffects !== false;
             document.getElementById('prefDailyReminder').checked = !!prefs.dailyReminder;
             document.getElementById('prefAnimations').checked = prefs.animations !== false;
-            const storedKey = localStorage.getItem('openai_api_key') || '';
+            const storedKey = localStorage.getItem(scopedKey('openai_api_key')) || '';
             document.getElementById('openaiKeyInput').value = storedKey;
         }
 
         function saveOpenAIKey() {
             const key = document.getElementById('openaiKeyInput').value.trim();
-            localStorage.setItem('openai_api_key', key);
+            localStorage.setItem(scopedKey('openai_api_key'), key);
             const msg = document.getElementById('openaiKeyMsg');
             msg.style.display = 'block';
             setTimeout(() => { msg.style.display = 'none'; }, 2500);
@@ -12427,10 +12522,11 @@ User's message: ${userMessage}`
 
         function saveDisplayName() {
             const name = document.getElementById('displayNameInput').value.trim();
-            localStorage.setItem('displayName', name);
+            localStorage.setItem(scopedKey('displayName'), name);
             const msg = document.getElementById('displayNameMsg');
             msg.style.display = 'block';
             setTimeout(() => { msg.style.display = 'none'; }, 2500);
+            applyDisplayNamePersonalization();
         }
 
         // ───── Talk to ה' Letter Functions ─────
@@ -12535,15 +12631,15 @@ User's message: ${userMessage}`
         }
 
         function savePref(key, value) {
-            const prefs = JSON.parse(localStorage.getItem('userPrefs') || '{}');
+            const prefs = JSON.parse(localStorage.getItem(scopedKey('userPrefs')) || '{}');
             prefs[key] = value;
-            localStorage.setItem('userPrefs', JSON.stringify(prefs));
+            localStorage.setItem(scopedKey('userPrefs'), JSON.stringify(prefs));
         }
 
         function exportAccountData() {
             const data = {
-                displayName: localStorage.getItem('displayName') || '',
-                preferences: JSON.parse(localStorage.getItem('userPrefs') || '{}'),
+                displayName: localStorage.getItem(scopedKey('displayName')) || '',
+                preferences: JSON.parse(localStorage.getItem(scopedKey('userPrefs')) || '{}'),
                 diaryEntries: JSON.parse(localStorage.getItem('diaryEntries') || '[]'),
                 moodLog: JSON.parse(localStorage.getItem('moodLog') || '[]'),
                 safetyPlan: JSON.parse(localStorage.getItem('safetyPlanData') || '{}'),
@@ -12562,10 +12658,19 @@ User's message: ${userMessage}`
 
         function clearAllData() {
             if (!confirm('⚠️ This will delete ALL your data from this device. Are you sure?')) return;
-            const keys = ['diaryEntries','moodLog','safetyPlanData','safetyPlan','affirmationBook','mySongs','adoptedPet','plantState','displayName','userPrefs','godLetters'];
-            keys.forEach(k => localStorage.removeItem(k));
+            // Wipe both shared diary/safety/etc keys AND the per-account scoped
+            // copies (displayName / userPrefs / openai_api_key) so a user signing
+            // back in afterwards starts from a clean slate.
+            const sharedKeys = ['diaryEntries','moodLog','safetyPlanData','safetyPlan','affirmationBook','mySongs','adoptedPet','plantState','godLetters'];
+            sharedKeys.forEach(k => localStorage.removeItem(k));
+            // Per-account scoped keys for the *current* user (and legacy globals).
+            ACCOUNT_KEYS.forEach(base => {
+                localStorage.removeItem(base);                // legacy/global
+                localStorage.removeItem(scopedKey(base));     // current user scope
+            });
             // also clear safety textarea keys
             Object.keys(localStorage).filter(k => k.startsWith('safety-')).forEach(k => localStorage.removeItem(k));
+            applyDisplayNamePersonalization();
             alert('✅ All data has been cleared.');
         }
 
