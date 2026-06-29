@@ -5397,13 +5397,17 @@
                     <!-- Display Name -->
                     <div class="hotline" style="margin-bottom: 20px;">
                         <h3>👤 Display Name</h3>
-                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px;">This name appears throughout the app to personalise your experience.</p>
-                        <div style="display:flex; gap:10px; align-items:center;">
+                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px;">This name appears throughout the app to personalise your experience. Leave blank to use your Google profile first name.</p>
+                        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
                             <input type="text" id="displayNameInput" placeholder="Enter your name..." maxlength="40"
-                                style="flex:1; padding:10px 14px; border:2px solid #22c55e; border-radius:8px; font-size:15px; outline:none;">
+                                style="flex:1; min-width:160px; padding:10px 14px; border:2px solid #22c55e; border-radius:8px; font-size:15px; outline:none;">
                             <button onclick="saveDisplayName()"
                                 style="background:#22c55e; color:#000; border:none; border-radius:8px; padding:10px 18px; font-weight:700; cursor:pointer; font-size:14px; white-space:nowrap;">
                                 💾 Save
+                            </button>
+                            <button onclick="resetDisplayName()" title="Clear this name and use your Google profile name"
+                                style="background:#fef3c7; color:#92400e; border:2px solid #f59e0b; border-radius:8px; padding:9px 14px; font-weight:700; cursor:pointer; font-size:13px; white-space:nowrap;">
+                                🔄 Reset
                             </button>
                         </div>
                         <p id="displayNameMsg" style="color:#22c55e; font-size:13px; margin-top:8px; display:none;">✅ Name saved!</p>
@@ -11725,12 +11729,30 @@ User's message: ${userMessage}`
             const inIframe = (() => { try { return window.self !== window.top; } catch (_) { return true; } })();
             const isSafari  = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
             const cookiesOff = (typeof navigator.cookieEnabled === 'boolean') && !navigator.cookieEnabled;
+
+            // Tiny helper: when even signInWithRedirect can't navigate us away
+            // (e.g. we're trapped in VS Code's Simple Browser or a preview iframe
+            // with sandbox restrictions), pop a new top-level tab so the user can
+            // complete sign-in in a real browser context.
+            function _offerOpenInNewTab(reason) {
+                const url = (typeof location !== 'undefined' && location.origin) ? (location.origin + (location.pathname || '/')) : '/';
+                const wantsNewTab = confirm(
+                    'Sign-in could not complete here (' + reason + ').\n\n' +
+                    'This usually happens in embedded previews (VS Code Simple Browser, Replit preview, an iframe). ' +
+                    'Open this site in a new browser tab to sign in?'
+                );
+                if (wantsNewTab) {
+                    try { window.open(url, '_blank', 'noopener'); }
+                    catch (_) { window.location.assign(url); }
+                }
+            }
+
             if (inIframe || cookiesOff) {
                 console.info('[auth-module] popup will fail here (iframe/cookies-disabled) → using redirect', { inIframe, cookiesOff, isSafari });
                 try { await signInWithRedirect(auth, googleProvider); return; }
                 catch (redirErr) {
                     console.error('[auth-module] proactive redirect failed:', redirErr);
-                    alert('Sign-in failed: ' + (redirErr.code || redirErr.message || 'unknown') + '\n\nIf you are viewing this page in an embed/preview, open it in a new tab and try again.');
+                    _offerOpenInNewTab(redirErr.code || redirErr.message || 'embedded environment');
                     return;
                 }
             }
@@ -11825,7 +11847,11 @@ User's message: ${userMessage}`
                 if (shouldFallback) {
                     console.info('[auth-module] popup path unusable, falling back to redirect', { code: error.code, msg });
                     try { await signInWithRedirect(auth, googleProvider); return; }
-                    catch (redirErr) { console.error('[auth-module] redirect fallback failed:', redirErr); }
+                    catch (redirErr) {
+                        console.error('[auth-module] redirect fallback failed:', redirErr);
+                        _offerOpenInNewTab(redirErr.code || error.code || 'redirect blocked');
+                        return;
+                    }
                 }
                 // Surface the real reason instead of a generic message — makes diagnosis 10x faster.
                 const reason = (error && (error.code || error.message)) || 'unknown error';
@@ -12467,10 +12493,9 @@ User's message: ${userMessage}`
         // 'userPrefs', 'openai_api_key') with no user namespacing. Two accounts on
         // the same browser would clobber each other and the wrong name appeared
         // after a sign-out → sign-in. We now namespace every account-settings key
-        // by the signed-in user's uid (or '_guest' when nobody is signed in), and
-        // migrate any pre-existing global values into the active user's namespace
-        // on first read so nothing is lost.
+        // by the signed-in user's uid (or '_guest' when nobody is signed in).
         const ACCOUNT_KEYS = ['displayName', 'userPrefs', 'openai_api_key'];
+        const MIGRATION_FLAG = '__settings_migration_v3_done';
 
         function userScope() {
             const u = (typeof window !== 'undefined' && window._currentUser) || null;
@@ -12481,31 +12506,77 @@ User's message: ${userMessage}`
             return base + userScope();
         }
 
-        // First time a signed-in user lands, copy any legacy global values into
-        // their per-user slot (but never overwrite an existing per-user value).
-        function _migrateGlobalsToScope() {
-            if (userScope() === '_guest') return;
-            ACCOUNT_KEYS.forEach((base) => {
-                const scoped = scopedKey(base);
-                if (localStorage.getItem(scoped) === null) {
+        // ---------- One-time, UID-bound migration ----------
+        // PREVIOUS BUG: an earlier migration copied the legacy global
+        // `displayName` into every new user's scope on first read, so the
+        // original owner's name (e.g. "Bracha") appeared for every subsequent
+        // account that signed in on the same device.
+        //
+        // FIX: run exactly once. First signed-in user keeps the legacy value
+        // (preserves their settings); the legacy global is then deleted so it
+        // can never leak again. Also clean up any scoped copies the broken
+        // migration already wrote into other users' slots.
+        function _migrateLegacyOnce() {
+            if (userScope() === '_guest') return;                       // need a real user
+            if (localStorage.getItem(MIGRATION_FLAG)) return;           // already done
+            try {
+                ACCOUNT_KEYS.forEach((base) => {
                     const legacy = localStorage.getItem(base);
-                    if (legacy !== null && legacy !== '') {
-                        localStorage.setItem(scoped, legacy);
+                    if (legacy == null || legacy === '') return;
+
+                    // 1) Preserve into CURRENT user's scope (don't overwrite).
+                    const myScoped = scopedKey(base);
+                    if (localStorage.getItem(myScoped) == null) {
+                        localStorage.setItem(myScoped, legacy);
                     }
-                }
-            });
+
+                    // 2) Nuke any *other* per-uid copies that exactly equal the
+                    //    legacy value — those are leak victims from the v1 bug.
+                    Object.keys(localStorage).forEach((k) => {
+                        if (k === myScoped) return;
+                        if (!k.startsWith(base + '_')) return;
+                        if (localStorage.getItem(k) === legacy) {
+                            console.info('[settings-migration] removing leaked', k, '=', legacy);
+                            localStorage.removeItem(k);
+                        }
+                    });
+
+                    // 3) Delete the legacy global so future users never inherit it.
+                    localStorage.removeItem(base);
+                });
+                localStorage.setItem(MIGRATION_FLAG, String(Date.now()));
+                console.info('[settings-migration] v3 complete for uid', userScope());
+            } catch (e) {
+                console.warn('[settings-migration] failed:', e);
+            }
         }
 
         // Returns the user's chosen display name, falling back to the first word
-        // of their Google profile name, then to 'friend'.
+        // of their Google profile name, then to '' (greeting hides).
         function getDisplayName() {
-            _migrateGlobalsToScope();
+            _migrateLegacyOnce();
             const stored = (localStorage.getItem(scopedKey('displayName')) || '').trim();
             if (stored) return stored;
             const u = window._currentUser;
             if (u && u.displayName) return String(u.displayName).split(' ')[0];
             return '';
         }
+
+        // Wipe the current user's display-name override so the greeting falls
+        // back to their Google profile first name. Exposed via the Reset button.
+        function resetDisplayName() {
+            try { localStorage.removeItem(scopedKey('displayName')); } catch (_) {}
+            const input = document.getElementById('displayNameInput');
+            if (input) input.value = '';
+            applyDisplayNamePersonalization();
+            const msg = document.getElementById('displayNameMsg');
+            if (msg) {
+                msg.textContent = '🔄 Reset! Greeting will now use your Google profile name.';
+                msg.style.display = 'block';
+                setTimeout(() => { msg.style.display = 'none'; msg.textContent = '✅ Name saved!'; }, 3000);
+            }
+        }
+        window.resetDisplayName = resetDisplayName;
 
         // Apply the display name to every spot that should be personalized.
         // Anything else in the future can just add the class `js-user-name` and
@@ -12546,7 +12617,7 @@ User's message: ${userMessage}`
         window.getDisplayName = getDisplayName;
 
         function loadAccountSettings() {
-            _migrateGlobalsToScope();
+            _migrateLegacyOnce();
             const name = localStorage.getItem(scopedKey('displayName')) || '';
             document.getElementById('displayNameInput').value = name;
             const prefs = JSON.parse(localStorage.getItem(scopedKey('userPrefs')) || '{}');
