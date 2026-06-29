@@ -12495,7 +12495,7 @@ User's message: ${userMessage}`
         // after a sign-out → sign-in. We now namespace every account-settings key
         // by the signed-in user's uid (or '_guest' when nobody is signed in).
         const ACCOUNT_KEYS = ['displayName', 'userPrefs', 'openai_api_key'];
-        const MIGRATION_FLAG = '__settings_migration_v3_done';
+        const MIGRATION_FLAG = '__settings_migration_v4_done';
 
         function userScope() {
             const u = (typeof window !== 'undefined' && window._currentUser) || null;
@@ -12506,50 +12506,67 @@ User's message: ${userMessage}`
             return base + userScope();
         }
 
-        // ---------- One-time, UID-bound migration ----------
-        // PREVIOUS BUG: an earlier migration copied the legacy global
-        // `displayName` into every new user's scope on first read, so the
-        // original owner's name (e.g. "Bracha") appeared for every subsequent
-        // account that signed in on the same device.
+        // ---------- One-time leak-eraser migration (v4) ----------
+        // PREVIOUS BUGS this had to recover from:
+        //   v1: copied the unscoped legacy 'displayName' into EVERY user's
+        //       scope on first read → every account inherited the first
+        //       owner's name ("Bracha leak").
+        //   v3: tried to "preserve" the legacy value into the current
+        //       user's scope. If a NEW account signed in before the
+        //       original owner re-loaded under v3, it imprinted the
+        //       original owner's name onto the new account AND wiped the
+        //       original owner's own slot (because it equalled the legacy
+        //       value and was treated as a "leak victim").
         //
-        // FIX: run exactly once. First signed-in user keeps the legacy value
-        // (preserves their settings); the legacy global is then deleted so it
-        // can never leak again. Also clean up any scoped copies the broken
-        // migration already wrote into other users' slots.
+        // v4 strategy: NEVER copy the legacy value to anyone. Wipe every
+        // scoped slot whose value duplicates either the legacy global or
+        // another scoped slot — duplicates are mathematically leaks. The
+        // legitimate owner (whoever that turns out to be) re-types their
+        // preferred name once, and from that point on every account is
+        // properly isolated. Runs at script-parse time so the input field
+        // and dashboard greeting never even briefly show a leaked name.
         function _migrateLegacyOnce() {
-            if (userScope() === '_guest') return;                       // need a real user
-            if (localStorage.getItem(MIGRATION_FLAG)) return;           // already done
+            if (localStorage.getItem(MIGRATION_FLAG)) return;
             try {
                 ACCOUNT_KEYS.forEach((base) => {
+                    // Collect every slot for this base key (including the legacy
+                    // unscoped one) and tally duplicate values.
+                    const slots = [];
                     const legacy = localStorage.getItem(base);
-                    if (legacy == null || legacy === '') return;
-
-                    // 1) Preserve into CURRENT user's scope (don't overwrite).
-                    const myScoped = scopedKey(base);
-                    if (localStorage.getItem(myScoped) == null) {
-                        localStorage.setItem(myScoped, legacy);
-                    }
-
-                    // 2) Nuke any *other* per-uid copies that exactly equal the
-                    //    legacy value — those are leak victims from the v1 bug.
+                    if (legacy != null && legacy !== '') slots.push({ key: base, val: legacy });
                     Object.keys(localStorage).forEach((k) => {
-                        if (k === myScoped) return;
-                        if (!k.startsWith(base + '_')) return;
-                        if (localStorage.getItem(k) === legacy) {
-                            console.info('[settings-migration] removing leaked', k, '=', legacy);
-                            localStorage.removeItem(k);
+                        if (k.startsWith(base + '_')) {
+                            const v = localStorage.getItem(k);
+                            if (v != null && v !== '') slots.push({ key: k, val: v });
+                        }
+                    });
+                    const counts = {};
+                    slots.forEach(s => { counts[s.val] = (counts[s.val] || 0) + 1; });
+
+                    // Any value that shows up in 2+ slots is a leak — wipe ALL
+                    // slots that share it (including the legitimate owner's;
+                    // they can re-type from the Account Settings page).
+                    slots.forEach(s => {
+                        if (counts[s.val] > 1) {
+                            console.info('[settings-migration v4] wiping duplicate', s.key, '=', JSON.stringify(s.val));
+                            localStorage.removeItem(s.key);
                         }
                     });
 
-                    // 3) Delete the legacy global so future users never inherit it.
+                    // Always nuke the unscoped legacy global so it can't seed
+                    // future leaks even if a v1-era cached page still runs.
                     localStorage.removeItem(base);
                 });
                 localStorage.setItem(MIGRATION_FLAG, String(Date.now()));
-                console.info('[settings-migration] v3 complete for uid', userScope());
+                console.info('[settings-migration v4] complete');
             } catch (e) {
-                console.warn('[settings-migration] failed:', e);
+                console.warn('[settings-migration v4] failed:', e);
             }
         }
+
+        // Run RIGHT AWAY (doesn't need a signed-in user) so the leak is gone
+        // before the input field, greeting banner, or anything else reads it.
+        _migrateLegacyOnce();
 
         // Returns the user's chosen display name, falling back to the first word
         // of their Google profile name, then to '' (greeting hides).
