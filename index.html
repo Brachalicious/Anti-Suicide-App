@@ -5814,6 +5814,42 @@
             }
         }
 
+        // ---------- Personalization helpers shared by all chatbots ----------
+        // Returns the user's preferred display name (per-account scoped),
+        // falling back to their Google profile first name, then to ''.
+        // Empty string means "no personalization" — prompts should branch on it.
+        function _userPrefName() {
+            try {
+                if (typeof getDisplayName === 'function') return getDisplayName() || '';
+            } catch (_) {}
+            return '';
+        }
+
+        // Reads the Gemini API key with per-account scoping first, then falls
+        // back to the legacy unscoped keys. Without this, the v4 settings
+        // migration's per-account isolation also hides the saved key from the
+        // chat code (which still looked at the flat 'openai_api_key').
+        function _geminiKey() {
+            try {
+                if (typeof scopedKey === 'function') {
+                    const scoped = localStorage.getItem(scopedKey('openai_api_key'));
+                    if (scoped) return scoped;
+                }
+            } catch (_) {}
+            return (
+                localStorage.getItem('openai_api_key') ||
+                localStorage.getItem('geminiApiKey') ||
+                ''
+            );
+        }
+
+        // Compose a small "speak to this user by name" preface for the AI.
+        function _nameAddressInstruction(role) {
+            const name = _userPrefName();
+            if (!name) return '';
+            return ` The person you are talking with is named ${name}. Greet them by name in your first reply of a conversation and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`;
+        }
+
         async function sendParentMessage() {
             const input = document.getElementById('parentChatInput');
             const message = input.value.trim();
@@ -5852,16 +5888,17 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
 
             try {
-                const GEMINI_KEY = localStorage.getItem('openai_api_key') || '';
-                const storedKey = localStorage.getItem('openai_api_key') || '';
+                const apiKey = _geminiKey();
+                const userName = _userPrefName();
 
-                const systemPrompt = selectedParent === 'mommy'
+                const baseSystemPrompt = selectedParent === 'mommy'
                     ? "You are a warm, loving, nurturing virtual mommy. Speak with unconditional love, gentle encouragement, and deep compassion. Use endearing terms like 'sweetheart', 'my love', 'baby'. Always validate feelings first before offering comfort."
                     : selectedParent === 'daddy'
                     ? "You are a caring, protective, supportive virtual daddy. Speak with steady calm, encouragement, and pride. Use terms like 'champ', 'kiddo', 'my dear'. Be strong but gentle."
                     : "You are a warm, funny, supportive best friend. Be real, relatable, and uplifting. Use casual friendly language. Validate feelings and cheer them on.";
 
-                const apiKey = storedKey || GEMINI_KEY;
+                // Add a personalization preface telling the AI the user's name (if any).
+                const systemPrompt = baseSystemPrompt + _nameAddressInstruction(selectedParent);
                 
                 // Format conversation history for Gemini
                 const conversationHistory = parentChatHistory.slice(-10).map(msg => ({
@@ -5964,9 +6001,11 @@
             chatContainer.scrollTop = chatContainer.scrollHeight;
             
             try {
-                const GEMINI_KEY = localStorage.getItem('openai_api_key') || '';
-                const storedKey = localStorage.getItem('geminiApiKey') || '';
-                const apiKey = storedKey || GEMINI_KEY;
+                const apiKey = _geminiKey();
+                const userName = _userPrefName();
+                const greetingHint = userName
+                    ? `\n\nThe person you are talking with is named ${userName}. Greet them by name in your first reply and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`
+                    : '';
                 
                 const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
                     method: 'POST',
@@ -5987,7 +6026,7 @@ CRITICAL GUIDELINES:
 - Remind them they're not alone and their life has value
 - Use emojis occasionally to convey warmth (💜, 🫂, ✨, etc.)
 
-Remember: Your goal is to be a supportive presence, not to fix everything. Sometimes people just need to be heard.
+Remember: Your goal is to be a supportive presence, not to fix everything. Sometimes people just need to be heard.${greetingHint}
 
 User's message: ${userMessage}`
                             }]
@@ -8256,6 +8295,7 @@ User's message: ${userMessage}`
                     body: JSON.stringify({
                         message: `After a silent scream session, the user shared: "${response}". Please provide compassionate, grounding support acknowledging their courage in releasing emotions and help them process what came up. Be gentle and validating.`,
                         parentType: 'mysticminded33',
+                        userName: (typeof _userPrefName === 'function' ? _userPrefName() : ''),
                         conversationHistory: []
                     })
                 });
@@ -8895,6 +8935,7 @@ User's message: ${userMessage}`
                     body: JSON.stringify({
                         message,
                         parentType: 'mommy',
+                        userName: (typeof _userPrefName === 'function' ? _userPrefName() : ''),
                         conversationHistory: screamChatHistory
                     })
                 });

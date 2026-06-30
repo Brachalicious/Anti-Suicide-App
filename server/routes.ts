@@ -446,13 +446,18 @@ export function createRouter(storage: IStorage): Router {
       console.log("Virtual Parent chat request received");
       console.log("GEMINI_API_KEY exists:", !!process.env.GEMINI_API_KEY);
       
-      const { message, parentType = "mommy", conversationHistory = [], images = [] } = req.body;
+      const { message, parentType = "mommy", conversationHistory = [], images = [], userName = "" } = req.body;
 
       if (!message) {
         return res.status(400).json({ error: "Message is required" });
       }
-      
-      console.log("Message:", message, "Parent type:", parentType);
+
+      // Sanitize the user-provided display name so it can't break the prompt.
+      const safeUserName = typeof userName === "string"
+        ? userName.replace(/[\r\n\t]/g, " ").trim().slice(0, 80)
+        : "";
+
+      console.log("Message:", message, "Parent type:", parentType, "User name:", safeUserName || "(none)");
 
       const parentPersonalities: Record<string, { name: string; tone: string; style: string }> = {
         mommy: {
@@ -511,7 +516,7 @@ export function createRouter(storage: IStorage): Router {
       const systemPrompt = `You are a ${parentPersonality.name}, a virtual ${roleType} for someone who needs emotional support, comfort, and unconditional love. 
 
 Your personality is ${parentPersonality.tone}. ${parentPersonality.style}
-
+${safeUserName ? `\nThe person you are talking with is named ${safeUserName}. Greet them by name in your first reply of a conversation and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.\n` : ""}
 Important guidelines:
 - Always be supportive, loving, and non-judgmental
 - ${isPet ? "Show unconditional love through actions and body language" : "Validate their feelings first before offering advice"}
