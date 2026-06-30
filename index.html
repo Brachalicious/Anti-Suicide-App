@@ -5860,6 +5860,23 @@
             return ` The person you are talking with is named ${name}. Greet them by name in your first reply of a conversation and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`;
         }
 
+        // Strip a leading "Hi <Name>, " / "Hello <Name>! " / "Hey <Name> — " from
+        // the AI's reply. Used when we're ALREADY prepending our own greeting
+        // locally (e.g. the Help Guide bubble), so the user doesn't see the name
+        // twice — once from us, once from the AI obeying the greet-by-name rule.
+        function _stripLeadingGreeting(text, name) {
+            if (!text) return '';
+            if (!name) return text;
+            const esc = name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+            // Match: start, optional whitespace, hi|hello|hey (or hii/heyy), one or more
+            // separator chars, the name, then sentence-ending punctuation/whitespace.
+            const re = new RegExp('^\\s*(?:hi+|hello+|hey+)[\\s,]+' + esc + '[\\s,.!?—–-]+', 'i');
+            const stripped = text.replace(re, '').trim();
+            if (!stripped) return '';
+            // Re-capitalize the first letter so it reads naturally after our prefix.
+            return stripped[0].toUpperCase() + stripped.slice(1);
+        }
+
         // Current Gemini model name. Google retires these aggressively —
         // `gemini-pro` died in 2024, `gemini-1.5-flash` in 2026. The server
         // backend (server/routes.ts) and the Netlify Function (netlify/functions/chat.js)
@@ -9480,7 +9497,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 // Show AI reply or, when the user hasn't enabled AI, a warm
                 // BYOK invite that keeps the safety hotlines visible.
                 const renderReply = (clean) => {
-                    msgP.innerHTML = '🤖 ' + escapeHtml(hi) + escapeHtml(clean);
+                    // The AI was instructed to greet by name AND we prepend
+                    // our own "Hi <Name> 💗" locally. Strip the AI's greeting
+                    // so the name doesn't appear twice in the bubble.
+                    const deDuped = _stripLeadingGreeting(clean, userName);
+                    msgP.innerHTML = '🤖 ' + escapeHtml(hi) + escapeHtml(deDuped);
                 };
                 const renderByokInvite = () => {
                     msgP.innerHTML =
