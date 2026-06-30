@@ -9336,35 +9336,51 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         function handleHelpGuideInput() {
             const input = document.getElementById('help-guide-input');
             if (!input) return;
-            const text = input.value.toLowerCase().trim();
-            if (!text) return;
+            const rawText = input.value.trim();
+            if (!rawText) return;
+            const text = rawText.toLowerCase();
             input.value = '';
+
+            // Always greet the signed-in user by name (helper defined near the
+            // other chatbots — falls back to '' for guests).
+            const userName = (typeof _userPrefName === 'function' ? _userPrefName() : '');
+            const hi = userName ? `Hi ${userName} 💗 ` : '';
 
             // Build response with empathetic message + navigation offer
             let response = null;
 
             if (/breath|breathe|chest tight|panic|hypervent/.test(text)) {
-                response = { msg: "I hear you 💗 When everything feels overwhelming, your breath is your anchor. I have a guided breathing exercise right here for you.", section: 'breathingOverlay', label: 'Take me to Breathing' };
+                response = { msg: hi + "I hear you. When everything feels overwhelming, your breath is your anchor. I have a guided breathing exercise right here for you.", section: 'breathingOverlay', label: 'Take me to Breathing' };
             } else if (/meditat|calm|peace|quiet|ground|overwhelm|settle/.test(text)) {
-                response = { msg: "That makes so much sense 🌸 Sometimes we just need to slow down and feel safe. I have a guided meditation that can help.", section: 'guidedMeditationOverlay', label: 'Take me to Guided Meditation' };
+                response = { msg: hi + "That makes so much sense 🌸 Sometimes we just need to slow down and feel safe. I have a guided meditation that can help.", section: 'guidedMeditationOverlay', label: 'Take me to Guided Meditation' };
             } else if (/safe|plan|safety/.test(text)) {
-                response = { msg: "I'm really glad you reached out 💪 Having a safety plan is one of the most powerful things you can do for yourself. Let's build yours together.", section: 'safetyPlanOverlay', label: 'Take me to Safety Plan' };
+                response = { msg: hi + "I'm really glad you reached out 💪 Having a safety plan is one of the most powerful things you can do for yourself. Let's build yours together.", section: 'safetyPlanOverlay', label: 'Take me to Safety Plan' };
             } else if (/suicid|harm|hurt myself|die|dying|end it|hopeless|can't go on|can't do this/.test(text)) {
-                response = { msg: "Thank you for trusting me with this 💗 Please know you are not alone, and this feeling can change. Right now, let's get you a safety plan — or call/text 988 immediately if you're in danger.", section: 'safetyPlanOverlay', label: 'Open Safety Plan' };
+                response = { msg: hi + "Thank you for trusting me with this. Please know you are not alone, and this feeling can change. Right now, let's get you a safety plan — or call/text 988 immediately if you're in danger.", section: 'safetyPlanOverlay', label: 'Open Safety Plan' };
             } else if (/angry|anger|rage|scream|yell|furious|mad|frustrated/.test(text)) {
-                response = { msg: "That anger is valid — you don't have to swallow it 💥 I have a space where you can let it all out safely.", section: 'screamCircleOverlay', label: 'Take me to Release Anger' };
+                response = { msg: hi + "That anger is valid — you don't have to swallow it 💥 I have a space where you can let it all out safely.", section: 'screamCircleOverlay', label: 'Take me to Release Anger' };
             } else if (/talk|chat|speak|listen|someone|lonely|alone|no one/.test(text)) {
-                response = { msg: "You deserve to be heard 💬 Let me connect you with real humans who care — available 24/7.", nav: () => { document.querySelector('.help-guide-modal')?.remove(); openTalkToSomeoneModal(); }, label: 'Talk to Someone' };
+                response = { msg: hi + "You deserve to be heard 💬 Let me connect you with real humans who care — available 24/7.", nav: () => { document.querySelector('.help-guide-modal')?.remove(); openTalkToSomeoneModal(); }, label: 'Talk to Someone' };
             } else if (/chizuk|strength|hope|inspire|motivat|encour|video/.test(text)) {
-                response = { msg: "You came to the right place ✨ I have words of strength, videos, and Jewish wisdom waiting for you in the Chizuk section.", navSection: 'chizuk', label: 'Take me to Chizuk' };
+                response = { msg: hi + "You came to the right place ✨ I have words of strength, videos, and Jewish wisdom waiting for you in the Chizuk section.", navSection: 'chizuk', label: 'Take me to Chizuk' };
             } else if (/tehillim|psalm|pray|prayer|daven/.test(text)) {
-                response = { msg: "Turning to Hashem is the most powerful thing 🕊️ The full Tehillim is in our Dedication section.", navSection: 'dedication', label: 'Take me to Tehillim' };
+                response = { msg: hi + "Turning to Hashem is the most powerful thing 🕊️ The full Tehillim is in our Dedication section.", navSection: 'dedication', label: 'Take me to Tehillim' };
             } else if (/mood|track|feel|feeling|emotion/.test(text)) {
-                response = { msg: "Checking in with yourself is so important 💜 Our Daily Check-in is on the Dashboard — it only takes a moment.", navSection: 'dashboard', label: 'Take me to Dashboard' };
+                response = { msg: hi + "Checking in with yourself is so important 💜 Our Daily Check-in is on the Dashboard — it only takes a moment.", navSection: 'dashboard', label: 'Take me to Dashboard' };
             } else if (/resource|hotline|crisis line|help line/.test(text)) {
-                response = { msg: "Here are all the resources and hotlines we have curated for you 📚", navSection: 'resources', label: 'Take me to Resources' };
+                response = { msg: hi + "Here are all the resources and hotlines we have curated for you 📚", navSection: 'resources', label: 'Take me to Resources' };
             } else {
-                response = { msg: "I'm here with you 💗 I didn't quite catch that — can you tell me a little more? Are you feeling anxious, angry, hopeless, or something else? I'll point you to exactly the right tool.", label: null };
+                // No keyword matched — instead of the old canned "didn't catch
+                // that" message, ask the real AI for a personalized reply.
+                // We render a "thinking…" bubble immediately, then swap in the
+                // AI's words when it comes back. If the AI is unreachable we
+                // fall back to a soft message that still uses the user's name.
+                response = {
+                    msg: hi + "I'm here with you. Let me take a moment to really listen…",
+                    label: null,
+                    useAI: true,
+                    aiPrompt: rawText
+                };
             }
 
             // Show response inside modal
@@ -9379,7 +9395,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const resp = document.createElement('div');
             resp.className = 'bot-response';
             resp.style.cssText = 'background:rgba(255,20,147,0.1);border:1px solid rgba(255,20,147,0.35);border-radius:14px;padding:16px;margin-bottom:14px;';
-            resp.innerHTML = `<p style="color:#fce7f3;font-size:14px;line-height:1.7;margin:0 0 ${response.label ? '12px' : '0'} 0;">🤖 ${response.msg}</p>`;
+            const msgP = document.createElement('p');
+            msgP.style.cssText = `color:#fce7f3;font-size:14px;line-height:1.7;margin:0 0 ${response.label ? '12px' : '0'} 0;`;
+            msgP.innerHTML = '🤖 ' + escapeHtml(response.msg);
+            resp.appendChild(msgP);
 
             if (response.label) {
                 const yesBtn = document.createElement('button');
@@ -9409,6 +9428,29 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const searchBar = container.querySelector('div[style*="display:flex;gap:8px"]');
             if (searchBar) container.insertBefore(resp, searchBar);
             else container.appendChild(resp);
+
+            // If we asked for an AI reply, fetch it in the background and
+            // swap it into the bubble (keeping the same DOM node so the user
+            // sees a smooth update instead of a flash).
+            if (response.useAI && typeof _chatBackend === 'function') {
+                const systemPrompt =
+                    "You are a warm, gentle triage helper for the Fight Suicide Project — a mental-health support app. " +
+                    "The user has just typed something into the 'How are you feeling right now?' search box and we couldn't match it to a specific tool. " +
+                    "Reply in 2-3 short sentences: (1) validate what they shared, (2) ask ONE gentle clarifying question OR softly suggest one of these tools by name: Breathing exercise, Guided Meditation, Safety Plan, Release Anger / Scream Circle, Talk to Someone, Chizuk videos, Tehillim, Daily Check-in, or Resources & Hotlines. " +
+                    "If they mention any risk of self-harm, gently remind them they can call or text 988 right now. " +
+                    "Keep it human, never robotic.";
+                _chatBackend({
+                    systemPrompt,
+                    userMessage: response.aiPrompt,
+                    history: []
+                }).then((reply) => {
+                    const clean = (reply || '').trim();
+                    if (clean) msgP.innerHTML = '🤖 ' + (hi ? escapeHtml(hi) : '') + escapeHtml(clean);
+                }).catch((err) => {
+                    console.warn('Help Guide AI fallback:', err && err.message);
+                    msgP.innerHTML = '🤖 ' + escapeHtml(hi + "I'm here with you. Could you tell me a little more about what's going on? You can also tap any of the buttons above for a tool that might help right now.");
+                });
+            }
         }
 
                 // Close dropdown when clicking outside
