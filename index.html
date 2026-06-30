@@ -5955,7 +5955,14 @@
                                     parts: [{ text: systemPrompt + '\n\nUser message: ' + message }]
                                 }
                             ],
-                            generationConfig: { temperature: 0.85, maxOutputTokens: 400 }
+                            // Disable Gemini 2.5's "thinking" budget (it would
+                            // otherwise eat visible tokens and truncate replies)
+                            // and give the visible answer plenty of headroom.
+                            generationConfig: {
+                                temperature: 0.85,
+                                maxOutputTokens: 1200,
+                                thinkingConfig: { thinkingBudget: 0 }
+                            }
                         })
                     });
 
@@ -6091,7 +6098,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                                 temperature: 0.9,
                                 topK: 40,
                                 topP: 0.95,
-                                maxOutputTokens: 1024,
+                                maxOutputTokens: 1500,
+                                // Disable Gemini 2.5 thinking-token reservation
+                                // so visible replies aren't truncated mid-sentence.
+                                thinkingConfig: { thinkingBudget: 0 }
                             },
                             safetySettings: [
                                 { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },

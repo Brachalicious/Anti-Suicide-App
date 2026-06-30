@@ -549,12 +549,18 @@ Conversation continuity notes:
 
       // Use Gemini API
       const genAI = getGemini();
-      // Use gemini-2.5-flash (latest stable model)
-      const model = genAI.getGenerativeModel({ 
+      // Use gemini-2.5-flash (latest stable model).
+      // thinkingBudget:0 disables the 2.5 model's internal "thinking" stage so
+      // the entire token budget goes to the visible reply -- otherwise short
+      // empathetic answers get truncated mid-sentence.
+      const model = genAI.getGenerativeModel({
         model: "gemini-2.5-flash",
         generationConfig: {
-          maxOutputTokens: 500,
+          maxOutputTokens: 1500,
           temperature: 0.8,
+          // @ts-expect-error -- thinkingConfig is supported on v1beta but not
+          // yet typed in the @google/generative-ai SDK we're on.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
 
@@ -567,8 +573,10 @@ Conversation continuity notes:
       const chat = model.startChat({
         history: chatHistory,
         generationConfig: {
-          maxOutputTokens: 500,
+          maxOutputTokens: 1500,
           temperature: 0.8,
+          // @ts-expect-error -- see note above.
+          thinkingConfig: { thinkingBudget: 0 },
         },
       });
 

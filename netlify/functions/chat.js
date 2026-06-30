@@ -102,7 +102,15 @@ exports.handler = async (event) => {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
                 contents,
-                generationConfig: { temperature: 0.85, maxOutputTokens: 600 },
+                // Gemini 2.5 "thinking" models burn output tokens on internal
+                // reasoning BEFORE producing visible text. For short empathetic
+                // replies we don't need that, so disable thinking AND raise the
+                // visible-token cap so a long-ish answer can't be truncated.
+                generationConfig: {
+                    temperature: 0.85,
+                    maxOutputTokens: 1500,
+                    thinkingConfig: { thinkingBudget: 0 }
+                },
                 safetySettings: [
                     { category: 'HARM_CATEGORY_HARASSMENT',        threshold: 'BLOCK_NONE' },
                     { category: 'HARM_CATEGORY_HATE_SPEECH',       threshold: 'BLOCK_NONE' },
@@ -118,7 +126,13 @@ exports.handler = async (event) => {
             return jsonResponse(upstream.status, { error: detail || 'Gemini upstream error' });
         }
 
-        const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+        // Defensive: if the reply still came back empty (e.g. MAX_TOKENS finish
+        // reason with no parts), surface a friendly note instead of "".
+        const candidate = data?.candidates?.[0];
+        let reply = candidate?.content?.parts?.[0]?.text || '';
+        if (!reply && candidate?.finishReason === 'MAX_TOKENS') {
+            reply = "I'm here with you — could you tell me a little more about what's on your mind?";
+        }
         return jsonResponse(200, { reply });
     } catch (err) {
         return jsonResponse(502, { error: String(err && err.message || err) });
