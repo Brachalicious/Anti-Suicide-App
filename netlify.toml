@@ -5,6 +5,13 @@
   NODE_VERSION = "20"
   SECRETS_SCAN_SMART_DETECTION_ENABLED = "false"
 
+# Server-side Gemini proxy lives in netlify/functions/chat.js so the
+# chatbots work for users who haven't pasted their own API key.
+# Set GEMINI_API_KEY in: Site settings → Environment variables.
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 [[headers]]
   for = "/"
   [headers.values]
@@ -30,6 +37,13 @@
 [[redirects]]
   from = "/favicon.ico"
   to = "/favicon.svg"
+  status = 200
+
+# Clean alias for the chat proxy function so the browser code can just POST
+# to /api/chat (no Netlify-specific path baked in).
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
   status = 200
 
 [[redirects]]

@@ -5850,6 +5850,36 @@
             return ` The person you are talking with is named ${name}. Greet them by name in your first reply of a conversation and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`;
         }
 
+        // Current Gemini model name. (The old `gemini-pro` was retired by Google.)
+        const _GEMINI_MODEL = 'gemini-1.5-flash';
+
+        // Call the server-side Gemini proxy (a Netlify Function deployed at
+        // /.netlify/functions/chat, aliased to /api/chat for cleanliness).
+        // This lets the chatbot work for users who have NOT pasted their own
+        // Gemini API key in Account Settings — the proxy uses the site-owner's
+        // key from the GEMINI_API_KEY env var. Returns the reply text or throws.
+        async function _chatBackend({ systemPrompt, userMessage, history }) {
+            const resp = await fetch('/api/chat', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    systemPrompt: systemPrompt || '',
+                    userMessage: userMessage || '',
+                    userName: _userPrefName(),
+                    history: Array.isArray(history) ? history.slice(-10) : []
+                })
+            });
+            // The Netlify SPA catch-all returns HTML when the function isn't
+            // deployed — detect that and treat it as "no backend available".
+            const contentType = resp.headers.get('content-type') || '';
+            if (!resp.ok || !contentType.includes('application/json')) {
+                throw new Error('backend_unavailable');
+            }
+            const data = await resp.json();
+            if (data && data.error) throw new Error('backend_error');
+            return (data && data.reply) || '';
+        }
+
         async function sendParentMessage() {
             const input = document.getElementById('parentChatInput');
             const message = input.value.trim();
@@ -5899,40 +5929,58 @@
 
                 // Add a personalization preface telling the AI the user's name (if any).
                 const systemPrompt = baseSystemPrompt + _nameAddressInstruction(selectedParent);
-                
+
                 // Format conversation history for Gemini
                 const conversationHistory = parentChatHistory.slice(-10).map(msg => ({
                     role: msg.role === 'assistant' ? 'model' : 'user',
                     parts: [{ text: msg.content }]
                 }));
 
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [
-                            {
-                                role: 'user',
-                                parts: [{ text: systemPrompt + '\n\nUser message: ' + message }]
-                            }
-                        ],
-                        generationConfig: {
-                            temperature: 0.85,
-                            maxOutputTokens: 300
-                        }
-                    })
-                });
+                let assistantMessage = '';
 
-                if (!response.ok) {
-                    const errorData = await response.json().catch(() => ({}));
-                    console.error('Gemini API error:', errorData);
-                    throw new Error('api_error');
+                if (apiKey) {
+                    // Path 1: user pasted their own free Gemini key in Account
+                    // Settings — call Google directly from the browser.
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${_GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [
+                                ...conversationHistory,
+                                {
+                                    role: 'user',
+                                    parts: [{ text: systemPrompt + '\n\nUser message: ' + message }]
+                                }
+                            ],
+                            generationConfig: { temperature: 0.85, maxOutputTokens: 400 }
+                        })
+                    });
+
+                    if (!response.ok) {
+                        const errorData = await response.json().catch(() => ({}));
+                        console.error('Gemini API error:', errorData);
+                        // Try the server backend as a graceful fallback.
+                        assistantMessage = await _chatBackend({
+                            systemPrompt,
+                            userMessage: message,
+                            history: parentChatHistory
+                        });
+                    } else {
+                        const data = await response.json();
+                        assistantMessage = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    }
+                } else {
+                    // Path 2: no per-user key → use the server-side Netlify Function.
+                    assistantMessage = await _chatBackend({
+                        systemPrompt,
+                        userMessage: message,
+                        history: parentChatHistory
+                    });
                 }
 
-                const data = await response.json();
-                const assistantMessage = data.candidates?.[0]?.content?.parts?.[0]?.text || 'I\'m here for you. Tell me more.';
+                if (!assistantMessage) {
+                    assistantMessage = `Hi${userName ? ' ' + userName : ''} 💕 I'm here. Tell me more.`;
+                }
 
                 // Remove typing indicator, show real response
                 document.getElementById(typingId)?.remove();
@@ -5950,9 +5998,12 @@
             } catch (error) {
                 console.error('Virtual parent chat error:', error);
                 document.getElementById(typingId)?.remove();
-                const fallbackMsg = error.message === 'no_key'
-                    ? `${parent.fallback} <br><br><small style="color:#ff69b4;">(To enable AI responses, add your Google Gemini API key in ⚙️ Account Settings)</small>`
-                    : parent.fallback;
+                const name = _userPrefName();
+                const hi = name ? `Hi ${escapeHtml(name)} 💕 ` : '';
+                const needsKey = (error && error.message === 'backend_unavailable');
+                const fallbackMsg = needsKey
+                    ? `${hi}${parent.fallback}<br><br><small style="color:#ff69b4;">To turn on AI replies, paste a free Google Gemini key in ⚙️ Account Settings — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493;">get one free here</a>.</small>`
+                    : `${hi}${parent.fallback}`;
                 chatContainer.innerHTML += `
                     <div class="chat-message assistant">
                         <div class="chat-avatar parent">${parent.emoji}</div>
@@ -6006,14 +6057,8 @@
                 const greetingHint = userName
                     ? `\n\nThe person you are talking with is named ${userName}. Greet them by name in your first reply and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`
                     : '';
-                
-                const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${apiKey}`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: `You are MysticMinded³³, a compassionate AI companion for the Fight Suicide Project. Your role is to provide empathetic, non-judgmental support to people who may be struggling with suicidal thoughts, mental health challenges, or difficult life situations.
+
+                const systemPrompt = `You are MysticMinded³³, a compassionate AI companion for the Fight Suicide Project. Your role is to provide empathetic, non-judgmental support to people who may be struggling with suicidal thoughts, mental health challenges, or difficult life situations.
 
 CRITICAL GUIDELINES:
 - Always be warm, understanding, and supportive
@@ -6026,34 +6071,58 @@ CRITICAL GUIDELINES:
 - Remind them they're not alone and their life has value
 - Use emojis occasionally to convey warmth (💜, 🫂, ✨, etc.)
 
-Remember: Your goal is to be a supportive presence, not to fix everything. Sometimes people just need to be heard.${greetingHint}
+Remember: Your goal is to be a supportive presence, not to fix everything. Sometimes people just need to be heard.${greetingHint}`;
 
-User's message: ${userMessage}`
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.9,
-                            topK: 40,
-                            topP: 0.95,
-                            maxOutputTokens: 1024,
-                        },
-                        safetySettings: [
-                            { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
-                            { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
-                        ]
-                    })
-                });
-                
-                if (!response.ok) {
-                    throw new Error('API request failed');
+                let aiReply = '';
+
+                if (apiKey) {
+                    // Path 1: user has their own Gemini key — call Google directly.
+                    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${_GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                parts: [{ text: `${systemPrompt}\n\nUser's message: ${userMessage}` }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.9,
+                                topK: 40,
+                                topP: 0.95,
+                                maxOutputTokens: 1024,
+                            },
+                            safetySettings: [
+                                { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+                                { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+                                { category: "HARM_CATEGORY_SEXUALLY_EXPLICIT", threshold: "BLOCK_NONE" },
+                                { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
+                            ]
+                        })
+                    });
+
+                    if (response.ok) {
+                        const data = await response.json();
+                        aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                    } else {
+                        // Try the server backend as a graceful fallback.
+                        aiReply = await _chatBackend({
+                            systemPrompt,
+                            userMessage,
+                            history: []
+                        });
+                    }
+                } else {
+                    // Path 2: no per-user key → call the server-side Netlify Function.
+                    aiReply = await _chatBackend({
+                        systemPrompt,
+                        userMessage,
+                        history: []
+                    });
                 }
-                
-                const data = await response.json();
-                const aiReply = data.candidates?.[0]?.content?.parts?.[0]?.text || 
-                    "I'm here for you. 💜 Could you tell me more about what you're going through?";
-                
+
+                if (!aiReply) {
+                    aiReply = `Hi${userName ? ' ' + userName : ''} 💜 I'm here for you. Could you tell me more about what you're going through?`;
+                }
+
                 document.getElementById(typingId)?.remove();
                 chatContainer.innerHTML += `
                     <div class="chat-message assistant">
@@ -6064,9 +6133,12 @@ User's message: ${userMessage}`
             } catch (error) {
                 console.error('MysticMinded chat error:', error);
                 document.getElementById(typingId)?.remove();
-                const fallbackMsg = error.message === 'no_key'
-                    ? `I'm here for you, and I want to help. 💜 However, to enable AI responses, you'll need to add your Google Gemini API key in ⚙️ Account Settings.<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
-                    : `I'm having a technical hiccup right now, but that doesn't change the fact that I care about what you're going through. 💜<br><br>While I get back on track, please remember:<br>📞 <strong>988</strong> - Available 24/7<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong><br><br>You matter, and help is available.`;
+                const name = _userPrefName();
+                const hi = name ? `Hi ${name} 💜 ` : '';
+                const needsKey = (error && error.message === 'backend_unavailable');
+                const fallbackMsg = needsKey
+                    ? `${hi}I'm here for you and I want to help. 💜 To turn on AI replies, paste a free Google Gemini key in ⚙️ Account Settings — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493;">get one free here</a>.<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
+                    : `${hi}I'm having a technical hiccup right now, but that doesn't change the fact that I care about what you're going through. 💜<br><br>While I get back on track, please remember:<br>📞 <strong>988</strong> - Available 24/7<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong><br><br>You matter, and help is available.`;
                 chatContainer.innerHTML += `
                     <div class="chat-message assistant">
                         <div class="chat-avatar">🤖</div>
