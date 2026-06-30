@@ -5379,12 +5379,19 @@
                         Manage your display name, preferences, and account data. All data is stored locally on your device.
                     </p>
 
-                    <!-- OpenAI API Key -->
+                    <!-- Google Gemini API Key (Bring Your Own Key) -->
                     <div class="hotline" style="margin-bottom: 20px; border: 2px solid #a855f7;">
-                        <h3 style="color:#ff1493;">🤖 Google Gemini AI Key</h3>
-                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px;">Enter your Google Gemini API key to enable real AI responses in Virtual Buddy and other features. Your key is stored only on your device and never sent anywhere except directly to Google.</p>
+                        <h3 style="color:#ff1493;">🤖 Turn on AI Replies (Free)</h3>
+                        <p style="margin: 8px 0 12px; color: #ff69b4; font-size: 14px; line-height: 1.6;">
+                            Our chatbots use Google Gemini. To keep this app free for everyone, you bring your own free Gemini key — it takes 2 minutes and costs $0.
+                        </p>
+                        <ol style="margin: 0 0 12px 18px; color: #ff69b4; font-size: 13px; line-height: 1.8;">
+                            <li>Open <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#a855f7; font-weight:700;">Google AI Studio → Create API key</a> (sign in with any Google account)</li>
+                            <li>Click <strong>"Create API key"</strong> → copy the key (starts with <code>AIzaSy…</code>)</li>
+                            <li>Paste it below and hit Save. Your key stays on your device — it's only ever sent directly to Google.</li>
+                        </ol>
                         <div style="display:flex; gap:10px; align-items:center;">
-                            <input type="password" id="openaiKeyInput" placeholder="AIzaSy..." 
+                            <input type="password" id="openaiKeyInput" placeholder="AIzaSy..."
                                 style="flex:1; padding:10px 14px; border:2px solid #a855f7; border-radius:8px; font-size:15px; outline:none;">
                             <button onclick="saveOpenAIKey()"
                                 style="background:#7c3aed; color:white; border:none; border-radius:8px; padding:10px 18px; font-weight:700; cursor:pointer; font-size:14px; white-space:nowrap;">
@@ -5392,6 +5399,9 @@
                             </button>
                         </div>
                         <p id="openaiKeyMsg" style="color:#ff1493; font-size:13px; margin-top:8px; display:none;">✅ API key saved!</p>
+                        <p style="margin: 14px 0 0; color: #c4b5fd; font-size: 12px; line-height: 1.6; border-top: 1px solid rgba(168,85,247,0.3); padding-top: 10px;">
+                            💎 <strong>Don't want to make a key?</strong> A hosted "Premium" option (we cover the AI cost for you) is coming soon — for now, please use the free Bring-Your-Own-Key path above. The app's coping tools, diary, safety plan, breathing exercises, and crisis hotlines all work without any key.
+                        </p>
                     </div>
 
                     <!-- Display Name -->
@@ -5856,12 +5866,23 @@
         // are kept in sync with this value. Last verified working: 2026-06-30.
         const _GEMINI_MODEL = 'gemini-2.5-flash';
 
+        // Returns true if the hosted ("Premium") AI backend is allowed for this
+        // user. DEFAULT IS FALSE so the site owner doesn't pay Google bills for
+        // every random visitor. To enable, set localStorage.useHostedAI = '1'
+        // (will be wired to a paid upgrade flow later).
+        function _hostedAIEnabled() {
+            try { return localStorage.getItem('useHostedAI') === '1'; }
+            catch (_) { return false; }
+        }
+
         // Call the server-side Gemini proxy (a Netlify Function deployed at
         // /.netlify/functions/chat, aliased to /api/chat for cleanliness).
-        // This lets the chatbot work for users who have NOT pasted their own
-        // Gemini API key in Account Settings — the proxy uses the site-owner's
-        // key from the GEMINI_API_KEY env var. Returns the reply text or throws.
+        // Only runs when the user has opted in via _hostedAIEnabled() — otherwise
+        // throws 'ai_disabled' so the caller can show a "bring your own key" UI.
         async function _chatBackend({ systemPrompt, userMessage, history }) {
+            if (!_hostedAIEnabled()) {
+                throw new Error('ai_disabled');
+            }
             const resp = await fetch('/api/chat', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -6010,9 +6031,13 @@
                 document.getElementById(typingId)?.remove();
                 const name = _userPrefName();
                 const hi = name ? `Hi ${escapeHtml(name)} 💕 ` : '';
-                const needsKey = (error && error.message === 'backend_unavailable');
+                // 'ai_disabled' = no per-user key AND owner hasn't opted into
+                // the hosted backend. 'backend_unavailable' = hosted backend
+                // tried but isn't deployed. Both mean: show the BYOK invite.
+                const needsKey = error && (error.message === 'ai_disabled' || error.message === 'backend_unavailable');
+                const byokInvite = `<br><br><small style="color:#ff69b4;">💡 To turn on AI replies, paste a <strong>free</strong> Google Gemini key in <strong>⚙️ Account Settings</strong> — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493; text-decoration:underline;">get one free here</a> (takes 2 min, costs $0).</small>`;
                 const fallbackMsg = needsKey
-                    ? `${hi}${parent.fallback}<br><br><small style="color:#ff69b4;">To turn on AI replies, paste a free Google Gemini key in ⚙️ Account Settings — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493;">get one free here</a>.</small>`
+                    ? `${hi}${parent.fallback}${byokInvite}`
                     : `${hi}${parent.fallback}`;
                 chatContainer.innerHTML += `
                     <div class="chat-message assistant">
@@ -6148,9 +6173,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 document.getElementById(typingId)?.remove();
                 const name = _userPrefName();
                 const hi = name ? `Hi ${name} 💜 ` : '';
-                const needsKey = (error && error.message === 'backend_unavailable');
+                // 'ai_disabled' = hosted backend turned off by default (no per-user
+                // key set). 'backend_unavailable' = hosted backend tried but missing.
+                const needsKey = error && (error.message === 'ai_disabled' || error.message === 'backend_unavailable');
                 const fallbackMsg = needsKey
-                    ? `${hi}I'm here for you and I want to help. 💜 To turn on AI replies, paste a free Google Gemini key in ⚙️ Account Settings — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493;">get one free here</a>.<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
+                    ? `${hi}I'm here for you and I want to help. 💜<br><br>💡 To turn on AI replies, paste a <strong>free</strong> Google Gemini key in <strong>⚙️ Account Settings</strong> — <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493; text-decoration:underline;">get one free here</a> (takes 2 min, costs $0).<br><br>In the meantime, please know that you're not alone. If you're in crisis, reach out to:<br>📞 <strong>988</strong> - Suicide & Crisis Lifeline<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong>`
                     : `${hi}I'm having a technical hiccup right now, but that doesn't change the fact that I care about what you're going through. 💜<br><br>While I get back on track, please remember:<br>📞 <strong>988</strong> - Available 24/7<br>📱 Text <strong>HELLO</strong> to <strong>741741</strong><br><br>You matter, and help is available.`;
                 chatContainer.innerHTML += `
                     <div class="chat-message assistant">
@@ -9442,24 +9469,75 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             // If we asked for an AI reply, fetch it in the background and
             // swap it into the bubble (keeping the same DOM node so the user
             // sees a smooth update instead of a flash).
-            if (response.useAI && typeof _chatBackend === 'function') {
+            if (response.useAI) {
                 const systemPrompt =
                     "You are a warm, gentle triage helper for the Fight Suicide Project — a mental-health support app. " +
                     "The user has just typed something into the 'How are you feeling right now?' search box and we couldn't match it to a specific tool. " +
                     "Reply in 2-3 short sentences: (1) validate what they shared, (2) ask ONE gentle clarifying question OR softly suggest one of these tools by name: Breathing exercise, Guided Meditation, Safety Plan, Release Anger / Scream Circle, Talk to Someone, Chizuk videos, Tehillim, Daily Check-in, or Resources & Hotlines. " +
                     "If they mention any risk of self-harm, gently remind them they can call or text 988 right now. " +
                     "Keep it human, never robotic.";
-                _chatBackend({
-                    systemPrompt,
-                    userMessage: response.aiPrompt,
-                    history: []
-                }).then((reply) => {
-                    const clean = (reply || '').trim();
-                    if (clean) msgP.innerHTML = '🤖 ' + (hi ? escapeHtml(hi) : '') + escapeHtml(clean);
-                }).catch((err) => {
-                    console.warn('Help Guide AI fallback:', err && err.message);
-                    msgP.innerHTML = '🤖 ' + escapeHtml(hi + "I'm here with you. Could you tell me a little more about what's going on? You can also tap any of the buttons above for a tool that might help right now.");
-                });
+
+                // Show AI reply or, when the user hasn't enabled AI, a warm
+                // BYOK invite that keeps the safety hotlines visible.
+                const renderReply = (clean) => {
+                    msgP.innerHTML = '🤖 ' + escapeHtml(hi) + escapeHtml(clean);
+                };
+                const renderByokInvite = () => {
+                    msgP.innerHTML =
+                        '🤖 ' + escapeHtml(hi) +
+                        "I'm here with you. To get a thoughtful AI reply, you can turn on Gemini in <strong>⚙️ Account Settings</strong> — " +
+                        '<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493; text-decoration:underline;">get a free key here</a> ' +
+                        "(2 min, $0). In the meantime, tap any of the buttons above for a tool that might help right now. If you're in crisis, call or text <strong>988</strong>.";
+                };
+
+                // Path 1: user has their own Gemini key → free for them.
+                const apiKey = (typeof _geminiKey === 'function') ? _geminiKey() : '';
+                if (apiKey) {
+                    fetch(`https://generativelanguage.googleapis.com/v1beta/models/${_GEMINI_MODEL}:generateContent?key=${apiKey}`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({
+                            contents: [{
+                                role: 'user',
+                                parts: [{ text: systemPrompt + _nameAddressInstruction('') + '\n\nUser: ' + response.aiPrompt }]
+                            }],
+                            generationConfig: {
+                                temperature: 0.85,
+                                maxOutputTokens: 1200,
+                                thinkingConfig: { thinkingBudget: 0 }
+                            }
+                        })
+                    })
+                    .then(r => r.ok ? r.json() : Promise.reject(new Error('api_error')))
+                    .then(data => {
+                        const text = (data?.candidates?.[0]?.content?.parts?.[0]?.text || '').trim();
+                        if (text) renderReply(text);
+                        else renderByokInvite();
+                    })
+                    .catch(err => {
+                        console.warn('Help Guide direct AI call failed:', err && err.message);
+                        renderByokInvite();
+                    });
+                } else if (typeof _chatBackend === 'function') {
+                    // Path 2: try the (opt-in) hosted backend. _chatBackend()
+                    // throws 'ai_disabled' immediately when the owner hasn't
+                    // turned it on — which is the default. We catch and show
+                    // the BYOK invite without ever hitting the network.
+                    _chatBackend({
+                        systemPrompt,
+                        userMessage: response.aiPrompt,
+                        history: []
+                    }).then((reply) => {
+                        const clean = (reply || '').trim();
+                        if (clean) renderReply(clean);
+                        else renderByokInvite();
+                    }).catch((err) => {
+                        console.warn('Help Guide hosted AI unavailable:', err && err.message);
+                        renderByokInvite();
+                    });
+                } else {
+                    renderByokInvite();
+                }
             }
         }
 
