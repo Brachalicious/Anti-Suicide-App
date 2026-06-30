@@ -25,7 +25,9 @@
 //   200 { reply: string }
 //   4xx/5xx { error: string }
 
-const GEMINI_MODEL = 'gemini-1.5-flash';
+// The model name Google currently serves on v1beta. Older names
+// (`gemini-pro`, `gemini-1.5-flash`) have been retired and return 404.
+const GEMINI_MODEL = 'gemini-2.5-flash';
 
 exports.handler = async (event) => {
     // CORS preflight — let any origin call this in case the page is loaded

@@ -5850,8 +5850,11 @@
             return ` The person you are talking with is named ${name}. Greet them by name in your first reply of a conversation and use their name occasionally where it feels warm and natural — never robotic. Do not invent any other names for them.`;
         }
 
-        // Current Gemini model name. (The old `gemini-pro` was retired by Google.)
-        const _GEMINI_MODEL = 'gemini-1.5-flash';
+        // Current Gemini model name. Google retires these aggressively —
+        // `gemini-pro` died in 2024, `gemini-1.5-flash` in 2026. The server
+        // backend (server/routes.ts) and the Netlify Function (netlify/functions/chat.js)
+        // are kept in sync with this value. Last verified working: 2026-06-30.
+        const _GEMINI_MODEL = 'gemini-2.5-flash';
 
         // Call the server-side Gemini proxy (a Netlify Function deployed at
         // /.netlify/functions/chat, aliased to /api/chat for cleanliness).
