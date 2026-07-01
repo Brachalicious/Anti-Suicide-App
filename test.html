@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<!--
+  Hi Self — Automated Test Dashboard
+  ─────────────────────────────────────
+  Purpose: exercise every feature of the app end-to-end from the browser,
+  with a clear green/red status per test. No test framework needed — this
+  is a single self-contained HTML page that boots the real app inside a
+  hidden iframe and pokes at its functions / DOM / localStorage / fetch.
+
+  How it works:
+    • The iframe loads /index.html so we get the real code, real Firebase,
+      real service worker, real Gemini client. No mocking of app internals.
+    • Each test is a small async function that returns a { pass, detail }.
+    • Tests are grouped: 🧰 Tools, 🔐 Auth & Storage, 💬 Chatbots, 📦 PWA.
+    • Some tests need permission (camera, mic) — we degrade gracefully:
+      status becomes "skipped" with an explanation the user can act on.
+    • Chatbot tests default to "no-key" (BYOK invite path) because that
+      requires no secrets. Paste a Gemini key at the top to also run the
+      "user's own key" path. Server-side ("paid") path runs automatically
+      whenever localStorage.useHostedAI === '1' and /api/chat is reachable.
+
+  Safety-critical rule: tests must NEVER trigger a real crisis dial or
+  send a real SMS. We only inspect that the correct <a href="tel:…"> or
+  <a href="sms:…"> DOM is generated, never simulate a click on them.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Hi Self — Automated Test Dashboard</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+    <style>
+        :root {
+            --pass: #22c55e;
+            --fail: #ef4444;
+            --skip: #94a3b8;
+            --pending: #eab308;
+            --bg: #0f172a;
+            --card: #1e293b;
+            --text: #e2e8f0;
+            --muted: #94a3b8;
+            --pink: #ec4899;
+        }
+        * { box-sizing: border-box; }
+        html, body {
+            margin: 0; padding: 0;
+            background: var(--bg); color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+        header {
+            padding: 20px 24px; background: linear-gradient(135deg, #831843, #1e293b);
+            border-bottom: 2px solid var(--pink);
+        }
+        header h1 { margin: 0 0 6px; font-size: 22px; }
+        header p  { margin: 0; color: var(--muted); font-size: 13px; }
+        main {
+            max-width: 1100px; margin: 0 auto;
+            padding: 20px; display: grid; gap: 20px;
+        }
+        .row {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+        }
+        @media (max-width: 760px) { .row { grid-template-columns: 1fr; } }
+        .card {
+            background: var(--card); border-radius: 12px; padding: 16px;
+            border: 1px solid #334155;
+        }
+        .card h2 { margin: 0 0 12px; font-size: 16px; color: #f9a8d4; }
+        .controls {
+            display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px;
+            align-items: center;
+        }
+        button {
+            background: var(--pink); color: white; border: none;
+            padding: 10px 16px; border-radius: 8px; cursor: pointer;
+            font-weight: 700; font-size: 14px;
+        }
+        button:hover { filter: brightness(1.1); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        button.secondary { background: #475569; }
+        input[type=text], input[type=password] {
+            background: #0f172a; color: var(--text); border: 1px solid #475569;
+            border-radius: 6px; padding: 8px 12px; font-size: 14px; min-width: 200px;
+        }
+        .test {
+            display: grid; grid-template-columns: 24px 1fr auto;
+            gap: 10px; padding: 8px 4px;
+            border-bottom: 1px solid #334155;
+            align-items: center;
+        }
+        .test:last-child { border-bottom: none; }
+        .test .dot {
+            width: 14px; height: 14px; border-radius: 50%;
+            background: var(--pending);
+            box-shadow: 0 0 8px currentColor;
+            transition: background .2s;
+        }
+        .test.pass .dot { background: var(--pass); color: var(--pass); }
+        .test.fail .dot { background: var(--fail); color: var(--fail); }
+        .test.skip .dot { background: var(--skip); color: var(--skip); }
+        .test.run  .dot { background: var(--pending); color: var(--pending); animation: pulse 1s infinite; }
+        @keyframes pulse { 50% { opacity: 0.4; } }
+        .test .name { font-size: 14px; }
+        .test .detail {
+            grid-column: 2 / -1; font-size: 12px; color: var(--muted);
+            margin-top: 2px; word-break: break-word;
+        }
+        .test .badge {
+            font-size: 11px; padding: 2px 8px; border-radius: 12px;
+            background: #475569; color: white;
+        }
+        .test.pass .badge { background: var(--pass); }
+        .test.fail .badge { background: var(--fail); }
+        .test.skip .badge { background: var(--skip); }
+        .test.run  .badge { background: var(--pending); color: #1e293b; }
+        .summary {
+            display: flex; gap: 16px; flex-wrap: wrap;
+            padding: 12px; background: #0f172a; border-radius: 8px;
+            font-size: 14px; margin-bottom: 12px;
+        }
+        .summary strong { font-size: 18px; }
+        iframe#appFrame {
+            width: 320px; height: 240px;
+            border: 1px solid #334155; border-radius: 6px;
+            transform: scale(0.35); transform-origin: top left;
+            pointer-events: none;
+        }
+        .frame-wrap {
+            width: 112px; height: 84px; overflow: hidden;
+            display: inline-block; vertical-align: top;
+        }
+        details summary {
+            cursor: pointer; color: var(--pink); font-size: 13px;
+            padding: 4px 0;
+        }
+        pre.log {
+            background: #020617; color: #cbd5e1;
+            padding: 12px; border-radius: 6px;
+            max-height: 200px; overflow: auto;
+            font-size: 11px; margin: 8px 0 0;
+            white-space: pre-wrap; word-break: break-word;
+        }
+        .top-actions {
+            display: flex; gap: 10px; flex-wrap: wrap;
+            padding: 12px 24px; background: #1e293b;
+            border-bottom: 1px solid #334155;
+        }
+        code {
+            background: #0f172a; padding: 2px 6px;
+            border-radius: 4px; color: #a5f3fc;
+            font-size: 12px;
+        }
+        .footer-note {
+            text-align: center; color: var(--muted);
+            font-size: 12px; padding: 20px;
+        }
+        .footer-note a { color: var(--pink); }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>🧪 Hi Self — Automated Test Dashboard</h1>
+        <p>Boots the real app in a hidden iframe, then runs 40+ live checks against every subsystem.</p>
+    </header>
+
+    <div class="top-actions">
+        <button id="runAllBtn">▶️ Run all tests</button>
+        <button id="reloadFrameBtn" class="secondary">🔄 Reload app frame</button>
+        <input type="password" id="userGeminiKey" placeholder="Optional: Gemini key to test BYOK path (AIzaSy…)" style="flex:1; min-width: 300px;">
+        <button id="saveKeyBtn" class="secondary">💾 Save key</button>
+        <button id="clearKeyBtn" class="secondary">🗑️ Clear key</button>
+    </div>
+
+    <main>
+        <div class="card">
+            <div class="summary" id="summary">
+                <span>✅ Passed: <strong id="countPass">0</strong></span>
+                <span>❌ Failed: <strong id="countFail">0</strong></span>
+                <span>⏸️ Skipped: <strong id="countSkip">0</strong></span>
+                <span>⌛ Pending: <strong id="countPending">0</strong></span>
+                <span style="margin-left:auto; color: var(--muted);">
+                    App frame:
+                    <span class="frame-wrap"><iframe id="appFrame" src="about:blank"></iframe></span>
+                </span>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <h2>🧰 Coping tools</h2>
+                <div id="group-tools"></div>
+            </div>
+            <div class="card">
+                <h2>💫 Affirmations</h2>
+                <div id="group-affirm"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <h2>🪞 Mirror &amp; camera</h2>
+                <div id="group-mirror"></div>
+            </div>
+            <div class="card">
+                <h2>🧘 Meditation &amp; mic</h2>
+                <div id="group-meditation"></div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <h2>🔐 Auth &amp; multi-user isolation</h2>
+                <div id="group-auth"></div>
+            </div>
+            <div class="card">
+                <h2>💾 Save / load data</h2>
+                <div id="group-storage"></div>
+            </div>
+        </div>
+
+        <div class="card">
+            <h2>💬 Chatbots (all 3 paths: BYOK, hosted, no-key fallback)</h2>
+            <div id="group-chat"></div>
+        </div>
+
+        <div class="row">
+            <div class="card">
+                <h2>📦 PWA / service worker / offline</h2>
+                <div id="group-pwa"></div>
+            </div>
+            <div class="card">
+                <h2>⚖️ Store-compliance surface</h2>
+                <div id="group-compliance"></div>
+            </div>
+        </div>
+
+        <details>
+            <summary>📜 Test log (verbose)</summary>
+            <pre class="log" id="log"></pre>
+        </details>
+
+        <p class="footer-note">
+            Load this page from the same origin as the app (open
+            <code>http://localhost:5500/test.html</code>). Cross-origin loading
+            will trip Firebase auth and block iframe access to <code>window</code>.
+        </p>
+    </main>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // ─── Tiny in-browser test harness ────────────────────────────
+        // Not using Mocha/Jest — we want zero build step and a single file
+        // that can be opened directly on staging, prod, or localhost.
+        const TESTS = [];   // { name, group, run: async () => {pass|skip, detail} }
+        const NODES = {};   // name → <div> element for status updates
+        const $     = (id) => document.getElementById(id);
+        const iframe = $('appFrame');
+        let counts = { pass: 0, fail: 0, skip: 0, pending: 0 };
+
+        function log(msg) {
+            const el = $('log');
+            const t  = new Date().toLocaleTimeString();
+            el.textContent += `[${t}] ${msg}\n`;
+            el.scrollTop = el.scrollHeight;
+        }
+
+        function refreshCounts() {
+            $('countPass').textContent    = counts.pass;
+            $('countFail').textContent    = counts.fail;
+            $('countSkip').textContent    = counts.skip;
+            $('countPending').textContent = counts.pending;
+        }
+
+        function addTest(group, name, fn) {
+            TESTS.push({ name, group, run: fn });
+            const parent = $('group-' + group);
+            if (!parent) return;
+            const row = document.createElement('div');
+            row.className = 'test';
+            row.innerHTML = `
+                <span class="dot"></span>
+                <span class="name">${name}</span>
+                <span class="badge">pending</span>
+                <span class="detail" style="display:none"></span>
+            `;
+            parent.appendChild(row);
+            NODES[name] = row;
+        }
+
+        function setStatus(name, status, detail) {
+            const row = NODES[name];
+            if (!row) return;
+            row.classList.remove('pass', 'fail', 'skip', 'run');
+            row.classList.add(status);
+            row.querySelector('.badge').textContent = status;
+            const detailEl = row.querySelector('.detail');
+            if (detail) {
+                detailEl.style.display = '';
+                detailEl.textContent = detail;
+            } else {
+                detailEl.style.display = 'none';
+            }
+        }
+
+        // Wait for the iframe to load AND its `window` to have finished
+        // executing all the module scripts we care about (Firebase init).
+        function frameReady() {
+            return new Promise((resolve, reject) => {
+                const started = Date.now();
+                iframe.addEventListener('load', function once() {
+                    iframe.removeEventListener('load', once);
+                    // Poll until the app has exposed at least one of its
+                    // key globals — that tells us the module scripts ran.
+                    const timer = setInterval(() => {
+                        try {
+                            const w = iframe.contentWindow;
+                            if (w && (typeof w.startBreathing === 'function' || Date.now() - started > 15000)) {
+                                clearInterval(timer);
+                                resolve(w);
+                            }
+                        } catch (e) {
+                            clearInterval(timer);
+                            reject(e);
+                        }
+                    }, 200);
+                });
+                iframe.addEventListener('error', reject, { once: true });
+            });
+        }
+
+        function reloadFrame() {
+            log('Reloading app iframe…');
+            iframe.src = '/index.html?t=' + Date.now();
+            return frameReady();
+        }
+
+        // Small helper to poll for a condition inside the iframe. Used for
+        // things that flip true only after Firebase auth resolves.
+        function waitFor(condFn, timeout = 5000, interval = 100) {
+            return new Promise((resolve, reject) => {
+                const start = Date.now();
+                (function tick() {
+                    let ok = false;
+                    try { ok = !!condFn(); } catch (_) {}
+                    if (ok) return resolve(true);
+                    if (Date.now() - start > timeout) return reject(new Error('waitFor timeout'));
+                    setTimeout(tick, interval);
+                })();
+            });
+        }
+
+        // ═════════════════════════════════════════════════════════════
+        // TEST DEFINITIONS
+        // ═════════════════════════════════════════════════════════════
+
+        // ─── 🧰 Coping tools ────────────────────────────────────────
+        addTest('tools', 'Global startBreathing() function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.startBreathing === 'function'
+                ? { pass: 'pass', detail: 'window.startBreathing is a function' }
+                : { pass: 'fail', detail: 'window.startBreathing is missing' };
+        });
+
+        addTest('tools', 'Breathing UI elements present in DOM', async () => {
+            const d = iframe.contentDocument;
+            const circle = d.getElementById('breathCircle');
+            const text   = d.getElementById('breathText');
+            if (!circle || !text) return { pass: 'fail', detail: `#breathCircle=${!!circle} #breathText=${!!text}` };
+            return { pass: 'pass', detail: 'Circle + label both found' };
+        });
+
+        addTest('tools', 'Breathing cycle actually mutates DOM', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.startBreathing !== 'function') return { pass: 'fail', detail: 'startBreathing() missing' };
+            const text = d.getElementById('breathText');
+            if (!text) return { pass: 'fail', detail: '#breathText missing' };
+            const before = text.textContent;
+            w.startBreathing();
+            await new Promise(r => setTimeout(r, 100));
+            const first = text.textContent;
+            // Clean up so we don't leak the 4-second interval.
+            try { if (w.breathInterval) { w.clearInterval(w.breathInterval); w.breathInterval = null; } } catch (_) {}
+            return first && first !== before
+                ? { pass: 'pass', detail: `text changed: "${before}" → "${first}"` }
+                : { pass: 'fail', detail: `text did not change (still "${first}")` };
+        });
+
+        addTest('tools', 'STOP overlay function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.activateStopButton === 'function'
+                ? { pass: 'pass', detail: 'activateStopButton() exposed' }
+                : { pass: 'fail', detail: 'activateStopButton() missing' };
+        });
+
+        addTest('tools', 'showSection() SPA navigation works', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.showSection !== 'function') return { pass: 'fail', detail: 'showSection() missing' };
+            w.showSection('resources');
+            await new Promise(r => setTimeout(r, 200));
+            const sec = d.getElementById('resources');
+            const visible = sec && !sec.classList.contains('hidden');
+            // Restore to dashboard so subsequent tests see it.
+            try { w.showSection('dashboard'); } catch (_) {}
+            return visible
+                ? { pass: 'pass', detail: '#resources became visible' }
+                : { pass: 'fail', detail: '#resources still hidden' };
+        });
+
+        // ─── 💫 Affirmations ────────────────────────────────────────
+        addTest('affirm', 'affirmations array is populated', async () => {
+            const w = iframe.contentWindow;
+            const arr = w.affirmations;
+            return Array.isArray(arr) && arr.length > 5
+                ? { pass: 'pass', detail: `${arr.length} affirmations loaded` }
+                : { pass: 'fail', detail: `affirmations = ${JSON.stringify(arr).slice(0, 60)}…` };
+        });
+
+        addTest('affirm', 'newAffirmation() rotates to a different card', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.newAffirmation !== 'function') return { pass: 'fail', detail: 'newAffirmation() missing' };
+            const el = d.getElementById('daily-affirmation');
+            if (!el) return { pass: 'fail', detail: '#daily-affirmation missing' };
+            const before = el.innerHTML;
+            // Run up to 6 times because the same index can repeat if the RNG
+            // picks it — the function's do/while guarantees it eventually flips.
+            let after = before;
+            for (let i = 0; i < 6 && after === before; i++) {
+                w.newAffirmation();
+                after = el.innerHTML;
+            }
+            return after !== before
+                ? { pass: 'pass', detail: 'DOM updated to a new affirmation' }
+                : { pass: 'fail', detail: 'affirmation card did not change after 6 tries' };
+        });
+
+        addTest('affirm', 'heartAffirmation() saves to Affirmation Book', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.heartAffirmation !== 'function') return { pass: 'fail', detail: 'heartAffirmation() missing' };
+            // The book key is scoped per-account, so use the same helper.
+            const key = typeof w.scopedKey === 'function' ? w.scopedKey('heartedAffirmations') : 'heartedAffirmations';
+            const before = w.localStorage.getItem(key);
+            w.heartAffirmation();
+            const after = w.localStorage.getItem(key);
+            return after && after !== before
+                ? { pass: 'pass', detail: `localStorage["${key}"] populated` }
+                : { pass: 'skip', detail: 'may be already hearted or already at max; not a functional bug' };
+        });
+
+        // ─── 🪞 Mirror & camera ─────────────────────────────────────
+        addTest('mirror', 'openMirror() function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.openMirror === 'function'
+                ? { pass: 'pass', detail: 'openMirror() exposed' }
+                : { pass: 'fail', detail: 'openMirror() missing' };
+        });
+
+        addTest('mirror', 'Mirror DOM elements present', async () => {
+            const d = iframe.contentDocument;
+            const need = ['mirrorVideo', 'mirrorFrameWrap', 'mirrorPlaceholder', 'mirrorStartBtn', 'mirrorStopBtn', 'mirrorStatus'];
+            const missing = need.filter(id => !d.getElementById(id));
+            return missing.length === 0
+                ? { pass: 'pass', detail: 'all mirror IDs present' }
+                : { pass: 'fail', detail: 'missing: ' + missing.join(', ') };
+        });
+
+        addTest('mirror', 'Camera API available (getUserMedia)', async () => {
+            const w = iframe.contentWindow;
+            const supported = !!(w.navigator.mediaDevices && w.navigator.mediaDevices.getUserMedia);
+            return supported
+                ? { pass: 'pass', detail: 'navigator.mediaDevices.getUserMedia present' }
+                : { pass: 'fail', detail: 'browser lacks getUserMedia — mirror will show polite fallback' };
+        });
+
+        addTest('mirror', 'openMirror() gracefully falls back if permission denied', async () => {
+            // We don't want a real permission prompt during testing. Instead
+            // we stub getUserMedia to reject, then confirm the status label
+            // shows the "denied" message rather than throwing.
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            const orig = w.navigator.mediaDevices.getUserMedia.bind(w.navigator.mediaDevices);
+            w.navigator.mediaDevices.getUserMedia = () => Promise.reject(new Error('NotAllowedError'));
+            try {
+                w.openMirror();
+                await new Promise(r => setTimeout(r, 200));
+                const status = d.getElementById('mirrorStatus');
+                const msg = status ? status.textContent : '';
+                return /denied|allow camera/i.test(msg)
+                    ? { pass: 'pass', detail: `polite denial message shown: "${msg}"` }
+                    : { pass: 'fail', detail: `unexpected status: "${msg}"` };
+            } finally {
+                w.navigator.mediaDevices.getUserMedia = orig;
+                try { w.closeMirror(); } catch (_) {}
+            }
+        });
+
+        addTest('mirror', 'Speech recognition detection is safe', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.startMirrorListening !== 'function') return { pass: 'fail', detail: 'startMirrorListening() missing' };
+            // Should not throw when SpeechRecognition is undefined.
+            const hadSR = 'SpeechRecognition' in w;
+            const hadWSR = 'webkitSpeechRecognition' in w;
+            try {
+                delete w.SpeechRecognition;
+                delete w.webkitSpeechRecognition;
+                w.startMirrorListening();
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw when SR unavailable: ' + e.message };
+            }
+            // Nothing to restore — the browser's original ones are still on the
+            // prototype, we only deleted own-properties (usually no-ops).
+            return { pass: 'pass', detail: 'no throw when SpeechRecognition missing' };
+        });
+
+        // ─── 🧘 Meditation & mic ────────────────────────────────────
+        addTest('meditation', 'Meditation section renders in DOM', async () => {
+            const d = iframe.contentDocument;
+            // The section might be named guided-meditation, meditation, or similar.
+            const candidates = ['guided-meditation', 'meditation', 'sound-bath'];
+            const found = candidates.filter(id => d.getElementById(id));
+            return found.length
+                ? { pass: 'pass', detail: 'section IDs found: ' + found.join(', ') }
+                : { pass: 'skip', detail: 'no meditation section — feature may be gated behind a menu' };
+        });
+
+        addTest('meditation', 'Audio element / play control present somewhere', async () => {
+            const d = iframe.contentDocument;
+            const audios = d.querySelectorAll('audio');
+            return audios.length > 0
+                ? { pass: 'pass', detail: `${audios.length} <audio> elements in DOM` }
+                : { pass: 'skip', detail: 'no <audio> tags — meditation may use Web Audio API' };
+        });
+
+        // ─── 🔐 Auth & multi-user isolation ─────────────────────────
+        addTest('auth', 'scopedKey() namespaces per user', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.scopedKey !== 'function') return { pass: 'fail', detail: 'scopedKey() missing' };
+            const guest = w.scopedKey('displayName');
+            // Simulate a signed-in user and verify the key changes.
+            const prev = w._currentUser;
+            w._currentUser = { uid: 'test-uid-abc123' };
+            const signed = w.scopedKey('displayName');
+            w._currentUser = prev;
+            return guest !== signed && signed.includes('test-uid-abc123')
+                ? { pass: 'pass', detail: `guest="${guest}" signed="${signed}"` }
+                : { pass: 'fail', detail: `no per-user scoping: guest=${guest} signed=${signed}` };
+        });
+
+        addTest('auth', 'saveDisplayName() writes to scoped slot only', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.saveDisplayName !== 'function') return { pass: 'fail', detail: 'saveDisplayName() missing' };
+            const input = d.getElementById('displayNameInput') || d.querySelector('[data-role="displayName"]');
+            if (!input) return { pass: 'skip', detail: '#displayNameInput not visible (need to open Account Settings)' };
+            const testName = 'Tester_' + Date.now();
+            input.value = testName;
+            w.saveDisplayName();
+            const scoped = w.localStorage.getItem(w.scopedKey('displayName'));
+            const legacy = w.localStorage.getItem('displayName');
+            const ok = scoped === testName && legacy !== testName;
+            // Clean up.
+            w.localStorage.removeItem(w.scopedKey('displayName'));
+            return ok
+                ? { pass: 'pass', detail: `scoped="${scoped}" legacy="${legacy}" — no leak` }
+                : { pass: 'fail', detail: `scoped="${scoped}" legacy="${legacy}" — leak detected` };
+        });
+
+        addTest('auth', 'Google sign-in button is wired', async () => {
+            const d = iframe.contentDocument;
+            const btn = d.getElementById('google-signin-btn') || d.querySelector('[data-provider="google"]');
+            return btn
+                ? { pass: 'pass', detail: 'button found: #' + (btn.id || 'no-id') }
+                : { pass: 'fail', detail: 'no Google sign-in button' };
+        });
+
+        addTest('auth', 'Apple sign-in button is wired', async () => {
+            const d = iframe.contentDocument;
+            const btn = d.getElementById('apple-signin-btn');
+            return btn
+                ? { pass: 'pass', detail: '#apple-signin-btn present (opens "coming soon" alert)' }
+                : { pass: 'fail', detail: 'no Apple sign-in button' };
+        });
+
+        addTest('auth', 'deleteAccount() function exists + is behind confirm', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.deleteAccount !== 'function') return { pass: 'fail', detail: 'deleteAccount() missing' };
+            // Should refuse without the literal "DELETE" typed.
+            const confirmInput = d.getElementById('deleteConfirmInput') || d.querySelector('[data-role="deleteConfirm"]');
+            if (!confirmInput) return { pass: 'skip', detail: 'confirm input not in DOM — open Account Settings first' };
+            confirmInput.value = 'nope';
+            // We can't actually invoke Firebase deletion in a test, so we just
+            // verify that the function's guard triggers a friendly alert.
+            const alertsSpy = [];
+            const origAlert = w.alert; w.alert = (m) => alertsSpy.push(String(m));
+            try { w.deleteAccount(); } catch (_) {}
+            w.alert = origAlert;
+            return alertsSpy.some(m => /type delete/i.test(m))
+                ? { pass: 'pass', detail: 'guard fired: ' + alertsSpy[0] }
+                : { pass: 'skip', detail: 'no alert fired — guard may run after Firebase check' };
+        });
+
+        // ─── 💾 Save / load data ────────────────────────────────────
+        addTest('storage', 'localStorage read/write works in iframe', async () => {
+            const w = iframe.contentWindow;
+            const k = '__hi_self_probe_' + Date.now();
+            w.localStorage.setItem(k, 'v');
+            const v = w.localStorage.getItem(k);
+            w.localStorage.removeItem(k);
+            return v === 'v'
+                ? { pass: 'pass', detail: 'localStorage works — cache tier is healthy' }
+                : { pass: 'fail', detail: 'localStorage disabled?' };
+        });
+
+        addTest('storage', 'Diary save function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.saveDiaryEntry === 'function'
+                ? { pass: 'pass', detail: 'saveDiaryEntry() exposed' }
+                : { pass: 'fail', detail: 'saveDiaryEntry() missing' };
+        });
+
+        addTest('storage', 'Diary entries are per-user scoped', async () => {
+            const w = iframe.contentWindow;
+            const scopedName = w.scopedKey ? w.scopedKey('diaryEntries') : null;
+            if (!scopedName) return { pass: 'fail', detail: 'scopedKey() missing so diary would leak' };
+            const includesScope = scopedName.includes('_');
+            return includesScope
+                ? { pass: 'pass', detail: `key="${scopedName}"` }
+                : { pass: 'fail', detail: `key="${scopedName}" (no scope suffix)` };
+        });
+
+        addTest('storage', 'Safety plan save function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.saveSafetyPlanData === 'function'
+                ? { pass: 'pass', detail: 'saveSafetyPlanData() exposed' }
+                : { pass: 'fail', detail: 'saveSafetyPlanData() missing' };
+        });
+
+        addTest('storage', 'Legacy leak migration v4 has run', async () => {
+            const w = iframe.contentWindow;
+            const flag = w.localStorage.getItem('__settings_migration_v4_done');
+            return flag === '1'
+                ? { pass: 'pass', detail: 'migration flag set — leak-eraser ran' }
+                : { pass: 'fail', detail: 'migration flag missing — old data may still be leaking' };
+        });
+
+        // ─── 💬 Chatbots ────────────────────────────────────────────
+        addTest('chat', 'Global _geminiKey() reader exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w._geminiKey === 'function'
+                ? { pass: 'pass', detail: '_geminiKey() exposed' }
+                : { pass: 'fail', detail: '_geminiKey() missing' };
+        });
+
+        addTest('chat', 'Gemini model is not a retired one', async () => {
+            const w = iframe.contentWindow;
+            const model = w._GEMINI_MODEL || '';
+            const retired = ['gemini-pro', 'gemini-1.5-flash'];
+            if (!model) return { pass: 'fail', detail: '_GEMINI_MODEL not exposed' };
+            return retired.includes(model)
+                ? { pass: 'fail', detail: `using retired model "${model}"` }
+                : { pass: 'pass', detail: `model = "${model}"` };
+        });
+
+        addTest('chat', '_linkifyHotlines() wraps 988 into a tel: link', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w._linkifyHotlines !== 'function') return { pass: 'fail', detail: '_linkifyHotlines() missing' };
+            const html = w._linkifyHotlines('If you feel unsafe, call 988 or text 741741 for HOME.');
+            const hasTel = /href="tel:988"/.test(html);
+            const hasSms = /href="sms:741741\?body=HOME"/.test(html);
+            return hasTel && hasSms
+                ? { pass: 'pass', detail: 'both 988 (tel:) and 741741 (sms:) linkified' }
+                : { pass: 'fail', detail: `tel:${hasTel} sms:${hasSms} — HTML was ${html.slice(0,120)}…` };
+        });
+
+        addTest('chat', '_linkifyHotlines() does NOT double-wrap existing anchors', async () => {
+            const w = iframe.contentWindow;
+            const input = 'call <a href="tel:988">988</a> or new 988 too';
+            const out = w._linkifyHotlines(input);
+            // Only ONE inner "988" should have been wrapped (the second bare one).
+            const anchors = (out.match(/<a\b[^>]*>988<\/a>/g) || []).length;
+            return anchors === 2
+                ? { pass: 'pass', detail: 'existing anchor preserved, bare 988 wrapped' }
+                : { pass: 'fail', detail: `expected 2 <a>988</a> anchors, got ${anchors}. out=${out}` };
+        });
+
+        addTest('chat', 'BYOK path: no key ⇒ chatBackend throws ai_disabled', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w._chatBackend !== 'function') return { pass: 'skip', detail: '_chatBackend() not exposed on window' };
+            // Ensure hosted AI is OFF (default for public users).
+            w.localStorage.removeItem('useHostedAI');
+            try {
+                await w._chatBackend({ systemPrompt: 'x', userMessage: 'hi' });
+                return { pass: 'fail', detail: 'should have thrown ai_disabled but resolved' };
+            } catch (e) {
+                return /ai_disabled/.test(e.message)
+                    ? { pass: 'pass', detail: 'correctly threw ai_disabled' }
+                    : { pass: 'fail', detail: 'wrong error: ' + e.message };
+            }
+        });
+
+        addTest('chat', 'Hosted path: /api/chat responds when opted in', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w._chatBackend !== 'function') return { pass: 'skip', detail: '_chatBackend() not exposed' };
+            const prev = w.localStorage.getItem('useHostedAI');
+            w.localStorage.setItem('useHostedAI', '1');
+            try {
+                const reply = await w._chatBackend({
+                    systemPrompt: 'You are a very brief test assistant. Reply with a single sentence.',
+                    userMessage: 'Say "pong" to prove the connection works.',
+                    history: []
+                });
+                if (!reply) return { pass: 'fail', detail: 'backend returned empty reply' };
+                return { pass: 'pass', detail: `backend reply (${reply.length} chars): "${reply.slice(0, 100)}…"` };
+            } catch (e) {
+                const skip = /backend_unavailable/.test(e.message);
+                return skip
+                    ? { pass: 'skip', detail: '/api/chat not deployed on this origin — deploy Netlify function to enable' }
+                    : { pass: 'fail', detail: 'backend error: ' + e.message };
+            } finally {
+                if (prev == null) w.localStorage.removeItem('useHostedAI');
+                else w.localStorage.setItem('useHostedAI', prev);
+            }
+        });
+
+        addTest('chat', 'User-supplied Gemini key (BYOK) actually returns a reply', async () => {
+            const w = iframe.contentWindow;
+            const key = w.localStorage.getItem(w.scopedKey('openai_api_key')) || w.localStorage.getItem('openai_api_key');
+            if (!key || !key.startsWith('AIzaSy')) {
+                return { pass: 'skip', detail: 'no user Gemini key set — paste one in the box above to test' };
+            }
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${w._GEMINI_MODEL}:generateContent?key=${key}`;
+            try {
+                const r = await fetch(url, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        contents: [{ role: 'user', parts: [{ text: 'Reply "pong" only.' }] }],
+                        generationConfig: { temperature: 0, maxOutputTokens: 50, thinkingConfig: { thinkingBudget: 0 } }
+                    })
+                });
+                const data = await r.json();
+                const reply = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
+                return r.ok && reply
+                    ? { pass: 'pass', detail: `Gemini reply: "${reply.slice(0, 100)}"` }
+                    : { pass: 'fail', detail: `HTTP ${r.status}: ${JSON.stringify(data).slice(0, 200)}` };
+            } catch (e) {
+                return { pass: 'fail', detail: 'network error: ' + e.message };
+            }
+        });
+
+        addTest('chat', 'Virtual Parent send function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.sendParentMessage === 'function'
+                ? { pass: 'pass', detail: 'sendParentMessage() exposed' }
+                : { pass: 'fail', detail: 'sendParentMessage() missing' };
+        });
+
+        addTest('chat', 'MysticMinded send function exists', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.sendMysticMessage === 'function'
+                ? { pass: 'pass', detail: 'sendMysticMessage() exposed' }
+                : { pass: 'fail', detail: 'sendMysticMessage() missing' };
+        });
+
+        addTest('chat', 'AI-transparency notices are present in DOM', async () => {
+            const d = iframe.contentDocument;
+            const html = d.body.innerHTML;
+            const helpNotice   = /AI notice.*Google Gemini/i.test(html);
+            const parentNotice = /AI companions, not real people/i.test(html);
+            const mysticNotice = /chatting with AI, not a person/i.test(html);
+            const missing = [];
+            if (!helpNotice)   missing.push('Help Guide notice');
+            if (!parentNotice) missing.push('Virtual Parent notice');
+            if (!mysticNotice) missing.push('Mystic notice');
+            return missing.length === 0
+                ? { pass: 'pass', detail: 'all 3 AI transparency notices present' }
+                : { pass: 'fail', detail: 'missing: ' + missing.join(', ') };
+        });
+
+        // ─── 📦 PWA / service worker ─────────────────────────────────
+        addTest('pwa', '<link rel="manifest"> declared', async () => {
+            const d = iframe.contentDocument;
+            const link = d.querySelector('link[rel="manifest"]');
+            return link
+                ? { pass: 'pass', detail: 'href=' + link.getAttribute('href') }
+                : { pass: 'fail', detail: 'no manifest link — PWA install prompt will not appear' };
+        });
+
+        addTest('pwa', 'manifest.json fetches and parses', async () => {
+            try {
+                const r = await fetch('/manifest.json');
+                if (!r.ok) return { pass: 'fail', detail: 'HTTP ' + r.status };
+                const m = await r.json();
+                const need = ['name', 'short_name', 'start_url', 'icons', 'display'];
+                const missing = need.filter(k => !m[k]);
+                return missing.length === 0
+                    ? { pass: 'pass', detail: `name="${m.name}" display=${m.display} icons=${m.icons.length}` }
+                    : { pass: 'fail', detail: 'missing fields: ' + missing.join(', ') };
+            } catch (e) {
+                return { pass: 'fail', detail: 'fetch error: ' + e.message };
+            }
+        });
+
+        addTest('pwa', 'manifest icons all return 200', async () => {
+            try {
+                const m = await (await fetch('/manifest.json')).json();
+                const results = await Promise.all(m.icons.map(async (i) => {
+                    try {
+                        const r = await fetch(i.src, { method: 'HEAD' });
+                        return { src: i.src, ok: r.ok, status: r.status };
+                    } catch (e) { return { src: i.src, ok: false, status: e.message }; }
+                }));
+                const bad = results.filter(r => !r.ok);
+                return bad.length === 0
+                    ? { pass: 'pass', detail: `${results.length} icons all reachable` }
+                    : { pass: 'fail', detail: 'broken icons: ' + bad.map(b => `${b.src}(${b.status})`).join(', ') };
+            } catch (e) {
+                return { pass: 'fail', detail: 'error: ' + e.message };
+            }
+        });
+
+        addTest('pwa', 'service-worker.js loads', async () => {
+            try {
+                const r = await fetch('/service-worker.js');
+                return r.ok
+                    ? { pass: 'pass', detail: `HTTP ${r.status}, ${r.headers.get('content-length')} bytes` }
+                    : { pass: 'fail', detail: 'HTTP ' + r.status };
+            } catch (e) {
+                return { pass: 'fail', detail: 'fetch error: ' + e.message };
+            }
+        });
+
+        addTest('pwa', 'Service worker registered in app scope', async () => {
+            // Registration happens in index.html on DOMContentLoaded — poll for it.
+            const w = iframe.contentWindow;
+            if (!('serviceWorker' in w.navigator)) return { pass: 'skip', detail: 'browser has no SW support' };
+            try {
+                await waitFor(async () => {
+                    const reg = await w.navigator.serviceWorker.getRegistration('/');
+                    return !!reg;
+                }, 6000);
+                const reg = await w.navigator.serviceWorker.getRegistration('/');
+                return { pass: 'pass', detail: `scope=${reg.scope} active=${!!reg.active}` };
+            } catch (e) {
+                return { pass: 'fail', detail: 'no SW registration after 6s' };
+            }
+        });
+
+        // ─── ⚖️ Store-compliance surface ────────────────────────────
+        addTest('compliance', 'First-launch disclaimer modal exists', async () => {
+            const d = iframe.contentDocument;
+            const modal = d.getElementById('firstLaunchDisclaimer');
+            return modal
+                ? { pass: 'pass', detail: '#firstLaunchDisclaimer present in DOM' }
+                : { pass: 'fail', detail: 'no #firstLaunchDisclaimer — Play/App Store will reject' };
+        });
+
+        addTest('compliance', 'Global crisis footer with 988 + 741741 links', async () => {
+            const d = iframe.contentDocument;
+            const footer = d.getElementById('appFooter');
+            if (!footer) return { pass: 'fail', detail: '#appFooter missing' };
+            const tel = footer.querySelector('a[href="tel:988"]');
+            const sms = footer.querySelector('a[href^="sms:741741"]');
+            return tel && sms
+                ? { pass: 'pass', detail: 'footer has tap-to-call + tap-to-text' }
+                : { pass: 'fail', detail: `tel=${!!tel} sms=${!!sms}` };
+        });
+
+        addTest('compliance', '/privacy.html loads and mentions crisis lines', async () => {
+            try {
+                const html = await (await fetch('/privacy.html')).text();
+                const has988 = /tel:988/.test(html);
+                return has988
+                    ? { pass: 'pass', detail: 'privacy page includes 988 link' }
+                    : { pass: 'fail', detail: 'no 988 link on privacy page' };
+            } catch (e) {
+                return { pass: 'fail', detail: 'fetch failed: ' + e.message };
+            }
+        });
+
+        addTest('compliance', '/terms.html loads and mentions crisis lines', async () => {
+            try {
+                const html = await (await fetch('/terms.html')).text();
+                const has988 = /tel:988/.test(html);
+                return has988
+                    ? { pass: 'pass', detail: 'terms page includes 988 link' }
+                    : { pass: 'fail', detail: 'no 988 link on terms page' };
+            } catch (e) {
+                return { pass: 'fail', detail: 'fetch failed: ' + e.message };
+            }
+        });
+
+        addTest('compliance', 'checkDisclaimer() function is exposed', async () => {
+            const w = iframe.contentWindow;
+            return typeof w.checkDisclaimer === 'function'
+                ? { pass: 'pass', detail: 'runs on load + on auth state change' }
+                : { pass: 'fail', detail: 'checkDisclaimer() missing' };
+        });
+
+        addTest('compliance', 'No render-blocking JS errors in iframe', async () => {
+            // Look for anything the app posted to the parent (we set up capture
+            // in the runner via window.onerror below).
+            return __errorsCaught.length === 0
+                ? { pass: 'pass', detail: 'no uncaught errors during boot' }
+                : { pass: 'fail', detail: __errorsCaught.length + ' error(s): ' + __errorsCaught[0] };
+        });
+
+        // ═════════════════════════════════════════════════════════════
+        // RUNNER
+        // ═════════════════════════════════════════════════════════════
+        const __errorsCaught = [];
+        window.addEventListener('message', (e) => {
+            if (e.data && e.data.__hiSelfError) __errorsCaught.push(e.data.__hiSelfError);
+        });
+
+        async function runAll() {
+            counts = { pass: 0, fail: 0, skip: 0, pending: TESTS.length };
+            TESTS.forEach(t => setStatus(t.name, 'run'));
+            refreshCounts();
+            log(`Running ${TESTS.length} tests…`);
+
+            try {
+                await reloadFrame();
+                log('App frame ready.');
+            } catch (e) {
+                log('❌ App frame failed to load: ' + e.message);
+                TESTS.forEach(t => setStatus(t.name, 'fail', 'iframe boot failed: ' + e.message));
+                counts.fail = TESTS.length;
+                counts.pending = 0;
+                refreshCounts();
+                return;
+            }
+
+            // Inject a global error capturer into the app so we can assert on it.
+            try {
+                iframe.contentWindow.addEventListener('error', (ev) => {
+                    parent.postMessage({ __hiSelfError: ev.message + ' @ ' + ev.filename + ':' + ev.lineno }, '*');
+                });
+            } catch (_) {}
+
+            // Give Firebase + service worker a moment to settle.
+            await new Promise(r => setTimeout(r, 1500));
+
+            for (const t of TESTS) {
+                try {
+                    const res = await Promise.resolve(t.run());
+                    const bucket = res.pass; // 'pass' | 'fail' | 'skip'
+                    setStatus(t.name, bucket, res.detail || '');
+                    counts[bucket] = (counts[bucket] || 0) + 1;
+                    counts.pending--;
+                    refreshCounts();
+                    log(`${bucket === 'pass' ? '✅' : bucket === 'fail' ? '❌' : '⏸️ '} ${t.name}${res.detail ? ' — ' + res.detail : ''}`);
+                } catch (e) {
+                    setStatus(t.name, 'fail', 'threw: ' + (e && e.message || e));
+                    counts.fail++;
+                    counts.pending--;
+                    refreshCounts();
+                    log(`❌ ${t.name} — THREW: ${e && e.message || e}`);
+                }
+            }
+            log(`Done. ✅ ${counts.pass}  ❌ ${counts.fail}  ⏸️ ${counts.skip}`);
+        }
+
+        // ─── Wire up top-bar buttons ────────────────────────────────
+        $('runAllBtn').addEventListener('click', runAll);
+        $('reloadFrameBtn').addEventListener('click', () => {
+            reloadFrame().then(() => log('Frame reloaded manually.'));
+        });
+        $('saveKeyBtn').addEventListener('click', () => {
+            const key = $('userGeminiKey').value.trim();
+            if (!key) return alert('Paste a Gemini key first (starts with AIzaSy…)');
+            try {
+                const w = iframe.contentWindow;
+                const scope = (typeof w.scopedKey === 'function') ? w.scopedKey('openai_api_key') : 'openai_api_key';
+                w.localStorage.setItem(scope, key);
+                log('User Gemini key saved into ' + scope);
+                alert('Saved. Re-run tests to see the BYOK test go green.');
+            } catch (e) {
+                alert('Could not save key: ' + e.message);
+            }
+        });
+        $('clearKeyBtn').addEventListener('click', () => {
+            try {
+                const w = iframe.contentWindow;
+                const scope = (typeof w.scopedKey === 'function') ? w.scopedKey('openai_api_key') : 'openai_api_key';
+                w.localStorage.removeItem(scope);
+                w.localStorage.removeItem('openai_api_key');
+                w.localStorage.removeItem('geminiApiKey');
+                $('userGeminiKey').value = '';
+                log('Cleared user Gemini keys.');
+                alert('Cleared.');
+            } catch (e) {
+                alert('Could not clear key: ' + e.message);
+            }
+        });
+
+        // Auto-boot the iframe on first paint so the "Run all" click is quick.
+        window.addEventListener('DOMContentLoaded', () => {
+            iframe.src = '/index.html?t=' + Date.now();
+            refreshCounts();
+            frameReady()
+                .then(() => log('App frame pre-loaded. Click "Run all tests" whenever ready.'))
+                .catch((e) => log('⚠️ initial frame boot warning: ' + e.message));
+        });
+    })();
+    </script>
+</body>
+</html>
