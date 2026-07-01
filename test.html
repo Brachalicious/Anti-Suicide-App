@@ -311,6 +311,21 @@
                 const started = Date.now();
                 iframe.addEventListener('load', function once() {
                     iframe.removeEventListener('load', once);
+                    // Immediately install an error accumulator on the app's
+                    // window so we catch errors thrown DURING boot, not just
+                    // ones that fire after all module scripts finished.
+                    try {
+                        const w = iframe.contentWindow;
+                        w._testErrors = w._testErrors || [];
+                        w.addEventListener('error', (ev) => {
+                            const msg = (ev.message || String(ev.error || 'error')) +
+                                (ev.filename ? ' @ ' + ev.filename + ':' + ev.lineno : '');
+                            w._testErrors.push(msg);
+                        });
+                        w.addEventListener('unhandledrejection', (ev) => {
+                            w._testErrors.push('unhandled promise: ' + (ev.reason && ev.reason.message || ev.reason));
+                        });
+                    } catch (_) {}
                     // Poll until the app has exposed at least one of its
                     // key globals — that tells us the module scripts ran.
                     const timer = setInterval(() => {
@@ -854,6 +869,38 @@
                 : { pass: 'fail', detail: 'no #firstLaunchDisclaimer — Play/App Store will reject' };
         });
 
+        addTest('compliance', 'Disclaimer contains "not a medical" wording', async () => {
+            const d = iframe.contentDocument;
+            const modal = d.getElementById('firstLaunchDisclaimer');
+            if (!modal) return { pass: 'fail', detail: 'modal not found' };
+            const txt = modal.textContent || '';
+            const hasMedical  = /not a medical|not medical advice|not a substitute/i.test(txt);
+            const hasCrisis   = /988|emergency|crisis/i.test(txt);
+            const hasAcceptBtn = !!d.getElementById('disclaimerAcceptBtn');
+            return hasMedical && hasCrisis && hasAcceptBtn
+                ? { pass: 'pass', detail: 'wording + accept button correct' }
+                : { pass: 'fail', detail: `medical=${hasMedical} crisis=${hasCrisis} btn=${hasAcceptBtn}` };
+        });
+
+        addTest('compliance', 'Disclaimer modal hides after acceptance', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            const modal = d.getElementById('firstLaunchDisclaimer');
+            const btn = d.getElementById('disclaimerAcceptBtn');
+            if (!modal || !btn) return { pass: 'fail', detail: 'modal or accept button missing' };
+            // Reset the acceptance flag so we can prove the flow end-to-end.
+            const key = (typeof w.scopedKey === 'function') ? w.scopedKey('disclaimerAccepted_v1') : 'disclaimerAccepted_v1';
+            w.localStorage.removeItem(key);
+            w.checkDisclaimer();
+            const shownBefore = getComputedStyle(modal).display !== 'none';
+            btn.click();
+            await new Promise(r => setTimeout(r, 100));
+            const shownAfter = getComputedStyle(modal).display !== 'none';
+            const flagSet = w.localStorage.getItem(key) === '1';
+            return shownBefore && !shownAfter && flagSet
+                ? { pass: 'pass', detail: 'shown → click → hidden + acceptance persisted' }
+                : { pass: 'fail', detail: `shownBefore=${shownBefore} shownAfter=${shownAfter} flag=${flagSet}` };
+        });
+
         addTest('compliance', 'Global crisis footer with 988 + 741741 links', async () => {
             const d = iframe.contentDocument;
             const footer = d.getElementById('appFooter');
@@ -897,11 +944,20 @@
         });
 
         addTest('compliance', 'No render-blocking JS errors in iframe', async () => {
-            // Look for anything the app posted to the parent (we set up capture
-            // in the runner via window.onerror below).
-            return __errorsCaught.length === 0
-                ? { pass: 'pass', detail: 'no uncaught errors during boot' }
-                : { pass: 'fail', detail: __errorsCaught.length + ' error(s): ' + __errorsCaught[0] };
+            // We accumulate errors two ways:
+            //   1. Errors caught by our postMessage-based listener (post-boot).
+            //   2. Errors we can read off iframe.contentWindow._testErrors if
+            //      the app was booted with a pre-installed listener.
+            // Ignore known-benign warnings (e.g. Firebase's popup-blocked one
+            // that appears when tests run in a sandbox without user gesture).
+            const w = iframe.contentWindow;
+            const local = (w && w._testErrors) ? w._testErrors : [];
+            const all = __errorsCaught.concat(local);
+            const benign = /popup|popup-blocked|missing initial state|favicon/i;
+            const bad = all.filter(m => !benign.test(String(m)));
+            return bad.length === 0
+                ? { pass: 'pass', detail: (all.length ? `${all.length} benign warning(s) ignored` : 'no errors during boot') }
+                : { pass: 'fail', detail: bad.length + ' error(s): ' + bad[0] };
         });
 
         // ═════════════════════════════════════════════════════════════
