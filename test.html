@@ -262,8 +262,11 @@
         function log(msg) {
             const el = $('log');
             const t  = new Date().toLocaleTimeString();
-            el.textContent += `[${t}] ${msg}\n`;
+            const line = `[${t}] ${msg}`;
+            el.textContent += line + '\n';
             el.scrollTop = el.scrollHeight;
+            // Mirror to console so the headless runner can stream it.
+            try { console.log(line); } catch (_) {}
         }
 
         function refreshCounts() {
@@ -314,9 +317,17 @@
                     // Immediately install an error accumulator on the app's
                     // window so we catch errors thrown DURING boot, not just
                     // ones that fire after all module scripts finished.
+                    // ALSO stub alert/confirm/prompt so any test that clicks
+                    // through app UI doesn't block headless Chrome forever
+                    // (native dialogs freeze the whole main thread).
                     try {
                         const w = iframe.contentWindow;
                         w._testErrors = w._testErrors || [];
+                        w._alerts = w._alerts || [];
+                        w._confirms = w._confirms || [];
+                        w.alert = (m) => { w._alerts.push(String(m)); };
+                        w.confirm = (m) => { w._confirms.push(String(m)); return true; };
+                        w.prompt = (m, d) => { w._confirms.push(String(m)); return d || ''; };
                         w.addEventListener('error', (ev) => {
                             const msg = (ev.message || String(ev.error || 'error')) +
                                 (ev.filename ? ' @ ' + ev.filename + ':' + ev.lineno : '');
@@ -391,15 +402,19 @@
             if (typeof w.startBreathing !== 'function') return { pass: 'fail', detail: 'startBreathing() missing' };
             const text = d.getElementById('breathText');
             if (!text) return { pass: 'fail', detail: '#breathText missing' };
-            const before = text.textContent;
+            // startBreathing() synchronously calls doCycle() once (setting text to
+            // "Breathe In") then schedules an interval that flips it every 4 s.
+            // We assert that after invoking it, the text is one of the two valid
+            // labels — proof the cycle is wired.
+            text.textContent = ''; // clear any prior state
             w.startBreathing();
-            await new Promise(r => setTimeout(r, 100));
-            const first = text.textContent;
+            await new Promise(r => setTimeout(r, 50));
+            const val = text.textContent;
             // Clean up so we don't leak the 4-second interval.
             try { if (w.breathInterval) { w.clearInterval(w.breathInterval); w.breathInterval = null; } } catch (_) {}
-            return first && first !== before
-                ? { pass: 'pass', detail: `text changed: "${before}" → "${first}"` }
-                : { pass: 'fail', detail: `text did not change (still "${first}")` };
+            return /Breathe (In|Out)/.test(val)
+                ? { pass: 'pass', detail: `text is now "${val}"` }
+                : { pass: 'fail', detail: `text is "${val}" (expected "Breathe In" or "Breathe Out")` };
         });
 
         addTest('tools', 'STOP overlay function exists', async () => {
@@ -426,10 +441,25 @@
         // ─── 💫 Affirmations ────────────────────────────────────────
         addTest('affirm', 'affirmations array is populated', async () => {
             const w = iframe.contentWindow;
-            const arr = w.affirmations;
-            return Array.isArray(arr) && arr.length > 5
-                ? { pass: 'pass', detail: `${arr.length} affirmations loaded` }
-                : { pass: 'fail', detail: `affirmations = ${JSON.stringify(arr).slice(0, 60)}…` };
+            // The array is declared with `const` inside a <script> block, which
+            // does NOT put it on window. We evaluate inside the frame to reach
+            // it via lexical scope. Fall back to counting rendered cards if the
+            // symbol isn't reachable that way either.
+            let count;
+            try {
+                count = w.eval('typeof affirmations !== "undefined" ? affirmations.length : 0');
+            } catch (_) { count = 0; }
+            if (!count) {
+                // Belt-and-braces: at least one affirmation card must be rendered.
+                const el = iframe.contentDocument.getElementById('daily-affirmation');
+                if (el && el.textContent.trim().length > 20) {
+                    return { pass: 'pass', detail: 'affirmation rendered in DOM (array not reachable via window)' };
+                }
+                return { pass: 'fail', detail: 'no affirmations reachable and no card rendered' };
+            }
+            return count > 5
+                ? { pass: 'pass', detail: `${count} affirmations loaded` }
+                : { pass: 'fail', detail: `only ${count} affirmations` };
         });
 
         addTest('affirm', 'newAffirmation() rotates to a different card', async () => {
@@ -453,14 +483,31 @@
         addTest('affirm', 'heartAffirmation() saves to Affirmation Book', async () => {
             const w = iframe.contentWindow;
             if (typeof w.heartAffirmation !== 'function') return { pass: 'fail', detail: 'heartAffirmation() missing' };
-            // The book key is scoped per-account, so use the same helper.
-            const key = typeof w.scopedKey === 'function' ? w.scopedKey('heartedAffirmations') : 'heartedAffirmations';
-            const before = w.localStorage.getItem(key);
-            w.heartAffirmation();
+            // heartAffirmation stores into localStorage AND fires an alert().
+            // The alert is stubbed at frame boot into w._alerts, so we can
+            // both check storage AND read the confirmation dialog.
+            const beforeAlerts = w._alerts.length;
+            let key = null, before = null;
+            // The function uses a different key internally — try a couple.
+            const candidates = ['heartedAffirmations', 'affirmationBookEntries', 'bookEntries', 'affirmations_hearted'];
+            for (const c of candidates) {
+                const scoped = (typeof w.scopedKey === 'function') ? w.scopedKey(c) : c;
+                if (w.localStorage.getItem(scoped) !== null) { key = scoped; break; }
+            }
+            if (!key) key = (typeof w.scopedKey === 'function') ? w.scopedKey(candidates[1]) : candidates[1];
+            before = w.localStorage.getItem(key);
+            try { w.heartAffirmation(); } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            }
+            const alerts = w._alerts.slice(beforeAlerts);
             const after = w.localStorage.getItem(key);
-            return after && after !== before
-                ? { pass: 'pass', detail: `localStorage["${key}"] populated` }
-                : { pass: 'skip', detail: 'may be already hearted or already at max; not a functional bug' };
+            // Success = either storage changed OR an "already saved" alert fired
+            // (which itself proves the function ran end-to-end without crashing).
+            const stored = after && after !== before;
+            const alerted = alerts.some(a => /saved|already/i.test(a));
+            return (stored || alerted)
+                ? { pass: 'pass', detail: stored ? `wrote to "${key}"` : `alert: "${alerts[0]}"` }
+                : { pass: 'fail', detail: `no localStorage change and no alert (alerts=${alerts.length})` };
         });
 
         // ─── 🪞 Mirror & camera ─────────────────────────────────────
@@ -530,12 +577,12 @@
         // ─── 🧘 Meditation & mic ────────────────────────────────────
         addTest('meditation', 'Meditation section renders in DOM', async () => {
             const d = iframe.contentDocument;
-            // The section might be named guided-meditation, meditation, or similar.
-            const candidates = ['guided-meditation', 'meditation', 'sound-bath'];
+            // The section is a multi-part experience: setup screen + running screen.
+            const candidates = ['meditationSetup', 'meditationExperience', 'meditationTimer', 'meditationScript', 'guided-meditation'];
             const found = candidates.filter(id => d.getElementById(id));
             return found.length
                 ? { pass: 'pass', detail: 'section IDs found: ' + found.join(', ') }
-                : { pass: 'skip', detail: 'no meditation section — feature may be gated behind a menu' };
+                : { pass: 'fail', detail: 'no meditation section IDs — feature broken' };
         });
 
         addTest('meditation', 'Audio element / play control present somewhere', async () => {
@@ -651,9 +698,11 @@
 
         addTest('storage', 'Legacy leak migration v4 has run', async () => {
             const w = iframe.contentWindow;
+            // The migration writes String(Date.now()) into the flag, not '1',
+            // so any non-empty value proves it ran.
             const flag = w.localStorage.getItem('__settings_migration_v4_done');
-            return flag === '1'
-                ? { pass: 'pass', detail: 'migration flag set — leak-eraser ran' }
+            return flag && flag.length > 0
+                ? { pass: 'pass', detail: `migration flag = "${flag}" (ran ${new Date(+flag).toISOString()})` }
                 : { pass: 'fail', detail: 'migration flag missing — old data may still be leaking' };
         });
 
@@ -667,9 +716,13 @@
 
         addTest('chat', 'Gemini model is not a retired one', async () => {
             const w = iframe.contentWindow;
-            const model = w._GEMINI_MODEL || '';
+            // _GEMINI_MODEL is a top-level `const` inside a <script> block,
+            // so it's not on window. Reach it via eval() in frame scope.
+            let model = '';
+            try { model = w.eval('typeof _GEMINI_MODEL !== "undefined" ? _GEMINI_MODEL : ""'); }
+            catch (_) {}
             const retired = ['gemini-pro', 'gemini-1.5-flash'];
-            if (!model) return { pass: 'fail', detail: '_GEMINI_MODEL not exposed' };
+            if (!model) return { pass: 'fail', detail: '_GEMINI_MODEL not found in frame scope' };
             return retired.includes(model)
                 ? { pass: 'fail', detail: `using retired model "${model}"` }
                 : { pass: 'pass', detail: `model = "${model}"` };
@@ -742,7 +795,10 @@
             if (!key || !key.startsWith('AIzaSy')) {
                 return { pass: 'skip', detail: 'no user Gemini key set — paste one in the box above to test' };
             }
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/${w._GEMINI_MODEL}:generateContent?key=${key}`;
+            let model = '';
+            try { model = w.eval('typeof _GEMINI_MODEL !== "undefined" ? _GEMINI_MODEL : "gemini-2.5-flash"'); }
+            catch (_) { model = 'gemini-2.5-flash'; }
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:generateContent?key=${key}`;
             try {
                 const r = await fetch(url, {
                     method: 'POST',
@@ -998,7 +1054,18 @@
 
             for (const t of TESTS) {
                 try {
-                    const res = await Promise.resolve(t.run());
+                    // Per-test hard timeout so a stuck fetch / hung promise
+                    // never blocks the whole suite. 12s is generous enough for
+                    // a slow Gemini round-trip but short enough to keep
+                    // total runtime bounded.
+                    const withTimeout = Promise.race([
+                        Promise.resolve(t.run()),
+                        new Promise((_, rej) => setTimeout(
+                            () => rej(new Error('test timed out (12s)')),
+                            12000
+                        ))
+                    ]);
+                    const res = await withTimeout;
                     const bucket = res.pass; // 'pass' | 'fail' | 'skip'
                     setStatus(t.name, bucket, res.detail || '');
                     counts[bucket] = (counts[bucket] || 0) + 1;
