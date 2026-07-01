@@ -1,0 +1,71 @@
+{
+  "name": "Hi Self — The Anti-Suicide Project",
+  "short_name": "Hi Self",
+  "description": "A free peer-support and self-help wellness companion. Journaling, mood tracking, coping tools, and one-tap access to crisis resources. Not a medical device.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait-primary",
+  "background_color": "#1a0a2e",
+  "theme_color": "#ec4899",
+  "lang": "en",
+  "dir": "ltr",
+  "categories": ["health", "lifestyle", "medical"],
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/favicon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "In Crisis? Call 988",
+      "short_name": "Call 988",
+      "description": "Immediate access to the Suicide & Crisis Lifeline",
+      "url": "/?action=crisis",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "My Diary",
+      "short_name": "Diary",
+      "description": "Open your private journal",
+      "url": "/?section=diary",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Safety Plan",
+      "short_name": "Safety Plan",
+      "description": "Open your personalized safety plan",
+      "url": "/?section=safetyPlan",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Breathing Exercise",
+      "short_name": "Breathe",
+      "description": "Quick calming breathing exercise",
+      "url": "/?action=breathing",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    }
+  ],
+  "prefer_related_applications": false
+}
