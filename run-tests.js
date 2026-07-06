@@ -2,7 +2,7 @@
 /**
  * run-tests.js
  * ────────────
- * Headless test harness for the Hi Self app.
+ * Headless test harness for the Fight Suicide Project by MysticMinded³³ app.
  *
  * Launches system Chrome (via puppeteer-core), opens the local
  * test.html dashboard, clicks "Run all tests", and prints a
@@ -42,7 +42,7 @@ const RESET = '\x1b[0m';
 function color(s, c) { return `${c}${s}${RESET}`; }
 
 (async () => {
-    console.log(`\n${BOLD}🧪 Hi Self — headless test runner${RESET}`);
+    console.log(`\n${BOLD}🧪 Fight Suicide Project by MysticMinded³³ — headless test runner${RESET}`);
     console.log(`   Target: ${BASE_URL}`);
     console.log(`   BYOK key: ${GEMINI_KEY ? '(supplied, ' + GEMINI_KEY.slice(0, 8) + '…)' : '(not supplied — Google API round-trip test will skip)'}\n`);
 

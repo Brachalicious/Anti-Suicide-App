@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <!--
-  Hi Self — Automated Test Dashboard
-  ─────────────────────────────────────
+  Fight Suicide Project by MysticMinded³³ — Automated Test Dashboard
+  ──────────────────────────────────────────────────────────────────
   Purpose: exercise every feature of the app end-to-end from the browser,
   with a clear green/red status per test. No test framework needed — this
   is a single self-contained HTML page that boots the real app inside a
@@ -27,7 +27,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Hi Self — Automated Test Dashboard</title>
+    <title>Fight Suicide Project — Automated Test Dashboard</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <style>
         :root {
@@ -159,7 +159,7 @@
 </head>
 <body>
     <header>
-        <h1>🧪 Hi Self — Automated Test Dashboard</h1>
+        <h1>🧪 Fight Suicide Project by MysticMinded³³ — Automated Test Dashboard</h1>
         <p>Boots the real app in a hidden iframe, then runs 40+ live checks against every subsystem.</p>
     </header>
 
@@ -663,7 +663,7 @@
         // ─── 💾 Save / load data ────────────────────────────────────
         addTest('storage', 'localStorage read/write works in iframe', async () => {
             const w = iframe.contentWindow;
-            const k = '__hi_self_probe_' + Date.now();
+            const k = '__fsp_probe_' + Date.now();
             w.localStorage.setItem(k, 'v');
             const v = w.localStorage.getItem(k);
             w.localStorage.removeItem(k);
@@ -1021,7 +1021,7 @@
         // ═════════════════════════════════════════════════════════════
         const __errorsCaught = [];
         window.addEventListener('message', (e) => {
-            if (e.data && e.data.__hiSelfError) __errorsCaught.push(e.data.__hiSelfError);
+            if (e.data && e.data.__fspError) __errorsCaught.push(e.data.__fspError);
         });
 
         async function runAll() {
@@ -1045,7 +1045,7 @@
             // Inject a global error capturer into the app so we can assert on it.
             try {
                 iframe.contentWindow.addEventListener('error', (ev) => {
-                    parent.postMessage({ __hiSelfError: ev.message + ' @ ' + ev.filename + ':' + ev.lineno }, '*');
+                    parent.postMessage({ __fspError: ev.message + ' @ ' + ev.filename + ':' + ev.lineno }, '*');
                 });
             } catch (_) {}
 

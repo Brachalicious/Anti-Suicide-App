@@ -1,7 +1,7 @@
 {
-  "name": "Hi Self — The Anti-Suicide Project",
-  "short_name": "Hi Self",
-  "description": "A free peer-support and self-help wellness companion. Journaling, mood tracking, coping tools, and one-tap access to crisis resources. Not a medical device.",
+  "name": "Fight Suicide Project by MysticMinded³³",
+  "short_name": "Fight Suicide",
+  "description": "A free peer-support and self-help wellness companion by MysticMinded³³. Journaling, mood tracking, coping tools, and one-tap access to crisis resources. Not a medical device.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

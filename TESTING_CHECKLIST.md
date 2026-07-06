@@ -1,4 +1,4 @@
-# 🧪 Hi Self — Full Testing Checklist
+# 🧪 Fight Suicide Project by MysticMinded³³ — Full Testing Checklist
 
 **Test URL:** https://fightsuicideproject.netlify.app
 **Auto-test dashboard:** https://fightsuicideproject.netlify.app/test.html
@@ -50,7 +50,7 @@
 
 ### 4. First-launch disclaimer modal (just shipped)
 
-- [ ] **Open the site in a private/incognito window** → you should IMMEDIATELY see a full-screen 💗 "Welcome to Hi Self" modal
+- [ ] **Open the site in a private/incognito window** → you should IMMEDIATELY see a full-screen 💗 "Welcome to Fight Suicide Project by MysticMinded³³" modal
 - [ ] Try to scroll behind the modal → the background is locked, can't interact
 - [ ] Tap-to-call 988 button inside the modal → works
 - [ ] Tap "I understand — let's begin" → modal disappears, you can use the app
@@ -93,7 +93,7 @@
 - [ ] Open https://fightsuicideproject.netlify.app
 - [ ] Tap the Share button (square with arrow up)
 - [ ] Scroll down → tap "Add to Home Screen"
-- [ ] Name shows as "Hi Self" (not the URL)
+- [ ] Name shows as "Fight Suicide" (not the URL — Android/iOS truncates long names on the home screen)
 - [ ] Icon on home screen looks correct (pink heart)
 - [ ] Tap the icon → app opens FULLSCREEN (no Safari address bar)
 - [ ] Test: force airplane mode → open the app → **the shell loads** (this is service-worker offline support)

@@ -1,6 +1,6 @@
 /**
- * Hi Self — Service Worker
- * ─────────────────────────
+ * Fight Suicide Project by MysticMinded³³ — Service Worker
+ * ────────────────────────────────────────────────────────
  *
  * Purpose: enable the app to be installed as a PWA on iOS / Android home
  * screens and to work offline for the core crisis-resource + coping-tool
@@ -21,9 +21,13 @@
  * see a "you're offline" screen when they're reaching out for help.
  */
 
-const CACHE_VERSION = 'v1.0.0';
-const STATIC_CACHE = `hi-self-static-${CACHE_VERSION}`;
-const RUNTIME_CACHE = `hi-self-runtime-${CACHE_VERSION}`;
+// v1.1.0 = brand rename from "Hi Self" → "Fight Suicide Project by
+// MysticMinded³³". Bumping the version prefix here forces the activate
+// handler to purge every old `hi-self-*` cache on the user's next visit,
+// so nothing stale sticks around with the previous branding.
+const CACHE_VERSION = 'v1.1.0';
+const STATIC_CACHE = `fsp-static-${CACHE_VERSION}`;
+const RUNTIME_CACHE = `fsp-runtime-${CACHE_VERSION}`;
 
 // Pre-cache the shell so the app opens even with zero signal. Keep this
 // list tight — anything not here still works, it just needs one online
@@ -67,15 +71,19 @@ self.addEventListener('install', (event) => {
 
 // ─── Activate: clean up old caches ───────────────────────────────────
 self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    caches.keys().then((names) => {
-      return Promise.all(
-        names
-          .filter((n) => n.startsWith('hi-self-') && n !== STATIC_CACHE && n !== RUNTIME_CACHE)
-          .map((n) => caches.delete(n))
-      );
-    }).then(() => self.clients.claim())
-  );
+    event.waitUntil(
+        caches.keys().then((names) => {
+            return Promise.all(
+                names
+                    // Nuke:
+                    //   - old versioned caches under the current fsp- prefix,
+                    //   - AND every legacy hi-self-* cache from the pre-rename era.
+                    .filter((n) => (n.startsWith('fsp-') || n.startsWith('hi-self-'))
+                                 && n !== STATIC_CACHE && n !== RUNTIME_CACHE)
+                    .map((n) => caches.delete(n))
+            );
+        }).then(() => self.clients.claim())
+    );
 });
 
 // ─── Fetch: route requests through the right strategy ────────────────
