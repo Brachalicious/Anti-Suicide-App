@@ -65,6 +65,13 @@
       "description": "Quick calming breathing exercise",
       "url": "/?action=breathing",
       "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
+    },
+    {
+      "name": "Shared Lifelines",
+      "short_name": "Lifelines",
+      "description": "Your saved & shareable crisis phone numbers",
+      "url": "/#shared-lifelines",
+      "icons": [{ "src": "/favicon.svg", "sizes": "any", "type": "image/svg+xml" }]
     }
   ],
   "prefer_related_applications": false

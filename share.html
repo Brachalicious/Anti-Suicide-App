@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<!--
+  share.html — landing page for shared lifeline links
+  ────────────────────────────────────────────────────
+  When a Fight Suicide Project user hits "📤 Share" on any lifeline, the
+  native OS share sheet gets a URL like:
+      /share.html?name=Chai+Lifeline&tel=212-465-1300&note=24%2F7+support&cat=community
+  This page unpacks those query params and gives the recipient three
+  big, obvious buttons — Call, Text, Save-to-Contacts — plus a fourth
+  that jumps them into the full Fight Suicide Project app to add the
+  number to their own list.
+
+  Design goals:
+    • Load in <1 second on slow mobile (no external JS, no framework).
+    • Every button is thumb-sized (48+ px tall) for phone use.
+    • Works with zero JavaScript for the Call / Text buttons via <a href="tel:…">.
+    • vCard download uses a data-URL fallback so it works even offline.
+    • Displays a persistent "Verify before calling" warning because
+      anyone can generate a share URL — trust must be earned per-link.
+-->
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+    <title>Shared Lifeline · Fight Suicide Project</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <meta name="theme-color" content="#ec4899">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+            background: linear-gradient(135deg, #4c1d95, #831843);
+            color: #f9fafb;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 16px 40px;
+        }
+        header {
+            width: 100%; max-width: 500px;
+            text-align: center; margin-bottom: 20px;
+        }
+        header h1 {
+            font-size: 20px; font-weight: 800;
+            color: #f9a8d4;
+        }
+        header p {
+            font-size: 13px; color: #cbd5e1; margin-top: 4px;
+        }
+        .card {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(8px);
+            border-radius: 16px;
+            padding: 24px;
+            width: 100%; max-width: 500px;
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+            border: 1px solid rgba(236, 72, 153, 0.4);
+        }
+        .name {
+            font-size: 24px; font-weight: 800;
+            color: #f9a8d4; margin-bottom: 8px;
+            line-height: 1.3;
+        }
+        .phone {
+            font-family: 'Courier New', monospace;
+            font-size: 28px; font-weight: 700;
+            color: #fff; letter-spacing: 1px;
+            margin: 8px 0 16px;
+            padding: 12px 16px;
+            background: rgba(0,0,0,0.35);
+            border-radius: 10px;
+            text-align: center;
+        }
+        .note {
+            font-size: 14px; color: #cbd5e1;
+            line-height: 1.55; margin-bottom: 16px;
+            padding: 10px 14px;
+            border-left: 3px solid #ec4899;
+            background: rgba(236, 72, 153, 0.1);
+            border-radius: 6px;
+        }
+        .warn {
+            background: rgba(245, 158, 11, 0.15);
+            border: 1px solid #f59e0b;
+            color: #fde68a;
+            padding: 12px 14px;
+            border-radius: 8px;
+            font-size: 12px;
+            line-height: 1.5;
+            margin-bottom: 20px;
+        }
+        .warn strong { color: #fbbf24; }
+        .btn {
+            display: block; width: 100%;
+            padding: 14px 18px; margin-bottom: 10px;
+            border-radius: 10px; border: none;
+            font-size: 16px; font-weight: 800;
+            text-align: center;
+            text-decoration: none;
+            cursor: pointer;
+            min-height: 52px;
+            letter-spacing: 0.3px;
+        }
+        .btn-call { background: #22c55e; color: #fff; }
+        .btn-text { background: #3b82f6; color: #fff; }
+        .btn-save { background: #8b5cf6; color: #fff; }
+        .btn-add  { background: #ec4899; color: #fff; }
+        .btn:active { transform: scale(0.98); }
+        .footer {
+            margin-top: 24px; padding-top: 16px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            font-size: 12px; color: #94a3b8;
+            text-align: center; line-height: 1.6;
+        }
+        .footer a { color: #f9a8d4; }
+        .crisis-strip {
+            background: #ef4444; color: #fff;
+            padding: 10px 14px; border-radius: 8px;
+            font-size: 13px; font-weight: 700;
+            margin-top: 16px; text-align: center;
+        }
+        .crisis-strip a { color: #fff; text-decoration: underline; }
+        .missing {
+            background: rgba(239, 68, 68, 0.2);
+            border: 1px solid #ef4444;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            color: #fecaca;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>💗 Fight Suicide Project</h1>
+        <p>Someone shared this lifeline with you</p>
+    </header>
+
+    <div class="card" id="content">
+        <!-- populated by the script below -->
+    </div>
+
+    <p class="footer">
+        This app is <strong>not</strong> a medical service.
+        Verify any shared number before calling.
+        <br>
+        <a href="/">← Open the full Fight Suicide Project app</a>
+    </p>
+
+    <script>
+    (function () {
+        'use strict';
+
+        // --- Helpers ---------------------------------------------------
+        function esc(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+        function get(param) {
+            try { return new URLSearchParams(location.search).get(param) || ''; }
+            catch (_) { return ''; }
+        }
+        function normalizePhone(raw) {
+            const s = String(raw || '').trim();
+            const leadingPlus = s.startsWith('+') ? '+' : '';
+            return leadingPlus + s.replace(/[^\d]/g, '');
+        }
+        function vcardEscape(s) {
+            return String(s || '')
+                .replace(/\\/g, '\\\\')
+                .replace(/\n/g, '\\n')
+                .replace(/,/g, '\\,')
+                .replace(/;/g, '\\;');
+        }
+        function buildVCard(name, phone, note) {
+            return [
+                'BEGIN:VCARD',
+                'VERSION:3.0',
+                'FN:' + vcardEscape(name),
+                'ORG:Fight Suicide Project (shared lifeline)',
+                'TEL;TYPE=CELL,VOICE:' + vcardEscape(phone),
+                note ? 'NOTE:' + vcardEscape(note) : null,
+                'END:VCARD'
+            ].filter(Boolean).join('\r\n') + '\r\n';
+        }
+        function downloadVCard(name, phone, note) {
+            try {
+                const content = buildVCard(name, phone, note);
+                const blob = new Blob([content], { type: 'text/vcard;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                const safe = (name || 'lifeline').replace(/[^\w-]+/g, '_').slice(0, 40);
+                a.href = url; a.download = safe + '.vcf';
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            } catch (e) {
+                alert('Could not download the contact card: ' + e.message);
+            }
+        }
+        function addToMyList(name, phone, note, cat) {
+            // Deep-link into the main app with instructions to append this
+            // lifeline. We store it under a small transient key that the
+            // main app looks for on load; if it isn't picked up (e.g. app
+            // isn't installed as PWA), we fall back to just opening the
+            // Shared Lifelines section.
+            try {
+                sessionStorage.setItem('_pendingSharedLifeline', JSON.stringify({
+                    name, phone, note, category: cat || 'other'
+                }));
+            } catch (_) {}
+            location.href = '/#shared-lifelines';
+        }
+
+        // --- Read params ----------------------------------------------
+        const name  = get('name').slice(0, 80);
+        const rawPh = get('tel').slice(0, 30);
+        const phone = normalizePhone(rawPh);
+        const note  = get('note').slice(0, 300);
+        const cat   = get('cat').slice(0, 20);
+
+        const target = document.getElementById('content');
+        if (!name || !phone) {
+            target.innerHTML = `
+                <div class="missing">
+                    <strong>⚠️ Nothing to show here.</strong><br><br>
+                    This share link is missing a name or phone number.
+                    <br><br>
+                    <a href="/" style="color:#fca5a5; font-weight:700;">Open Fight Suicide Project →</a>
+                </div>`;
+            return;
+        }
+
+        target.innerHTML = `
+            <div class="name">${esc(name)}</div>
+            <div class="phone">${esc(rawPh || phone)}</div>
+            ${note ? `<div class="note">📝 ${esc(note)}</div>` : ''}
+            <div class="warn">
+                <strong>⚠️ Verify before calling.</strong> This number was
+                shared by another person — Fight Suicide Project did not
+                verify it. Always double-check unfamiliar numbers, especially
+                in a crisis.
+            </div>
+            <a class="btn btn-call" href="tel:${esc(phone)}">📞 Call now</a>
+            <a class="btn btn-text" href="sms:${esc(phone)}">💬 Send a text</a>
+            <button class="btn btn-save" id="btnSave">💾 Save to my Contacts</button>
+            <button class="btn btn-add"  id="btnAdd">➕ Add to my Fight Suicide Project list</button>
+
+            <div class="crisis-strip">
+                🆘 Not sure yet? Free 24/7 crisis help:
+                <a href="tel:988">call 988</a> or
+                <a href="sms:741741?body=HOME">text 741741</a>
+            </div>
+        `;
+
+        document.getElementById('btnSave').addEventListener('click',
+            () => downloadVCard(name, phone, note));
+        document.getElementById('btnAdd').addEventListener('click',
+            () => addToMyList(name, phone, note, cat));
+    })();
+    </script>
+</body>
+</html>

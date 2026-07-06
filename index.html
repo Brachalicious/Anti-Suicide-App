@@ -1682,6 +1682,7 @@
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
+            <button class="nav-item" onclick="showSection('shared-lifelines'); closeMobileNav()">📇 Shared Lifelines</button>
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
@@ -4053,6 +4054,94 @@
                 </div>
             </div>
         </div>
+        </div>
+
+        <!-- ╭─────────────────────────────────────────────────────────────────╮
+             │  📇 Shared Lifelines — community-shareable phone directory      │
+             ├─────────────────────────────────────────────────────────────────┤
+             │  Users can add any trusted crisis-support number (local        │
+             │  hotline, therapist, community line, etc.) and share it with   │
+             │  friends via native OS share sheet, SMS, WhatsApp, or by       │
+             │  downloading a .vcf vCard that both iOS and Android open       │
+             │  natively with an "Add to Contacts" prompt. Each entry is      │
+             │  stored per-user under scopedKey('sharedLifelines') so one     │
+             │  account's list never bleeds into another.                     │
+             │                                                                │
+             │  Pre-seeded with the four built-in emergency lines so a brand- │
+             │  new user has something to share on day one.                   │
+             │                                                                │
+             │  Safety: every added number is displayed with a big red "⚠️    │
+             │  This is a user-submitted number — verify before calling"      │
+             │  disclaimer, because anyone can add anything. The seeded       │
+             │  built-in lines (988, 741741, Hatzoloh, 911) are marked        │
+             │  '✓ verified' and can't be deleted.                            │
+             ╰─────────────────────────────────────────────────────────────────╯ -->
+        <div id="shared-lifelines" class="section hidden">
+            <div class="card">
+                <h2 class="section-title">📇 Shared Lifelines</h2>
+                <p style="color:#f9a8d4; font-size:15px; margin-bottom:6px; line-height:1.6;">
+                    Save the numbers that matter. Share them with anyone who needs help.
+                </p>
+                <p style="color:#cbd5e1; font-size:13px; margin-bottom:20px; line-height:1.6;">
+                    Tap 💾 to save a number to your phone's Contacts app (iOS &amp; Android).
+                    Tap 📤 to send it to a friend by text, WhatsApp, or email.
+                    Tap 📞 to call, or 💬 to text.
+                </p>
+
+                <!-- Add a new resource ─────────────────────────────────────── -->
+                <div style="background:linear-gradient(135deg,#4c1d95,#831843); border-radius:14px; padding:18px; margin-bottom:22px; border:1px solid #a855f7;">
+                    <h3 style="color:#f9a8d4; font-size:17px; margin:0 0 12px;">➕ Add a lifeline to share</h3>
+                    <div style="display:grid; gap:10px;">
+                        <input id="lifelineName" type="text" placeholder="Name (e.g. Chai Lifeline)" maxlength="60"
+                               style="padding:10px 12px; border-radius:8px; border:1px solid #6b21a8; background:#1e0a3a; color:#fff; font-size:14px;">
+                        <input id="lifelinePhone" type="tel" placeholder="Phone (e.g. 212-465-1300 or 988)" maxlength="30"
+                               style="padding:10px 12px; border-radius:8px; border:1px solid #6b21a8; background:#1e0a3a; color:#fff; font-size:14px;">
+                        <select id="lifelineCategory"
+                                style="padding:10px 12px; border-radius:8px; border:1px solid #6b21a8; background:#1e0a3a; color:#fff; font-size:14px;">
+                            <option value="crisis">🆘 Crisis / Suicide</option>
+                            <option value="text">💬 Text-Only Line</option>
+                            <option value="community">🕊️ Community / Faith</option>
+                            <option value="therapy">🧘 Therapy / Counseling</option>
+                            <option value="medical">🏥 Medical / Hospital</option>
+                            <option value="youth">👦 Youth / Teen</option>
+                            <option value="lgbtq">🌈 LGBTQ+</option>
+                            <option value="veterans">🎖️ Veterans</option>
+                            <option value="other">📌 Other</option>
+                        </select>
+                        <textarea id="lifelineNote" placeholder="Optional note (e.g. '24/7, free, Yiddish-speaking')" maxlength="200" rows="2"
+                                  style="padding:10px 12px; border-radius:8px; border:1px solid #6b21a8; background:#1e0a3a; color:#fff; font-size:14px; resize:vertical;"></textarea>
+                        <button id="addLifelineBtn" class="btn" onclick="addSharedLifeline()"
+                                style="background:linear-gradient(135deg,#22c55e,#16a34a); color:#fff; font-weight:800; font-size:15px;">
+                            ➕ Add to my list
+                        </button>
+                    </div>
+                    <p style="color:#fca5a5; font-size:12px; margin:10px 0 0; line-height:1.5;">
+                        ⚠️ Your additions are saved to your account only. Verify any number you share came from a trusted source.
+                    </p>
+                </div>
+
+                <!-- Filter buttons ────────────────────────────────────────── -->
+                <div id="lifelineFilters" style="display:flex; flex-wrap:wrap; gap:6px; margin-bottom:14px;">
+                    <!-- populated by renderSharedLifelines() -->
+                </div>
+
+                <!-- The list ──────────────────────────────────────────────── -->
+                <div id="lifelinesList">
+                    <!-- populated by renderSharedLifelines() -->
+                </div>
+
+                <!-- Bulk actions ──────────────────────────────────────────── -->
+                <div style="margin-top:24px; padding-top:16px; border-top:1px solid #4c1d95; display:flex; flex-wrap:wrap; gap:10px;">
+                    <button class="btn" onclick="downloadAllLifelinesVCard()"
+                            style="background:#3b82f6; color:#fff; font-weight:700;">
+                        💾 Save ALL to Contacts (.vcf)
+                    </button>
+                    <button class="btn" onclick="shareAllLifelines()"
+                            style="background:#8b5cf6; color:#fff; font-weight:700;">
+                        📤 Share my full list
+                    </button>
+                </div>
+            </div>
         </div>
 
         <!-- Virtual Therapist Section -->
@@ -13716,6 +13805,429 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 }
             }, 3000);
         }
+
+        // ═══════════════════════════════════════════════════════════════════
+        // 📇 SHARED LIFELINES — user-added crisis / support phone directory
+        // ═══════════════════════════════════════════════════════════════════
+        //
+        // Storage:
+        //   • Custom entries → localStorage[scopedKey('sharedLifelines')]
+        //     (per-user, JSON-serialized array of {id,name,phone,note,category,verified})
+        //   • Built-in seeds are NOT stored — they're merged in at render time
+        //     so a user never accidentally deletes 988 by clearing their list.
+        //
+        // Share strategy:
+        //   1. Preferred: navigator.share({title,text,url})   ← native OS sheet
+        //   2. Fallback: copy a formatted string to clipboard + toast
+        //   3. Also always offer: download a .vcf vCard file that iOS and
+        //      Android both open natively with "Add to Contacts" prompt.
+        //
+        // Public URL format for shared links (handled by share.html):
+        //   /share.html?name=<url-encoded>&tel=<digits>&note=<url-encoded>
+        //
+        // Safety:
+        //   • Every user-added number is displayed with an "unverified" tag
+        //     so the recipient knows to sanity-check it before dialing.
+        //   • Seeded entries (988, 741741, Hatzoloh, 911) show "✓ verified".
+        //
+        // Testability:
+        //   • All functions are attached to `window` so the test harness
+        //     can call them without eval'ing into the script scope.
+
+        // Built-in verified crisis lines that every user's list starts with.
+        // Kept immutable — user can hide but not delete these.
+        const _BUILTIN_LIFELINES = [
+            { id: 'builtin-988',     name: '988 Suicide & Crisis Lifeline', phone: '988',           category: 'crisis',    note: 'US 24/7, free, confidential. Call or text.', verified: true, builtin: true },
+            { id: 'builtin-741741',  name: 'Crisis Text Line',              phone: '741741',        category: 'text',      note: 'Text HOME to 741741. US/CA/UK/IE.',         verified: true, builtin: true },
+            { id: 'builtin-hatzoloh',name: 'Hatzoloh NYC',                  phone: '718-230-1000',  category: 'medical',   note: 'Volunteer Jewish EMS, NYC area.',           verified: true, builtin: true },
+            { id: 'builtin-911',     name: '911 Emergency',                 phone: '911',           category: 'medical',   note: 'US emergency services (police/fire/EMS).',  verified: true, builtin: true },
+            { id: 'builtin-chai',    name: 'Chai Lifeline Crisis Line',     phone: '212-465-1300',  category: 'community', note: 'Jewish community — kids, families, illness.', verified: true, builtin: true },
+            { id: 'builtin-trevor',  name: 'Trevor Project (LGBTQ+ Youth)', phone: '866-488-7386',  category: 'lgbtq',     note: '24/7 crisis support for LGBTQ+ young people.', verified: true, builtin: true },
+            { id: 'builtin-veterans',name: 'Veterans Crisis Line',          phone: '988',           category: 'veterans',  note: 'Dial 988 then Press 1 (US veterans).',      verified: true, builtin: true }
+        ];
+
+        // Category → emoji + label lookup used by the render + filter code.
+        const _LIFELINE_CATS = {
+            crisis:    { emoji: '🆘', label: 'Crisis / Suicide' },
+            text:      { emoji: '💬', label: 'Text-Only' },
+            community: { emoji: '🕊️', label: 'Community / Faith' },
+            therapy:   { emoji: '🧘', label: 'Therapy' },
+            medical:   { emoji: '🏥', label: 'Medical' },
+            youth:     { emoji: '👦', label: 'Youth / Teen' },
+            lgbtq:     { emoji: '🌈', label: 'LGBTQ+' },
+            veterans:  { emoji: '🎖️', label: 'Veterans' },
+            other:     { emoji: '📌', label: 'Other' }
+        };
+
+        let _lifelineFilter = 'all'; // active category filter for the list view
+
+        // Read the user's saved additions. Merges cleanly on a fresh account
+        // (returns []) and never throws even if localStorage is disabled.
+        function getSharedLifelines() {
+            try {
+                const key = (typeof scopedKey === 'function') ? scopedKey('sharedLifelines') : 'sharedLifelines';
+                const raw = localStorage.getItem(key);
+                if (!raw) return [];
+                const parsed = JSON.parse(raw);
+                return Array.isArray(parsed) ? parsed : [];
+            } catch (e) {
+                console.warn('getSharedLifelines error:', e);
+                return [];
+            }
+        }
+        function saveSharedLifelines(list) {
+            try {
+                const key = (typeof scopedKey === 'function') ? scopedKey('sharedLifelines') : 'sharedLifelines';
+                localStorage.setItem(key, JSON.stringify(list));
+            } catch (e) {
+                console.warn('saveSharedLifelines error:', e);
+            }
+        }
+
+        // Sanitize a phone number to the cleanest dialable form.
+        // Keeps leading + for international, strips other punctuation.
+        function _normalizePhone(raw) {
+            const s = String(raw || '').trim();
+            const leadingPlus = s.startsWith('+') ? '+' : '';
+            const digits = s.replace(/[^\d]/g, '');
+            return leadingPlus + digits;
+        }
+        // Pretty format for display: 212-465-1300, +1 800 555 0100, or 988.
+        function _formatPhone(raw) {
+            const s = String(raw || '').trim();
+            if (!s) return '';
+            if (/^\+?\d{3,4}$/.test(s.replace(/\D/g, ''))) return s.replace(/\D/g, ''); // short codes like 988, 741741
+            // Otherwise let the raw value speak for itself — users format
+            // international / vanity numbers however they like.
+            return s;
+        }
+
+        function addSharedLifeline() {
+            const nameEl  = document.getElementById('lifelineName');
+            const phoneEl = document.getElementById('lifelinePhone');
+            const noteEl  = document.getElementById('lifelineNote');
+            const catEl   = document.getElementById('lifelineCategory');
+            const name    = (nameEl.value  || '').trim().slice(0, 60);
+            const phone   = _normalizePhone(phoneEl.value);
+            const note    = (noteEl.value  || '').trim().slice(0, 200);
+            const category = catEl.value || 'other';
+            if (!name)  { alert('Please add a name for this lifeline.'); return; }
+            if (!phone || phone.replace(/\D/g, '').length < 3) {
+                alert('Please add a valid phone number (or short code like 988).');
+                return;
+            }
+            const list = getSharedLifelines();
+            // Reject exact duplicates (same normalized phone).
+            if (list.some(l => _normalizePhone(l.phone) === phone)) {
+                alert('You already have this number in your list.');
+                return;
+            }
+            list.push({
+                id: 'user-' + Date.now(),
+                name, phone, note, category,
+                verified: false,
+                addedAt: new Date().toISOString()
+            });
+            saveSharedLifelines(list);
+            nameEl.value = ''; phoneEl.value = ''; noteEl.value = '';
+            renderSharedLifelines();
+        }
+
+        function deleteSharedLifeline(id) {
+            if (!id || String(id).startsWith('builtin-')) return; // guard
+            if (!confirm('Remove this lifeline from your list?')) return;
+            const list = getSharedLifelines().filter(l => l.id !== id);
+            saveSharedLifelines(list);
+            renderSharedLifelines();
+        }
+
+        // Full merged list = built-ins first, then user's additions.
+        function _allLifelines() {
+            return _BUILTIN_LIFELINES.concat(getSharedLifelines());
+        }
+
+        // ── vCard generation ────────────────────────────────────────────
+        // vCard 3.0 spec — accepted by iOS Contacts, Android Contacts,
+        // Outlook, Gmail, and every mainstream address book on the planet.
+        function _vcardEscape(s) {
+            return String(s || '')
+                .replace(/\\/g, '\\\\')
+                .replace(/\n/g, '\\n')
+                .replace(/,/g, '\\,')
+                .replace(/;/g, '\\;');
+        }
+        function _buildVCard(lifeline) {
+            const lines = [
+                'BEGIN:VCARD',
+                'VERSION:3.0',
+                'FN:' + _vcardEscape(lifeline.name),
+                'ORG:Fight Suicide Project (shared lifeline)',
+                'TEL;TYPE=CELL,VOICE:' + _vcardEscape(lifeline.phone)
+            ];
+            if (lifeline.note) lines.push('NOTE:' + _vcardEscape(lifeline.note));
+            lines.push('CATEGORIES:crisis,lifeline,' + (lifeline.category || 'other'));
+            lines.push('END:VCARD');
+            return lines.join('\r\n') + '\r\n';
+        }
+        function _triggerDownload(filename, mimeType, content) {
+            try {
+                const blob = new Blob([content], { type: mimeType });
+                const url  = URL.createObjectURL(blob);
+                const a    = document.createElement('a');
+                a.href = url; a.download = filename;
+                document.body.appendChild(a);
+                a.click();
+                setTimeout(() => {
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                }, 100);
+            } catch (e) {
+                console.warn('_triggerDownload error:', e);
+                alert('Could not download the file. ' + e.message);
+            }
+        }
+        function downloadLifelineVCard(id) {
+            const lifeline = _allLifelines().find(l => l.id === id);
+            if (!lifeline) return;
+            const safe = (lifeline.name || 'lifeline').replace(/[^\w-]+/g, '_').slice(0, 40);
+            _triggerDownload(safe + '.vcf', 'text/vcard;charset=utf-8', _buildVCard(lifeline));
+        }
+        function downloadAllLifelinesVCard() {
+            const all = _allLifelines();
+            if (!all.length) { alert('Your list is empty.'); return; }
+            const combined = all.map(_buildVCard).join('');
+            _triggerDownload('fight-suicide-project-lifelines.vcf', 'text/vcard;charset=utf-8', combined);
+        }
+
+        // ── Native / clipboard share ────────────────────────────────────
+        function _buildShareUrl(lifeline) {
+            const base = (location.origin && location.origin.startsWith('http'))
+                ? location.origin
+                : 'https://fightsuicideproject.netlify.app';
+            const q = new URLSearchParams({
+                name: lifeline.name || '',
+                tel:  lifeline.phone || '',
+                note: lifeline.note || '',
+                cat:  lifeline.category || ''
+            });
+            return base + '/share.html?' + q.toString();
+        }
+        async function shareSharedLifeline(id) {
+            const lifeline = _allLifelines().find(l => l.id === id);
+            if (!lifeline) return;
+            const url = _buildShareUrl(lifeline);
+            const text = `📞 ${lifeline.name}: ${lifeline.phone}` +
+                (lifeline.note ? `\n${lifeline.note}` : '') +
+                `\n\nSave to contacts or call now: ${url}`;
+            if (navigator.share) {
+                try {
+                    await navigator.share({ title: lifeline.name, text, url });
+                    return;
+                } catch (e) {
+                    // User cancelled the sheet — no need to fallback.
+                    if (e && e.name === 'AbortError') return;
+                    // Any other error → fall through to clipboard.
+                }
+            }
+            _copyToClipboardWithToast(text, 'Copied — paste into any message or app.');
+        }
+        async function shareAllLifelines() {
+            const all = _allLifelines();
+            if (!all.length) { alert('Your list is empty.'); return; }
+            const lines = all.map(l =>
+                `• ${l.name} — ${l.phone}${l.note ? ' (' + l.note + ')' : ''}`
+            );
+            const text = 'Crisis & support lifelines shared from Fight Suicide Project:\n\n' + lines.join('\n');
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Crisis Lifelines', text }); return; }
+                catch (e) { if (e && e.name === 'AbortError') return; }
+            }
+            _copyToClipboardWithToast(text, 'List copied — paste it into a message.');
+        }
+        function _copyToClipboardWithToast(text, successMsg) {
+            try {
+                if (navigator.clipboard && navigator.clipboard.writeText) {
+                    navigator.clipboard.writeText(text).then(
+                        () => _showToast(successMsg || 'Copied!'),
+                        () => _legacyCopy(text, successMsg)
+                    );
+                } else {
+                    _legacyCopy(text, successMsg);
+                }
+            } catch (e) {
+                _legacyCopy(text, successMsg);
+            }
+        }
+        function _legacyCopy(text, successMsg) {
+            try {
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.cssText = 'position:fixed;top:-9999px;left:-9999px;';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+                _showToast(successMsg || 'Copied!');
+            } catch (e) {
+                alert('Could not copy. Please copy manually:\n\n' + text);
+            }
+        }
+        function _showToast(msg) {
+            let el = document.getElementById('_appToast');
+            if (!el) {
+                el = document.createElement('div');
+                el.id = '_appToast';
+                el.style.cssText = 'position:fixed; bottom:24px; left:50%; transform:translateX(-50%); background:#22c55e; color:#fff; padding:12px 20px; border-radius:10px; box-shadow:0 6px 20px rgba(0,0,0,0.3); z-index:100000; font-weight:700; font-size:14px; opacity:0; transition:opacity .2s;';
+                document.body.appendChild(el);
+            }
+            el.textContent = msg;
+            el.style.opacity = '1';
+            clearTimeout(el._t);
+            el._t = setTimeout(() => { el.style.opacity = '0'; }, 2600);
+        }
+
+        // ── Render the list + filter buttons ────────────────────────────
+        function renderSharedLifelines() {
+            const listEl = document.getElementById('lifelinesList');
+            const filterEl = document.getElementById('lifelineFilters');
+            if (!listEl || !filterEl) return;
+
+            const all = _allLifelines();
+
+            // Build filter chips
+            const present = new Set(all.map(l => l.category));
+            const chips = [{ key: 'all', label: '🌍 All (' + all.length + ')' }];
+            Object.keys(_LIFELINE_CATS).forEach(cat => {
+                if (present.has(cat)) {
+                    const c = _LIFELINE_CATS[cat];
+                    const count = all.filter(l => l.category === cat).length;
+                    chips.push({ key: cat, label: c.emoji + ' ' + c.label + ' (' + count + ')' });
+                }
+            });
+            filterEl.innerHTML = chips.map(c =>
+                `<button onclick="setLifelineFilter('${c.key}')" style="
+                    background:${_lifelineFilter === c.key ? 'linear-gradient(135deg,#ec4899,#be185d)' : '#334155'};
+                    color:#fff; border:none; padding:6px 12px; border-radius:16px;
+                    font-size:12px; font-weight:700; cursor:pointer;">${c.label}</button>`
+            ).join('');
+
+            const filtered = _lifelineFilter === 'all'
+                ? all
+                : all.filter(l => l.category === _lifelineFilter);
+
+            if (!filtered.length) {
+                listEl.innerHTML = '<p style="color:#94a3b8; text-align:center; padding:24px;">No lifelines in this category yet.</p>';
+                return;
+            }
+
+            listEl.innerHTML = filtered.map(l => {
+                const cat = _LIFELINE_CATS[l.category] || _LIFELINE_CATS.other;
+                const tel = _normalizePhone(l.phone);
+                const isSmsFriendly = l.category === 'text' || /^7\d{5}$/.test(tel); // short codes like 741741
+                const smsHref = isSmsFriendly ? `sms:${tel}?body=HOME` : `sms:${tel}`;
+                const verifiedBadge = l.verified
+                    ? '<span style="background:#22c55e; color:#fff; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; margin-left:6px;">✓ verified</span>'
+                    : '<span style="background:#f59e0b; color:#000; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; margin-left:6px;" title="User-submitted — verify before calling">⚠ unverified</span>';
+                const deleteBtn = l.builtin
+                    ? ''
+                    : `<button onclick="deleteSharedLifeline('${l.id}')" title="Remove from my list" style="background:none; border:none; color:#ef4444; font-size:16px; cursor:pointer;">🗑️</button>`;
+                return `
+                    <div style="background:#1e293b; border:1px solid #334155; border-radius:12px; padding:14px 16px; margin-bottom:12px;">
+                        <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:8px;">
+                            <div style="flex:1; min-width:0;">
+                                <div style="color:#f9a8d4; font-size:16px; font-weight:800; display:flex; align-items:center; flex-wrap:wrap;">
+                                    ${cat.emoji} ${escapeHtml(l.name)}${verifiedBadge}
+                                </div>
+                                <div style="color:#cbd5e1; font-size:14px; margin-top:4px; font-family:'Courier New', monospace; letter-spacing:0.5px;">
+                                    ${escapeHtml(_formatPhone(l.phone))}
+                                </div>
+                                ${l.note ? `<div style="color:#94a3b8; font-size:12px; margin-top:6px; line-height:1.5;">${escapeHtml(l.note)}</div>` : ''}
+                            </div>
+                            ${deleteBtn}
+                        </div>
+                        <div style="display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;">
+                            <a href="tel:${tel}" style="background:#22c55e; color:#fff; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13px;">📞 Call</a>
+                            <a href="${smsHref}" style="background:#3b82f6; color:#fff; padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:700; font-size:13px;">💬 Text</a>
+                            <button onclick="downloadLifelineVCard('${l.id}')" style="background:#8b5cf6; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">💾 Save to Contacts</button>
+                            <button onclick="shareSharedLifeline('${l.id}')" style="background:#ec4899; color:#fff; border:none; padding:8px 14px; border-radius:8px; font-weight:700; font-size:13px; cursor:pointer;">📤 Share</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+        function setLifelineFilter(key) {
+            _lifelineFilter = key || 'all';
+            renderSharedLifelines();
+        }
+
+        // Auto-render when the section is opened. `showSection` already runs
+        // per-section init in a few places; we hook in here so any first-open
+        // of Shared Lifelines gets a populated list immediately.
+        (function _watchShowSectionForLifelines() {
+            const orig = window.showSection;
+            if (typeof orig !== 'function') return;
+            window.showSection = function (id) {
+                const r = orig.apply(this, arguments);
+                if (id === 'shared-lifelines') {
+                    try { renderSharedLifelines(); } catch (e) { console.warn('renderSharedLifelines error:', e); }
+                }
+                return r;
+            };
+        })();
+
+        // Also render once on load so the first click finds the DOM ready.
+        document.addEventListener('DOMContentLoaded', () => {
+            try { renderSharedLifelines(); } catch (_) {}
+            // Pick up a pending lifeline that share.html asked us to add.
+            // Runs once, then clears the sessionStorage handoff so a refresh
+            // doesn't re-add it. Never overwrites an existing entry.
+            try {
+                const pending = sessionStorage.getItem('_pendingSharedLifeline');
+                if (pending) {
+                    sessionStorage.removeItem('_pendingSharedLifeline');
+                    const parsed = JSON.parse(pending);
+                    if (parsed && parsed.name && parsed.phone) {
+                        const list = getSharedLifelines();
+                        const dupe = list.some(l => _normalizePhone(l.phone) === _normalizePhone(parsed.phone));
+                        if (!dupe) {
+                            list.push({
+                                id: 'user-' + Date.now(),
+                                name:  String(parsed.name).slice(0, 60),
+                                phone: _normalizePhone(parsed.phone),
+                                note:  String(parsed.note || '').slice(0, 200),
+                                category: String(parsed.category || 'other').slice(0, 20),
+                                verified: false,
+                                addedAt: new Date().toISOString()
+                            });
+                            saveSharedLifelines(list);
+                            renderSharedLifelines();
+                            _showToast('✅ "' + parsed.name + '" added to your Shared Lifelines.');
+                            // Jump into the section so the new entry is visible.
+                            if (typeof showSection === 'function') showSection('shared-lifelines');
+                        } else {
+                            _showToast('"' + parsed.name + '" was already in your list.');
+                        }
+                    }
+                }
+            } catch (e) {
+                console.warn('pending lifeline pickup failed:', e);
+            }
+        });
+
+        // Expose so the test harness (and any external tools) can call them.
+        window.getSharedLifelines       = getSharedLifelines;
+        window.saveSharedLifelines      = saveSharedLifelines;
+        window.addSharedLifeline        = addSharedLifeline;
+        window.deleteSharedLifeline     = deleteSharedLifeline;
+        window.downloadLifelineVCard    = downloadLifelineVCard;
+        window.downloadAllLifelinesVCard= downloadAllLifelinesVCard;
+        window.shareSharedLifeline      = shareSharedLifeline;
+        window.shareAllLifelines        = shareAllLifelines;
+        window.renderSharedLifelines    = renderSharedLifelines;
+        window.setLifelineFilter        = setLifelineFilter;
+        window._buildVCard              = _buildVCard;
+        window._buildShareUrl           = _buildShareUrl;
+        window._BUILTIN_LIFELINES       = _BUILTIN_LIFELINES;
     </script>
 
     <!-- Footer -->

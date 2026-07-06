@@ -223,6 +223,11 @@
             <div id="group-chat"></div>
         </div>
 
+        <div class="card">
+            <h2>📇 Shared Lifelines (add / share / save-to-contacts)</h2>
+            <div id="group-lifelines"></div>
+        </div>
+
         <div class="row">
             <div class="card">
                 <h2>📦 PWA / service worker / offline</h2>
@@ -913,6 +918,173 @@
                 return { pass: 'pass', detail: `scope=${reg.scope} active=${!!reg.active}` };
             } catch (e) {
                 return { pass: 'fail', detail: 'no SW registration after 6s' };
+            }
+        });
+
+        // ─── 📇 Shared Lifelines ────────────────────────────────────
+        addTest('lifelines', 'Shared Lifelines section exists in DOM', async () => {
+            const d = iframe.contentDocument;
+            const sec = d.getElementById('shared-lifelines');
+            const list = d.getElementById('lifelinesList');
+            const addBtn = d.getElementById('addLifelineBtn');
+            return sec && list && addBtn
+                ? { pass: 'pass', detail: 'section + list container + add button all present' }
+                : { pass: 'fail', detail: `section=${!!sec} list=${!!list} addBtn=${!!addBtn}` };
+        });
+
+        addTest('lifelines', 'Built-in verified crisis lines are seeded', async () => {
+            const w = iframe.contentWindow;
+            const seeds = w._BUILTIN_LIFELINES;
+            if (!Array.isArray(seeds) || !seeds.length) return { pass: 'fail', detail: '_BUILTIN_LIFELINES missing' };
+            const has988 = seeds.some(l => l.phone === '988');
+            const has741 = seeds.some(l => l.phone === '741741');
+            const allVerified = seeds.every(l => l.verified === true);
+            return has988 && has741 && allVerified
+                ? { pass: 'pass', detail: `${seeds.length} seed lines, all verified, incl. 988 + 741741` }
+                : { pass: 'fail', detail: `has988=${has988} has741=${has741} allVerified=${allVerified}` };
+        });
+
+        addTest('lifelines', 'addSharedLifeline() stores per-user', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.addSharedLifeline !== 'function') return { pass: 'fail', detail: 'addSharedLifeline() missing' };
+            // Populate the form fields, invoke the function, then read back
+            // the underlying storage to confirm it landed in the scoped slot.
+            d.getElementById('lifelineName').value  = 'Test Lifeline';
+            d.getElementById('lifelinePhone').value = '555-000-9999';
+            d.getElementById('lifelineNote').value  = 'automated test entry';
+            d.getElementById('lifelineCategory').value = 'other';
+            const before = w.getSharedLifelines().length;
+            w.addSharedLifeline();
+            const after = w.getSharedLifelines();
+            // Clean up so the next run doesn't fail on the duplicate guard.
+            const filtered = after.filter(l => l.name !== 'Test Lifeline');
+            w.saveSharedLifelines(filtered);
+            return after.length === before + 1 && after.some(l => l.name === 'Test Lifeline')
+                ? { pass: 'pass', detail: `added, saved into scopedKey("sharedLifelines")` }
+                : { pass: 'fail', detail: `count went ${before} → ${after.length}` };
+        });
+
+        addTest('lifelines', 'addSharedLifeline() rejects duplicate phone numbers', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            // Prime the list with one entry.
+            w.saveSharedLifelines([{
+                id: 'test-dupe', name: 'DupeGuard', phone: '5551234', note: '',
+                category: 'other', verified: false
+            }]);
+            d.getElementById('lifelineName').value = 'DupeGuard Attempt 2';
+            d.getElementById('lifelinePhone').value = '(555) 123-4';
+            d.getElementById('lifelineNote').value = '';
+            const alertsBefore = w._alerts.length;
+            w.addSharedLifeline();
+            const alerts = w._alerts.slice(alertsBefore);
+            const count = w.getSharedLifelines().filter(l => l.phone === '5551234').length;
+            w.saveSharedLifelines([]); // cleanup
+            return count === 1 && alerts.some(a => /already/i.test(a))
+                ? { pass: 'pass', detail: 'duplicate rejected + alert shown' }
+                : { pass: 'fail', detail: `count=${count} alerts=${alerts.join('|')}` };
+        });
+
+        addTest('lifelines', '_buildVCard() emits valid vCard 3.0', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w._buildVCard !== 'function') return { pass: 'fail', detail: '_buildVCard() missing' };
+            const card = w._buildVCard({
+                name: 'Test, Name; With Escapes',
+                phone: '+1 555 123 4567',
+                note: 'Line1\nLine2',
+                category: 'crisis'
+            });
+            const hasBegin   = /^BEGIN:VCARD\r?\n/.test(card);
+            const hasEnd     = /END:VCARD\r?\n?$/.test(card);
+            const hasVersion = /VERSION:3\.0/.test(card);
+            const hasFN      = /FN:Test\\, Name\\; With Escapes/.test(card);
+            const hasTel     = /TEL[^:]*:\+1 555 123 4567/.test(card);
+            const escapedNote = /NOTE:Line1\\nLine2/.test(card);
+            const bad = [];
+            if (!hasBegin)   bad.push('no BEGIN:VCARD');
+            if (!hasEnd)     bad.push('no END:VCARD');
+            if (!hasVersion) bad.push('no VERSION:3.0');
+            if (!hasFN)      bad.push('FN not escaped');
+            if (!hasTel)     bad.push('TEL missing');
+            if (!escapedNote)bad.push('newline in NOTE not escaped');
+            return bad.length === 0
+                ? { pass: 'pass', detail: 'BEGIN/VERSION/FN/TEL/NOTE all valid + escaped' }
+                : { pass: 'fail', detail: bad.join(', ') + ' — sample: ' + card.slice(0, 200) };
+        });
+
+        addTest('lifelines', '_buildShareUrl() produces a parseable share link', async () => {
+            const w = iframe.contentWindow;
+            const url = w._buildShareUrl({
+                name: 'Chai Lifeline', phone: '212-465-1300',
+                note: '24/7 & free', category: 'community'
+            });
+            let parsed; try { parsed = new URL(url); } catch (_) {}
+            if (!parsed) return { pass: 'fail', detail: 'not a valid URL: ' + url };
+            const hasPath = parsed.pathname === '/share.html';
+            const q = parsed.searchParams;
+            const okName = q.get('name') === 'Chai Lifeline';
+            const okTel  = q.get('tel')  === '212-465-1300';
+            const okNote = q.get('note') === '24/7 & free';
+            const okCat  = q.get('cat')  === 'community';
+            return hasPath && okName && okTel && okNote && okCat
+                ? { pass: 'pass', detail: 'URL round-trips all 4 params: ' + url }
+                : { pass: 'fail', detail: `path=${hasPath} name=${okName} tel=${okTel} note=${okNote} cat=${okCat}` };
+        });
+
+        addTest('lifelines', 'downloadLifelineVCard() triggers a Blob download', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.downloadLifelineVCard !== 'function') return { pass: 'fail', detail: 'downloadLifelineVCard() missing' };
+            // Spy on createObjectURL / anchor.click so we don't actually
+            // trigger a browser download during headless tests.
+            const origURL = w.URL.createObjectURL;
+            let capturedBlob = null;
+            let clicked = false;
+            w.URL.createObjectURL = (blob) => { capturedBlob = blob; return 'blob:test-stub'; };
+            const origClick = w.HTMLAnchorElement.prototype.click;
+            w.HTMLAnchorElement.prototype.click = function () { clicked = true; };
+            try {
+                w.downloadLifelineVCard('builtin-988');
+            } finally {
+                w.URL.createObjectURL = origURL;
+                w.HTMLAnchorElement.prototype.click = origClick;
+            }
+            const ok = capturedBlob && capturedBlob.type.includes('vcard') && clicked;
+            return ok
+                ? { pass: 'pass', detail: `Blob(${capturedBlob.size}B, ${capturedBlob.type}) — anchor.click() fired` }
+                : { pass: 'fail', detail: `blob=${!!capturedBlob} click=${clicked}` };
+        });
+
+        addTest('lifelines', 'renderSharedLifelines() paints buttons + call links', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            w.renderSharedLifelines();
+            const list = d.getElementById('lifelinesList');
+            if (!list) return { pass: 'fail', detail: '#lifelinesList missing' };
+            const html = list.innerHTML;
+            const hasCall = /href="tel:988"/.test(html);
+            const hasText = /href="sms:741741[^"]*"/.test(html);
+            const hasSaveBtn = /downloadLifelineVCard/.test(html);
+            const hasShareBtn = /shareSharedLifeline/.test(html);
+            const missing = [];
+            if (!hasCall)     missing.push('no tel:988 anchor');
+            if (!hasText)     missing.push('no sms:741741 anchor');
+            if (!hasSaveBtn)  missing.push('no Save-to-Contacts button');
+            if (!hasShareBtn) missing.push('no Share button');
+            return missing.length === 0
+                ? { pass: 'pass', detail: 'call + text + save + share all rendered for built-in seeds' }
+                : { pass: 'fail', detail: missing.join(', ') };
+        });
+
+        addTest('lifelines', 'share.html landing page loads', async () => {
+            try {
+                const r = await fetch('/share.html?name=Test&tel=988&note=x');
+                if (!r.ok) return { pass: 'fail', detail: 'HTTP ' + r.status };
+                const html = await r.text();
+                const has988btn = /href="tel:988"/.test(html) || /tel:\$\{esc\(phone\)\}/.test(html);
+                const hasSave = /Save to my Contacts/i.test(html);
+                return has988btn && hasSave
+                    ? { pass: 'pass', detail: 'landing page renders Call + Save buttons' }
+                    : { pass: 'fail', detail: `has988btn=${has988btn} hasSave=${hasSave}` };
+            } catch (e) {
+                return { pass: 'fail', detail: 'fetch error: ' + e.message };
             }
         });
 

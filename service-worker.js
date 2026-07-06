@@ -37,6 +37,7 @@ const PRECACHE_URLS = [
   '/index.html',
   '/privacy.html',
   '/terms.html',
+  '/share.html',
   '/manifest.json',
   '/favicon.svg',
   '/logo.png'
