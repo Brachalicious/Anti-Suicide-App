@@ -256,7 +256,7 @@ export default function VirtualParent() {
   const todaysAffirmation = getTodaysAffirmation();
   const parentName = parentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";
   const parentEmoji = parentType === "mommy" ? "👩‍👧" : "👨‍👧";
-  const parentAvatarSrc = "/download-2026-04-05T09_23_05.jpg";
+  const parentAvatarSrc = "/Pinkbird.png";
 
   const buildTranscript = (sessionMessages: ChatMessage[], sessionParentType: "mommy" | "daddy") => {
     const speakerName = sessionParentType === "mommy" ? "Virtual Mommy" : "Virtual Daddy";

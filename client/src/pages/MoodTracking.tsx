@@ -109,7 +109,7 @@ export default function MoodTracking() {
     setNotes("");
   };
 
-  const normalizeGifUrl = (value: string): string | undefined | null => {
+  const normalizeGifUrl = (value: string): string | undefined => {
     const trimmed = value.trim();
     if (!trimmed) return undefined;
 
@@ -117,7 +117,7 @@ export default function MoodTracking() {
       new URL(trimmed);
       return trimmed;
     } catch {
-      return null;
+      return undefined;
     }
   };
 

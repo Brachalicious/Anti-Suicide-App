@@ -564,6 +564,29 @@
         .feeling-tag .tag-emoji {
             font-size: 18px;
         }
+        /* Karaoke Corner — retro pink chips (matches MY MUSIC terminal aesthetic) */
+        .karaoke-chip {
+            background: transparent;
+            color: #ff69b4;
+            border: 1px solid #ff69b4;
+            border-radius: 20px;
+            padding: 7px 13px;
+            cursor: pointer;
+            font-size: 12px;
+            font-family: 'Courier New', monospace;
+            letter-spacing: 1px;
+            transition: all 0.2s ease;
+            white-space: nowrap;
+        }
+        .karaoke-chip:hover {
+            background: #ff1493;
+            color: #000;
+            box-shadow: 0 0 12px rgba(255,20,147,0.6);
+            transform: translateY(-1px);
+        }
+        .karaoke-chip:active {
+            transform: translateY(0);
+        }
         .mood-btn {
             width: 44px;
             height: 44px;
@@ -1675,6 +1698,7 @@
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
                     <button onclick="window.location.href='activities.html#color-paint'">🎨 Color & Paint</button>
                     <button onclick="window.location.href='activities.html#music'">🎵 My Music</button>
+                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav(); setTimeout(function(){ var el=document.getElementById('karaoke-card'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);">🎤 Karaoke</button>
                     <button onclick="window.location.href='activities.html#release'">😤 Release &amp; Let Go</button>
                     <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
                     <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
@@ -5628,6 +5652,99 @@
                         <div style="color:#00ff41; font-size:13px; letter-spacing:2px; margin-bottom:12px;">♬ MY PLAYLIST</div>
                         <div id="savedMusicList" style="display:flex; flex-direction:column; gap:8px;">
                             <p id="noSongsMsg" style="color:#005500; font-style:italic; text-align:center; font-size:13px; padding:12px;">── no songs saved yet ──</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 🎤 KARAOKE CORNER ────────────────────────────────────────
+                     Sing-along lyric videos from YouTube, curated for gentle
+                     mood-lift. Built to match the retro MY MUSIC terminal card
+                     but with a magenta glow so it reads as a companion feature.
+                -->
+                <div class="card" id="karaoke-card" style="background: #0a0a0a; border: 2px solid #ff1493; border-radius: 16px; font-family: 'Courier New', monospace; box-shadow: 0 0 20px rgba(255,20,147,0.25);">
+
+                    <!-- Retro header -->
+                    <div style="text-align:center; margin-bottom: 20px;">
+                        <div style="font-size: 28px; font-weight: 900; color: #ff1493; text-shadow: 0 0 10px #ff1493, 0 0 20px #ff1493; letter-spacing: 4px;">🎤 KARAOKE</div>
+                        <div style="color: #ff69b4; font-size: 12px; letter-spacing: 3px; margin-top: 4px;">── SING YOUR HEART OUT ──</div>
+                        <div style="color: #ff69b4; font-size: 11px; margin-top: 10px; line-height: 1.6; font-family: sans-serif;">Even a wobbly voice is a brave voice. Singing releases endorphins, calms the vagus nerve, and gives big feelings a place to land.</div>
+                    </div>
+
+                    <!-- Now-singing YouTube player -->
+                    <div style="background:#0d0d0d; border:2px solid #ff1493; border-radius:12px; padding:14px; margin-bottom:18px; box-shadow: 0 0 15px rgba(255,20,147,0.2);">
+                        <div style="color:#ff1493; font-size:13px; letter-spacing:2px; margin-bottom:10px;">▶ NOW SINGING</div>
+                        <div id="karaokeYtWrap" style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:8px; background:#000; display:none;">
+                            <iframe id="karaokeYtFrame" title="Karaoke player" style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" allowfullscreen allow="autoplay; encrypted-media"></iframe>
+                        </div>
+                        <div id="karaokePlaceholder" style="background:#111; border-radius:8px; padding: 24px 12px; text-align:center; color:#ff69b4; font-size:13px; letter-spacing:1px;">
+                            🎶 Pick a quick vibe or search for any song below 🎶
+                        </div>
+                        <button id="karaokeCloseBtn" onclick="closeKaraoke()" style="display:none; margin-top:10px; width:100%; padding:9px; background:#330018; color:#ff69b4; border:1px solid #ff69b4; border-radius:8px; cursor:pointer; font-size:13px; font-family:'Courier New',monospace; letter-spacing:1px;">⏹ STOP & CLOSE</button>
+                    </div>
+
+                    <!-- Search any song -->
+                    <div style="background:#0d0d0d; border:2px solid #ff69b4; border-radius:12px; padding:14px; margin-bottom:16px;">
+                        <div style="color:#ff1493; font-size:12px; letter-spacing:2px; margin-bottom:10px;">🔎 SEARCH ANY SONG</div>
+                        <div style="display:flex; gap:8px;">
+                            <input type="text" id="karaokeSearchInput"
+                                   placeholder="e.g. Rainbow Connection, Hallelujah…"
+                                   onkeydown="if(event.key==='Enter'){karaokeSearchSong()}"
+                                   style="flex:1; background:#000; border:1px solid #ff69b4; border-radius:6px; padding:9px 12px; color:#ff1493; font-size:13px; font-family:'Courier New',monospace; outline:none;">
+                            <button onclick="karaokeSearchSong()"
+                                    style="background:#ff1493; color:#000; border:none; border-radius:6px; padding:9px 14px; font-weight:900; font-family:'Courier New',monospace; cursor:pointer; letter-spacing:1px; font-size:13px; white-space:nowrap;">
+                                🎤 SING
+                            </button>
+                        </div>
+                        <div style="color:#c4b5fd; font-size:10px; margin-top:6px; font-family: sans-serif;">We add "karaoke with lyrics" to your search so lyric videos come up first.</div>
+                    </div>
+
+                    <!-- Quick-pick vibe chips -->
+                    <div style="margin-bottom:18px;">
+                        <div style="color:#ff1493; font-size:12px; letter-spacing:2px; margin-bottom:10px;">✨ QUICK PICKS</div>
+                        <div style="display:flex; flex-wrap:wrap; gap:7px;">
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('uplifting anthem karaoke with lyrics')">✨ Uplifting</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('feel good pop karaoke with lyrics')">🌈 Feel-Good</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('worship christian karaoke with lyrics')">🕊️ Faith</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('jewish music karaoke with lyrics')">✡️ Jewish</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('disney sing along karaoke with lyrics')">🏰 Disney</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('musical theatre karaoke with lyrics')">🎭 Musicals</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('80s karaoke hits with lyrics')">📻 80s Hits</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('empowerment anthem karaoke with lyrics')">💪 Empower</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('slow gentle acoustic karaoke with lyrics')">😌 Gentle</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('silly funny karaoke with lyrics')">😂 Silly</button>
+                            <button class="karaoke-chip" onclick="karaokeQuickSearch('kids karaoke sing along with lyrics')">🧒 Kid-Friendly</button>
+                            <button class="karaoke-chip" onclick="karaokeSurpriseMe()">🎲 Surprise Me</button>
+                        </div>
+                    </div>
+
+                    <!-- Mic monitor -->
+                    <div style="background:#0d0d0d; border:2px solid #ff69b4; border-radius:12px; padding:14px; margin-bottom:18px;">
+                        <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:8px;">
+                            <div style="color:#ff1493; font-size:12px; letter-spacing:2px;">🎙️ MIC MONITOR</div>
+                            <button id="karaokeMicBtn" onclick="toggleKaraokeMic()"
+                                    style="background:#ff69b4; color:#000; border:none; border-radius:6px; padding:6px 12px; font-weight:900; font-family:'Courier New',monospace; cursor:pointer; letter-spacing:1px; font-size:11px;">
+                                🎙️ TURN ON MIC
+                            </button>
+                        </div>
+                        <canvas id="karaokeMicCanvas" width="600" height="70"
+                                style="width:100%; height:70px; margin-top:12px; background:#000; border-radius:8px; display:none;"></canvas>
+                        <div id="karaokeMicHint" style="color:#c4b5fd; font-size:10px; margin-top:8px; font-family: sans-serif;">
+                            Watch your voice on-screen while you sing. Your audio never leaves this device — nothing is recorded.
+                        </div>
+                    </div>
+
+                    <!-- Favorites -->
+                    <div>
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:10px; flex-wrap:wrap; gap:8px;">
+                            <div style="color:#ff1493; font-size:13px; letter-spacing:2px;">⭐ MY KARAOKE FAVORITES</div>
+                            <button onclick="saveKaraokeFavorite()" id="saveKaraokeBtn"
+                                    style="background:#ff1493; color:#000; border:none; border-radius:6px; padding:5px 11px; font-weight:900; font-family:'Courier New',monospace; cursor:pointer; letter-spacing:1px; font-size:11px;">
+                                + SAVE CURRENT
+                            </button>
+                        </div>
+                        <div id="karaokeFavoritesList" style="display:flex; flex-direction:column; gap:6px;">
+                            <p style="color:#660033; font-style:italic; text-align:center; font-size:12px; padding:10px;">── no favorites yet ──</p>
                         </div>
                     </div>
 
@@ -13234,9 +13351,262 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         const _origShowSection2 = window.showSection;
         window.showSection = function(id) {
             if (_origShowSection2) _origShowSection2(id);
-            if (id === 'music') renderMusicList();
+            if (id === 'music') {
+                renderMusicList();
+                renderKaraokeFavorites();
+            }
             if (id === 'account') loadAccountSettings();
         };
+
+        // ── 🎤 Karaoke Corner ─────────────────────────────────────
+        // Uses YouTube's embedded search-playlist URL so users can sing along
+        // to lyric videos without leaving the app. Same technique as the
+        // rage-music player, plus a saved-favorites list and a mic monitor.
+        const KARAOKE_SURPRISE = [
+            'happy karaoke with lyrics',
+            'inspirational karaoke with lyrics',
+            'sing along hits karaoke with lyrics',
+            'best karaoke songs with lyrics',
+            'motivational song karaoke with lyrics',
+            'friendship karaoke with lyrics',
+            'hope song karaoke with lyrics',
+            'gentle love song karaoke with lyrics',
+            'oldies karaoke with lyrics',
+            'kids karaoke sing along with lyrics'
+        ];
+
+        // Remember the current search so "Save current" knows what to store.
+        let _lastKaraokeSearch = null;
+        let _lastKaraokeLabel = null;
+
+        function karaokeSearchSong() {
+            const input = document.getElementById('karaokeSearchInput');
+            const raw = (input && input.value ? input.value : '').trim();
+            if (!raw) {
+                alert('Type a song name first — we\'ll find a lyric version for you.');
+                return;
+            }
+            const query = raw + ' karaoke with lyrics';
+            karaokeQuickSearch(query, raw);
+        }
+
+        function karaokeQuickSearch(query, label) {
+            const iframe = document.getElementById('karaokeYtFrame');
+            const wrap = document.getElementById('karaokeYtWrap');
+            const placeholder = document.getElementById('karaokePlaceholder');
+            const closeBtn = document.getElementById('karaokeCloseBtn');
+            if (!iframe || !wrap) return;
+            const encoded = encodeURIComponent(query);
+            iframe.src = 'https://www.youtube.com/embed?listType=search&list=' + encoded + '&autoplay=1&rel=0';
+            wrap.style.display = 'block';
+            if (placeholder) placeholder.style.display = 'none';
+            if (closeBtn) closeBtn.style.display = 'block';
+            _lastKaraokeSearch = query;
+            _lastKaraokeLabel = label || query.replace(/ karaoke with lyrics$/i, '');
+        }
+
+        function karaokeSurpriseMe() {
+            const q = KARAOKE_SURPRISE[Math.floor(Math.random() * KARAOKE_SURPRISE.length)];
+            karaokeQuickSearch(q, q.replace(/ karaoke with lyrics$/i, ''));
+        }
+
+        function closeKaraoke() {
+            const iframe = document.getElementById('karaokeYtFrame');
+            const wrap = document.getElementById('karaokeYtWrap');
+            const placeholder = document.getElementById('karaokePlaceholder');
+            const closeBtn = document.getElementById('karaokeCloseBtn');
+            if (iframe) iframe.src = '';
+            if (wrap) wrap.style.display = 'none';
+            if (placeholder) placeholder.style.display = 'block';
+            if (closeBtn) closeBtn.style.display = 'none';
+        }
+
+        function _loadKaraokeFavorites() {
+            try { return JSON.parse(localStorage.getItem('myKaraokeFavorites') || '[]'); }
+            catch (e) { return []; }
+        }
+
+        function _saveKaraokeFavorites(list) {
+            try { localStorage.setItem('myKaraokeFavorites', JSON.stringify(list)); }
+            catch (e) { /* quota — swallow silently */ }
+        }
+
+        function _escapeKaraoke(s) {
+            return String(s == null ? '' : s)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function saveKaraokeFavorite() {
+            if (!_lastKaraokeSearch) {
+                alert('🎤 Play a song first, then save it as a favorite.');
+                return;
+            }
+            const defaultLabel = _lastKaraokeLabel || _lastKaraokeSearch;
+            const label = (prompt('Name this favorite:', defaultLabel) || '').trim() || defaultLabel;
+            const favs = _loadKaraokeFavorites();
+            favs.push({ label: label, query: _lastKaraokeSearch, ts: Date.now() });
+            _saveKaraokeFavorites(favs);
+            renderKaraokeFavorites();
+        }
+
+        function renderKaraokeFavorites() {
+            const list = document.getElementById('karaokeFavoritesList');
+            if (!list) return;
+            const favs = _loadKaraokeFavorites();
+            if (favs.length === 0) {
+                list.innerHTML = '<p style="color:#660033;font-style:italic;text-align:center;font-size:12px;padding:10px;">── no favorites yet ──</p>';
+                return;
+            }
+            list.innerHTML = favs.map(function(f, i) {
+                return '<div style="display:flex;align-items:center;justify-content:space-between;background:#0d0d0d;border:1px solid #660033;border-radius:8px;padding:8px 12px;gap:8px;">' +
+                    '<span style="color:#ff69b4;font-size:12px;font-family:\'Courier New\',monospace;flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">⭐ ' + _escapeKaraoke(f.label) + '</span>' +
+                    '<div style="display:flex;gap:6px;flex-shrink:0;">' +
+                        '<button onclick="playKaraokeFavorite(' + i + ')" style="background:#ff1493;color:#000;border:none;border-radius:6px;padding:5px 10px;cursor:pointer;font-size:11px;font-weight:900;font-family:\'Courier New\',monospace;">▶ SING</button>' +
+                        '<button onclick="deleteKaraokeFavorite(' + i + ')" style="background:#330000;color:#ff4444;border:1px solid #ff4444;border-radius:6px;padding:5px 8px;cursor:pointer;font-size:11px;font-family:\'Courier New\',monospace;">✕</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
+        }
+
+        function playKaraokeFavorite(i) {
+            const favs = _loadKaraokeFavorites();
+            if (!favs[i]) return;
+            karaokeQuickSearch(favs[i].query, favs[i].label);
+        }
+
+        function deleteKaraokeFavorite(i) {
+            if (!confirm('Remove this favorite?')) return;
+            const favs = _loadKaraokeFavorites();
+            favs.splice(i, 1);
+            _saveKaraokeFavorites(favs);
+            renderKaraokeFavorites();
+        }
+
+        // ── Mic monitor (Web Audio API, no upload, no recording) ──
+        let _karaokeMicStream = null;
+        let _karaokeMicCtx = null;
+        let _karaokeMicAnalyser = null;
+        let _karaokeMicRaf = null;
+
+        async function toggleKaraokeMic() {
+            const btn = document.getElementById('karaokeMicBtn');
+            const canvas = document.getElementById('karaokeMicCanvas');
+            const hint = document.getElementById('karaokeMicHint');
+            // Already on → turn off
+            if (_karaokeMicStream) {
+                try { _karaokeMicStream.getTracks().forEach(function(t){ t.stop(); }); } catch (e) {}
+                if (_karaokeMicRaf) cancelAnimationFrame(_karaokeMicRaf);
+                if (_karaokeMicCtx) { try { _karaokeMicCtx.close(); } catch (e) {} }
+                _karaokeMicStream = null;
+                _karaokeMicCtx = null;
+                _karaokeMicAnalyser = null;
+                _karaokeMicRaf = null;
+                if (btn) btn.textContent = '🎙️ TURN ON MIC';
+                if (canvas) canvas.style.display = 'none';
+                if (hint) hint.textContent = 'Watch your voice on-screen while you sing. Your audio never leaves this device — nothing is recorded.';
+                return;
+            }
+            // Turn on
+            if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+                alert('Sorry, your browser does not support microphone access.');
+                return;
+            }
+            try {
+                _karaokeMicStream = await navigator.mediaDevices.getUserMedia({ audio: true, video: false });
+                const Ctor = window.AudioContext || window.webkitAudioContext;
+                _karaokeMicCtx = new Ctor();
+                const src = _karaokeMicCtx.createMediaStreamSource(_karaokeMicStream);
+                _karaokeMicAnalyser = _karaokeMicCtx.createAnalyser();
+                _karaokeMicAnalyser.fftSize = 1024;
+                src.connect(_karaokeMicAnalyser);
+                // Deliberately NOT connecting to destination → prevents feedback howl.
+                if (btn) btn.textContent = '⏹ TURN OFF MIC';
+                if (canvas) canvas.style.display = 'block';
+                if (hint) hint.textContent = '🎙️ Listening… sing loud, sing wobbly — it all counts.';
+                drawKaraokeMicWave();
+            } catch (err) {
+                console.warn('Karaoke mic error:', err);
+                alert('Could not access the microphone. Please check browser permissions and try again.');
+                _karaokeMicStream = null;
+            }
+        }
+
+        function drawKaraokeMicWave() {
+            const canvas = document.getElementById('karaokeMicCanvas');
+            if (!canvas || !_karaokeMicAnalyser) return;
+            const ctx = canvas.getContext('2d');
+            // Match internal buffer to the drawn size so it stays crisp
+            const dpr = window.devicePixelRatio || 1;
+            const targetW = canvas.clientWidth || 600;
+            const targetH = canvas.clientHeight || 70;
+            if (canvas.width !== Math.round(targetW * dpr) || canvas.height !== Math.round(targetH * dpr)) {
+                canvas.width = Math.round(targetW * dpr);
+                canvas.height = Math.round(targetH * dpr);
+                ctx.scale(dpr, dpr);
+            }
+            const bufferLength = _karaokeMicAnalyser.fftSize;
+            const dataArray = new Uint8Array(bufferLength);
+
+            function frame() {
+                _karaokeMicRaf = requestAnimationFrame(frame);
+                if (!_karaokeMicAnalyser) return;
+                _karaokeMicAnalyser.getByteTimeDomainData(dataArray);
+                const w = targetW;
+                const h = targetH;
+                ctx.fillStyle = '#000';
+                ctx.fillRect(0, 0, w, h);
+                // Center line
+                ctx.strokeStyle = 'rgba(255,105,180,0.25)';
+                ctx.lineWidth = 1;
+                ctx.beginPath();
+                ctx.moveTo(0, h / 2);
+                ctx.lineTo(w, h / 2);
+                ctx.stroke();
+                // Waveform
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = '#ff1493';
+                ctx.shadowColor = '#ff1493';
+                ctx.shadowBlur = 8;
+                ctx.beginPath();
+                const sliceWidth = w / bufferLength;
+                let x = 0;
+                for (let i = 0; i < bufferLength; i++) {
+                    const v = dataArray[i] / 128.0; // 0..2, centered at 1
+                    const y = (v * h) / 2;
+                    if (i === 0) ctx.moveTo(x, y);
+                    else ctx.lineTo(x, y);
+                    x += sliceWidth;
+                }
+                ctx.stroke();
+                ctx.shadowBlur = 0;
+            }
+            frame();
+        }
+
+        // Stop mic automatically if user leaves the music tab (saves battery/privacy)
+        (function attachKaraokeMicAutoStop(){
+            const _prev = window.showSection;
+            window.showSection = function(id) {
+                if (_prev) _prev(id);
+                if (id !== 'music' && _karaokeMicStream) {
+                    // silently switch off the mic when navigating away
+                    toggleKaraokeMic();
+                }
+            };
+        })();
+
+        // Render favorites on load (in case the music tab is the deep-link target)
+        if (document.readyState !== 'loading') {
+            try { renderKaraokeFavorites(); } catch (e) {}
+        } else {
+            document.addEventListener('DOMContentLoaded', function(){
+                try { renderKaraokeFavorites(); } catch (e) {}
+            });
+        }
 
         // ── Account Settings ──────────────────────────────────────
         // ---------- Per-account scoping helpers ----------

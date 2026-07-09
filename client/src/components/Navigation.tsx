@@ -167,7 +167,7 @@ export default function Navigation() {
         <div className="space-y-4">
           <div className="flex items-center gap-3 mb-4">
             <img
-              src="/download-2026-04-05T09_23_05.jpg"
+              src="/Pinkbird.png"
               alt="MysticMinded33"
               className="w-16 h-16 rounded-full object-cover border-2 border-pink-300"
             />
