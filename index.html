@@ -1697,8 +1697,7 @@
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
                     <button onclick="window.location.href='activities.html#color-paint'">🎨 Color & Paint</button>
-                    <button onclick="window.location.href='activities.html#music'">🎵 My Music</button>
-                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav(); setTimeout(function(){ var el=document.getElementById('karaoke-card'); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }, 120);">🎤 Karaoke</button>
+                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav();">🎵 My Music &amp; Karaoke</button>
                     <button onclick="window.location.href='activities.html#release'">😤 Release &amp; Let Go</button>
                     <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
                     <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
@@ -5596,7 +5595,8 @@
 
         <!-- Music Player Section -->
         <div id="music" class="section hidden">
-            <div class="grid">
+            <!-- MY MUSIC + KARAOKE are stacked (single column) so Karaoke sits DIRECTLY below MY MUSIC on every screen size. -->
+            <div style="display:flex; flex-direction:column; gap:20px; margin-bottom:20px;">
                 <div class="card" style="background: #0a0a0a; border: 2px solid #00ff41; border-radius: 16px; font-family: 'Courier New', monospace;">
 
                     <!-- Retro header -->
@@ -5750,6 +5750,8 @@
 
                 </div>
             </div>
+            <!-- Healing playlists + healing music side-by-side on wide screens (original layout) -->
+            <div class="grid">
             <div class="card">
                 <h2 class="section-title">🎵 Healing Music Playlists</h2>
                 <p style="margin-bottom: 12px; color: #ff69b4;">Curated playlists for emotional support and calm.</p>
@@ -5788,6 +5790,7 @@
                     <button class="btn" id="natureStopBtn" style="display:none; margin-top:8px; font-size:13px;" onclick="stopNatureSound()">⏹ Stop Nature Sound</button>
                 </div>
             </div>
+            </div><!-- /healing grid -->
         </div>
 
         <!-- Account Settings Section -->
