@@ -15253,15 +15253,34 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         // ── 2. Add Share + Save-to-Contacts to every .hotline ──────
+        // extractPhone — pull a dial-able number out of a .phone element's text.
+        // Handles US short codes (988, 911), long numbers (1-800-273-8255),
+        // dotted (929.801.2301), Israel (1201), and text-line syntax
+        // ("Text HOME to 741741").
+        //
+        // BUG FIX 2026-07-13: the previous regex required 4+ characters, which
+        // silently dropped 3-digit short codes like 988 and 911 — the very
+        // hotlines that need to be shareable the most. New regex accepts any
+        // 3+ digit sequence with optional separators, and short-code detection
+        // is explicit so we still copy the right dial-able string.
         function extractPhone(text) {
             if (!text) return { phone: '', isText: false, keyword: '' };
             const isText = /text/i.test(text);
             let keyword = '';
             const kwMatch = text.match(/text\s+([A-Z]{2,10})\s+to/i);
             if (kwMatch) keyword = kwMatch[1].toUpperCase();
-            const numMatch = text.match(/(\+?\d[\d\-.\s()]{2,}\d)/);
-            const phone = numMatch ? numMatch[1].trim() : '';
-            return { phone: phone, isText: isText, keyword: keyword };
+
+            // First try: any digit run with separators (3+ digits total).
+            // We collect digits, drop the separators for counting, and keep the
+            // original formatting for display.
+            const rich = text.match(/\+?\d[\d\-.\s()]{1,}\d/);
+            if (rich && rich[0].replace(/\D/g, '').length >= 3) {
+                return { phone: rich[0].trim(), isText: isText, keyword: keyword };
+            }
+            // Fallback: a bare short code like "988" or "911" on its own.
+            const bare = text.match(/\b(\d{3,6})\b/);
+            if (bare) return { phone: bare[1], isText: isText, keyword: keyword };
+            return { phone: '', isText: isText, keyword: keyword };
         }
 
         function makeBtn(label, onClick, bg, fg) {
