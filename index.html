@@ -379,7 +379,11 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            padding-bottom: 80px;
+            /* Safe default while JS-driven auto-padding is still measuring the
+               fixed footer. The `--site-footer-h` custom prop is set by
+               applySiteFooterPadding() in the script block below and keeps
+               growing/shrinking with the footer as it wraps on narrow screens. */
+            padding-bottom: calc(var(--site-footer-h, 220px) + 24px);
         }
         .crisis-banner {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
@@ -1290,7 +1294,7 @@
             }
             .container {
                 padding: 10px;
-                padding-bottom: 60px;
+                padding-bottom: calc(var(--site-footer-h, 260px) + 20px);
                 max-width: 100%;
             }
 
@@ -1407,7 +1411,7 @@
             }
             .container {
                 padding: 8px;
-                padding-bottom: 60px;
+                padding-bottom: calc(var(--site-footer-h, 280px) + 16px);
             }
             .nav {
                 padding: 8px;
@@ -1705,7 +1709,7 @@
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
-            <button class="nav-item" onclick="showSection('shared-lifelines'); closeMobileNav()">📇 Shared Lifelines</button>
+            <!-- 📇 Shared Lifelines nav removed — sharing + save-to-contacts is now available on EVERY hotline card via the auto-decorator (see decorateHotlinesWithShareButtons). Section HTML + JS helpers kept intact below because the vCard/share machinery is reused. -->
             <button class="nav-item" onclick="showSection('resources'); closeMobileNav()">📚 Resources</button>
         </nav>
         </div><!-- end nav-mobile-wrapper -->
@@ -13125,7 +13129,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
     </script>
 
     <!-- Footer with Privacy & Terms -->
-    <div style="position: fixed !important; bottom: 0 !important; left: 0; right: 0; background:#065f46; color:white; text-align:center; padding:20px 20px; border-top:3px solid #22c55e; z-index: 1000; width: 100%;">
+    <!-- ID `site-footer` is required by the auto-padding JS below — it sets
+         body/container padding-bottom to this footer's real height so nothing
+         gets clipped when the footer wraps to 2-3 lines on narrow phones. -->
+    <div id="site-footer" style="position: fixed !important; bottom: 0 !important; left: 0; right: 0; background:#065f46; color:white; text-align:center; padding:20px 20px; border-top:3px solid #22c55e; z-index: 1000; width: 100%;">
         <div style="max-width:1200px; margin:0 auto;">
             <p style="font-size:14px; margin-bottom:12px; opacity:0.9;">
                 <strong>Fight Suicide Project</strong> is a spiritually-based brand rooted in Kabbalistic teachings, focusing on the <em>soul</em> aspect of healing—mind, body, and soul. If you're in crisis, please call 988 or Hatzoloh (718-230-1000) immediately.
@@ -15205,6 +15212,205 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             </p>
         </div>
     </footer>
+
+    <!-- ─────────────────────────────────────────────────────────────
+         Post-load enhancements added 2026-07-13:
+           1. applySiteFooterPadding — keeps container clear of the
+              fixed dark-green footer at #site-footer so its bottom
+              doesn't clip content (esp. on narrow phones where the
+              footer wraps to 3 lines).
+           2. decorateHotlinesWithShareButtons — automatically adds
+              📤 Share and 📇 Save-to-Contacts buttons to every
+              .hotline block on the page, using the existing
+              _buildVCard / navigator.share machinery originally
+              built for the (now hidden) Shared Lifelines section.
+         ───────────────────────────────────────────────────────────── -->
+    <script>
+    (function () {
+        'use strict';
+
+        // ── 1. Keep container clear of the fixed footer ────────────
+        function applySiteFooterPadding() {
+            const footer = document.getElementById('site-footer');
+            if (!footer) return;
+            const h = footer.offsetHeight || 0;
+            document.documentElement.style.setProperty('--site-footer-h', h + 'px');
+        }
+        window.addEventListener('load', applySiteFooterPadding);
+        window.addEventListener('resize', applySiteFooterPadding);
+        if (document.fonts && document.fonts.ready) {
+            document.fonts.ready.then(applySiteFooterPadding).catch(function(){});
+        }
+        if (typeof ResizeObserver === 'function') {
+            const ro = new ResizeObserver(applySiteFooterPadding);
+            document.addEventListener('DOMContentLoaded', function () {
+                const footer = document.getElementById('site-footer');
+                if (footer) ro.observe(footer);
+                applySiteFooterPadding();
+            });
+        } else {
+            document.addEventListener('DOMContentLoaded', applySiteFooterPadding);
+        }
+
+        // ── 2. Add Share + Save-to-Contacts to every .hotline ──────
+        function extractPhone(text) {
+            if (!text) return { phone: '', isText: false, keyword: '' };
+            const isText = /text/i.test(text);
+            let keyword = '';
+            const kwMatch = text.match(/text\s+([A-Z]{2,10})\s+to/i);
+            if (kwMatch) keyword = kwMatch[1].toUpperCase();
+            const numMatch = text.match(/(\+?\d[\d\-.\s()]{2,}\d)/);
+            const phone = numMatch ? numMatch[1].trim() : '';
+            return { phone: phone, isText: isText, keyword: keyword };
+        }
+
+        function makeBtn(label, onClick, bg, fg) {
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = label;
+            b.className = 'hotline-action-btn';
+            b.style.cssText =
+                'display:inline-flex;align-items:center;gap:6px;' +
+                'padding:8px 14px;margin:6px 6px 0 0;border:none;' +
+                'border-radius:10px;font-weight:700;font-size:13px;' +
+                'cursor:pointer;background:' + (bg || '#0ea5e9') + ';' +
+                'color:' + (fg || '#fff') + ';' +
+                'box-shadow:0 2px 6px rgba(0,0,0,0.12);' +
+                'transition:transform .15s ease, box-shadow .15s ease;';
+            b.addEventListener('mouseenter', function(){ b.style.transform='translateY(-1px)'; b.style.boxShadow='0 4px 10px rgba(0,0,0,0.18)'; });
+            b.addEventListener('mouseleave', function(){ b.style.transform=''; b.style.boxShadow='0 2px 6px rgba(0,0,0,0.12)'; });
+            b.addEventListener('click', onClick);
+            return b;
+        }
+
+        function toast(msg) {
+            if (typeof window._showToast === 'function') { window._showToast(msg); return; }
+            const el = document.createElement('div');
+            el.textContent = msg;
+            el.style.cssText = 'position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:#22c55e;color:#fff;padding:12px 20px;border-radius:10px;box-shadow:0 6px 20px rgba(0,0,0,0.3);z-index:100000;font-weight:700;font-size:14px;';
+            document.body.appendChild(el);
+            setTimeout(function(){ el.remove(); }, 2200);
+        }
+
+        async function shareHotline(name, phone, note, isText, keyword) {
+            const dialLabel = isText
+                ? (keyword ? 'Text ' + keyword + ' to ' + phone : 'Text ' + phone)
+                : 'Call ' + phone;
+            const text =
+                '📞 ' + name + '\n' + dialLabel +
+                (note ? ('\n\n' + note) : '') +
+                '\n\nShared from Fight Suicide Project — a peer-support wellness companion.';
+            if (navigator.share) {
+                try { await navigator.share({ title: name, text: text }); return; }
+                catch (e) { if (e && e.name === 'AbortError') return; }
+            }
+            try {
+                await navigator.clipboard.writeText(text);
+                toast('📋 Copied — paste it into any message.');
+            } catch (e) {
+                window.prompt('Copy this text:', text);
+            }
+        }
+
+        function saveToContacts(name, phone, note, category) {
+            const lifeline = { name: name, phone: phone, note: note || '', category: category || 'crisis' };
+            let vcf;
+            if (typeof window._buildVCard === 'function') {
+                vcf = window._buildVCard(lifeline);
+            } else {
+                const esc = function (s) {
+                    return String(s || '').replace(/\\/g, '\\\\').replace(/\n/g, '\\n').replace(/,/g, '\\,').replace(/;/g, '\\;');
+                };
+                vcf =
+                    'BEGIN:VCARD\r\nVERSION:3.0\r\n' +
+                    'FN:' + esc(name) + '\r\n' +
+                    'ORG:Fight Suicide Project (crisis lifeline)\r\n' +
+                    'TEL;TYPE=CELL,VOICE:' + esc(phone) + '\r\n' +
+                    (note ? 'NOTE:' + esc(note) + '\r\n' : '') +
+                    'CATEGORIES:crisis,lifeline\r\nEND:VCARD\r\n';
+            }
+            const safe = (name || 'lifeline').replace(/[^\w-]+/g, '_').slice(0, 40) || 'lifeline';
+            const filename = safe + '.vcf';
+            if (typeof window._triggerDownload === 'function') {
+                window._triggerDownload(filename, 'text/vcard;charset=utf-8', vcf);
+            } else {
+                const blob = new Blob([vcf], { type: 'text/vcard;charset=utf-8' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url; a.download = filename;
+                document.body.appendChild(a); a.click();
+                setTimeout(function(){ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+            }
+            toast('📇 Contact card downloaded — open it to add to your phone.');
+        }
+
+        function decorateHotline(hotline) {
+            if (!hotline || hotline.dataset.shareDecorated === '1') return;
+            // Skip the (hidden) Shared Lifelines section — it has its own controls
+            if (hotline.closest && hotline.closest('#shared-lifelines')) return;
+            const nameEl  = hotline.querySelector('h3');
+            const phoneEl = hotline.querySelector('.phone');
+            if (!nameEl || !phoneEl) return;
+            const name = (nameEl.textContent || '').trim();
+            const info = extractPhone(phoneEl.textContent || '');
+            if (!name || !info.phone) return;
+            const descEl = hotline.querySelector('p');
+            const note = descEl ? (descEl.textContent || '').trim().slice(0, 300) : '';
+            const wrap = document.createElement('div');
+            wrap.className = 'hotline-share-row';
+            wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0;margin-top:12px;';
+            wrap.appendChild(makeBtn('📤 Share', function () {
+                shareHotline(name, info.phone, note, info.isText, info.keyword);
+            }, '#0ea5e9', '#fff'));
+            wrap.appendChild(makeBtn('📇 Save to Contacts', function () {
+                saveToContacts(name, info.phone, note);
+            }, '#8b5cf6', '#fff'));
+            if (info.isText) {
+                wrap.appendChild(makeBtn('💬 Text', function () {
+                    const body = info.keyword ? ('?body=' + encodeURIComponent(info.keyword)) : '';
+                    window.open('sms:' + info.phone.replace(/[^\d+]/g, '') + body);
+                }, '#22c55e', '#052e16'));
+            }
+            hotline.appendChild(wrap);
+            hotline.dataset.shareDecorated = '1';
+        }
+
+        function decorateAllHotlines() {
+            const hotlines = document.querySelectorAll('.hotline');
+            for (let i = 0; i < hotlines.length; i++) decorateHotline(hotlines[i]);
+        }
+
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', decorateAllHotlines);
+        } else {
+            decorateAllHotlines();
+        }
+        window.addEventListener('load', decorateAllHotlines);
+
+        if (typeof MutationObserver === 'function') {
+            const mo = new MutationObserver(function (mutations) {
+                for (let i = 0; i < mutations.length; i++) {
+                    const added = mutations[i].addedNodes;
+                    for (let j = 0; j < added.length; j++) {
+                        const n = added[j];
+                        if (!(n instanceof Element)) continue;
+                        if (n.classList && n.classList.contains('hotline')) {
+                            decorateHotline(n);
+                        } else if (n.querySelectorAll) {
+                            n.querySelectorAll('.hotline').forEach(decorateHotline);
+                        }
+                    }
+                }
+            });
+            document.addEventListener('DOMContentLoaded', function () {
+                mo.observe(document.body, { childList: true, subtree: true });
+            });
+        }
+
+        window.decorateAllHotlines   = decorateAllHotlines;
+        window.applySiteFooterPadding = applySiteFooterPadding;
+    })();
+    </script>
 
 </body>
 </html>
