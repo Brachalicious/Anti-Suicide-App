@@ -14138,12 +14138,21 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const scriptEl = document.getElementById('meditationScript');
             scriptEl.innerHTML = `<p>${scripts[index]}</p>`;
             
-            // Text-to-speech
+            // Text-to-speech using the *best natural voice* the browser has.
+            // Note: this is Web Speech API (browser-native), NOT an AI voice.
+            // If a user's device has Apple's "Enhanced" / "Premium" voices
+            // downloaded (Karen, Moira, Ava, Zoe, Samantha), they sound much
+            // more human than the generic default. On Chrome/Android we look
+            // for Google's UK/US English voices. We ALWAYS prefer a female
+            // English voice for meditation — softer and less robotic.
             if (meditationSpeechSynth) {
                 const utterance = new SpeechSynthesisUtterance(scripts[index]);
-                utterance.rate = 0.8; // Slow and calm
-                utterance.pitch = 1.0;
-                utterance.volume = 0.8;
+                const voice = pickCalmingVoice();
+                if (voice) utterance.voice = voice;
+                // Softer defaults tuned for guided meditation:
+                utterance.rate   = 0.75; // ~25% slower than natural speech
+                utterance.pitch  = 0.95; // very slightly below neutral = warmer
+                utterance.volume = 0.9;
                 
                 utterance.onend = () => {
                     // Wait 5 seconds before next script
@@ -14156,6 +14165,76 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 
                 meditationSpeechSynth.speak(utterance);
             }
+        }
+
+        // ── Voice picker for guided meditation ─────────────────────────
+        // Ranks every voice the browser exposes and returns the best natural
+        // English female voice. Cached after the first successful pick so
+        // subsequent utterances don't re-scan the list.
+        //
+        // Ranking (higher = better):
+        //   +100  Apple "Premium" / "Enhanced" / "Neural" voices (Ava, Zoe, Evan, Serena Premium)
+        //   +80   Google natural-sounding English voices
+        //   +60   Microsoft Neural voices (Aria, Jenny)
+        //   +40   Known-good named female voices (Karen, Moira, Serena, Samantha, Fiona, Tessa)
+        //   +20   Any voice whose name contains "female"
+        //   +10   Any en-* voice
+        //   -100  Anything with "compact", "eloquence", "novelty" (robotic)
+        let _cachedCalmingVoice = null;
+        function pickCalmingVoice() {
+            if (_cachedCalmingVoice) return _cachedCalmingVoice;
+            const synth = window.speechSynthesis;
+            if (!synth) return null;
+            const voices = synth.getVoices() || [];
+            if (!voices.length) return null; // Voices sometimes load async — will be picked next call.
+            const PREFERRED_NAMES = [
+                // Apple premium/enhanced female (macOS + iOS)
+                'Ava (Premium)', 'Ava (Enhanced)', 'Zoe (Premium)', 'Zoe (Enhanced)',
+                'Serena (Premium)', 'Serena (Enhanced)', 'Samantha (Enhanced)',
+                // Google natural
+                'Google UK English Female', 'Google US English',
+                // Microsoft neural
+                'Microsoft Aria Online (Natural)', 'Microsoft Jenny Online (Natural)',
+                'Microsoft Aria', 'Microsoft Jenny',
+                // Apple standard female
+                'Karen', 'Moira', 'Serena', 'Samantha', 'Fiona', 'Tessa', 'Allison', 'Susan',
+            ];
+            function score(v) {
+                const name = (v.name || '').toString();
+                const lname = name.toLowerCase();
+                let s = 0;
+                if (!/^en(-|$)/i.test(v.lang || '')) s -= 50; // Non-English is a hard skip for meditation.
+                if (/premium|enhanced|neural|natural/i.test(name)) s += 100;
+                if (lname.startsWith('google ') && /english/i.test(name)) s += 80;
+                if (/microsoft .* (neural|natural|online)/i.test(name)) s += 60;
+                for (const p of PREFERRED_NAMES) if (name === p) { s += 40; break; }
+                if (/female/i.test(name)) s += 20;
+                if (/en-gb|en_gb|en-us|en_us|en-au|en_au/i.test(v.lang || '')) s += 10;
+                if (/compact|eloquence|novelty|whisper/i.test(name)) s -= 100;
+                if (v.default) s += 5;
+                return s;
+            }
+            const ranked = voices
+                .map(v => ({ v, s: score(v) }))
+                .sort((a, b) => b.s - a.s);
+            // Only accept a positive-score voice; otherwise let browser default win.
+            if (ranked.length && ranked[0].s > 0) {
+                _cachedCalmingVoice = ranked[0].v;
+                try { console.log('🧘 meditation voice:', _cachedCalmingVoice.name, '(' + _cachedCalmingVoice.lang + ') score=' + ranked[0].s); } catch (e) {}
+                return _cachedCalmingVoice;
+            }
+            return null;
+        }
+        // Voices load asynchronously in Chrome — refresh cache when they arrive.
+        if (typeof window !== 'undefined' && window.speechSynthesis) {
+            try {
+                window.speechSynthesis.onvoiceschanged = function () {
+                    _cachedCalmingVoice = null;
+                    pickCalmingVoice();
+                };
+                // Kick off an initial load attempt.
+                pickCalmingVoice();
+            } catch (e) { /* older browsers */ }
         }
         
         function updateMeditationTimer() {
