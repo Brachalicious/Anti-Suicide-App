@@ -114,6 +114,16 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             color: #ff1493;
+            /* Reserve room for the fixed dark-green footer at #site-footer.
+               --site-footer-h is measured live by applySiteFooterPadding()
+               in the post-load script. Fallback is intentionally generous
+               (320px) because the footer wraps to 3 lines on narrow phones,
+               and cutting content off is worse than a bit of extra whitespace.
+               env(safe-area-inset-bottom) covers iPhone home-indicator area. */
+            padding-bottom: calc(var(--site-footer-h, 320px) + env(safe-area-inset-bottom, 0px) + 16px);
+            box-sizing: border-box;
+            /* Anchor-jump / scrollIntoView also needs to clear the footer. */
+            scroll-padding-bottom: calc(var(--site-footer-h, 320px) + 24px);
         }
         /* (Animated sky clouds removed) */
         /* Scream circle expanding energy rings */
@@ -379,11 +389,10 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            /* Safe default while JS-driven auto-padding is still measuring the
-               fixed footer. The `--site-footer-h` custom prop is set by
-               applySiteFooterPadding() in the script block below and keeps
-               growing/shrinking with the footer as it wraps on narrow screens. */
-            padding-bottom: calc(var(--site-footer-h, 220px) + 24px);
+            /* Extra safety margin on top of body's padding-bottom, so any
+               floated / absolutely-positioned children stay above the
+               fixed footer even before JS measures its real height. */
+            padding-bottom: calc(var(--site-footer-h, 320px) + 40px);
         }
         .crisis-banner {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
@@ -1294,7 +1303,7 @@
             }
             .container {
                 padding: 10px;
-                padding-bottom: calc(var(--site-footer-h, 260px) + 20px);
+                padding-bottom: calc(var(--site-footer-h, 360px) + 32px);
                 max-width: 100%;
             }
 
@@ -1411,7 +1420,7 @@
             }
             .container {
                 padding: 8px;
-                padding-bottom: calc(var(--site-footer-h, 280px) + 16px);
+                padding-bottom: calc(var(--site-footer-h, 400px) + 24px);
             }
             .nav {
                 padding: 8px;
@@ -15230,17 +15239,29 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         'use strict';
 
         // ── 1. Keep container clear of the fixed footer ────────────
+        // Sets a CSS custom property `--site-footer-h` that body + .container
+        // padding-bottom rules read via calc(). Measured live because the
+        // dark-green footer wraps to 3 lines on narrow phones and can be
+        // anywhere from ~150px (desktop) to ~350px (small phone).
         function applySiteFooterPadding() {
             const footer = document.getElementById('site-footer');
             if (!footer) return;
             const h = footer.offsetHeight || 0;
+            if (h <= 0) return; // element not yet laid out — skip this pass
             document.documentElement.style.setProperty('--site-footer-h', h + 'px');
         }
+        // Run as often as we can — cheap operation, big correctness win.
+        applySiteFooterPadding();                          // parse time (footer may already be in DOM)
         window.addEventListener('load', applySiteFooterPadding);
         window.addEventListener('resize', applySiteFooterPadding);
+        window.addEventListener('orientationchange', applySiteFooterPadding);
         if (document.fonts && document.fonts.ready) {
             document.fonts.ready.then(applySiteFooterPadding).catch(function(){});
         }
+        // Also poll a few times during first paint — some phones (especially
+        // iOS Safari after the URL bar collapses) resize the viewport a beat
+        // after `load` fires, which grows the footer.
+        [100, 400, 1200, 3000].forEach(function (ms) { setTimeout(applySiteFooterPadding, ms); });
         if (typeof ResizeObserver === 'function') {
             const ro = new ResizeObserver(applySiteFooterPadding);
             document.addEventListener('DOMContentLoaded', function () {
