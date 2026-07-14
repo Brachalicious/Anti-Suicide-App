@@ -944,14 +944,15 @@
             padding-right: 10px;
             margin-right: -10px;
         }
-        /* Give every opened section/tool its own scroll area instead of only the page scroll */
-        .section {
-            max-height: calc(100vh - 150px);
-            overflow-y: auto;
-            overflow-x: hidden;
-            scrollbar-width: thin;
-            scrollbar-color: #ff1493 rgba(0, 0, 0, 0.3);
-        }
+        /* REMOVED 2026-07-13: `.section` used to have its own inner
+           scrollbar (max-height: calc(100vh - 150px); overflow-y: auto).
+           That caused a permanent scrollbar to render inside #dashboard
+           (and every other tab), leaving the page scroll AND the section
+           scroll fighting each other. Now sections flow naturally and
+           the page's own scroll handles everything, which is what
+           mobile users expect. Rule removed entirely to avoid an empty
+           ruleset lint warning. */
+
         .parent-card {
             background: linear-gradient(135deg, #ecfdf5, #d1fae5);
             border: 2px solid #86efac;
