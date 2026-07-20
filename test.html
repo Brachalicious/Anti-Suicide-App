@@ -207,6 +207,11 @@
             </div>
         </div>
 
+        <div class="card">
+            <h2>🎵 Music &amp; Karaoke</h2>
+            <div id="group-music"></div>
+        </div>
+
         <div class="row">
             <div class="card">
                 <h2>🔐 Auth &amp; multi-user isolation</h2>
@@ -596,6 +601,209 @@
             return audios.length > 0
                 ? { pass: 'pass', detail: `${audios.length} <audio> elements in DOM` }
                 : { pass: 'skip', detail: 'no <audio> tags — meditation may use Web Audio API' };
+        });
+
+        addTest('meditation', 'pickCalmingVoice() prefers natural English voices', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.pickCalmingVoice !== 'function') return { pass: 'fail', detail: 'pickCalmingVoice() missing' };
+            const synth = w.speechSynthesis;
+            if (!synth || typeof synth.getVoices !== 'function') {
+                return { pass: 'skip', detail: 'speechSynthesis/getVoices unavailable in this browser' };
+            }
+            const originalGetVoices = synth.getVoices.bind(synth);
+            try {
+                synth.getVoices = () => [
+                    { name: 'Robot Compact', lang: 'en-US', default: true },
+                    { name: 'Spanish Voice', lang: 'es-ES', default: false },
+                    { name: 'Google UK English Female', lang: 'en-GB', default: false }
+                ];
+                try { w.eval('_cachedCalmingVoice = null'); } catch (_) {}
+                const picked = w.pickCalmingVoice();
+                const ok = picked && picked.name === 'Google UK English Female';
+                return ok
+                    ? { pass: 'pass', detail: `picked "${picked.name}" (${picked.lang})` }
+                    : { pass: 'fail', detail: `unexpected pick: ${picked ? picked.name + ' (' + picked.lang + ')' : 'null'}` };
+            } catch (e) {
+                return { pass: 'skip', detail: 'voice mocking not supported here: ' + e.message };
+            } finally {
+                try { synth.getVoices = originalGetVoices; } catch (_) {}
+                try { w.eval('_cachedCalmingVoice = null'); } catch (_) {}
+            }
+        });
+
+        addTest('meditation', 'speakMeditationScript() sets calm speech tuning', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.speakMeditationScript !== 'function') return { pass: 'fail', detail: 'speakMeditationScript() missing' };
+            const synth = w.speechSynthesis;
+            if (!synth || typeof synth.speak !== 'function') {
+                return { pass: 'skip', detail: 'speechSynthesis.speak unavailable in this browser' };
+            }
+            const voices = (typeof synth.getVoices === 'function') ? (synth.getVoices() || []) : [];
+            if (!voices.length) {
+                return { pass: 'skip', detail: 'no speech voices available in this browser session' };
+            }
+            const originalSpeak = synth.speak.bind(synth);
+            const originalPick = w.pickCalmingVoice;
+            let captured = null;
+            try {
+                const testVoice = voices.find(v => /^en(-|$)/i.test(v.lang || '')) || voices[0];
+                w.pickCalmingVoice = () => testVoice;
+                synth.speak = (utterance) => {
+                    captured = {
+                        text: utterance.text,
+                        rate: utterance.rate,
+                        pitch: utterance.pitch,
+                        volume: utterance.volume,
+                        voiceName: utterance.voice && utterance.voice.name,
+                        expectedVoiceName: testVoice && testVoice.name
+                    };
+                };
+                w.meditationPaused = false;
+                w.speakMeditationScript(['hello peace'], 0);
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            } finally {
+                try { synth.speak = originalSpeak; } catch (_) {}
+                try { w.pickCalmingVoice = originalPick; } catch (_) {}
+            }
+            if (!captured) return { pass: 'fail', detail: 'speechSynthesis.speak was not invoked' };
+            const approx = (actual, expected, eps = 0.0001) => Math.abs(Number(actual) - Number(expected)) <= eps;
+            const tuned = approx(captured.rate, 0.75) && approx(captured.pitch, 0.95) && approx(captured.volume, 0.9);
+            const voiceSet = captured.voiceName === captured.expectedVoiceName;
+            return (tuned && voiceSet)
+                ? { pass: 'pass', detail: `rate=${captured.rate} pitch=${captured.pitch} volume=${captured.volume} voice=${captured.voiceName}` }
+                : { pass: 'fail', detail: `rate=${captured.rate} pitch=${captured.pitch} volume=${captured.volume} voice=${captured.voiceName} expected=${captured.expectedVoiceName}` };
+        });
+
+        // ─── 🎵 Music & Karaoke ───────────────────────────────────
+        addTest('music', 'Music + Karaoke core DOM nodes exist', async () => {
+            const d = iframe.contentDocument;
+            const ids = [
+                'music', 'ytLinkInput', 'savedMusicList', 'karaokeSearchInput',
+                'karaokeFavoritesList', 'karaokeYtFrame', 'karaokeYtWrap',
+                'karaokeMicBtn', 'karaokeMicCanvas'
+            ];
+            const missing = ids.filter(id => !d.getElementById(id));
+            return missing.length === 0
+                ? { pass: 'pass', detail: 'all core music/karaoke IDs found' }
+                : { pass: 'fail', detail: 'missing: ' + missing.join(', ') };
+        });
+
+        addTest('music', 'getYouTubeId() parses watch / short / shorts URLs', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.getYouTubeId !== 'function') return { pass: 'fail', detail: 'getYouTubeId() missing' };
+            const cases = [
+                ['https://www.youtube.com/watch?v=dQw4w9WgXcQ', 'dQw4w9WgXcQ'],
+                ['https://youtu.be/dQw4w9WgXcQ', 'dQw4w9WgXcQ'],
+                ['https://youtube.com/shorts/dQw4w9WgXcQ', 'dQw4w9WgXcQ']
+            ];
+            const failures = [];
+            for (const [url, expected] of cases) {
+                const got = w.getYouTubeId(url);
+                if (got !== expected) failures.push(`${url} -> ${got}`);
+            }
+            const invalid = w.getYouTubeId('https://example.com/nope') === null;
+            if (!invalid) failures.push('invalid URL did not return null');
+            return failures.length === 0
+                ? { pass: 'pass', detail: 'all URL formats parsed correctly' }
+                : { pass: 'fail', detail: failures.join(' | ') };
+        });
+
+        addTest('music', 'saveYouTubeSong() writes to mySongs', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.saveYouTubeSong !== 'function') return { pass: 'fail', detail: 'saveYouTubeSong() missing' };
+            const input = d.getElementById('ytLinkInput');
+            if (!input) return { pass: 'fail', detail: '#ytLinkInput missing' };
+            const original = w.localStorage.getItem('mySongs');
+            try {
+                w.localStorage.setItem('mySongs', '[]');
+                input.value = 'https://www.youtube.com/watch?v=dQw4w9WgXcQ';
+                w.saveYouTubeSong();
+                const songs = JSON.parse(w.localStorage.getItem('mySongs') || '[]');
+                const ok = songs.length === 1 && songs[0].type === 'youtube' && songs[0].ytId === 'dQw4w9WgXcQ';
+                return ok
+                    ? { pass: 'pass', detail: `saved ${songs[0].name} (${songs[0].ytId})` }
+                    : { pass: 'fail', detail: 'unexpected songs payload: ' + JSON.stringify(songs).slice(0, 180) };
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            } finally {
+                if (original == null) w.localStorage.removeItem('mySongs');
+                else w.localStorage.setItem('mySongs', original);
+                try { if (typeof w.renderMusicList === 'function') w.renderMusicList(); } catch (_) {}
+            }
+        });
+
+        addTest('music', 'playMusicTrack() opens embedded YouTube player', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.playMusicTrack !== 'function') return { pass: 'fail', detail: 'playMusicTrack() missing' };
+            const original = w.localStorage.getItem('mySongs');
+            try {
+                w.localStorage.setItem('mySongs', JSON.stringify([
+                    { name: 'Test Song', type: 'youtube', ytId: 'dQw4w9WgXcQ' }
+                ]));
+                w.playMusicTrack(0);
+                const wrap = d.getElementById('ytPlayerWrap');
+                const frame = d.getElementById('ytFrame');
+                const title = d.getElementById('nowPlayingTitle');
+                const visible = wrap && wrap.style.display === 'block';
+                const srcOk = frame && /youtube\.com\/embed\/dQw4w9WgXcQ/.test(frame.src);
+                const titleOk = title && /Test Song/.test(title.textContent || '');
+                return (visible && srcOk && titleOk)
+                    ? { pass: 'pass', detail: 'YT embed + title updated' }
+                    : { pass: 'fail', detail: `visible=${visible} srcOk=${srcOk} titleOk=${titleOk}` };
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            } finally {
+                if (original == null) w.localStorage.removeItem('mySongs');
+                else w.localStorage.setItem('mySongs', original);
+            }
+        });
+
+        addTest('music', 'karaokeQuickSearch() starts search playlist', async () => {
+            const w = iframe.contentWindow, d = iframe.contentDocument;
+            if (typeof w.karaokeQuickSearch !== 'function') return { pass: 'fail', detail: 'karaokeQuickSearch() missing' };
+            try {
+                w.karaokeQuickSearch('happy songs karaoke with lyrics', 'happy songs');
+                const frame = d.getElementById('karaokeYtFrame');
+                const wrap = d.getElementById('karaokeYtWrap');
+                const closeBtn = d.getElementById('karaokeCloseBtn');
+                const src = frame ? frame.src : '';
+                const hasSearch = /listType=search/.test(src) && /happy%20songs%20karaoke%20with%20lyrics/.test(src);
+                const visible = wrap && wrap.style.display === 'block';
+                const closeVisible = closeBtn && closeBtn.style.display === 'block';
+                return (hasSearch && visible && closeVisible)
+                    ? { pass: 'pass', detail: 'karaoke player opened with encoded search query' }
+                    : { pass: 'fail', detail: `hasSearch=${hasSearch} visible=${visible} closeVisible=${closeVisible}` };
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            } finally {
+                try { if (typeof w.closeKaraoke === 'function') w.closeKaraoke(); } catch (_) {}
+            }
+        });
+
+        addTest('music', 'saveKaraokeFavorite() persists last karaoke query', async () => {
+            const w = iframe.contentWindow;
+            if (typeof w.saveKaraokeFavorite !== 'function' || typeof w.karaokeQuickSearch !== 'function') {
+                return { pass: 'fail', detail: 'karaoke save/search functions missing' };
+            }
+            const original = w.localStorage.getItem('myKaraokeFavorites');
+            try {
+                w.localStorage.setItem('myKaraokeFavorites', '[]');
+                w.karaokeQuickSearch('encouraging karaoke with lyrics', 'encouraging');
+                w.saveKaraokeFavorite();
+                const favs = JSON.parse(w.localStorage.getItem('myKaraokeFavorites') || '[]');
+                const ok = favs.length === 1 && favs[0].query === 'encouraging karaoke with lyrics';
+                return ok
+                    ? { pass: 'pass', detail: `saved favorite "${favs[0].label}"` }
+                    : { pass: 'fail', detail: 'unexpected favorites: ' + JSON.stringify(favs).slice(0, 180) };
+            } catch (e) {
+                return { pass: 'fail', detail: 'threw: ' + e.message };
+            } finally {
+                if (original == null) w.localStorage.removeItem('myKaraokeFavorites');
+                else w.localStorage.setItem('myKaraokeFavorites', original);
+                try { if (typeof w.renderKaraokeFavorites === 'function') w.renderKaraokeFavorites(); } catch (_) {}
+                try { if (typeof w.closeKaraoke === 'function') w.closeKaraoke(); } catch (_) {}
+            }
         });
 
         // ─── 🔐 Auth & multi-user isolation ─────────────────────────

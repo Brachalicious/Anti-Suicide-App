@@ -5,6 +5,8 @@
   "scripts": {
     "test": "node run-tests.js",
     "test:live": "node run-tests.js --url=https://fightsuicideproject.netlify.app",
+    "test:ship": "node check-all-scripts.js && node run-tests.js",
+    "test:ship:live": "node check-all-scripts.js && node run-tests.js --url=https://fightsuicideproject.netlify.app",
     "dev": "tsx server/index.ts",
     "start": "npx tsx server/index.ts",
     "build": "vite build",

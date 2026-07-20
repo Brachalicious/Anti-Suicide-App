@@ -1,0 +1,37 @@
+import { Music, Play, Pause, Rewind } from "lucide-react";
+
+export default function KaraokePlayer() {
+  return (
+    <div className="container mx-auto max-w-2xl px-4 py-6">
+      <div className="bg-card border rounded-lg shadow-lg">
+        <div className="p-6">
+          <h2 className="text-2xl font-bold flex items-center gap-2">
+            <Music className="h-6 w-6 text-primary" />
+            Karaoke Machine
+          </h2>
+          <p className="text-muted-foreground mt-2">
+            Sing your heart out!
+          </p>
+        </div>
+
+        <div className="p-6 bg-muted/20">
+          <div className="bg-black text-green-400 font-mono p-4 rounded-lg h-32 flex items-center justify-center">
+            <p className="text-lg">[Lyrics will appear here]</p>
+          </div>
+        </div>
+
+        <div className="p-6 flex items-center justify-center gap-4">
+          <button className="p-3 rounded-full bg-muted hover:bg-muted/80">
+            <Rewind className="h-6 w-6" />
+          </button>
+          <button className="p-4 rounded-full bg-primary text-primary-foreground hover:bg-primary/80">
+            <Play className="h-8 w-8" />
+          </button>
+          <button className="p-3 rounded-full bg-muted hover:bg-muted/80">
+            <Pause className="h-6 w-6" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
