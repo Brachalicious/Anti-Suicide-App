@@ -1627,13 +1627,13 @@
                             <!-- r=93: just outside gold ring (86 SVG units), circumference ≈ 584 units -->
                             <path id="ringCircle" d="M 150,57 a 93,93 0 1,1 -0.001,0"/>
                         </defs>
-                        <text font-family="Arial Black, Arial, sans-serif" font-size="11" font-weight="900" fill="#ff1493" stroke="#ff1493" stroke-width="0.4" filter="url(#textGlow)" style="paint-order:stroke fill;">
+                        <text font-family="Arial Black, Arial, sans-serif" font-size="11" font-weight="900" fill="#c2a25c" stroke="#c2a25c" stroke-width="0.4" filter="url(#textGlow)" style="paint-order:stroke fill;">
                             <textPath href="#ringCircle" startOffset="0%" textLength="584" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦</textPath>
                         </text>
                     </svg>
                     <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
                 </div>
-                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#ff1493; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(255,20,147,0.5); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with MysticMinded³³ chatbot!</p>
+                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#4d235a; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(194,162,92,0.45); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with MysticMinded³³ chatbot!</p>
             </div>
         </div>
 
@@ -1715,6 +1715,7 @@
                     <button onclick="window.location.href='activities.html#release'">😤 Release &amp; Let Go</button>
                     <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
                     <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
+                    <button onclick="showSection('what-i-tried'); closeCrisisToolsMenu(); closeMobileNav()">📋 What I Tried</button>
                 </div>
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
@@ -1728,12 +1729,28 @@
         <div id="crisis-skills" class="section hidden">
             <div class="card">
                 <h2 class="section-title">🛟 Crisis Skills</h2>
-                <p style="color: #ff69b4; font-size: 15px; margin-bottom: 24px; line-height: 1.6;">
+                <p style="color: #ff69b4; font-size: 15px; margin-bottom: 16px; line-height: 1.6;">
                     These are evidence-based techniques used in crisis intervention. 
                     They work by changing your body chemistry, interrupting emotional spirals, and bringing you back to the present moment.
                 </p>
-                
+
+                <!-- Stats bar -->
+                <div id="crisis-skills-stats" style="display:none; margin-bottom:18px; padding:14px 16px; background:linear-gradient(135deg,#f0fdf4,#dcfce7); border:2px solid #86efac; border-radius:14px;">
+                    <div style="font-size:13px; font-weight:700; color:#15803d; margin-bottom:10px;">📊 Your Crisis Skills Stats</div>
+                    <div id="crisis-skills-stats-body" style="display:grid; gap:6px;"></div>
+                    <div style="display:flex; gap:8px; margin-top:12px; flex-wrap:wrap;">
+                        <button onclick="shareCrisisSkillsStats('whatsapp')" style="flex:1; padding:8px 6px; background:#25D366; color:white; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">📱 Share</button>
+                        <button onclick="shareCrisisSkillsStats('email')" style="flex:1; padding:8px 6px; background:#8b5cf6; color:white; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">📧 Email Therapist</button>
+                        <button onclick="renderCrisisSkillsStats()" style="padding:8px 10px; background:#e5e7eb; color:#374151; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">🔄</button>
+                    </div>
+                </div>
+                <button onclick="toggleCrisisSkillsStats()" style="width:100%; margin-bottom:18px; padding:9px; background:rgba(22,163,74,0.1); border:2px solid #86efac; border-radius:10px; color:#15803d; font-size:13px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                    <span>📊 View My Skills Stats &amp; History</span><span id="crisis-stats-arrow">▼</span>
+                </button>
+
                 <div style="display: grid; gap: 16px;">
+
+                    <!-- Skill 1 -->
                     <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 20px; border-radius: 12px; border-left: 5px solid #22c55e; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #15803d; margin-bottom: 8px; font-size: 18px;">🧊 5-4-3-2-1 Grounding Technique</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1749,8 +1766,10 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #15803d; font-size: 13px; font-style: italic;">
                             💡 This works because it forces your brain to focus on the present instead of spiraling thoughts.
                         </div>
+                        <div class="cs-notes-panel" data-skill="grounding-54321" data-color="#22c55e" style="margin-top:12px;"></div>
                     </div>
 
+                    <!-- Skill 2 -->
                     <div style="background: linear-gradient(135deg, #eff6ff, #dbeafe); padding: 20px; border-radius: 12px; border-left: 5px solid #3b82f6; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #ff1493; margin-bottom: 8px; font-size: 18px;">❄️ Ice & Cold Water (TIP Skill)</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1765,8 +1784,10 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #ff1493; font-size: 13px; font-style: italic;">
                             💡 This physically slows your heart rate and reduces emotional intensity immediately.
                         </div>
+                        <div class="cs-notes-panel" data-skill="ice-cold-water" data-color="#3b82f6" style="margin-top:12px;"></div>
                     </div>
 
+                    <!-- Skill 3 -->
                     <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 20px; border-radius: 12px; border-left: 5px solid #f59e0b; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #ff1493; margin-bottom: 8px; font-size: 18px;">🏃 Intense Exercise (Burn It Off)</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1782,8 +1803,10 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #ff1493; font-size: 13px; font-style: italic;">
                             💡 Releases endorphins and burns off stress hormones like cortisol and adrenaline.
                         </div>
+                        <div class="cs-notes-panel" data-skill="intense-exercise" data-color="#f59e0b" style="margin-top:12px;"></div>
                     </div>
 
+                    <!-- Skill 4 -->
                     <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); padding: 20px; border-radius: 12px; border-left: 5px solid #16a34a; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #15803d; margin-bottom: 8px; font-size: 18px;">📞 Reach Out & Connect</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1799,8 +1822,10 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #15803d; font-size: 13px; font-style: italic;">
                             💡 Isolation makes everything worse. Connection reminds you that you're not alone.
                         </div>
+                        <div class="cs-notes-panel" data-skill="reach-out-connect" data-color="#16a34a" style="margin-top:12px;"></div>
                     </div>
 
+                    <!-- Skill 5 -->
                     <div style="background: linear-gradient(135deg, #fae8ff, #f3e8ff); padding: 20px; border-radius: 12px; border-left: 5px solid #a855f7; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #ff1493; margin-bottom: 8px; font-size: 18px;">⏰ Wait 15 Minutes (Ride the Wave)</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1816,8 +1841,10 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #ff1493; font-size: 13px; font-style: italic;">
                             💡 Urges typically peak at 10-15 minutes, then decrease naturally. You just need to outlast them.
                         </div>
+                        <div class="cs-notes-panel" data-skill="wait-15-minutes" data-color="#a855f7" style="margin-top:12px;"></div>
                     </div>
 
+                    <!-- Skill 6 -->
                     <div style="background: linear-gradient(135deg, #fff7ed, #ffedd5); padding: 20px; border-radius: 12px; border-left: 5px solid #f97316; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
                         <div style="font-weight: 700; color: #ff1493; margin-bottom: 8px; font-size: 18px;">✍️ Write It Out (Brain Dump)</div>
                         <div style="color: #ff1493; font-size: 14px; line-height: 1.7; margin-bottom: 12px;">
@@ -1833,7 +1860,9 @@
                         <div style="margin-top: 12px; padding: 10px; background: white; border-radius: 8px; color: #ff1493; font-size: 13px; font-style: italic;">
                             💡 Getting thoughts out of your head and onto paper creates distance and perspective.
                         </div>
+                        <div class="cs-notes-panel" data-skill="write-it-out" data-color="#f97316" style="margin-top:12px;"></div>
                     </div>
+
                 </div>
 
                 <div style="margin-top: 24px; padding: 20px; background: linear-gradient(135deg, #1f2937, #374151); border-radius: 12px; color: white; text-align: center;">
@@ -1950,6 +1979,48 @@
                         onkeydown="handleMysticChatKeydown(event)"
                     ></textarea>
                     <button class="send-btn" onclick="sendMysticMessage()" id="sendMysticBtn">➤</button>
+                </div>
+
+                <!-- Save / Share session panel -->
+                <div style="margin-top:14px; border-top:2px solid rgba(139,92,246,0.3); padding-top:14px;">
+                    <button onclick="toggleMysticSavePanel()" id="mysticSavePanelToggle" style="width:100%; padding:11px; background:linear-gradient(135deg,rgba(139,92,246,0.15),rgba(124,58,237,0.15)); border:2px solid #8b5cf6; border-radius:12px; color:#c4b5fd; font-size:13px; font-weight:700; cursor:pointer; display:flex; justify-content:space-between; align-items:center;">
+                        <span>💾 Save or Share This Session</span><span id="mysticSavePanelArrow">▼</span>
+                    </button>
+                    <div id="mysticSavePanel" style="display:none; margin-top:10px; padding:16px; background:rgba(139,92,246,0.1); border:2px solid #8b5cf6; border-radius:12px;">
+                        <div style="margin-bottom:12px;">
+                            <label style="color:#c4b5fd; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">How do you feel after this session? (1 = worse, 10 = much better)</label>
+                            <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
+                                <button onclick="setMysticRating(1)" class="mystic-rating-btn" data-rating="1" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">1</button>
+                                <button onclick="setMysticRating(2)" class="mystic-rating-btn" data-rating="2" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">2</button>
+                                <button onclick="setMysticRating(3)" class="mystic-rating-btn" data-rating="3" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">3</button>
+                                <button onclick="setMysticRating(4)" class="mystic-rating-btn" data-rating="4" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">4</button>
+                                <button onclick="setMysticRating(5)" class="mystic-rating-btn" data-rating="5" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">5</button>
+                                <button onclick="setMysticRating(6)" class="mystic-rating-btn" data-rating="6" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">6</button>
+                                <button onclick="setMysticRating(7)" class="mystic-rating-btn" data-rating="7" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">7</button>
+                                <button onclick="setMysticRating(8)" class="mystic-rating-btn" data-rating="8" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">8</button>
+                                <button onclick="setMysticRating(9)" class="mystic-rating-btn" data-rating="9" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">9</button>
+                                <button onclick="setMysticRating(10)" class="mystic-rating-btn" data-rating="10" style="padding:7px 10px; border:2px solid #8b5cf6; background:rgba(139,92,246,0.1); color:#c4b5fd; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">10</button>
+                            </div>
+                            <p id="mysticRatingDisplay" style="color:#a78bfa; font-size:12px; margin-top:6px; text-align:center;"></p>
+                        </div>
+                        <div style="margin-bottom:12px;">
+                            <label style="color:#c4b5fd; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Notes about this session (optional)</label>
+                            <textarea id="mysticSessionNotes" placeholder="What helped? What did you realise? Any insights…" rows="2" style="width:100%; background:rgba(139,92,246,0.08); border:2px solid #8b5cf6; border-radius:8px; color:#e9d5ff; font-size:13px; padding:10px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+                        </div>
+                        <div style="margin-bottom:10px;">
+                            <label style="display:flex; align-items:center; gap:8px; cursor:pointer; color:#c4b5fd; font-size:13px; font-weight:600;">
+                                <input type="checkbox" id="mysticIncludeTranscript" style="width:16px; height:16px; accent-color:#8b5cf6;">
+                                Include chat transcript when sharing
+                            </label>
+                        </div>
+                        <button onclick="saveMysticSession()" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed); color:white; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; width:100%; margin-bottom:8px;">💾 Save to Journal</button>
+                        <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+                            <button onclick="shareMysticSession('whatsapp')" style="flex:1; padding:10px 6px; background:#25D366; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📱 WhatsApp</button>
+                            <button onclick="shareMysticSession('sms')" style="flex:1; padding:10px 6px; background:#3b82f6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">💬 Text</button>
+                            <button onclick="shareMysticSession('email')" style="flex:1; padding:10px 6px; background:#8b5cf6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📧 Email Therapist</button>
+                        </div>
+                        <button onclick="clearMysticChat()" style="background:rgba(239,68,68,0.15); color:#fca5a5; border:2px solid #ef4444; padding:9px; border-radius:10px; font-size:12px; font-weight:600; cursor:pointer; width:100%;">🗑️ Clear Chat &amp; Start Fresh</button>
+                    </div>
                 </div>
 
                 <div class="reminder-box">
@@ -2103,7 +2174,7 @@
         </div>
 
         <!-- Scream Overlay -->
-        <div id="screamCircleOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:center; padding:30px; overflow-y:auto;">
+        <div id="screamCircleOverlay" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.95); z-index:9999; justify-content:center; align-items:flex-start; padding:60px 30px 40px; overflow-y:auto; box-sizing:border-box;">
             <button onclick="closeScreamCircle()" style="position:fixed; top:20px; right:24px; background:none; border:none; color:white; font-size:32px; cursor:pointer; z-index:10;">&times;</button>
             <div style="max-width:600px; width:100%; text-align:center;">
                 <h2 style="color:#e9d5ff; font-size:28px; font-weight:700; margin-bottom:16px;">Scream your heart out</h2>
@@ -2275,11 +2346,16 @@
                             style="width:100%; background:rgba(124,58,237,0.1); border:2px solid #7c3aed; border-radius:10px; color:#e9d5ff; font-size:14px; padding:12px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
                     </div>
                     
-                    <!-- Save Button -->
-                    <button onclick="saveScreamSession()" style="background:#22c55e; color:white; border:none; padding:14px 28px; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; width:100%;">
-                        💾 Save Session
+                    <!-- Save + Share Buttons -->
+                    <button onclick="saveScreamSession()" style="background:#22c55e; color:white; border:none; padding:14px 28px; border-radius:10px; font-size:16px; font-weight:700; cursor:pointer; width:100%; margin-bottom:10px;">
+                        💾 Save Session to Journal
                     </button>
-                    <p style="color:#86efac; font-size:12px; margin-top:8px; text-align:center;">Your session will be saved to your device only</p>
+                    <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                        <button onclick="shareScreamSession('whatsapp')" style="flex:1; padding:11px 8px; background:#25D366; color:white; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">📱 WhatsApp</button>
+                        <button onclick="shareScreamSession('sms')" style="flex:1; padding:11px 8px; background:#3b82f6; color:white; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">💬 Text</button>
+                        <button onclick="shareScreamSession('email')" style="flex:1; padding:11px 8px; background:#8b5cf6; color:white; border:none; border-radius:10px; font-size:13px; font-weight:700; cursor:pointer;">📧 Email</button>
+                    </div>
+                    <p style="color:#86efac; font-size:12px; margin-top:8px; text-align:center;">Saved sessions are private — only you can see them</p>
                 </div>
             </div>
         </div>
@@ -2368,7 +2444,7 @@
 
         <div id="dashboard" class="section">
             <!-- Personalized greeting (filled by applyDisplayNamePersonalization() when a display name is set in Account Settings). -->
-            <div id="home-greeting" style="display:none; max-width: 720px; margin: 0 auto 16px; padding: 14px 22px; background: linear-gradient(135deg, rgba(34,197,94,0.15), rgba(236,72,153,0.12)); border: 1px solid rgba(34,197,94,0.45); border-radius: 16px; color: #ff1493; font-family: 'Georgia', serif; font-size: 18px; font-weight: 700; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.12);"></div>
+            <div id="home-greeting" style="display:none; max-width: 720px; margin: 0 auto 16px; padding: 14px 22px; background: linear-gradient(135deg, rgba(77,35,90,0.10), rgba(194,162,92,0.12)); border: 1px solid rgba(194,162,92,0.55); border-radius: 16px; color: #000000; font-family: 'Georgia', serif; font-size: 18px; font-weight: 700; text-align: center; box-shadow: 0 2px 10px rgba(77,35,90,0.12);"></div>
             <div class="grid">
                 <div class="card">
                     <h2 class="section-title">Quick Crisis Support</h2>
@@ -3264,6 +3340,66 @@
                 </div>
             </div>
         </div>
+
+        <!-- ===== WHAT I TRIED SECTION ===== -->
+        <div id="what-i-tried" class="section hidden">
+            <div style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border-radius: 20px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); border: 3px solid #86efac; max-width: 720px; margin: 0 auto;">
+                <h2 style="text-align:center; color:#16a34a; font-family:'Georgia',serif; font-size:26px; margin-bottom:4px;">📋 Here's What I Tried</h2>
+                <p style="text-align:center; color:#4b7c59; font-family:'Georgia',serif; font-size:13px; margin-bottom:18px;">Track the coping strategies you tried, rate whether they helped, and share the summary with your therapist or save it to your journal.</p>
+
+                <!-- Date + Notes header -->
+                <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:16px;">
+                    <div style="flex:1; min-width:140px;">
+                        <label style="display:block; font-size:12px; color:#4b7c59; margin-bottom:4px; font-weight:600;">📅 Date</label>
+                        <input type="date" id="wit-date" style="width:100%; padding:8px; border:2px solid #86efac; border-radius:8px; font-size:14px; background:#fff; color:#166534;">
+                    </div>
+                    <div style="flex:1; min-width:140px;">
+                        <label style="display:block; font-size:12px; color:#4b7c59; margin-bottom:4px; font-weight:600;">🕐 Time</label>
+                        <input type="time" id="wit-time" style="width:100%; padding:8px; border:2px solid #86efac; border-radius:8px; font-size:14px; background:#fff; color:#166534;">
+                    </div>
+                    <div style="flex:2; min-width:200px;">
+                        <label style="display:block; font-size:12px; color:#4b7c59; margin-bottom:4px; font-weight:600;">😔 How I was feeling before</label>
+                        <input type="text" id="wit-before" placeholder="e.g. overwhelmed, anxious, hopeless…" style="width:100%; padding:8px; border:2px solid #86efac; border-radius:8px; font-size:14px; background:#fff; color:#166534; box-sizing:border-box;">
+                    </div>
+                </div>
+
+                <!-- Exercise checklist -->
+                <div style="margin-bottom:18px;">
+                    <div style="font-size:14px; font-weight:700; color:#166534; margin-bottom:10px;">✅ Coping Strategies I Tried</div>
+                    <div id="wit-exercise-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+
+                    <!-- Custom exercise input -->
+                    <div style="display:flex; gap:8px; margin-top:12px;">
+                        <input type="text" id="wit-custom-input" placeholder="Add your own strategy…" style="flex:1; padding:8px 12px; border:2px solid #86efac; border-radius:8px; font-size:13px; background:#fff; color:#166534;" onkeydown="if(event.key==='Enter')addWitCustomExercise()">
+                        <button onclick="addWitCustomExercise()" style="padding:8px 14px; background:#16a34a; color:white; border:none; border-radius:8px; font-size:13px; font-weight:600; cursor:pointer;">+ Add</button>
+                    </div>
+                </div>
+
+                <!-- After feeling + extra notes -->
+                <div style="margin-bottom:18px;">
+                    <label style="display:block; font-size:12px; color:#4b7c59; margin-bottom:4px; font-weight:600;">😊 How I felt AFTER trying these</label>
+                    <input type="text" id="wit-after" placeholder="e.g. calmer, still struggling, a little better…" style="width:100%; padding:8px; border:2px solid #86efac; border-radius:8px; font-size:14px; background:#fff; color:#166534; box-sizing:border-box; margin-bottom:10px;">
+                    <label style="display:block; font-size:12px; color:#4b7c59; margin-bottom:4px; font-weight:600;">📝 Extra notes for my therapist</label>
+                    <textarea id="wit-notes" rows="3" placeholder="Anything else you'd like to share…" style="width:100%; padding:8px; border:2px solid #86efac; border-radius:8px; font-size:14px; background:#fff; color:#166534; box-sizing:border-box; resize:vertical; font-family:inherit;"></textarea>
+                </div>
+
+                <!-- Action buttons -->
+                <div style="display:flex; flex-wrap:wrap; gap:10px; justify-content:center; margin-bottom:18px;">
+                    <button onclick="saveWitEntry()" style="padding:10px 20px; background:linear-gradient(135deg,#16a34a,#15803d); color:white; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(22,163,74,0.4);">💾 Save to Journal</button>
+                    <button onclick="shareWitEntry('whatsapp')" style="padding:10px 20px; background:#25D366; color:white; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(37,211,102,0.35);">📱 Share via WhatsApp</button>
+                    <button onclick="shareWitEntry('sms')" style="padding:10px 20px; background:#3b82f6; color:white; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(59,130,246,0.35);">💬 Share via Text</button>
+                    <button onclick="shareWitEntry('email')" style="padding:10px 20px; background:#8b5cf6; color:white; border:none; border-radius:12px; font-size:14px; font-weight:700; cursor:pointer; box-shadow:0 3px 10px rgba(139,92,246,0.35);">📧 Email to Therapist</button>
+                </div>
+
+                <!-- Saved entries -->
+                <div>
+                    <div style="font-size:14px; font-weight:700; color:#166534; margin-bottom:10px; border-top:2px solid #86efac; padding-top:14px;">📚 Past Entries</div>
+                    <div id="wit-saved-list" style="display:flex; flex-direction:column; gap:10px;"></div>
+                    <div id="wit-empty-msg" style="text-align:center; color:#86efac; font-size:14px; font-style:italic; padding:20px 0;">No entries yet — save your first one above! 🌱</div>
+                </div>
+            </div>
+        </div>
+        <!-- ===== END WHAT I TRIED SECTION ===== -->
 
         <div id="mood" class="section hidden">
             <div style="background: linear-gradient(135deg, #f5e6d3, #e8d5b7); border-radius: 20px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.3); position: relative; border: 3px solid #c4a87c;">
@@ -6706,6 +6842,341 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
         }
 
+        // ── MysticBot session save / share ──────────────────────────────
+        let mysticCurrentRating = 0;
+
+        function toggleMysticSavePanel() {
+            const panel = document.getElementById('mysticSavePanel');
+            const arrow = document.getElementById('mysticSavePanelArrow');
+            if (!panel) return;
+            const open = panel.style.display === 'block';
+            panel.style.display = open ? 'none' : 'block';
+            if (arrow) arrow.textContent = open ? '▼' : '▲';
+            if (!open) panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function setMysticRating(n) {
+            mysticCurrentRating = n;
+            document.querySelectorAll('.mystic-rating-btn').forEach(btn => {
+                const sel = parseInt(btn.dataset.rating) === n;
+                btn.style.background = sel ? '#8b5cf6' : 'rgba(139,92,246,0.1)';
+                btn.style.color = sel ? 'white' : '#c4b5fd';
+            });
+            const el = document.getElementById('mysticRatingDisplay');
+            if (el) el.textContent = _ratingLabel(n);
+        }
+
+        function _getMysticTranscript() {
+            const bubbles = document.querySelectorAll('#mysticChatContainer .chat-message');
+            let lines = [];
+            bubbles.forEach(msg => {
+                const isUser = msg.classList.contains('user');
+                const bubble = msg.querySelector('.chat-bubble');
+                if (!bubble) return;
+                // Skip typing indicators
+                if (bubble.classList.contains('typing-indicator')) return;
+                const speaker = isUser ? 'Me' : 'MysticBot';
+                // Strip HTML tags for plain-text transcript
+                const text = bubble.innerText || bubble.textContent || '';
+                lines.push(`${speaker}: ${text.trim()}`);
+            });
+            return lines.join('\n');
+        }
+
+        function buildMysticShareText(includeTranscript) {
+            const notes = document.getElementById('mysticSessionNotes')?.value?.trim() || '';
+            const n = mysticCurrentRating;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+            let text = `💬 MysticBot Chat Session\n${dateStr} at ${timeStr}\n${'─'.repeat(38)}\n`;
+            if (n) text += `😊 Feeling after: ${_ratingLabel(n)}\n`;
+            if (notes) text += `\n📝 Notes: ${notes}\n`;
+            if (includeTranscript) {
+                const transcript = _getMysticTranscript();
+                if (transcript) text += `\n${'─'.repeat(38)}\n📜 Transcript:\n\n${transcript}\n`;
+            }
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+
+        function saveMysticSession() {
+            if (!mysticCurrentRating) { alert('Please rate how you feel before saving.'); return; }
+            const notes = document.getElementById('mysticSessionNotes')?.value?.trim() || '';
+            const transcript = _getMysticTranscript();
+            saveExerciseSession('mysticbot', mysticCurrentRating, notes, { transcript });
+            alert('✅ Chat session saved to your journal!');
+            // Collapse panel and reset
+            document.getElementById('mysticSavePanel').style.display = 'none';
+            document.getElementById('mysticSavePanelArrow').textContent = '▼';
+            document.getElementById('mysticSessionNotes').value = '';
+            mysticCurrentRating = 0;
+            document.querySelectorAll('.mystic-rating-btn').forEach(btn => {
+                btn.style.background = 'rgba(139,92,246,0.1)';
+                btn.style.color = '#c4b5fd';
+            });
+            document.getElementById('mysticRatingDisplay').textContent = '';
+        }
+
+        async function shareMysticSession(method) {
+            const includeTranscript = document.getElementById('mysticIncludeTranscript')?.checked;
+            const text = buildMysticShareText(includeTranscript);
+            await shareContent(text, method, null);
+        }
+
+        function clearMysticChat() {
+            if (!confirm('Clear the chat and start a fresh conversation?')) return;
+            const container = document.getElementById('mysticChatContainer');
+            if (!container) return;
+            container.innerHTML = `
+                <div class="chat-message assistant">
+                    <div class="chat-avatar" style="background:linear-gradient(135deg,#8b5cf6,#7c3aed);">🤖</div>
+                    <div class="chat-bubble">Hey there! I'm MysticBot 💜 I'm here to listen. What feels heaviest right now?</div>
+                </div>`;
+            mysticCurrentRating = 0;
+            document.getElementById('mysticSessionNotes').value = '';
+            document.getElementById('mysticRatingDisplay').textContent = '';
+            document.querySelectorAll('.mystic-rating-btn').forEach(btn => {
+                btn.style.background = 'rgba(139,92,246,0.1)';
+                btn.style.color = '#c4b5fd';
+            });
+            document.getElementById('mysticSavePanel').style.display = 'none';
+            document.getElementById('mysticSavePanelArrow').textContent = '▼';
+        }
+        // ── End MysticBot session ───────────────────────────────────────
+
+        // ══════════════════════════════════════════════════════════════
+        // CRISIS SKILLS — Notes, Helpfulness Tracking & Stats
+        // ══════════════════════════════════════════════════════════════
+
+        const CS_SKILLS = {
+            'grounding-54321':   { label: '🧊 5-4-3-2-1 Grounding',      color: '#22c55e' },
+            'ice-cold-water':    { label: '❄️ Ice & Cold Water',          color: '#3b82f6' },
+            'intense-exercise':  { label: '🏃 Intense Exercise',          color: '#f59e0b' },
+            'reach-out-connect': { label: '📞 Reach Out & Connect',       color: '#16a34a' },
+            'wait-15-minutes':   { label: '⏰ Wait 15 Minutes',           color: '#a855f7' },
+            'write-it-out':      { label: '✍️ Write It Out',              color: '#f97316' }
+        };
+
+        function _csStats() {
+            return JSON.parse(localStorage.getItem('crisisSkillStats') || '{}');
+        }
+        function _csNotes() {
+            return JSON.parse(localStorage.getItem('crisisSkillNotes') || '[]');
+        }
+
+        function initCrisisSkillPanels() {
+            document.querySelectorAll('.cs-notes-panel').forEach(el => {
+                const skillId = el.dataset.skill;
+                const color   = el.dataset.color || '#6366f1';
+                el.innerHTML  = buildCsPanel(skillId, color);
+            });
+            renderCrisisSkillsStats();
+        }
+
+        function buildCsPanel(skillId, color) {
+            const light = color + '22';
+            return `
+            <div id="csp-${skillId}" style="border-top:2px dashed ${color}44; padding-top:12px;">
+                <div style="font-size:13px; font-weight:700; color:${color}; margin-bottom:8px;">📝 How did this skill go for you?</div>
+                <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
+                    <button onclick="csSaveRating('${skillId}','helped')"
+                        id="csr-helped-${skillId}"
+                        style="flex:1; padding:8px 4px; background:${light}; border:2px solid ${color}; border-radius:10px; font-size:13px; font-weight:700; color:${color}; cursor:pointer;">✅ Helped</button>
+                    <button onclick="csSaveRating('${skillId}','alittle')"
+                        id="csr-alittle-${skillId}"
+                        style="flex:1; padding:8px 4px; background:${light}; border:2px solid ${color}; border-radius:10px; font-size:13px; font-weight:700; color:${color}; cursor:pointer;">🌿 A little</button>
+                    <button onclick="csSaveRating('${skillId}','notreally')"
+                        id="csr-notreally-${skillId}"
+                        style="flex:1; padding:8px 4px; background:${light}; border:2px solid ${color}; border-radius:10px; font-size:13px; font-weight:700; color:${color}; cursor:pointer;">😕 Not really</button>
+                </div>
+                <div id="csrating-feedback-${skillId}" style="font-size:12px; color:${color}; margin-bottom:8px; min-height:16px;"></div>
+                <textarea id="csnotes-${skillId}" placeholder="Notes about this skill... (optional)" rows="2"
+                    style="width:100%; padding:8px; border:1.5px solid ${color}55; border-radius:8px; font-size:13px; resize:vertical; font-family:inherit; box-sizing:border-box; background:white;"></textarea>
+                <div style="display:flex; gap:7px; margin-top:8px; flex-wrap:wrap;">
+                    <button onclick="csSaveEntry('${skillId}')"
+                        style="flex:2; padding:8px; background:${color}; color:white; border:none; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer;">💾 Save</button>
+                    <button onclick="csShare('${skillId}','whatsapp')"
+                        style="flex:1; padding:8px; background:#25D366; color:white; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">📱</button>
+                    <button onclick="csShare('${skillId}','sms')"
+                        style="flex:1; padding:8px; background:#3b82f6; color:white; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">💬</button>
+                    <button onclick="csShare('${skillId}','email')"
+                        style="flex:1; padding:8px; background:#8b5cf6; color:white; border:none; border-radius:9px; font-size:12px; font-weight:700; cursor:pointer;">📧</button>
+                </div>
+                <div id="cssave-confirm-${skillId}" style="font-size:12px; color:${color}; margin-top:6px; min-height:16px;"></div>
+            </div>`;
+        }
+
+        function csSaveRating(skillId, rating) {
+            const stats = _csStats();
+            if (!stats[skillId]) stats[skillId] = { used: 0, helped: 0, alittle: 0, notreally: 0 };
+            // only increment rating counts (not 'used') here — used increments on Save
+            stats[skillId]._pendingRating = rating;
+            localStorage.setItem('crisisSkillStats', JSON.stringify(stats));
+
+            const color = CS_SKILLS[skillId]?.color || '#6366f1';
+            const labels = { helped: '✅ Marked as Helpful!', alittle: '🌿 Marked: A little helpful', notreally: '😕 Marked: Not really helpful' };
+            const fb = document.getElementById(`csrating-feedback-${skillId}`);
+            if (fb) fb.textContent = labels[rating] || '';
+
+            // Highlight selected button
+            ['helped','alittle','notreally'].forEach(r => {
+                const btn = document.getElementById(`csr-${r}-${skillId}`);
+                if (!btn) return;
+                if (r === rating) {
+                    btn.style.background = color;
+                    btn.style.color = 'white';
+                } else {
+                    btn.style.background = color + '22';
+                    btn.style.color = color;
+                }
+            });
+        }
+
+        function csSaveEntry(skillId) {
+            const notes   = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
+            const stats   = _csStats();
+            if (!stats[skillId]) stats[skillId] = { used: 0, helped: 0, alittle: 0, notreally: 0 };
+            const rating  = stats[skillId]._pendingRating || '';
+            stats[skillId].used = (stats[skillId].used || 0) + 1;
+            if (rating) stats[skillId][rating] = (stats[skillId][rating] || 0) + 1;
+            delete stats[skillId]._pendingRating;
+            localStorage.setItem('crisisSkillStats', JSON.stringify(stats));
+
+            const allNotes = _csNotes();
+            allNotes.unshift({
+                skillId,
+                label: CS_SKILLS[skillId]?.label || skillId,
+                rating,
+                notes,
+                date: new Date().toLocaleString()
+            });
+            localStorage.setItem('crisisSkillNotes', JSON.stringify(allNotes));
+
+            // Save to Firebase if logged in
+            try {
+                const uid = firebase.auth().currentUser?.uid;
+                if (uid) {
+                    firebase.firestore().collection('users').doc(uid)
+                        .collection('exerciseSessions').add({
+                            type: 'crisis-skill',
+                            skillId,
+                            label: CS_SKILLS[skillId]?.label || skillId,
+                            rating, notes,
+                            date: new Date().toISOString()
+                        });
+                }
+            } catch(e) {}
+
+            const fb = document.getElementById(`cssave-confirm-${skillId}`);
+            if (fb) {
+                fb.textContent = '✅ Saved!';
+                setTimeout(() => { fb.textContent = ''; }, 2500);
+            }
+            renderCrisisSkillsStats();
+        }
+
+        function csShare(skillId, method) {
+            const notes  = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
+            const stats  = _csStats();
+            const s      = stats[skillId] || {};
+            const label  = CS_SKILLS[skillId]?.label || skillId;
+            const ratingMap = { helped:'✅ Helped', alittle:'🌿 A little', notreally:'😕 Not really' };
+            const ratingTxt = ratingMap[s._pendingRating] || 'Not rated yet';
+            const lines = [
+                `Crisis Skill Used: ${label}`,
+                `Date: ${new Date().toLocaleString()}`,
+                `How it helped: ${ratingTxt}`,
+                notes ? `\nNotes:\n${notes}` : '',
+                `\nTotal times used: ${s.used || 0}`,
+                `Helped: ${s.helped || 0}x | A little: ${s.alittle || 0}x | Not really: ${s.notreally || 0}x`,
+                `\n— Sent from Fight Suicide Project 💜`
+            ].filter(Boolean).join('\n');
+            shareContent(lines, method);
+        }
+
+        function toggleCrisisSkillsStats() {
+            const el  = document.getElementById('crisis-skills-stats');
+            const arr = document.getElementById('crisis-stats-arrow');
+            if (!el) return;
+            const shown = el.style.display !== 'none';
+            el.style.display = shown ? 'none' : 'block';
+            if (arr) arr.textContent = shown ? '▼' : '▲';
+            if (!shown) renderCrisisSkillsStats();
+        }
+
+        function renderCrisisSkillsStats() {
+            const stats  = _csStats();
+            const notes  = _csNotes();
+            const body   = document.getElementById('crisis-skills-stats-body');
+            const wrap   = document.getElementById('crisis-skills-stats');
+            if (!body) return;
+
+            const hasAny = Object.values(stats).some(s => s.used > 0);
+            if (!hasAny && notes.length === 0) {
+                body.innerHTML = '<div style="font-size:13px;color:#6b7280;">No skills recorded yet. Use a skill and tap Save to see your stats here!</div>';
+            } else {
+                // Sort by helpfulness desc
+                const sorted = Object.entries(CS_SKILLS).map(([id, info]) => {
+                    const s = stats[id] || {};
+                    return { id, label: info.label, color: info.color, ...s };
+                }).sort((a, b) => (b.helped || 0) - (a.helped || 0));
+
+                body.innerHTML = sorted.map(s => {
+                    const used = s.used || 0;
+                    if (used === 0) return '';
+                    const helpPct = used > 0 ? Math.round(((s.helped||0) / used) * 100) : 0;
+                    const bar = `<div style="height:6px;border-radius:3px;background:#e5e7eb;margin-top:3px;"><div style="height:6px;border-radius:3px;background:${s.color};width:${helpPct}%;"></div></div>`;
+                    return `<div style="background:white;padding:8px 10px;border-radius:8px;border-left:3px solid ${s.color};">
+                        <div style="display:flex;justify-content:space-between;align-items:center;">
+                            <span style="font-size:13px;font-weight:700;color:#1f2937;">${s.label}</span>
+                            <span style="font-size:11px;color:#6b7280;">used ${used}×</span>
+                        </div>
+                        <div style="font-size:11px;color:#6b7280;margin-top:2px;">✅ ${s.helped||0}× helped · 🌿 ${s.alittle||0}× a little · 😕 ${s.notreally||0}× not really</div>
+                        ${bar}
+                    </div>`;
+                }).filter(Boolean).join('');
+
+                // Recent notes
+                if (notes.length > 0) {
+                    body.innerHTML += `<div style="font-size:12px;font-weight:700;color:#374151;margin-top:8px;">📋 Recent Entries</div>`;
+                    body.innerHTML += notes.slice(0, 5).map(n => {
+                        const rMap = {helped:'✅',alittle:'🌿',notreally:'😕','':'—'};
+                        return `<div style="background:white;padding:7px 10px;border-radius:8px;font-size:12px;color:#374151;">
+                            <strong>${n.label}</strong> ${rMap[n.rating]||'—'} <span style="color:#9ca3af;float:right;">${n.date}</span>
+                            ${n.notes ? `<div style="margin-top:3px;color:#6b7280;">${n.notes}</div>` : ''}
+                        </div>`;
+                    }).join('');
+                }
+            }
+            if (wrap) wrap.style.display = 'block';
+        }
+
+        function shareCrisisSkillsStats(method) {
+            const stats = _csStats();
+            const notes = _csNotes();
+            const lines = [
+                '📊 My Crisis Skills Progress — Fight Suicide Project',
+                `Date: ${new Date().toLocaleDateString()}`,
+                ''
+            ];
+            Object.entries(CS_SKILLS).forEach(([id, info]) => {
+                const s = stats[id] || {};
+                if ((s.used||0) === 0) return;
+                lines.push(`${info.label}`);
+                lines.push(`  Used: ${s.used||0}× | ✅ Helped: ${s.helped||0}× | 🌿 A little: ${s.alittle||0}× | 😕 Not really: ${s.notreally||0}×`);
+            });
+            if (notes.length > 0) {
+                lines.push('', '📋 Recent Notes:');
+                notes.slice(0, 5).forEach(n => {
+                    lines.push(`• ${n.label} — ${n.rating||'no rating'} — ${n.date}`);
+                    if (n.notes) lines.push(`  "${n.notes}"`);
+                });
+            }
+            lines.push('', '— Fight Suicide Project 💜');
+            shareContent(lines.join('\n'), method);
+        }
+
         function switchMysticBotInfoTab(tab) {
             const generalPanel = document.getElementById('mysticGeneralSupportPanel');
             const screamPanel = document.getElementById('mysticScreamTherapyPanel');
@@ -7097,7 +7568,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const dateVal = document.getElementById('diary-date').value;
             const timeVal = document.getElementById('diary-time').value;
             const now = new Date();
-            const date = dateVal || now.toISOString().split('T')[0];
+            const _pad = n => String(n).padStart(2, '0');
+            const localDate = `${now.getFullYear()}-${_pad(now.getMonth()+1)}-${_pad(now.getDate())}`;
+            const date = dateVal || localDate;
             const time = timeVal || now.toTimeString().slice(0, 5);
             const timestamp = new Date(`${date}T${time}:00`).toISOString();
             const entryId = Date.now().toString();
@@ -7225,6 +7698,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
             
             if (emptyMsg) emptyMsg.style.display = 'none';
+
+            // Store rendered entries globally so shareDiary() uses the same list
+            window._renderedDiaryEntries = entries;
             
             let html = '';
             entries.forEach((entry, idx) => {
@@ -7316,11 +7792,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         };
 
         function shareDiary(idx, method) {
-            const entries = getDiaryEntries();
+            const entries = window._renderedDiaryEntries || getDiaryEntries();
             const e = entries[idx];
             if (!e) return;
             const text = buildDiaryShareText(e);
-            shareContent(text, method);
+            shareContent(text, method, e.gif || null);
         }
 
         function shareCurrentDiary(method) {
@@ -7331,33 +7807,60 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const dateVal = document.getElementById('diary-date').value;
             const timeVal = document.getElementById('diary-time').value;
             const now = new Date();
-            const date = dateVal || now.toISOString().split('T')[0];
+            // Use local date (not UTC) to avoid timezone off-by-one
+            const pad = n => String(n).padStart(2, '0');
+            const localDate = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+            const date = dateVal || localDate;
             const time = timeVal || now.toTimeString().slice(0, 5);
+            // Include selected GIF if any
+            const gifImg = document.getElementById('mood-gif-preview-img');
+            const gif = (gifImg && gifImg.src && document.getElementById('mood-gif-preview').style.display !== 'none') ? gifImg.src : null;
             const entry = {
                 date,
                 time,
                 mood,
                 emoji: moodEmojis[mood - 1],
                 feelings,
-                note: notes
+                note: notes,
+                gif
             };
             const text = buildDiaryShareText(entry);
-            shareContent(text, method);
+            shareContent(text, method, gif);
         }
 
         function buildDiaryShareText(entry) {
-            const d = new Date(entry.date + 'T' + (entry.time || '12:00'));
-            const dateStr = d.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+            // Parse as local time to avoid timezone date shift
+            const [y, m, d] = (entry.date || '').split('-').map(Number);
+            const [h, min] = (entry.time || '12:00').split(':').map(Number);
+            const dt = new Date(y, m - 1, d, h, min);
+            const dateStr = dt.toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
             let text = `📓 My Diary Entry - ${dateStr}\n`;
             text += `Mood: ${entry.emoji} ${entry.mood}/10\n`;
             if (entry.feelings && entry.feelings.length) text += `Feeling: ${entry.feelings.join(', ')}\n`;
             if (entry.note) text += `\n${entry.note}\n`;
+            if (entry.gif) text += `\n🎬 GIF: ${entry.gif}\n`;
             text += `\n— From MysticMinded³³`;
             return text;
         }
 
-        function shareContent(text, method) {
+        async function shareContent(text, method, gifUrl) {
             const encoded = encodeURIComponent(text);
+            // If we have a GIF and the browser supports native share with files, use it
+            if (gifUrl && method === 'whatsapp' && navigator.canShare) {
+                try {
+                    const resp = await fetch(gifUrl);
+                    const blob = await resp.blob();
+                    const file = new File([blob], 'mood.gif', { type: blob.type });
+                    if (navigator.canShare({ files: [file] })) {
+                        await navigator.share({ text, files: [file] });
+                        return;
+                    }
+                } catch(e) { /* fall through to text share */ }
+            }
+            // Native share sheet (mobile) — preferred when available
+            if (method === 'whatsapp' && navigator.share) {
+                try { await navigator.share({ text }); return; } catch(e) { /* fall through */ }
+            }
             if (method === 'whatsapp') {
                 window.open(`https://wa.me/?text=${encoded}`, '_blank');
             } else if (method === 'sms') {
@@ -7369,7 +7872,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function initDiary() {
             const now = new Date();
-            document.getElementById('diary-date').value = now.toISOString().split('T')[0];
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById('diary-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
             document.getElementById('diary-time').value = now.toTimeString().slice(0, 5);
             renderDiaryEntries();
         }
@@ -7612,6 +8116,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             // Hide selection, show guide
             document.getElementById('breathingSelection').style.display = 'none';
             document.getElementById('breathingGuide').style.display = 'block';
+            // Hide save panel if re-starting
+            const savePanel = document.getElementById('breathingSavePanel');
+            if (savePanel) savePanel.style.display = 'none';
             
             const circle = document.getElementById('breathingCircle');
             const text = document.getElementById('breathingText');
@@ -7739,6 +8246,73 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             stopGuidedBreathing();
             document.getElementById('breathingOverlay').style.display = 'none';
             document.body.style.overflow = 'auto';
+        }
+
+        let breathingCurrentRating = 0;
+        let breathingCurrentTechnique = '4-7-8';
+
+        function showBreathingSavePanel() {
+            stopGuidedBreathing();
+            document.getElementById('breathingSavePanel').style.display = 'block';
+            document.getElementById('breathingSavePanel').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function setBreathingRating(n) {
+            breathingCurrentRating = n;
+            document.querySelectorAll('.breathing-rating-btn').forEach(btn => {
+                const isSelected = parseInt(btn.dataset.rating) === n;
+                btn.style.background = isSelected ? '#22c55e' : 'rgba(34,197,94,0.1)';
+                btn.style.color = isSelected ? 'white' : '#86efac';
+            });
+            const labels = ['😞 worse','😕 slightly worse','😐 about the same','🙂 a bit better','😌 somewhat better','😊 better','😄 noticeably better','😁 much better','🤩 great','🌟 amazing'];
+            document.getElementById('breathingRatingDisplay').textContent = `${n}/10 — ${labels[n-1]}`;
+        }
+
+        function buildBreathingShareText() {
+            const notes = document.getElementById('breathingSessionNotes')?.value?.trim() || '';
+            const rating = breathingCurrentRating;
+            const technique = document.getElementById('breathingTitle')?.textContent || 'Breathing';
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+            let text = `🧘 Breathing Exercise Session\n${dateStr} at ${timeStr}\n`;
+            text += `${'─'.repeat(36)}\n`;
+            text += `Technique: ${technique}\n`;
+            if (rating > 0) text += `😊 Feeling after: ${rating}/10\n`;
+            if (notes) text += `\n📝 Notes: ${notes}\n`;
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+
+        function saveBreathingSession() {
+            const rating = breathingCurrentRating;
+            if (rating === 0) { alert('Please rate how you feel before saving.'); return; }
+            const notes = document.getElementById('breathingSessionNotes')?.value?.trim() || '';
+            const technique = document.getElementById('breathingTitle')?.textContent || 'Breathing';
+            const session = { timestamp: new Date().toISOString(), type: 'breathing', technique, rating, notes };
+            const sessions = JSON.parse(localStorage.getItem('breathing_sessions') || '[]');
+            sessions.unshift(session);
+            if (sessions.length > 50) sessions.pop();
+            localStorage.setItem('breathing_sessions', JSON.stringify(sessions));
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                const id = session.timestamp.replace(/[:.]/g, '-');
+                setDoc(doc(db, 'users', auth.currentUser.uid, 'exerciseSessions', id), session)
+                    .catch(e => console.error('Firebase save error', e));
+            }
+            alert('✅ Breathing session saved to your journal!');
+            document.getElementById('breathingSavePanel').style.display = 'none';
+            document.getElementById('breathingSessionNotes').value = '';
+            breathingCurrentRating = 0;
+            document.querySelectorAll('.breathing-rating-btn').forEach(btn => {
+                btn.style.background = 'rgba(34,197,94,0.1)';
+                btn.style.color = '#86efac';
+            });
+            document.getElementById('breathingRatingDisplay').textContent = '';
+        }
+
+        async function shareBreathingSession(method) {
+            const text = buildBreathingShareText();
+            await shareContent(text, method, null);
         }
 
         function showContacts() {
@@ -8307,9 +8881,35 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             },
             {
                 id: "finish",
-                title: "You did it.",
-                message: "You stopped. You breathed. You stayed. That is incredible strength. If you need more support, the resources on this app are here for you — anytime.",
-                steps: "<em>Remember: If you are in immediate danger, please call 988 or Hatzoloh (718-230-1000).</em>"
+                title: "You did it. 💚",
+                message: "You stopped. You breathed. You stayed. That is incredible strength.",
+                steps: `<em style="color:#86efac;">Remember: If you are in immediate danger, please call 988 or Hatzoloh (718-230-1000).</em>
+<div id="stopSavePanel" style="margin-top:20px; padding:18px; background:rgba(34,197,94,0.1); border:2px solid #22c55e; border-radius:14px; text-align:left;">
+  <div style="color:#86efac; font-size:14px; font-weight:700; margin-bottom:10px;">💾 Save this moment to your journal</div>
+  <div style="margin-bottom:10px;">
+    <label style="color:#d1fae5; font-size:12px; font-weight:600; display:block; margin-bottom:6px;">How do you feel now? (1 = worse, 10 = much better)</label>
+    <div style="display:flex; gap:4px; flex-wrap:wrap; justify-content:center;">
+      <button onclick="setStopRating(1)" class="stop-rating-btn" data-rating="1" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">1</button>
+      <button onclick="setStopRating(2)" class="stop-rating-btn" data-rating="2" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">2</button>
+      <button onclick="setStopRating(3)" class="stop-rating-btn" data-rating="3" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">3</button>
+      <button onclick="setStopRating(4)" class="stop-rating-btn" data-rating="4" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">4</button>
+      <button onclick="setStopRating(5)" class="stop-rating-btn" data-rating="5" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">5</button>
+      <button onclick="setStopRating(6)" class="stop-rating-btn" data-rating="6" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">6</button>
+      <button onclick="setStopRating(7)" class="stop-rating-btn" data-rating="7" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">7</button>
+      <button onclick="setStopRating(8)" class="stop-rating-btn" data-rating="8" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">8</button>
+      <button onclick="setStopRating(9)" class="stop-rating-btn" data-rating="9" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">9</button>
+      <button onclick="setStopRating(10)" class="stop-rating-btn" data-rating="10" style="padding:6px 9px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:7px; cursor:pointer; font-weight:700; font-size:12px;">10</button>
+    </div>
+    <p id="stopRatingDisplay" style="color:#86efac; font-size:12px; margin-top:5px; text-align:center;"></p>
+  </div>
+  <textarea id="stopSessionNotes" placeholder="What helped most? Any thoughts to remember…" rows="2" style="width:100%; background:rgba(34,197,94,0.08); border:2px solid #22c55e; border-radius:8px; color:#d1fae5; font-size:12px; padding:8px; resize:vertical; box-sizing:border-box; font-family:inherit; margin-bottom:8px;"></textarea>
+  <button onclick="saveStopSession()" style="background:#22c55e; color:white; border:none; padding:10px; border-radius:9px; font-size:13px; font-weight:700; cursor:pointer; width:100%; margin-bottom:7px;">💾 Save to Journal</button>
+  <div style="display:flex; gap:7px; flex-wrap:wrap;">
+    <button onclick="shareStopSession('whatsapp')" style="flex:1; padding:9px 6px; background:#25D366; color:white; border:none; border-radius:9px; font-size:11px; font-weight:700; cursor:pointer;">📱 WhatsApp</button>
+    <button onclick="shareStopSession('sms')" style="flex:1; padding:9px 6px; background:#3b82f6; color:white; border:none; border-radius:9px; font-size:11px; font-weight:700; cursor:pointer;">💬 Text</button>
+    <button onclick="shareStopSession('email')" style="flex:1; padding:9px 6px; background:#8b5cf6; color:white; border:none; border-radius:9px; font-size:11px; font-weight:700; cursor:pointer;">📧 Email</button>
+  </div>
+</div>`
             }
         ];
 
@@ -8611,6 +9211,42 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             circle.style.boxShadow = '0 0 40px rgba(34,197,94,0.4)';
         }
 
+        let stopCurrentRating = 0;
+        function setStopRating(n) {
+            stopCurrentRating = n;
+            document.querySelectorAll('.stop-rating-btn').forEach(btn => {
+                const sel = parseInt(btn.dataset.rating) === n;
+                btn.style.background = sel ? '#22c55e' : 'rgba(34,197,94,0.1)';
+                btn.style.color = sel ? 'white' : '#86efac';
+            });
+            const el = document.getElementById('stopRatingDisplay');
+            if (el) el.textContent = _ratingLabel(n);
+        }
+        function saveStopSession() {
+            if (!stopCurrentRating) { alert('Please rate how you feel before saving.'); return; }
+            const notes = document.getElementById('stopSessionNotes')?.value?.trim() || '';
+            const action = selectedStopAction || 'unknown';
+            saveExerciseSession('stop', stopCurrentRating, notes, { action });
+            alert('✅ Session saved to your journal!');
+            closeStopOverlay();
+        }
+        function buildStopShareText() {
+            const notes = document.getElementById('stopSessionNotes')?.value?.trim() || '';
+            const n = stopCurrentRating;
+            const actionLabel = { breathe:'Breathing', vent:'Venting', scream:'Screaming/Release', cry:'Allowing myself to cry', talk:'Talking to the chatbot' };
+            const action = actionLabel[selectedStopAction] || 'Coping exercise';
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+            let text = `🛑 STOP Crisis Skill Session\n${dateStr} at ${timeStr}\n${'─'.repeat(38)}\n`;
+            text += `I tried: ${action}\n`;
+            if (n) text += `😊 Feeling after: ${_ratingLabel(n)}\n`;
+            if (notes) text += `\n📝 Notes: ${notes}\n`;
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+        async function shareStopSession(method) { await shareContent(buildStopShareText(), method, null); }
+
         // Progressive Muscle Relaxation Functions
         let pmrCurrentStep = 0;
         let pmrTimer = null;
@@ -8734,11 +9370,41 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             circle.style.boxShadow = '0 0 60px rgba(34,197,94,0.8)';
             document.getElementById('pmrCircleText').textContent = '💚';
 
-            const closeBtn = document.createElement('button');
-            closeBtn.textContent = 'Finish';
-            closeBtn.style.cssText = 'background:#22c55e; color:white; border:none; padding:16px 40px; border-radius:12px; font-size:18px; font-weight:700; cursor:pointer; margin-top:24px; transition:background 0.2s;';
-            closeBtn.onclick = closePMR;
-            document.getElementById('pmrAction').parentElement.appendChild(closeBtn);
+            // Build save+share panel
+            const panel = document.createElement('div');
+            panel.id = 'pmrSavePanel';
+            panel.style.cssText = 'margin-top:28px; padding:20px; background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:14px; text-align:left; width:100%; box-sizing:border-box;';
+            panel.innerHTML = `
+                <h3 style="color:#86efac; font-size:17px; font-weight:700; margin-bottom:12px;">💾 Save This Session</h3>
+                <div style="margin-bottom:12px;">
+                    <label style="color:#d1fae5; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">How do you feel now? (1 = worse, 10 = much better)</label>
+                    <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
+                        <button onclick="setPMRRating(1)" class="pmr-rating-btn" data-rating="1" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">1</button>
+                        <button onclick="setPMRRating(2)" class="pmr-rating-btn" data-rating="2" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">2</button>
+                        <button onclick="setPMRRating(3)" class="pmr-rating-btn" data-rating="3" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">3</button>
+                        <button onclick="setPMRRating(4)" class="pmr-rating-btn" data-rating="4" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">4</button>
+                        <button onclick="setPMRRating(5)" class="pmr-rating-btn" data-rating="5" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">5</button>
+                        <button onclick="setPMRRating(6)" class="pmr-rating-btn" data-rating="6" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">6</button>
+                        <button onclick="setPMRRating(7)" class="pmr-rating-btn" data-rating="7" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">7</button>
+                        <button onclick="setPMRRating(8)" class="pmr-rating-btn" data-rating="8" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">8</button>
+                        <button onclick="setPMRRating(9)" class="pmr-rating-btn" data-rating="9" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">9</button>
+                        <button onclick="setPMRRating(10)" class="pmr-rating-btn" data-rating="10" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">10</button>
+                    </div>
+                    <p id="pmrRatingDisplay" style="color:#86efac; font-size:12px; margin-top:6px; text-align:center;"></p>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label style="color:#d1fae5; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Notes (optional)</label>
+                    <textarea id="pmrSessionNotes" placeholder="How did your body feel? What did you notice?..." rows="2" style="width:100%; background:rgba(34,197,94,0.08); border:2px solid #22c55e; border-radius:8px; color:#d1fae5; font-size:13px; padding:10px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+                </div>
+                <button onclick="savePMRSession()" style="background:#22c55e; color:white; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; width:100%; margin-bottom:8px;">💾 Save to Journal</button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+                    <button onclick="sharePMRSession('whatsapp')" style="flex:1; padding:10px 6px; background:#25D366; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📱 WhatsApp</button>
+                    <button onclick="sharePMRSession('sms')" style="flex:1; padding:10px 6px; background:#3b82f6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">💬 Text</button>
+                    <button onclick="sharePMRSession('email')" style="flex:1; padding:10px 6px; background:#8b5cf6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📧 Email</button>
+                </div>
+                <button onclick="closePMR()" style="background:#374151; color:white; border:none; padding:10px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; width:100%;">✕ Close</button>
+            `;
+            action.parentElement.appendChild(panel);
         }
 
         function closePMR() {
@@ -8753,6 +9419,57 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             document.body.style.overflow = '';
             pmrCurrentStep = 0;
         }
+
+        // ── Shared exercise session helper ──────────────────────────────
+        function saveExerciseSession(type, rating, notes, extra) {
+            const session = { timestamp: new Date().toISOString(), type, rating, notes, ...extra };
+            const key = type + '_sessions';
+            const sessions = JSON.parse(localStorage.getItem(key) || '[]');
+            sessions.unshift(session);
+            if (sessions.length > 50) sessions.pop();
+            localStorage.setItem(key, JSON.stringify(sessions));
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                const id = session.timestamp.replace(/[:.]/g, '-');
+                setDoc(doc(db, 'users', auth.currentUser.uid, 'exerciseSessions', id), session)
+                    .catch(e => console.error('Firebase save error', e));
+            }
+        }
+        const _ratingLabels = ['😞 worse','😕 slightly worse','😐 about the same','🙂 a bit better','😌 somewhat better','😊 better','😄 noticeably better','😁 much better','🤩 great','🌟 amazing'];
+        function _ratingLabel(n) { return n > 0 ? `${n}/10 — ${_ratingLabels[n-1]}` : ''; }
+        // ───────────────────────────────────────────────────────────────
+
+        // PMR rating/save/share
+        let pmrCurrentRating = 0;
+        function setPMRRating(n) {
+            pmrCurrentRating = n;
+            document.querySelectorAll('.pmr-rating-btn').forEach(btn => {
+                const sel = parseInt(btn.dataset.rating) === n;
+                btn.style.background = sel ? '#22c55e' : 'rgba(34,197,94,0.1)';
+                btn.style.color = sel ? 'white' : '#86efac';
+            });
+            const el = document.getElementById('pmrRatingDisplay');
+            if (el) el.textContent = _ratingLabel(n);
+        }
+        function savePMRSession() {
+            if (!pmrCurrentRating) { alert('Please rate how you feel before saving.'); return; }
+            const notes = document.getElementById('pmrSessionNotes')?.value?.trim() || '';
+            saveExerciseSession('pmr', pmrCurrentRating, notes, { exercise: 'Progressive Muscle Relaxation' });
+            alert('✅ PMR session saved to your journal!');
+            closePMR();
+        }
+        function buildPMRShareText() {
+            const notes = document.getElementById('pmrSessionNotes')?.value?.trim() || '';
+            const n = pmrCurrentRating;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+            let text = `💆 Progressive Muscle Relaxation Session\n${dateStr} at ${timeStr}\n${'─'.repeat(38)}\n`;
+            if (n) text += `😊 Feeling after: ${_ratingLabel(n)}\n`;
+            if (notes) text += `\n📝 Notes: ${notes}\n`;
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+        async function sharePMRSession(method) { await shareContent(buildPMRShareText(), method, null); }
 
         // Scream Circle Functions
     let circleScreamRecognition = null;
@@ -9350,24 +10067,47 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             
             // Save to localStorage
             localStorage.setItem('scream_sessions', JSON.stringify(sessions));
+
+            // Also save to Firebase if logged in
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                const id = session.timestamp.replace(/[:.]/g, '-');
+                setDoc(doc(db, 'users', auth.currentUser.uid, 'exerciseSessions', id), { ...session, type: 'scream' })
+                    .catch(e => console.error('Firebase save error', e));
+            }
             
-            alert('✅ Session saved! You can review your scream sessions anytime.');
+            alert('✅ Session saved to your journal!');
             
             // Reset for next session
             screamCurrentRating = 0;
             const saveSec = document.getElementById('screamSaveSection');
-            if (saveSec) {
-                saveSec.style.display = 'none';
-            }
+            if (saveSec) saveSec.style.display = 'none';
             document.getElementById('screamSessionNotes').value = '';
             
             // Reset rating buttons
-            const buttons = document.querySelectorAll('.scream-rating-btn');
-            buttons.forEach(btn => {
+            document.querySelectorAll('.scream-rating-btn').forEach(btn => {
                 btn.style.background = 'rgba(124,58,237,0.1)';
                 btn.style.color = '#c4b5fd';
                 btn.style.borderColor = '#7c3aed';
             });
+        }
+
+        function buildScreamShareText() {
+            const notes = document.getElementById('screamSessionNotes')?.value?.trim() || '';
+            const rating = screamCurrentRating;
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = now.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+            let text = `😤 Scream/Release Session\n${dateStr} at ${timeStr}\n`;
+            text += `${'─'.repeat(36)}\n`;
+            if (rating > 0) text += `😊 Feeling after: ${rating}/10\n`;
+            if (notes) text += `\n📝 Notes: ${notes}\n`;
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+
+        async function shareScreamSession(method) {
+            const text = buildScreamShareText();
+            await shareContent(text, method, null);
         }
 
         function initScreamExperience() {
@@ -9750,8 +10490,207 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         document.addEventListener('DOMContentLoaded', function() { renderBookEntries(); });
 
+        // ===== WHAT I TRIED — coping tracker =====
+        const WIT_DEFAULTS = [
+            '🧘 Breathing exercise',
+            '🚶 Went for a walk',
+            '📓 Wrote in my diary',
+            '🎵 Listened to music',
+            '🙏 Prayed / talked to G-d',
+            '💬 Called / texted a friend',
+            '🎨 Drew or painted',
+            '🛁 Took a shower / bath',
+            '🧊 Used cold water / ice',
+            '📱 Used an app (MysticMinded)',
+            '🍵 Made tea / drank water',
+            '😤 Did the release exercise',
+            '🧸 Used a comfort object',
+            '📺 Watched something calming',
+            '🌳 Went outside / got fresh air',
+        ];
+
+        function initWhatITried() {
+            // Set default date/time
+            const now = new Date();
+            const pad = n => String(n).padStart(2, '0');
+            document.getElementById('wit-date').value = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}`;
+            document.getElementById('wit-time').value = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            renderWitChecklist();
+            renderWitSavedEntries();
+        }
+
+        function renderWitChecklist() {
+            const list = document.getElementById('wit-exercise-list');
+            if (!list) return;
+            // Get custom extras from localStorage
+            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const all = [...WIT_DEFAULTS, ...extras];
+            list.innerHTML = all.map((label, i) => `
+                <div style="display:flex; align-items:center; gap:10px; background:white; border:2px solid #bbf7d0; border-radius:10px; padding:10px 14px; transition: border-color 0.2s;">
+                    <input type="checkbox" id="wit-chk-${i}" style="width:18px; height:18px; accent-color:#16a34a; cursor:pointer; flex-shrink:0;">
+                    <label for="wit-chk-${i}" style="flex:1; font-size:14px; color:#166534; cursor:pointer;">${label}</label>
+                    <select id="wit-rate-${i}" style="padding:4px 8px; border:2px solid #86efac; border-radius:8px; font-size:12px; color:#166534; background:#f0fdf4; cursor:pointer;">
+                        <option value="">Did it help?</option>
+                        <option value="helped">✅ It helped!</option>
+                        <option value="alittle">🌿 A little</option>
+                        <option value="notreally">😕 Not really</option>
+                        <option value="notsure">🤷 Not sure</option>
+                    </select>
+                    ${i >= WIT_DEFAULTS.length ? `<button onclick="removeWitCustom(${i - WIT_DEFAULTS.length})" style="background:none; border:none; color:#f87171; font-size:16px; cursor:pointer; padding:0; line-height:1;">✕</button>` : ''}
+                </div>
+            `).join('');
+        }
+
+        function addWitCustomExercise() {
+            const input = document.getElementById('wit-custom-input');
+            const val = input.value.trim();
+            if (!val) return;
+            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            extras.push(val);
+            localStorage.setItem('witCustomExercises', JSON.stringify(extras));
+            input.value = '';
+            renderWitChecklist();
+        }
+
+        function removeWitCustom(idx) {
+            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            extras.splice(idx, 1);
+            localStorage.setItem('witCustomExercises', JSON.stringify(extras));
+            renderWitChecklist();
+        }
+
+        function collectWitData() {
+            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const all = [...WIT_DEFAULTS, ...extras];
+            const tried = [];
+            all.forEach((label, i) => {
+                const chk = document.getElementById(`wit-chk-${i}`);
+                if (chk && chk.checked) {
+                    const rate = document.getElementById(`wit-rate-${i}`);
+                    tried.push({ label, rating: rate ? rate.value : '' });
+                }
+            });
+            return {
+                date: document.getElementById('wit-date').value,
+                time: document.getElementById('wit-time').value,
+                before: document.getElementById('wit-before').value.trim(),
+                after: document.getElementById('wit-after').value.trim(),
+                notes: document.getElementById('wit-notes').value.trim(),
+                tried
+            };
+        }
+
+        function buildWitText(data) {
+            const pad = n => String(n).padStart(2,'0');
+            const [y, m, d] = (data.date || '').split('-').map(Number);
+            const [h, min] = (data.time || '00:00').split(':').map(Number);
+            const dt = new Date(y, m - 1, d, h, min);
+            const dateStr = dt.toLocaleDateString('en-US', { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+            const timeStr = dt.toLocaleTimeString('en-US', { hour:'numeric', minute:'2-digit', hour12:true });
+
+            const ratingLabels = { helped:'✅ It helped!', alittle:'🌿 A little', notreally:'😕 Not really', notsure:'🤷 Not sure', '':'(no rating)' };
+
+            let text = `📋 Here's What I Tried — ${dateStr} at ${timeStr}\n`;
+            text += `${'─'.repeat(44)}\n`;
+            if (data.before) text += `😔 Before: ${data.before}\n`;
+            text += `\n🛠️ Coping Strategies I Tried:\n`;
+            if (data.tried.length === 0) {
+                text += `  (none checked)\n`;
+            } else {
+                data.tried.forEach(t => {
+                    text += `  • ${t.label}  →  ${ratingLabels[t.rating] || '(no rating)'}\n`;
+                });
+            }
+            if (data.after) text += `\n😊 After: ${data.after}\n`;
+            if (data.notes) text += `\n📝 Notes: ${data.notes}\n`;
+            text += `\n— Shared from MysticMinded³³`;
+            return text;
+        }
+
+        function saveWitEntry() {
+            const data = collectWitData();
+            if (data.tried.length === 0 && !data.before && !data.after && !data.notes) {
+                alert('Please fill in at least one field or check a strategy before saving!');
+                return;
+            }
+            data.id = Date.now().toString();
+            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            entries.unshift(data);
+            localStorage.setItem('witEntries', JSON.stringify(entries));
+
+            // Also save to diary's "what helped" if user is logged in
+            if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                setDoc(doc(db, 'users', auth.currentUser.uid, 'witEntries', data.id), data)
+                    .then(() => console.log('✅ WIT entry saved to Firebase'))
+                    .catch(e => console.error('❌ WIT Firebase save error', e));
+            }
+
+            renderWitSavedEntries();
+            alert('✅ Saved to your journal! You can view it in Past Entries below.');
+        }
+
+        async function shareWitEntry(method) {
+            const data = collectWitData();
+            const text = buildWitText(data);
+            await shareContent(text, method, null);
+        }
+
+        function renderWitSavedEntries() {
+            const list = document.getElementById('wit-saved-list');
+            const empty = document.getElementById('wit-empty-msg');
+            if (!list) return;
+            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            if (entries.length === 0) {
+                list.innerHTML = '';
+                if (empty) empty.style.display = 'block';
+                return;
+            }
+            if (empty) empty.style.display = 'none';
+            const ratingLabels = { helped:'✅ Helped!', alittle:'🌿 A little', notreally:'😕 Not really', notsure:'🤷 Not sure', '':'' };
+            list.innerHTML = entries.map((e, idx) => {
+                const [y, m, d] = (e.date || '').split('-').map(Number);
+                const [h, min] = (e.time || '00:00').split(':').map(Number);
+                const dt = new Date(y, m - 1, d, h, min);
+                const dateStr = dt.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric', year:'numeric' });
+                const triedHtml = (e.tried || []).map(t => `
+                    <div style="display:flex; justify-content:space-between; align-items:center; font-size:12px; padding:3px 0; border-bottom:1px solid #bbf7d0;">
+                        <span style="color:#166534;">${t.label}</span>
+                        <span style="color:#16a34a; font-weight:600; white-space:nowrap; margin-left:8px;">${ratingLabels[t.rating] || ''}</span>
+                    </div>`).join('');
+                return `<div style="background:white; border:2px solid #86efac; border-radius:12px; padding:14px; position:relative;">
+                    <div style="font-weight:700; color:#166534; font-size:14px; margin-bottom:6px;">📅 ${dateStr}</div>
+                    ${e.before ? `<div style="font-size:12px; color:#4b7c59; margin-bottom:4px;">😔 Before: ${e.before}</div>` : ''}
+                    <div style="margin: 6px 0;">${triedHtml || '<em style="font-size:12px;color:#9ca3af;">No strategies logged</em>'}</div>
+                    ${e.after ? `<div style="font-size:12px; color:#4b7c59; margin-top:4px;">😊 After: ${e.after}</div>` : ''}
+                    ${e.notes ? `<div style="font-size:12px; color:#4b7c59; margin-top:4px; padding:6px; background:#f0fdf4; border-radius:6px;">📝 ${e.notes}</div>` : ''}
+                    <div style="display:flex; gap:6px; margin-top:10px; flex-wrap:wrap;">
+                        <button onclick="shareWitSaved(${idx},'whatsapp')" style="flex:1; padding:6px; background:#25D366; color:white; border:none; border-radius:8px; cursor:pointer; font-size:11px; font-weight:600;">WhatsApp</button>
+                        <button onclick="shareWitSaved(${idx},'sms')" style="flex:1; padding:6px; background:#3b82f6; color:white; border:none; border-radius:8px; cursor:pointer; font-size:11px; font-weight:600;">Text</button>
+                        <button onclick="shareWitSaved(${idx},'email')" style="flex:1; padding:6px; background:#8b5cf6; color:white; border:none; border-radius:8px; cursor:pointer; font-size:11px; font-weight:600;">Email</button>
+                        <button onclick="deleteWitEntry(${idx})" style="padding:6px 10px; background:#ef4444; color:white; border:none; border-radius:8px; cursor:pointer; font-size:11px;">🗑️</button>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        async function shareWitSaved(idx, method) {
+            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            if (!entries[idx]) return;
+            const text = buildWitText(entries[idx]);
+            await shareContent(text, method, null);
+        }
+
+        function deleteWitEntry(idx) {
+            if (!confirm('Delete this entry?')) return;
+            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            entries.splice(idx, 1);
+            localStorage.setItem('witEntries', JSON.stringify(entries));
+            renderWitSavedEntries();
+        }
+        // ===== END WHAT I TRIED =====
+
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards'];
+        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards', 'what-i-tried'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -9777,6 +10716,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
             console.log(`Navigating to: ${section}`);
             if (section === 'talk-to-god') { setTimeout(initTehillim, 100); }
+            if (section === 'what-i-tried') { setTimeout(initWhatITried, 100); }
+            if (section === 'crisis-skills') { setTimeout(initCrisisSkillPanels, 100); }
             // Update hamburger label to reflect current section
             const hamburgerLabel = document.getElementById('hamburgerLabel');
             if (hamburgerLabel) {
@@ -9837,8 +10778,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     <button onclick="this.closest('.help-guide-modal').remove()" style="position:absolute;top:12px;right:16px;background:none;border:none;color:#ff69b4;font-size:24px;cursor:pointer;line-height:1;">✕</button>
 
                     <div style="text-align:center;margin-bottom:20px;">
-                        <h2 style="color:#ff1493;font-size:24px;font-weight:800;margin:0 0 4px 0;">Fight Suicide Project</h2>
-                        <p style="color:#ff69b4;font-size:15px;margin:0 0 6px 0;font-weight:700;">We got you!</p>
+                        <h2 style="color:#4d235a;font-size:24px;font-weight:800;margin:0 0 4px 0;">Fight Suicide Project</h2>
+                        <p style="color:#6c4f71;font-size:15px;margin:0 0 6px 0;font-weight:700;">We got you!</p>
                         <p style="color:#fce7f3;font-size:14px;margin:0 0 16px 0;line-height:1.6;">A safe space built with love — tools to breathe, cope, plan, and feel heard. Whatever you need right now, we have it.</p>
                     </div>
 
@@ -9852,7 +10793,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     <!-- Welcome message -->
                     <div style="background:rgba(255,20,147,0.08);border:1px solid rgba(255,20,147,0.3);border-radius:16px;padding:18px;margin-bottom:20px;">
                         <p style="color:#fce7f3;font-size:14px;line-height:1.8;margin:0 0 12px 0;">
-                            Welcome to the <strong style="color:#ff69b4;">MysticMinded³³ Fight Suicide Project</strong>. We are so happy you are here!! 💗
+                            Welcome to the <strong style="color:#c2a25c;">MysticMinded³³ Fight Suicide Project</strong>. We are so happy you are here!! 💗
                         </p>
                         <div style="background:rgba(220,38,38,0.2);border:2px solid #ef4444;border-radius:12px;padding:14px;margin-bottom:12px;">
                             <p style="color:#fca5a5;font-size:14px;font-weight:700;margin:0 0 6px 0;">🚨 If you are in suicidal crisis or imminent risk of self-harm:</p>
@@ -14806,7 +15747,39 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             <p id="breathingInstruction" style="color:#d1d5db; font-size:17px; line-height:1.7; margin-bottom:24px;">Follow the circle and the prompts</p>
             <div id="breathingCounter" style="color:#22c55e; font-size:48px; font-weight:700; margin-bottom:24px;">4</div>
             <button onclick="stopGuidedBreathing()" style="background:#374151; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; margin-right:12px;">⏸️ Pause</button>
-            <button onclick="closeBreathingOverlay()" style="background:#22c55e; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer;">✓ Done</button>
+            <button onclick="showBreathingSavePanel()" style="background:#22c55e; color:white; border:none; padding:12px 32px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer;">✓ Done</button>
+
+            <!-- Save & Share panel (shown after Done) -->
+            <div id="breathingSavePanel" style="display:none; margin-top:28px; padding:20px; background:rgba(34,197,94,0.12); border:2px solid #22c55e; border-radius:14px; text-align:left; width:100%; box-sizing:border-box;">
+                <h3 style="color:#86efac; font-size:17px; font-weight:700; margin-bottom:12px;">💾 Save This Session</h3>
+                <div style="margin-bottom:12px;">
+                    <label style="color:#d1fae5; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">How do you feel now? (1 = worse, 10 = much better)</label>
+                    <div style="display:flex; gap:5px; flex-wrap:wrap; justify-content:center;">
+                        <button onclick="setBreathingRating(1)" class="breathing-rating-btn" data-rating="1" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">1</button>
+                        <button onclick="setBreathingRating(2)" class="breathing-rating-btn" data-rating="2" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">2</button>
+                        <button onclick="setBreathingRating(3)" class="breathing-rating-btn" data-rating="3" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">3</button>
+                        <button onclick="setBreathingRating(4)" class="breathing-rating-btn" data-rating="4" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">4</button>
+                        <button onclick="setBreathingRating(5)" class="breathing-rating-btn" data-rating="5" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">5</button>
+                        <button onclick="setBreathingRating(6)" class="breathing-rating-btn" data-rating="6" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">6</button>
+                        <button onclick="setBreathingRating(7)" class="breathing-rating-btn" data-rating="7" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">7</button>
+                        <button onclick="setBreathingRating(8)" class="breathing-rating-btn" data-rating="8" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">8</button>
+                        <button onclick="setBreathingRating(9)" class="breathing-rating-btn" data-rating="9" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">9</button>
+                        <button onclick="setBreathingRating(10)" class="breathing-rating-btn" data-rating="10" style="padding:7px 10px; border:2px solid #22c55e; background:rgba(34,197,94,0.1); color:#86efac; border-radius:8px; cursor:pointer; font-weight:700; font-size:13px;">10</button>
+                    </div>
+                    <p id="breathingRatingDisplay" style="color:#86efac; font-size:12px; margin-top:6px; text-align:center;"></p>
+                </div>
+                <div style="margin-bottom:12px;">
+                    <label style="color:#d1fae5; font-size:13px; font-weight:600; display:block; margin-bottom:6px;">Notes about this session (optional)</label>
+                    <textarea id="breathingSessionNotes" placeholder="How did it go? What did you notice?..." rows="2" style="width:100%; background:rgba(34,197,94,0.08); border:2px solid #22c55e; border-radius:8px; color:#d1fae5; font-size:13px; padding:10px; resize:vertical; box-sizing:border-box; font-family:inherit;"></textarea>
+                </div>
+                <button onclick="saveBreathingSession()" style="background:#22c55e; color:white; border:none; padding:12px; border-radius:10px; font-size:14px; font-weight:700; cursor:pointer; width:100%; margin-bottom:8px;">💾 Save to Journal</button>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:8px;">
+                    <button onclick="shareBreathingSession('whatsapp')" style="flex:1; padding:10px 8px; background:#25D366; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📱 WhatsApp</button>
+                    <button onclick="shareBreathingSession('sms')" style="flex:1; padding:10px 8px; background:#3b82f6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">💬 Text</button>
+                    <button onclick="shareBreathingSession('email')" style="flex:1; padding:10px 8px; background:#8b5cf6; color:white; border:none; border-radius:10px; font-size:12px; font-weight:700; cursor:pointer;">📧 Email</button>
+                </div>
+                <button onclick="closeBreathingOverlay()" style="background:#374151; color:white; border:none; padding:10px; border-radius:10px; font-size:13px; font-weight:600; cursor:pointer; width:100%;">✕ Close</button>
+            </div>
         </div>
     </div>
 
