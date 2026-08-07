@@ -7977,12 +7977,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                         ].filter(Boolean).join('\r\n');
                         const blob = new Blob([vcf], { type: 'text/vcard' });
                         const url  = URL.createObjectURL(blob);
-                        const a    = document.createElement('a');
-                        a.href     = url;
-                        a.download = `${cleanName.replace(/\s+/g, '_')}.vcf`;
-                        document.body.appendChild(a);
-                        a.click();
-                        setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 1000);
+                        // Navigate directly — iOS & Android open native Add Contact screen
+                        window.location.href = url;
+                        setTimeout(() => URL.revokeObjectURL(url), 3000);
                     });
                     card.appendChild(saveBtn);
                 }
