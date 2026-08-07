@@ -8690,61 +8690,63 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 notes: safetyPlanNotes,
                 lastUpdated: new Date().toISOString()
             };
-            
-            // Save to localStorage as backup
-            localStorage.setItem('safetyPlanData', JSON.stringify(data));
-            
-            // Save to Firebase if user is logged in
+
+            // Save to Firebase if user is logged in (source of truth)
             const user = typeof auth !== 'undefined' ? auth.currentUser : null;
             if (user) {
+                // Per-user localStorage key so accounts never bleed into each other
+                localStorage.setItem(`safetyPlanData_${user.uid}`, JSON.stringify(data));
                 try {
-                    if (typeof setDoc === 'undefined' || typeof doc === 'undefined') {
-                        console.warn('⚠️ Firebase functions not ready, saved to localStorage only');
-                    } else {
+                    if (typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
                         await setDoc(doc(db, 'users', user.uid, 'safetyPlan', 'current'), data);
                         console.log('✅ Safety plan saved to Firebase');
                     }
                 } catch (error) {
                     console.error('❌ Error saving safety plan to Firebase:', error);
-                    console.log('📝 Safety plan saved to localStorage as backup');
                 }
             } else {
-                console.log('📝 User not logged in, safety plan saved to localStorage');
+                // Not logged in — only store under anonymous key, never overwrite a real user's data
+                localStorage.setItem('safetyPlanData_anonymous', JSON.stringify(data));
             }
         }
 
         async function loadSafetyPlan() {
+            // ── Always wipe in-memory state first so no previous user's data leaks ──
+            Object.keys(safetyPlanSelections).forEach(k => safetyPlanSelections[k] = new Set());
+            Object.keys(safetyPlanNotes).forEach(k => safetyPlanNotes[k] = '');
+
             const user = typeof auth !== 'undefined' ? auth.currentUser : null;
             let data = null;
-            
-            // Try to load from Firebase first if user is logged in
+
+            // Try Firebase first (logged-in users only)
             if (user) {
                 try {
-                    if (typeof getDoc === 'undefined' || typeof doc === 'undefined') {
-                        console.warn('⚠️ Firebase functions not ready, using localStorage');
-                    } else {
+                    if (typeof getDoc !== 'undefined' && typeof doc !== 'undefined') {
                         const docRef = doc(db, 'users', user.uid, 'safetyPlan', 'current');
                         const docSnap = await getDoc(docRef);
                         if (docSnap.exists()) {
                             data = docSnap.data();
                             console.log('✅ Safety plan loaded from Firebase');
-                        } else {
-                            console.log('ℹ️ No safety plan in Firebase yet, creating new one');
                         }
                     }
                 } catch (error) {
-                    // Silently fail and fall back to localStorage
-                    // Permission errors are expected if using test credentials
-                    console.log('📱 Falling back to localStorage for safety plan');
+                    console.log('📱 Firebase error, falling back to per-user localStorage');
+                }
+
+                // Fall back to THIS user's localStorage cache (not a global key)
+                if (!data) {
+                    const stored = localStorage.getItem(`safetyPlanData_${user.uid}`);
+                    if (stored) {
+                        data = JSON.parse(stored);
+                        console.log('📱 Safety plan loaded from per-user localStorage cache');
+                    }
                 }
             }
-            
-            // Fall back to localStorage if no Firebase data
-            if (!data) {
-                const stored = localStorage.getItem('safetyPlanData');
+            // NOT logged in — only load the anonymous draft, never another user's data
+            else {
+                const stored = localStorage.getItem('safetyPlanData_anonymous');
                 if (stored) {
                     data = JSON.parse(stored);
-                    console.log('📱 Safety plan loaded from localStorage');
                 }
             }
             
@@ -13780,6 +13782,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             try {
                 await signOut(auth);
                 console.log('User signed out');
+                // Wipe in-memory safety plan so next user sees a blank slate
+                Object.keys(safetyPlanSelections).forEach(k => safetyPlanSelections[k] = new Set());
+                Object.keys(safetyPlanNotes).forEach(k => safetyPlanNotes[k] = '');
                 // Close dropdown
                 const dd = document.getElementById('account-dropdown');
                 if (dd) dd.style.display = 'none';
