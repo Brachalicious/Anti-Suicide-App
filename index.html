@@ -7917,9 +7917,28 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 const phoneEl = card.querySelector('.phone');
                 const name = h3 ? h3.textContent.trim() : 'Crisis Resource';
                 const phone = phoneEl ? phoneEl.textContent.trim() : '';
-                const text = encodeURIComponent(
-                    `🆘 Crisis Resource\n\n${name}\n${phone}\n\nYou are not alone. Help is available 24/7.\n\n— Fight Suicide Project 💜\nhttps://fightsuicideproject.netlify.app`
-                );
+                // Grab all <p> description text (skip tiny fine-print under 30 chars)
+                const descParts = Array.from(card.querySelectorAll('p'))
+                    .map(p => p.textContent.trim())
+                    .filter(t => t.length > 30 && !t.startsWith('💡') && !t.startsWith('Hours'));
+                const desc = descParts.slice(0, 2).join(' '); // max 2 sentences
+                // Hours/availability line if present
+                const hoursEl = Array.from(card.querySelectorAll('p')).find(p => p.textContent.includes('Hours:') || p.textContent.includes('24/7') || p.textContent.includes('Mon–Fri'));
+                const hours = hoursEl ? `⏰ ${hoursEl.textContent.trim()}` : '';
+                const body = [
+                    `🆘 Crisis Resource`,
+                    ``,
+                    `🏥 ${name}`,
+                    phone ? `📞 ${phone}` : '',
+                    hours,
+                    desc ? `\nℹ️ ${desc}` : '',
+                    ``,
+                    `You are not alone. Help is always available. 💜`,
+                    ``,
+                    `— Fight Suicide Project`,
+                    `https://fightsuicideproject.netlify.app`
+                ].filter(l => l !== undefined && l !== null).join('\n');
+                const text = encodeURIComponent(body);
                 const btn = document.createElement('a');
                 btn.href = `https://wa.me/?text=${text}`;
                 btn.target = '_blank';
