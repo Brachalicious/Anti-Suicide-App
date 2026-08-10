@@ -1266,6 +1266,8 @@
             left: 50%;
             top: 50%;
             transform: translate(calc(-50% - 14px), -50%);
+            mix-blend-mode: multiply;      /* white areas become transparent over the sky */
+            filter: drop-shadow(0 2px 12px rgba(255,255,255,0.45)) drop-shadow(0 0 6px rgba(77,35,90,0.3));
         }
 
         /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
@@ -1507,6 +1509,7 @@
             .logo-container img {
                 image-rendering: -webkit-optimize-contrast;
                 image-rendering: crisp-edges;
+                mix-blend-mode: multiply;
             }
         }
 
