@@ -1627,13 +1627,13 @@
                             <!-- r=93: just outside gold ring (86 SVG units), circumference ≈ 584 units -->
                             <path id="ringCircle" d="M 150,57 a 93,93 0 1,1 -0.001,0"/>
                         </defs>
-                        <text font-family="Arial Black, Arial, sans-serif" font-size="11" font-weight="900" fill="#c2a25c" stroke="#c2a25c" stroke-width="0.4" filter="url(#textGlow)" style="paint-order:stroke fill;">
+                        <text font-family="Arial Black, Arial, sans-serif" font-size="11" font-weight="900" fill="#000000" stroke="#000000" stroke-width="0.4" filter="url(#textGlow)" style="paint-order:stroke fill;">
                             <textPath href="#ringCircle" startOffset="0%" textLength="584" lengthAdjust="spacing">✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦   ✦ FIGHT SUICIDE PROJECT ✦</textPath>
                         </text>
                     </svg>
                     <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" />
                 </div>
-                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#4d235a; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(194,162,92,0.45); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with MysticMinded³³ chatbot!</p>
+                <p class="tap-text" onclick="showAboutMysticMinded()" style="color:#000000; font-size:15px; font-weight:900; margin:0 0 0 6px; cursor:pointer; text-shadow:0 0 8px rgba(0,0,0,0.15); max-width:120px; line-height:1.4; text-align:left; flex-shrink:0;">👈 Tap logo to chat with MysticMinded³³ chatbot!</p>
             </div>
         </div>
 
@@ -3321,7 +3321,7 @@
                                 <li>Other means specific to your situation</li>
                             </ul>
                         </div>
-                        <textarea id="safety-environment-notes" placeholder="Write your plan for making your environment safe (Who will help? Where will items be stored?)..." style="width:100%; min-height:90px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="localStorage.setItem('safety-environment-notes', this.value)"></textarea>
+                        <textarea id="safety-environment-notes" placeholder="Write your plan for making your environment safe (Who will help? Where will items be stored?)..." style="width:100%; min-height:90px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="localStorage.setItem(_lsKey('safety-environment-notes'), this.value)"></textarea>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #065f46, #047857); border:2px solid #10b981; border-radius:16px; padding:20px; text-align:center;">
@@ -6205,7 +6205,7 @@
             { id: 'panda', emoji: '🐼', name: 'Bamboo', type: 'Panda', desc: 'Huggable, gentle, big cuddly bear', welcome: "*gives you the biggest, warmest bear hug* 🐼 Hi! I'm Bamboo! I give the BEST hugs. You look like you could use one. Want to talk while we cuddle?", placeholder: "Talk to Bamboo..." },
         ];
 
-        let adoptedPet = JSON.parse(localStorage.getItem('adoptedPet') || 'null');
+        let adoptedPet = JSON.parse(localStorage.getItem(_lsKey('adoptedPet')) || 'null');
 
         function openBuddyPanel() {
             document.getElementById('buddy-panel').style.display = 'block';
@@ -6291,7 +6291,7 @@
             const pet = petStoreAnimals.find(p => p.id === petId);
             if (!pet) return;
             adoptedPet = pet;
-            localStorage.setItem('adoptedPet', JSON.stringify(pet));
+            localStorage.setItem(_lsKey('adoptedPet'), JSON.stringify(pet));
 
             parentMessages.pet = {
                 welcome: pet.welcome,
@@ -6963,10 +6963,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         };
 
         function _csStats() {
-            return JSON.parse(localStorage.getItem('crisisSkillStats') || '{}');
+            return JSON.parse(localStorage.getItem(_lsKey('crisisSkillStats')) || '{}');
         }
         function _csNotes() {
-            return JSON.parse(localStorage.getItem('crisisSkillNotes') || '[]');
+            return JSON.parse(localStorage.getItem(_lsKey('crisisSkillNotes')) || '[]');
         }
 
         function initCrisisSkillPanels() {
@@ -7016,7 +7016,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (!stats[skillId]) stats[skillId] = { used: 0, helped: 0, alittle: 0, notreally: 0 };
             // only increment rating counts (not 'used') here — used increments on Save
             stats[skillId]._pendingRating = rating;
-            localStorage.setItem('crisisSkillStats', JSON.stringify(stats));
+            localStorage.setItem(_lsKey('crisisSkillStats'), JSON.stringify(stats));
 
             const color = CS_SKILLS[skillId]?.color || '#6366f1';
             const labels = { helped: '✅ Marked as Helpful!', alittle: '🌿 Marked: A little helpful', notreally: '😕 Marked: Not really helpful' };
@@ -7045,7 +7045,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             stats[skillId].used = (stats[skillId].used || 0) + 1;
             if (rating) stats[skillId][rating] = (stats[skillId][rating] || 0) + 1;
             delete stats[skillId]._pendingRating;
-            localStorage.setItem('crisisSkillStats', JSON.stringify(stats));
+            localStorage.setItem(_lsKey('crisisSkillStats'), JSON.stringify(stats));
 
             const allNotes = _csNotes();
             allNotes.unshift({
@@ -7055,7 +7055,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 notes,
                 date: new Date().toLocaleString()
             });
-            localStorage.setItem('crisisSkillNotes', JSON.stringify(allNotes));
+            localStorage.setItem(_lsKey('crisisSkillNotes'), JSON.stringify(allNotes));
 
             // Save to Firebase if logged in
             try {
@@ -7380,7 +7380,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     time,
                     timestamp
                 };
-                localStorage.setItem('pendingCheckIn', JSON.stringify(pendingData));
+                localStorage.setItem(_lsKey('pendingCheckIn'), JSON.stringify(pendingData));
                 console.log('💾 Pending check-in stored:', pendingData);
                 
                 alert('📱 Please sign in to save your check-in to your account.');
@@ -7419,12 +7419,12 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 }
 
                 // Also save to localStorage for offline access
-                const checkIns = JSON.parse(localStorage.getItem('dailyCheckIns') || '[]');
+                const checkIns = JSON.parse(localStorage.getItem(_lsKey('dailyCheckIns')) || '[]');
                 checkIns.unshift({
                     ...checkInData,
                     userId: userId
                 });
-                localStorage.setItem('dailyCheckIns', JSON.stringify(checkIns));
+                localStorage.setItem(_lsKey('dailyCheckIns'), JSON.stringify(checkIns));
                 console.log('✅ Saved to localStorage');
 
                 // Show success message
@@ -7556,11 +7556,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         function getDiaryEntries() {
-            return JSON.parse(localStorage.getItem('diaryEntries') || '[]');
+            return JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]');
         }
 
         function saveDiaryEntries(entries) {
-            localStorage.setItem('diaryEntries', JSON.stringify(entries));
+            localStorage.setItem(_lsKey('diaryEntries'), JSON.stringify(entries));
         }
 
         async function saveDiaryEntry() {
@@ -7739,7 +7739,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             console.log('🗑️ deleteDiaryEntry called', {
                 id,
                 idType: typeof id,
-                localStorageCount: JSON.parse(localStorage.getItem('diaryEntries') || '[]').length,
+                localStorageCount: JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]').length,
                 isAuthDefined: typeof auth !== 'undefined',
                 currentUser: typeof auth !== 'undefined' ? auth.currentUser : null,
                 isDbDefined: typeof db !== 'undefined'
@@ -7786,8 +7786,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         window.deleteDiaryEntry = deleteDiaryEntry;
         window.getDiaryDebugData = function() {
             return {
-                diaryEntriesInLocalStorage: localStorage.getItem('diaryEntries'),
-                sampleEntryId: JSON.parse(localStorage.getItem('diaryEntries') || '[]')[0]?.id,
+                diaryEntriesInLocalStorage: localStorage.getItem(_lsKey('diaryEntries')),
+                sampleEntryId: JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]')[0]?.id,
                 isAuthDefined: typeof auth !== 'undefined',
                 currentUser: typeof auth !== 'undefined' ? auth.currentUser : null,
                 isDbDefined: typeof db !== 'undefined',
@@ -8367,10 +8367,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const notes = document.getElementById('breathingSessionNotes')?.value?.trim() || '';
             const technique = document.getElementById('breathingTitle')?.textContent || 'Breathing';
             const session = { timestamp: new Date().toISOString(), type: 'breathing', technique, rating, notes };
-            const sessions = JSON.parse(localStorage.getItem('breathing_sessions') || '[]');
+            const sessions = JSON.parse(localStorage.getItem(_lsKey('breathing_sessions')) || '[]');
             sessions.unshift(session);
             if (sessions.length > 50) sessions.pop();
-            localStorage.setItem('breathing_sessions', JSON.stringify(sessions));
+            localStorage.setItem(_lsKey('breathing_sessions'), JSON.stringify(sessions));
             if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
                 const id = session.timestamp.replace(/[:.]/g, '-');
                 setDoc(doc(db, 'users', auth.currentUser.uid, 'exerciseSessions', id), session)
@@ -8398,6 +8398,28 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function showCoping() {
             alert('Coping Strategies:\n\n• Deep breathing exercises\n• Call or text a trusted friend\n• Take a warm bath or shower\n• Listen to calming music\n• Go for a walk outside\n• Practice mindfulness or meditation\n• Write in a journal\n• Use positive self-talk\n• Engage in a creative activity\n• Pet an animal\n\nFind what works best for you and practice regularly.');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // PER-USER localStorage HELPERS
+        // All private data is stored under keys namespaced to the
+        // current Firebase UID so no account can ever read another's data.
+        // ══════════════════════════════════════════════════════════════
+        function _uid() {
+            try { return firebase.auth().currentUser?.uid || 'anonymous'; }
+            catch(e) { return 'anonymous'; }
+        }
+        function _lsKey(k) { return `${k}__${_uid()}`; }
+        function _lsGet(k)  { return localStorage.getItem(_lsKey(k)); }
+        function _lsSet(k, v) { localStorage.setItem(_lsKey(k), v); }
+        function _lsDel(k)  { localStorage.removeItem(_lsKey(k)); }
+
+        // Wipe all private namespaced keys for a given uid on sign-out
+        function _clearUserStorage(uid) {
+            const suffix = `__${uid}`;
+            Object.keys(localStorage)
+                .filter(k => k.endsWith(suffix))
+                .forEach(k => localStorage.removeItem(k));
         }
 
         const safetyPlanSelections = {
@@ -8538,12 +8560,12 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         // Professional Contact Management
         function loadProfessionalContacts() {
-            const saved = localStorage.getItem('professionalContacts');
+            const saved = localStorage.getItem(_lsKey('professionalContacts'));
             return saved ? JSON.parse(saved) : [];
         }
 
         function saveProfessionalContactsToStorage(contacts) {
-            localStorage.setItem('professionalContacts', JSON.stringify(contacts));
+            localStorage.setItem(_lsKey('professionalContacts'), JSON.stringify(contacts));
         }
 
         function renderProfessionalContacts() {
@@ -10126,7 +10148,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
             
             // Get existing sessions or initialize array
-            const sessions = JSON.parse(localStorage.getItem('scream_sessions') || '[]');
+            const sessions = JSON.parse(localStorage.getItem(_lsKey('scream_sessions')) || '[]');
             
             // Create new session object
             const session = {
@@ -10145,7 +10167,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
             
             // Save to localStorage
-            localStorage.setItem('scream_sessions', JSON.stringify(sessions));
+            localStorage.setItem(_lsKey('scream_sessions'), JSON.stringify(sessions));
 
             // Also save to Firebase if logged in
             if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
@@ -10504,12 +10526,12 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         function getBookEntries() {
-            try { return JSON.parse(localStorage.getItem('affirmationBook') || '[]'); }
+            try { return JSON.parse(localStorage.getItem(_lsKey('affirmationBook')) || '[]'); }
             catch { return []; }
         }
 
         function saveBookEntries(entries) {
-            localStorage.setItem('affirmationBook', JSON.stringify(entries));
+            localStorage.setItem(_lsKey('affirmationBook'), JSON.stringify(entries));
         }
 
         function addBookAffirmation() {
@@ -10602,7 +10624,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const list = document.getElementById('wit-exercise-list');
             if (!list) return;
             // Get custom extras from localStorage
-            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const extras = JSON.parse(localStorage.getItem(_lsKey('witCustomExercises')) || '[]');
             const all = [...WIT_DEFAULTS, ...extras];
             list.innerHTML = all.map((label, i) => `
                 <div style="display:flex; align-items:center; gap:10px; background:white; border:2px solid #bbf7d0; border-radius:10px; padding:10px 14px; transition: border-color 0.2s;">
@@ -10624,22 +10646,22 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const input = document.getElementById('wit-custom-input');
             const val = input.value.trim();
             if (!val) return;
-            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const extras = JSON.parse(localStorage.getItem(_lsKey('witCustomExercises')) || '[]');
             extras.push(val);
-            localStorage.setItem('witCustomExercises', JSON.stringify(extras));
+            localStorage.setItem(_lsKey('witCustomExercises'), JSON.stringify(extras));
             input.value = '';
             renderWitChecklist();
         }
 
         function removeWitCustom(idx) {
-            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const extras = JSON.parse(localStorage.getItem(_lsKey('witCustomExercises')) || '[]');
             extras.splice(idx, 1);
-            localStorage.setItem('witCustomExercises', JSON.stringify(extras));
+            localStorage.setItem(_lsKey('witCustomExercises'), JSON.stringify(extras));
             renderWitChecklist();
         }
 
         function collectWitData() {
-            const extras = JSON.parse(localStorage.getItem('witCustomExercises') || '[]');
+            const extras = JSON.parse(localStorage.getItem(_lsKey('witCustomExercises')) || '[]');
             const all = [...WIT_DEFAULTS, ...extras];
             const tried = [];
             all.forEach((label, i) => {
@@ -10693,9 +10715,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 return;
             }
             data.id = Date.now().toString();
-            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(_lsKey('witEntries')) || '[]');
             entries.unshift(data);
-            localStorage.setItem('witEntries', JSON.stringify(entries));
+            localStorage.setItem(_lsKey('witEntries'), JSON.stringify(entries));
 
             // Also save to diary's "what helped" if user is logged in
             if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
@@ -10718,7 +10740,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const list = document.getElementById('wit-saved-list');
             const empty = document.getElementById('wit-empty-msg');
             if (!list) return;
-            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(_lsKey('witEntries')) || '[]');
             if (entries.length === 0) {
                 list.innerHTML = '';
                 if (empty) empty.style.display = 'block';
@@ -10753,7 +10775,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         async function shareWitSaved(idx, method) {
-            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(_lsKey('witEntries')) || '[]');
             if (!entries[idx]) return;
             const text = buildWitText(entries[idx]);
             await shareContent(text, method, null);
@@ -10761,9 +10783,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function deleteWitEntry(idx) {
             if (!confirm('Delete this entry?')) return;
-            const entries = JSON.parse(localStorage.getItem('witEntries') || '[]');
+            const entries = JSON.parse(localStorage.getItem(_lsKey('witEntries')) || '[]');
             entries.splice(idx, 1);
-            localStorage.setItem('witEntries', JSON.stringify(entries));
+            localStorage.setItem(_lsKey('witEntries'), JSON.stringify(entries));
             renderWitSavedEntries();
         }
         // ===== END WHAT I TRIED =====
@@ -12253,7 +12275,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             setTimeout(() => el.remove(), duration * 1000);
         }
 
-        let plantState = JSON.parse(localStorage.getItem('plantState') || 'null') || {
+        let plantState = JSON.parse(localStorage.getItem(_lsKey('plantState')) || 'null') || {
             growth: 0, health: 100, water: 50, sunlight: 50, love: 0, level: 1
         };
         const plantStages = [
@@ -12300,7 +12322,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         };
 
         function savePlant() {
-            localStorage.setItem('plantState', JSON.stringify(plantState));
+            localStorage.setItem(_lsKey('plantState'), JSON.stringify(plantState));
         }
 
         function updatePlantDisplay() {
@@ -13637,7 +13659,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 console.log('User signed in:', result.user.displayName);
                 
                 // If there's a pending check-in, save it now
-                const pendingCheckIn = localStorage.getItem('pendingCheckIn');
+                const pendingCheckIn = localStorage.getItem(_lsKey('pendingCheckIn'));
                 if (pendingCheckIn) {
                     console.log('💾 Saving pending check-in...');
                     const checkInData = JSON.parse(pendingCheckIn);
@@ -13661,7 +13683,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                                 timestamp: stamped.timestamp || new Date().toISOString()
                             });
                             console.log('✅ Pending check-in saved to Firestore');
-                            localStorage.removeItem('pendingCheckIn');
+                            localStorage.removeItem(_lsKey('pendingCheckIn'));
                             
                             // Show success
                             let msg = `✅ Check-in saved to your account!\n\nMood: ${checkInData.mood}/10 ${checkInData.moodEmoji}`;
@@ -13780,8 +13802,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         // Sign out
         on('signout-btn', 'click', async () => {
             try {
+                const uid = _uid();
                 await signOut(auth);
                 console.log('User signed out');
+                // Wipe ALL this user's private namespaced data from localStorage
+                _clearUserStorage(uid);
                 // Wipe in-memory safety plan so next user sees a blank slate
                 Object.keys(safetyPlanSelections).forEach(k => safetyPlanSelections[k] = new Set());
                 Object.keys(safetyPlanNotes).forEach(k => safetyPlanNotes[k] = '');
@@ -13942,18 +13967,18 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                         const data = docSnap.data();
                         // Restore user data
                         if (data.diaryEntries) {
-                            localStorage.setItem('diaryEntries', JSON.stringify(data.diaryEntries));
+                            localStorage.setItem(_lsKey('diaryEntries'), JSON.stringify(data.diaryEntries));
                             const entriesContainer = document.getElementById('diaryEntriesContainer');
                             if (entriesContainer) renderDiaryEntries();
                         }
                         if (data.moodLog) {
-                            localStorage.setItem('moodLog', JSON.stringify(data.moodLog));
+                            localStorage.setItem(_lsKey('moodLog'), JSON.stringify(data.moodLog));
                         }
                         if (data.safetyPlan) {
-                            localStorage.setItem('safetyPlan', JSON.stringify(data.safetyPlan));
+                            localStorage.setItem(_lsKey('safetyPlan'), JSON.stringify(data.safetyPlan));
                         }
                         if (data.adoptedPet) {
-                            localStorage.setItem('adoptedPet', JSON.stringify(data.adoptedPet));
+                            localStorage.setItem(_lsKey('adoptedPet'), JSON.stringify(data.adoptedPet));
                             adoptedPet = data.adoptedPet;
                         }
                     }
@@ -13977,17 +14002,17 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     
                     // Restore localStorage from Firestore
                     if (data.diaryEntries) {
-                        localStorage.setItem('diaryEntries', JSON.stringify(data.diaryEntries));
+                        localStorage.setItem(_lsKey('diaryEntries'), JSON.stringify(data.diaryEntries));
                         renderDiaryEntries();
                     }
                     if (data.moodLog) {
-                        localStorage.setItem('moodLog', JSON.stringify(data.moodLog));
+                        localStorage.setItem(_lsKey('moodLog'), JSON.stringify(data.moodLog));
                     }
                     if (data.safetyPlan) {
-                        localStorage.setItem('safetyPlan', JSON.stringify(data.safetyPlan));
+                        localStorage.setItem(_lsKey('safetyPlan'), JSON.stringify(data.safetyPlan));
                     }
                     if (data.adoptedPet) {
-                        localStorage.setItem('adoptedPet', JSON.stringify(data.adoptedPet));
+                        localStorage.setItem(_lsKey('adoptedPet'), JSON.stringify(data.adoptedPet));
                         adoptedPet = data.adoptedPet;
                     }
                 } else {
@@ -14006,10 +14031,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             try {
                 const userRef = doc(db, 'users', userId);
                 const data = {
-                    diaryEntries: JSON.parse(localStorage.getItem('diaryEntries') || '[]'),
-                    moodLog: JSON.parse(localStorage.getItem('moodLog') || '[]'),
-                    safetyPlan: JSON.parse(localStorage.getItem('safetyPlan') || 'null'),
-                    adoptedPet: JSON.parse(localStorage.getItem('adoptedPet') || 'null'),
+                    diaryEntries: JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]'),
+                    moodLog: JSON.parse(localStorage.getItem(_lsKey('moodLog')) || '[]'),
+                    safetyPlan: JSON.parse(localStorage.getItem(_lsKey('safetyPlan')) || 'null'),
+                    adoptedPet: JSON.parse(localStorage.getItem(_lsKey('adoptedPet')) || 'null'),
                     lastUpdated: new Date().toISOString()
                 };
                 
@@ -14988,10 +15013,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const data = {
                 displayName: localStorage.getItem(scopedKey('displayName')) || '',
                 preferences: JSON.parse(localStorage.getItem(scopedKey('userPrefs')) || '{}'),
-                diaryEntries: JSON.parse(localStorage.getItem('diaryEntries') || '[]'),
-                moodLog: JSON.parse(localStorage.getItem('moodLog') || '[]'),
+                diaryEntries: JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]'),
+                moodLog: JSON.parse(localStorage.getItem(_lsKey('moodLog')) || '[]'),
                 safetyPlan: JSON.parse(localStorage.getItem('safetyPlanData') || '{}'),
-                affirmationBook: JSON.parse(localStorage.getItem('affirmationBook') || '[]'),
+                affirmationBook: JSON.parse(localStorage.getItem(_lsKey('affirmationBook')) || '[]'),
                 savedSongs: JSON.parse(localStorage.getItem('mySongs') || '[]').map(s => ({ name: s.name, type: s.type, ytId: s.ytId || null })),
                 exportedAt: new Date().toISOString()
             };
