@@ -1266,8 +1266,9 @@
             left: 50%;
             top: 50%;
             transform: translate(calc(-50% - 14px), -50%);
-            mix-blend-mode: screen;
-            filter: brightness(1.4) saturate(0.8);
+            mix-blend-mode: luminosity;
+            filter: brightness(1.15) saturate(0.6) contrast(0.9);
+            opacity: 0.88;
         }
 
         /* ===== RESPONSIVE DESIGN FOR MOBILE (iOS & Android) ===== */
@@ -5430,18 +5431,8 @@
                 <div class="card">
                     <h2 class="section-title">💫 Affirmation Cards</h2>
                     <p style="margin-bottom: 20px; color: #ff69b4; line-height: 1.6; font-size: 16px;">
-                        Draw a card of hope. Choose your affirmation type below.
+                        Draw a card of hope. A new affirmation just for you.
                     </p>
-
-                    <!-- Affirmation Type Toggle -->
-                    <div style="display: flex; gap: 12px; justify-content: center; margin-bottom: 28px; flex-wrap: wrap;">
-                        <button id="biblicalBtn" onclick="setAffirmationType('biblical')" class="btn" style="background: linear-gradient(135deg, #a855f7, #9333ea); color: white; font-weight: 700; padding: 12px 32px; font-size: 16px;">
-                            📜 Biblical Affirmations
-                        </button>
-                        <button id="depressionBtn" onclick="setAffirmationType('depression')" class="btn" style="background: #d1d5db; color: #4b5563; font-weight: 700; padding: 12px 32px; font-size: 16px;">
-                            💪 Depression Affirmations
-                        </button>
-                    </div>
 
                     <!-- Card Display -->
                     <div style="display: flex; justify-content: center; margin-bottom: 32px;">
@@ -5476,13 +5467,6 @@
 
                     <div id="cardSaveConfirmation" style="display: none; margin-top: 20px; padding: 16px; background: #dcfce7; border: 2px solid #22c55e; border-radius: 12px; color: #ff1493; font-weight: 600; text-align: center;">
                         ✅ Card saved to your collection!
-                    </div>
-
-                    <!-- Resource Credit -->
-                    <div style="margin-top: 28px; padding: 16px; background: #f3f4f6; border-radius: 12px; text-align: center;">
-                        <p style="color: #ff69b4; font-size: 14px; margin: 0;">
-                            Depression affirmations from <a href="https://www.crisistextline.org/blog/2024/01/08/100-positive-affirmations-for-better-self-care/#affirmations-for-depression" target="_blank" style="color: #3b82f6; font-weight: 600; text-decoration: underline;">Crisis Text Line (741741)</a>
-                        </p>
                     </div>
 
                     <!-- Affirmation Mirror (Redesigned) -->
