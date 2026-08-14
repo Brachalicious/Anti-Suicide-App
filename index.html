@@ -3300,13 +3300,15 @@
                         
                         <!-- Original chips for quick selection -->
                         <div style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:10px;">
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','988 Lifeline', this)">988 Lifeline</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Crisis Text 741741', this)">Crisis Text 741741</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','My therapist', this)">My therapist</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Psychiatrist', this)">Psychiatrist</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Hospital ER', this)">Hospital ER</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Amudim 646-517-0222', this)">Amudim</button>
-                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Warmline', this)">Warmline</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','988 Lifeline — Call/Text 988', this)">📞 988 Lifeline</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Crisis Text Line — Text HOME to 741741', this)">💬 Crisis Text 741741</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','the.helpline — 929-801-2301 (Anonymous, Frum)', this)">📞 the.helpline</button>
+                            <button class="safety-chip" onclick="promptChipWithNumber('professional','My Therapist', this)">🧠 My Therapist</button>
+                            <button class="safety-chip" onclick="promptChipWithNumber('professional','My Psychiatrist', this)">💊 My Psychiatrist</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Hospital ER — Call 911', this)">🏥 Hospital ER</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Amudim — 646-517-0222', this)">Amudim</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','Frum Warmline — 484-474-0544', this)">📞 Frum Warmline</button>
+                            <button class="safety-chip" onclick="toggleSafetyChip('professional','ZA\'AKAH Warmline — 1-888-492-2524 (Shabbos/Yom Tov)', this)">📞 ZA'AKAH Warmline</button>
                         </div>
                         <div id="safety-professional-summary" style="font-size:13px; color:#bae6fd; margin-bottom:8px;"></div>
                         <textarea id="safety-professional-notes" placeholder="Add professional contacts (Name, Agency & Phone Number)..." style="width:100%; min-height:70px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="updateSafetyNotes('professional')"></textarea>
@@ -8640,6 +8642,18 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             document.getElementById('add-contact-form').style.display = 'none';
             document.getElementById('contact-name').value = '';
             document.getElementById('contact-phone').value = '';
+        }
+
+        function promptChipWithNumber(category, label, element) {
+            const phone = prompt(`Enter phone number for ${label} (optional):`);
+            const value = phone && phone.trim()
+                ? `${label} — ${phone.trim()}`
+                : label;
+            toggleSafetyChip(category, value, element);
+            // Update the chip button text to show the number
+            if (phone && phone.trim()) {
+                element.textContent = `${element.textContent.split('—')[0].trim()} — ${phone.trim()}`;
+            }
         }
 
         async function initSafetyPlan() {
