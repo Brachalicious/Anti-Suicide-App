@@ -13179,8 +13179,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const el = document.getElementById('mirrorAffDisplay');
             if (!el) return;
             el.innerHTML = '';
+            el.style.opacity = '1';
             const clean = text.replace(/^[\u201c"]+|[\u201d"]+$/g, '').trim();
             const words = clean.split(' ');
+            const totalDuration = words.length * 160;
             words.forEach(function(word, i) {
                 setTimeout(function() {
                     const span = document.createElement('span');
@@ -13189,6 +13191,18 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     el.appendChild(span);
                 }, i * 160);
             });
+            // Fade out the whole text after all words appear + 2.5 seconds of reading time
+            if (el._fadeTimer) clearTimeout(el._fadeTimer);
+            el._fadeTimer = setTimeout(function() {
+                el.style.transition = 'opacity 1.2s ease';
+                el.style.opacity = '0';
+                // Clear content after fade so it doesn't reappear
+                setTimeout(function() {
+                    el.innerHTML = '';
+                    el.style.transition = '';
+                    el.style.opacity = '1';
+                }, 1300);
+            }, totalDuration + 2500);
             mirrorCurrentAff = clean;
         }
 
@@ -13298,10 +13312,18 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 if (badge) badge.style.display = 'block';
                 if (heardEl) heardEl.textContent = heard;
                 if (final) {
-                    // Keep spoken words on mirror then fade
+                    // Fade spoken words off mirror after 2.5 seconds
                     setTimeout(function() {
-                        if (liveOverlay) liveOverlay.style.display = 'none';
-                    }, 3500);
+                        if (liveOverlay) {
+                            liveOverlay.style.transition = 'opacity 1s ease';
+                            liveOverlay.style.opacity = '0';
+                            setTimeout(function() {
+                                liveOverlay.style.display = 'none';
+                                liveOverlay.style.opacity = '1';
+                                liveOverlay.style.transition = '';
+                            }, 1100);
+                        }
+                    }, 2500);
                     // Match check
                     const keywords = mirrorCurrentAff.toLowerCase().split(' ').filter(function(w){ return w.length > 3; });
                     const matches = keywords.filter(function(k){ return final.toLowerCase().includes(k); }).length;
