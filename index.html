@@ -7030,12 +7030,60 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         // ══════════════════════════════════════════════════════════════
 
         const CS_SKILLS = {
-            'grounding-54321':   { label: '🧊 5-4-3-2-1 Grounding',      color: '#22c55e' },
-            'ice-cold-water':    { label: '❄️ Ice & Cold Water',          color: '#3b82f6' },
-            'intense-exercise':  { label: '🏃 Intense Exercise',          color: '#f59e0b' },
-            'reach-out-connect': { label: '📞 Reach Out & Connect',       color: '#16a34a' },
-            'wait-15-minutes':   { label: '⏰ Wait 15 Minutes',           color: '#a855f7' },
-            'write-it-out':      { label: '✍️ Write It Out',              color: '#f97316' }
+            'grounding-54321': {
+                label: '🧊 5-4-3-2-1 Grounding', color: '#22c55e',
+                prompts: [
+                    { id:'see1',   label:'👁️ I see (1)'   }, { id:'see2',   label:'👁️ I see (2)'   },
+                    { id:'see3',   label:'👁️ I see (3)'   }, { id:'see4',   label:'👁️ I see (4)'   },
+                    { id:'see5',   label:'👁️ I see (5)'   },
+                    { id:'touch1', label:'✋ I touch (1)' }, { id:'touch2', label:'✋ I touch (2)' },
+                    { id:'touch3', label:'✋ I touch (3)' }, { id:'touch4', label:'✋ I touch (4)' },
+                    { id:'hear1',  label:'👂 I hear (1)'  }, { id:'hear2',  label:'👂 I hear (2)'  },
+                    { id:'hear3',  label:'👂 I hear (3)'  },
+                    { id:'smell1', label:'👃 I smell (1)' }, { id:'smell2', label:'👃 I smell (2)' },
+                    { id:'taste1', label:'👅 I taste'     }
+                ]
+            },
+            'ice-cold-water': {
+                label: '❄️ Ice & Cold Water', color: '#3b82f6',
+                prompts: [
+                    { id:'what',   label:'🧊 What I used (e.g. ice, cold water, cold shower)' },
+                    { id:'howlong',label:'⏱️ How long I did it' },
+                    { id:'bodyfeel',label:'🌡️ How my body felt during/after' }
+                ]
+            },
+            'intense-exercise': {
+                label: '🏃 Intense Exercise', color: '#f59e0b',
+                prompts: [
+                    { id:'activity', label:'💪 What I did (e.g. ran, jumping jacks, danced)' },
+                    { id:'duration', label:'⏱️ For how long' },
+                    { id:'energyafter', label:'⚡ How my energy felt after' }
+                ]
+            },
+            'reach-out-connect': {
+                label: '📞 Reach Out & Connect', color: '#16a34a',
+                prompts: [
+                    { id:'who',     label:'👤 Who I reached out to' },
+                    { id:'howhelped', label:'💬 What I said / what helped' },
+                    { id:'feelafter', label:'❤️ How I felt after connecting' }
+                ]
+            },
+            'wait-15-minutes': {
+                label: '⏰ Wait 15 Minutes', color: '#a855f7',
+                prompts: [
+                    { id:'distraction', label:'🎯 What I did during the 15 min' },
+                    { id:'intensity',   label:'📊 Urge intensity before (1-10)' },
+                    { id:'after',       label:'📉 Urge intensity after (1-10)'  }
+                ]
+            },
+            'write-it-out': {
+                label: '✍️ Write It Out', color: '#f97316',
+                prompts: [
+                    { id:'feeling',  label:'💭 What I was feeling' },
+                    { id:'thoughts', label:'🧠 Thoughts I needed to get out' },
+                    { id:'insight',  label:'💡 Any insight that came up' }
+                ]
+            }
         };
 
         function _csStats() {
@@ -7055,10 +7103,36 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         function buildCsPanel(skillId, color) {
-            const light = color + '22';
+            const light    = color + '22';
+            const skill    = CS_SKILLS[skillId] || {};
+            const prompts  = skill.prompts || [];
+
+            // Build prompted fill-in fields
+            let promptsHtml = '';
+            if (prompts.length > 0) {
+                // Group 5-4-3-2-1 prompts into sense groups for visual neatness
+                const groups = {};
+                prompts.forEach(p => {
+                    const group = p.id.replace(/\d+$/, '') || p.id;
+                    if (!groups[group]) groups[group] = [];
+                    groups[group].push(p);
+                });
+                promptsHtml = `<div style="margin-bottom:10px;">
+                    <div style="font-size:12px; font-weight:700; color:${color}; margin-bottom:6px; text-transform:uppercase; letter-spacing:.5px;">✏️ Fill in your experience:</div>
+                    <div style="display:grid; gap:6px;">` +
+                    prompts.map(p => `
+                        <div style="display:flex; align-items:center; gap:6px;">
+                            <label style="font-size:12px; color:#555; min-width:180px; flex-shrink:0;">${p.label}:</label>
+                            <input id="csprompt-${skillId}-${p.id}" type="text" placeholder="..." 
+                                style="flex:1; padding:5px 8px; border:1.5px solid ${color}44; border-radius:7px; font-size:13px; font-family:inherit; background:white; min-width:0;"/>
+                        </div>`).join('') +
+                    `</div></div>`;
+            }
+
             return `
             <div id="csp-${skillId}" style="border-top:2px dashed ${color}44; padding-top:12px;">
                 <div style="font-size:13px; font-weight:700; color:${color}; margin-bottom:8px;">📝 How did this skill go for you?</div>
+                ${promptsHtml}
                 <div style="display:flex; gap:8px; margin-bottom:10px; flex-wrap:wrap;">
                     <button onclick="csSaveRating('${skillId}','helped')"
                         id="csr-helped-${skillId}"
@@ -7071,7 +7145,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                         style="flex:1; padding:8px 4px; background:${light}; border:2px solid ${color}; border-radius:10px; font-size:13px; font-weight:700; color:${color}; cursor:pointer;">😕 Not really</button>
                 </div>
                 <div id="csrating-feedback-${skillId}" style="font-size:12px; color:${color}; margin-bottom:8px; min-height:16px;"></div>
-                <textarea id="csnotes-${skillId}" placeholder="Notes about this skill... (optional)" rows="2"
+                <textarea id="csnotes-${skillId}" placeholder="Any extra notes... (optional)" rows="2"
                     style="width:100%; padding:8px; border:1.5px solid ${color}55; border-radius:8px; font-size:13px; resize:vertical; font-family:inherit; box-sizing:border-box; background:white;"></textarea>
                 <div style="display:flex; gap:7px; margin-top:8px; flex-wrap:wrap;">
                     <button onclick="csSaveEntry('${skillId}')"
@@ -7113,11 +7187,22 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             });
         }
 
+        function _csCollectPrompts(skillId) {
+            const prompts = CS_SKILLS[skillId]?.prompts || [];
+            const collected = {};
+            prompts.forEach(p => {
+                const el = document.getElementById(`csprompt-${skillId}-${p.id}`);
+                if (el && el.value.trim()) collected[p.id] = { label: p.label, value: el.value.trim() };
+            });
+            return collected;
+        }
+
         function csSaveEntry(skillId) {
-            const notes   = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
-            const stats   = _csStats();
+            const notes       = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
+            const promptData  = _csCollectPrompts(skillId);
+            const stats       = _csStats();
             if (!stats[skillId]) stats[skillId] = { used: 0, helped: 0, alittle: 0, notreally: 0 };
-            const rating  = stats[skillId]._pendingRating || '';
+            const rating      = stats[skillId]._pendingRating || '';
             stats[skillId].used = (stats[skillId].used || 0) + 1;
             if (rating) stats[skillId][rating] = (stats[skillId][rating] || 0) + 1;
             delete stats[skillId]._pendingRating;
@@ -7129,6 +7214,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 label: CS_SKILLS[skillId]?.label || skillId,
                 rating,
                 notes,
+                promptData,
                 date: new Date().toLocaleString()
             });
             localStorage.setItem(_lsKey('crisisSkillNotes'), JSON.stringify(allNotes));
@@ -7142,7 +7228,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                             type: 'crisis-skill',
                             skillId,
                             label: CS_SKILLS[skillId]?.label || skillId,
-                            rating, notes,
+                            rating, notes, promptData,
                             date: new Date().toISOString()
                         });
                 }
@@ -7157,17 +7243,24 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         function csShare(skillId, method) {
-            const notes  = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
-            const stats  = _csStats();
-            const s      = stats[skillId] || {};
-            const label  = CS_SKILLS[skillId]?.label || skillId;
-            const ratingMap = { helped:'✅ Helped', alittle:'🌿 A little', notreally:'😕 Not really' };
-            const ratingTxt = ratingMap[s._pendingRating] || 'Not rated yet';
+            const notes      = (document.getElementById(`csnotes-${skillId}`)?.value || '').trim();
+            const promptData = _csCollectPrompts(skillId);
+            const stats      = _csStats();
+            const s          = stats[skillId] || {};
+            const label      = CS_SKILLS[skillId]?.label || skillId;
+            const ratingMap  = { helped:'✅ Helped', alittle:'🌿 A little', notreally:'😕 Not really' };
+            const ratingTxt  = ratingMap[s._pendingRating] || 'Not rated yet';
+
+            const promptLines = Object.values(promptData)
+                .map(p => `  ${p.label}: ${p.value}`)
+                .join('\n');
+
             const lines = [
                 `Crisis Skill Used: ${label}`,
                 `Date: ${new Date().toLocaleString()}`,
                 `How it helped: ${ratingTxt}`,
-                notes ? `\nNotes:\n${notes}` : '',
+                promptLines ? `\nMy responses:\n${promptLines}` : '',
+                notes ? `\nExtra notes:\n${notes}` : '',
                 `\nTotal times used: ${s.used || 0}`,
                 `Helped: ${s.helped || 0}x | A little: ${s.alittle || 0}x | Not really: ${s.notreally || 0}x`,
                 `\n— Sent from Fight Suicide Project 💜`
@@ -7222,9 +7315,13 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     body.innerHTML += `<div style="font-size:12px;font-weight:700;color:#374151;margin-top:8px;">📋 Recent Entries</div>`;
                     body.innerHTML += notes.slice(0, 5).map(n => {
                         const rMap = {helped:'✅',alittle:'🌿',notreally:'😕','':'—'};
-                        return `<div style="background:white;padding:7px 10px;border-radius:8px;font-size:12px;color:#374151;">
+                        const promptLines = n.promptData
+                            ? Object.values(n.promptData).map(p => `<div style="color:#555;">• <em>${p.label}:</em> ${p.value}</div>`).join('')
+                            : '';
+                        return `<div style="background:white;padding:7px 10px;border-radius:8px;font-size:12px;color:#374151;border-left:3px solid #d1d5db;">
                             <strong>${n.label}</strong> ${rMap[n.rating]||'—'} <span style="color:#9ca3af;float:right;">${n.date}</span>
-                            ${n.notes ? `<div style="margin-top:3px;color:#6b7280;">${n.notes}</div>` : ''}
+                            ${promptLines ? `<div style="margin-top:4px;">${promptLines}</div>` : ''}
+                            ${n.notes ? `<div style="margin-top:3px;color:#6b7280;font-style:italic;">${n.notes}</div>` : ''}
                         </div>`;
                     }).join('');
                 }
