@@ -5357,6 +5357,27 @@
                         <div id="savedLettersList"></div>
                     </div>
 
+                    <!-- Kotel Wall Section -->
+                    <div style="background: linear-gradient(135deg, #fdf6ec, #fde9c9); padding: 28px; border-radius: 16px; border: 3px solid #c8860a; box-shadow: 0 4px 12px rgba(200,134,10,0.2); margin-bottom: 24px;">
+                        <h3 style="color: #92400e; font-size: 22px; margin-bottom: 8px;">🕊️ Place a Note in the Kotel Wall</h3>
+                        <p style="color: #78350f; font-size: 14px; line-height: 1.7; margin-bottom: 16px;">
+                            Send your prayer or letter directly to the Western Wall in Jerusalem. The organization will print it and place it between the holy stones on your behalf — right here, without leaving the app.
+                        </p>
+                        <button onclick="openKotelFrame()" style="background: linear-gradient(135deg, #c8860a, #a16207); color: white; border: none; padding: 12px 24px; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(161,98,7,0.4); margin-bottom: 16px;">
+                            🪨 Open the Kotel Note Submission Form
+                        </button>
+                        <!-- Inline Kotel iframe (hidden until button clicked) -->
+                        <div id="kotelFrameWrap" style="display:none; border-radius:14px; overflow:hidden; border:2px solid #c8860a; position:relative;">
+                            <button onclick="closeKotelFrame()" style="position:absolute; top:8px; right:12px; z-index:10; background:rgba(0,0,0,0.55); color:white; border:none; border-radius:50%; width:32px; height:32px; font-size:18px; cursor:pointer; line-height:1;">&times;</button>
+                            <iframe id="kotelIframe"
+                                src="https://thekotel.org/en/send-a-note/"
+                                style="width:100%; height:680px; border:none; display:block;"
+                                loading="lazy"
+                                title="Send a Note to the Kotel Wall">
+                            </iframe>
+                        </div>
+                    </div>
+
                     <!-- Psalms Section -->
                     <div style="background: linear-gradient(135deg, #ecfeff, #cffafe); padding: 28px; border-radius: 16px; border: 3px solid #06b6d4; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <h3 style="color: #0e7490; font-size: 22px; margin-bottom: 16px;">📜 Psalms of Comfort & Hope</h3>
@@ -15106,6 +15127,17 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function closeSavedLetters() {
             document.getElementById('savedLettersDisplay').style.display = 'none';
+        }
+
+        function openKotelFrame() {
+            const wrap = document.getElementById('kotelFrameWrap');
+            wrap.style.display = 'block';
+            wrap.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        }
+
+        function closeKotelFrame() {
+            const wrap = document.getElementById('kotelFrameWrap');
+            wrap.style.display = 'none';
         }
 
         function deleteGodLetter(letterId) {
