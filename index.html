@@ -6581,16 +6581,58 @@
                 // Skip the captured <a>…</a> chunks (odd indices in the split).
                 if (i % 2 === 1) continue;
                 parts[i] = parts[i]
+                    // 911 → tap to call
+                    .replace(/(^|[^\d>])911(?!\d)/g,
+                        '$1<a href="tel:911" style="' + callStyle + '" aria-label="Call 911 Emergency">911</a>')
                     // 988 → tap to call. Match digit-boundaries so 9889 etc. are safe.
                     .replace(/(^|[^\d>])988(?!\d)/g,
                         '$1<a href="tel:988" style="' + callStyle + '" aria-label="Call 988 Suicide and Crisis Lifeline">988</a>')
-                    // 741741 → tap to text HOME. The ?body= form works on both
-                    // modern iOS (14+) and Android; older iOS preferred &body=.
+                    // 741741 → tap to text HOME.
                     .replace(/(^|[^\d>])741741(?!\d)/g,
                         '$1<a href="sms:741741?body=HOME" style="' + textStyle + '" aria-label="Text HOME to 741741 Crisis Text Line">741741</a>');
             }
             return parts.join('');
         }
+
+        // ── Auto-linkify every .phone element in the static HTML ──────────────
+        // Converts any bare phone number (including 911, 988, 741741, and standard
+        // US formats) inside a .phone div into a tap-to-call <a href="tel:"> link.
+        function _autoLinkPhoneElements() {
+            const callStyle = 'color:inherit;text-decoration:underline;font-weight:inherit;cursor:pointer;';
+            // Matches: 988, 911, 741741, and standard US numbers like
+            // 1-800-273-8255 / (929) 801-2301 / 929.801.2301 / 646-517-0222
+            const phoneRe = /(\b(?:1[-.\s]?)?\(?\d{3}\)?[-.\s]\d{3}[-.\s]\d{4}\b|\b988\b|\b911\b|\b741741\b)/g;
+
+            document.querySelectorAll('.phone').forEach(function(el) {
+                // Skip if already has a tel: link inside
+                if (el.querySelector('a[href^="tel:"], a[href^="sms:"]')) return;
+                el.innerHTML = el.innerHTML.replace(phoneRe, function(match) {
+                    // Strip formatting to get bare digits
+                    const digits = match.replace(/[^\d]/g, '');
+                    // 741741 → SMS
+                    if (digits === '741741') {
+                        return '<a href="sms:741741?body=HOME" style="' + callStyle + '" aria-label="Text HOME to 741741">' + match + '</a>';
+                    }
+                    return '<a href="tel:' + digits + '" style="' + callStyle + '" aria-label="Call ' + match + '">' + match + '</a>';
+                });
+                // Make the whole div feel tappable
+                el.style.cursor = 'pointer';
+            });
+
+            // Also linkify any bare 911 / 988 that appear in paragraph text across the page
+            document.querySelectorAll('p, li, span, h3, h4, .card-desc').forEach(function(el) {
+                if (el.querySelector('a')) return; // skip if already has links
+                if (el.children.length > 2) return; // skip complex containers
+                el.innerHTML = el.innerHTML
+                    .replace(/(^|[^\d>\/"])911(?!\d)/g,
+                        '$1<a href="tel:911" style="color:#ff4444;font-weight:700;text-decoration:underline;">911</a>')
+                    .replace(/(^|[^\d>\/"])988(?!\d)/g,
+                        '$1<a href="tel:988" style="color:#ff1493;font-weight:700;text-decoration:underline;">988</a>')
+                    .replace(/(^|[^\d>\/"])741741(?!\d)/g,
+                        '$1<a href="sms:741741?body=HOME" style="color:#3b82f6;font-weight:700;text-decoration:underline;">741741</a>');
+            });
+        }
+        document.addEventListener('DOMContentLoaded', _autoLinkPhoneElements);
 
         // Current Gemini model name. Google retires these aggressively —
         // `gemini-pro` died in 2024, `gemini-1.5-flash` in 2026. The server
