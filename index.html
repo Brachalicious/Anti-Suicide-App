@@ -11325,12 +11325,68 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     msgP.innerHTML = '🤖 ' + escapeHtml(hi) + _linkifyHotlines(escapeHtml(deDuped));
                 };
                 const renderByokInvite = () => {
-                    msgP.innerHTML = _linkifyHotlines(
-                        '🤖 ' + escapeHtml(hi) +
-                        "I'm here with you. To get a thoughtful AI reply, you can turn on Gemini in <strong>⚙️ Account Settings</strong> — " +
-                        '<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493; text-decoration:underline;">get a free key here</a> ' +
-                        "(2 min, $0). In the meantime, tap any of the buttons above for a tool that might help right now. If you're in crisis, call or text <strong>988</strong>."
-                    );
+                    // Build a meaningful free response based on what the user typed
+                    const msg = (response.aiPrompt || '').toLowerCase();
+                    const name = userName ? (' ' + userName) : '';
+
+                    // Detect themes and give a real, warm, contextual reply
+                    let freeReply = '';
+                    if (/suicid|end (my|it all|life|everything)|don.t want to (live|be here|exist)|kill myself|want to die|no reason to live|give up on life/.test(msg)) {
+                        freeReply =
+                            "What you're feeling right now matters more than anything, and I'm so glad you're here talking instead of being alone with it. " +
+                            "Please don't face this alone — call or text <strong>988</strong> right now (free, 24/7, no judgment). You can also text HOME to <strong>741741</strong>. " +
+                            "You deserve real support, and there are people who genuinely want to help you through this moment. 💜";
+                    } else if (/hurt|cut|self.harm|harm myself|hurting myself/.test(msg)) {
+                        freeReply =
+                            "I hear you, and I'm not going to judge you — what you're going through must feel unbearable right now. " +
+                            "Please reach out to the Crisis Text Line: text HOME to <strong>741741</strong>, or call <strong>988</strong>. " +
+                            "You don't have to carry this alone. I'm here with you. 💙";
+                    } else if (/alone|lonely|nobody cares|no one cares|no one loves|abandoned|invisible/.test(msg)) {
+                        freeReply =
+                            "Loneliness can feel absolutely crushing — like you're screaming and no one hears. But you reached out right now, and that matters. " +
+                            "I hear you" + (userName ? (', ' + userName) : '') + ". You are not invisible to me. 💗 " +
+                            "Try the 📓 Diary to get it all out, or tap 🙏 Talk to ה' if that feels right. You are not as alone as it feels right now.";
+                    } else if (/anxious|anxiety|panic|scared|terrified|overwhelm|can.t breathe/.test(msg)) {
+                        freeReply =
+                            "That feeling of panic or overwhelm is so real and so hard. Let's slow it down together. " +
+                            "Try this right now: breathe in for 4 counts, hold for 4, out for 4. Repeat 3 times. " +
+                            "You can also hit the 🟢 STOP button on the dashboard for a guided breathing session. I'm right here with you. 💚";
+                    } else if (/angry|rage|furious|mad|hate (myself|everyone|everything|my life)/.test(msg)) {
+                        freeReply =
+                            "Anger that intense usually means something really hurt you, and you deserve to have that acknowledged. " +
+                            "It makes sense you feel this way" + (userName ? (', ' + userName) : '') + ". " +
+                            "Try the 🎤 Scream tool on the dashboard to physically release some of it — it actually helps. " +
+                            "Then when you're ready, the 📓 Diary is here for you. Your feelings are valid. 💜";
+                    } else if (/tired|exhausted|can.t (do this|go on|anymore|keep going)|give up|no energy|numb/.test(msg)) {
+                        freeReply =
+                            "Being this tired — bone-tired in your soul — is one of the hardest things to carry. " +
+                            "You don't have to fix everything right now. You just have to get through this moment. " +
+                            "Rest is allowed. You are allowed to just breathe for a minute" + (userName ? (', ' + userName) : '') + ". " +
+                            "Is there one tiny thing that usually brings even a sliver of comfort? Music? A prayer? A walk? You deserve ease right now. 🧡";
+                    } else if (/sad|cry|crying|depressed|depression|hopeless|empty|hollow/.test(msg)) {
+                        freeReply =
+                            "I'm so glad you told me. Sadness this heavy deserves to be witnessed, not minimized. " +
+                            "What you feel is real, and it makes sense" + (userName ? (', ' + userName) : '') + ". " +
+                            "You don't have to be okay right now. The 📓 Diary might help you pour some of this out, " +
+                            "or try 💫 Affirmation Cards for a gentle reminder of your worth. I'm here. 💗";
+                    } else if (/thank|you helped|feel better|that helped|feel good/.test(msg)) {
+                        freeReply =
+                            "That means so much to hear" + (userName ? (', ' + userName) : '') + ". 💗 " +
+                            "You did the hard part — you reached out and kept going. I'm proud of you. " +
+                            "Come back anytime you need to talk. You're never a burden here.";
+                    } else {
+                        // Generic warm response
+                        freeReply =
+                            "I'm here with you" + (userName ? (', ' + userName) : '') + ", and I'm listening. 💗 " +
+                            "Whatever brought you here today — you don't have to face it alone. " +
+                            "Tell me more about what's going on, or try one of the tools on the dashboard: " +
+                            "the 📓 Diary, 💫 Affirmation Cards, 🟢 STOP button, or just sit here with me for a moment. " +
+                            "If things feel urgent, call or text <strong>988</strong> — free, 24/7, always there. " +
+                            "<br><br><em style='color:#ff69b4;font-size:13px;'>💡 For a fully personalized AI reply, add a free Gemini key in ⚙️ Account Settings — " +
+                            '<a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener" style="color:#ff1493;">get one free here</a> (2 min).</em>';
+                    }
+
+                    msgP.innerHTML = '🤖 ' + escapeHtml(hi) + _linkifyHotlines(freeReply);
                 };
 
                 // Path 1: user has their own Gemini key → free for them.
