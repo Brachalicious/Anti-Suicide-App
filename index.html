@@ -5531,29 +5531,26 @@
                         Draw a card of hope. A new affirmation just for you.
                     </p>
 
-                    <!-- 🎵 Divine Affirmations Song — in-app player + lyrics -->
+                    <!-- 🎵 Divine Affirmations Song — in-app lyrics + play button -->
                     <div style="margin-bottom: 28px; border-radius: 20px; background: linear-gradient(135deg,#0f172a,#1e3a2f,#0c2340); border: 2px solid rgba(34,197,94,0.45); overflow:hidden; box-shadow: 0 8px 32px rgba(6,182,212,0.25);">
-                        <div style="padding:18px 20px 10px; text-align:center;">
-                            <div style="font-size:32px; margin-bottom:6px;">🎵</div>
+                        <!-- Header -->
+                        <div style="padding:18px 20px 14px; text-align:center;">
+                            <div style="font-size:36px; margin-bottom:6px; animation: pulse 2s ease-in-out infinite;">🎵</div>
                             <h3 style="font-size:18px; font-weight:800; margin-bottom:4px; background:linear-gradient(90deg,#22c55e,#06b6d4,#3b82f6,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Divine Affirmations Song</h3>
-                            <p style="color:#a7f3d0; font-size:13px; line-height:1.5; margin-bottom:12px;">
+                            <p style="color:#a7f3d0; font-size:13px; line-height:1.5; margin-bottom:14px;">
                                 Your daily dose of self-love 💗 &nbsp;·&nbsp; Play <strong style="color:#34d399;">100×</strong> a day or whenever you need it
                             </p>
+                            <!-- Big Play Button -->
+                            <a href="https://suno.com/s/B4Tpj7Cjn416wOE5" target="_blank" rel="noopener"
+                               style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6); background-size:200% 200%; animation:sunsetShift 4s ease infinite; color:white; font-weight:800; font-size:18px; padding:16px 36px; border-radius:50px; text-decoration:none; box-shadow:0 4px 24px rgba(34,197,94,0.5); letter-spacing:0.5px;">
+                                <span style="font-size:22px;">▶️</span> Play Song Now
+                            </a>
+                            <p style="margin-top:10px; font-size:11px; color:#64748b;">(opens music player in new tab — free)</p>
                         </div>
-                        <!-- Suno embedded player -->
-                        <iframe
-                            src="https://suno.com/embed/B4Tpj7Cjn416wOE5"
-                            width="100%" height="166"
-                            frameborder="0"
-                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
-                            loading="lazy"
-                            style="display:block; border:none; border-bottom: 1px solid rgba(34,197,94,0.2);"
-                            title="Divine Affirmations Song">
-                        </iframe>
-                        <!-- Lyrics -->
-                        <div id="divineAffLyrics" style="display:none; padding:18px 20px; background:rgba(0,0,0,0.3);">
-                            <p style="color:#34d399; font-size:13px; font-weight:700; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase;">📝 Lyrics</p>
-                            <div style="color:#e0f2fe; font-size:15px; line-height:2; text-align:center; font-style:italic; white-space:pre-line;">I am worthy, I am loved
+                        <!-- Lyrics always visible -->
+                        <div style="padding:16px 20px 20px; background:rgba(0,0,0,0.35); border-top:1px solid rgba(34,197,94,0.2);">
+                            <p style="color:#34d399; font-size:12px; font-weight:700; margin-bottom:12px; letter-spacing:1.5px; text-transform:uppercase; text-align:center;">🎤 Lyrics — read along or say out loud</p>
+                            <div style="color:#e0f2fe; font-size:15px; line-height:2.1; text-align:center; font-style:italic; white-space:pre-line; text-shadow:0 1px 4px rgba(0,0,0,0.5);">I am worthy, I am loved
 I am light from up above
 Every breath I take is grace
 I belong, I have a place
@@ -5573,10 +5570,6 @@ I have irreplaceable worth
 This unique soul, this one-of-a-kind me —
 Is exactly who the world needs me to be 💗</div>
                         </div>
-                        <button onclick="var l=document.getElementById('divineAffLyrics'); l.style.display=l.style.display==='none'?'block':'none'; this.textContent=l.style.display==='block'?'🎤 Hide Lyrics':'🎤 Show Lyrics';"
-                            style="width:100%; background:rgba(34,197,94,0.15); border:none; border-top:1px solid rgba(34,197,94,0.2); color:#34d399; font-size:14px; font-weight:700; padding:12px; cursor:pointer; letter-spacing:0.5px;">
-                            🎤 Show Lyrics
-                        </button>
                     </div>
 
                     <!-- Card Display -->
