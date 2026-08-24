@@ -1721,6 +1721,7 @@
                     <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
                     <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
                     <button onclick="showSection('what-i-tried'); closeCrisisToolsMenu(); closeMobileNav()">📋 What I Tried</button>
+                    <button onclick="showSection('helped-tracker'); closeCrisisToolsMenu(); closeMobileNav()">⭐ What Helped Me</button>
                 </div>
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
@@ -11007,7 +11008,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         // ===== END WHAT I TRIED =====
 
         // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards', 'what-i-tried'];
+        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards', 'what-i-tried', 'helped-tracker'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
@@ -11036,6 +11037,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (section === 'what-i-tried') { setTimeout(initWhatITried, 100); }
             if (section === 'crisis-skills') { setTimeout(initCrisisSkillPanels, 100); }
             if (section === 'crisis') { setTimeout(initHotlineShareButtons, 100); }
+            if (section === 'helped-tracker') { setTimeout(initHelpedTracker, 100); }
             // Update hamburger label to reflect current section
             const hamburgerLabel = document.getElementById('hamburgerLabel');
             if (hamburgerLabel) {
@@ -11045,6 +11047,20 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 }
             }
         }
+
+        // ── Deep-link / hash routing: /#resources, /#crisis etc. ──
+        // Called from share.html "View original source" button and any direct URL with a section hash.
+        (function () {
+            function handleHash() {
+                const hash = (location.hash || '').replace('#', '').trim();
+                if (hash && document.getElementById(hash)) {
+                    if (typeof showSection === 'function') showSection(hash);
+                }
+            }
+            // Run after all JS has initialised (fonts + layout settle at 'load')
+            window.addEventListener('load', function () { setTimeout(handleHash, 200); });
+            window.addEventListener('hashchange', handleHash);
+        })();
 
         function toggleCrisisToolsMenu(e) {
             e.stopPropagation();
@@ -14474,8 +14490,36 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         window.onSnapshot = onSnapshot;
     </script>
 
+    <!-- ===== WHAT HAS HELPED ME TRACKER ===== -->
+    <div id="helped-tracker" class="section hidden">
+        <div style="background: linear-gradient(135deg, #fdf4ff, #f3e8ff); border-radius: 20px; padding: 24px; box-shadow: 0 8px 32px rgba(0,0,0,0.15); border: 3px solid #c084fc; max-width: 720px; margin: 0 auto;">
+            <h2 style="text-align:center; color:#7e22ce; font-family:'Georgia',serif; font-size:26px; margin-bottom:4px;">⭐ What Has Helped Me</h2>
+            <p style="text-align:center; color:#7e22ce; font-family:'Georgia',serif; font-size:13px; margin-bottom:20px; line-height:1.6;">Every time a tool or activity helps you feel better, mark it here. Over time you'll see your personal patterns — what really works for YOU.</p>
+
+            <!-- Quick-log row -->
+            <div style="background:white; border-radius:14px; padding:16px; margin-bottom:20px; border:2px solid #e9d5ff;">
+                <p style="color:#7e22ce; font-weight:700; font-size:14px; margin-bottom:10px;">✅ What helped you today? <span style="font-weight:400; color:#a855f7;">(tap one or more)</span></p>
+                <div id="htToolGrid" style="display:flex; flex-wrap:wrap; gap:8px; margin-bottom:14px;"></div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap; margin-bottom:10px;">
+                    <input id="htCustomTool" type="text" placeholder="Something else… (type it)" maxlength="60"
+                        style="flex:1; min-width:160px; padding:8px 12px; border-radius:10px; border:2px solid #d8b4fe; font-size:14px; outline:none;">
+                    <button onclick="htAddCustom()" style="background:#a855f7; color:white; border:none; border-radius:10px; padding:8px 16px; font-weight:700; cursor:pointer; font-size:14px;">+ Add</button>
+                </div>
+                <textarea id="htNote" placeholder="Any notes about how it helped? (optional)" rows="2"
+                    style="width:100%; padding:8px 12px; border-radius:10px; border:2px solid #d8b4fe; font-size:14px; resize:vertical; font-family:inherit; box-sizing:border-box;"></textarea>
+                <button onclick="htLogEntry()" style="margin-top:10px; width:100%; background:linear-gradient(135deg,#a855f7,#7e22ce); color:white; border:none; border-radius:12px; padding:12px; font-weight:800; font-size:15px; cursor:pointer; box-shadow:0 4px 12px rgba(168,85,247,0.35);">💜 Save This Entry</button>
+            </div>
+
+            <!-- Stats / leaderboard -->
+            <div id="htStats" style="margin-bottom:20px;"></div>
+
+            <!-- History log -->
+            <div id="htHistory"></div>
+        </div>
+    </div>
+    <!-- ===== END WHAT HAS HELPED ME TRACKER ===== -->
+
     <!-- Footer with Privacy & Terms -->
-    <!-- ID `site-footer` is required by the auto-padding JS below — it sets
          body/container padding-bottom to this footer's real height so nothing
          gets clipped when the footer wraps to 2-3 lines on narrow phones. -->
     <div id="site-footer" style="position: fixed !important; bottom: 0 !important; left: 0; right: 0; background:#dcfce7; color:#000; text-align:center; padding:8px 16px; border-top:2px solid #22c55e; z-index: 1000; width: 100%;">
@@ -16921,6 +16965,209 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         window.applySiteFooterPadding = applySiteFooterPadding;
     })();
     </script>
+
+    <!-- ===== WHAT HAS HELPED ME TRACKER — JS ===== -->
+    <script>
+    (function () {
+        'use strict';
+
+        // ── Built-in tool list ──────────────────────────────────────────────
+        const HT_BUILT_IN = [
+            { id: 'breathing',      label: '🌬️ Breathing Exercise' },
+            { id: 'grounding',      label: '🧊 5-4-3-2-1 Grounding' },
+            { id: 'walk',           label: '🚶 Walk / Fresh Air' },
+            { id: 'music',          label: '🎵 Music / Karaoke' },
+            { id: 'diary',          label: '📓 Journaling / Diary' },
+            { id: 'affirmations',   label: '💫 Affirmations' },
+            { id: 'prayer',         label: '🙏 Prayer / Talk to ה\'' },
+            { id: 'talk-someone',   label: '💬 Talking to Someone' },
+            { id: 'meditation',     label: '🧘 Guided Meditation' },
+            { id: 'cold-water',     label: '🧊 Ice / Cold Water' },
+            { id: 'exercise',       label: '🏃 Intense Exercise' },
+            { id: 'scream',         label: '🗣️ Scream / Vent' },
+            { id: 'virtual-therapist', label: '🤖 Virtual Therapist' },
+            { id: 'release',        label: '🔥 Release & Let Go' },
+            { id: 'kotel',          label: '🪨 Kotel Note' },
+            { id: 'psalms',         label: '📖 Tehillim / Psalms' },
+            { id: 'game',           label: '🍄 Mushroom Runner Game' },
+            { id: 'coloring',       label: '🎨 Coloring / Drawing' },
+            { id: 'escape-head',    label: '🧠 Escape Your Head' },
+            { id: 'crisis-call',    label: '📞 Called a Hotline' },
+        ];
+
+        const _SK = (typeof scopedKey === 'function') ? scopedKey : function (k) { return k; };
+        const STORE_KEY   = _SK('helpedTrackerEntries');
+        const CUSTOMS_KEY = _SK('helpedTrackerCustomTools');
+
+        function _load(key, def) {
+            try { const v = localStorage.getItem(key); return v ? JSON.parse(v) : def; }
+            catch (_) { return def; }
+        }
+        function _save(key, val) {
+            try { localStorage.setItem(key, JSON.stringify(val)); } catch (_) {}
+        }
+        function getEntries()  { return _load(STORE_KEY,   []); }
+        function saveEntries(e) { _save(STORE_KEY, e); }
+        function getCustoms()  { return _load(CUSTOMS_KEY, []); }
+        function saveCustoms(c) { _save(CUSTOMS_KEY, c); }
+
+        // Selected tool ids in the current log session
+        let _selected = new Set();
+
+        function allTools() {
+            const customs = getCustoms();
+            return HT_BUILT_IN.concat(customs.map(function (t) {
+                return { id: 'custom_' + t, label: '✨ ' + t };
+            }));
+        }
+
+        // ── Render chip grid ────────────────────────────────────────────────
+        function renderChips() {
+            const grid = document.getElementById('htToolGrid');
+            if (!grid) return;
+            grid.innerHTML = '';
+            allTools().forEach(function (tool) {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = tool.label;
+                const sel = _selected.has(tool.id);
+                btn.style.cssText =
+                    'padding:7px 14px; border-radius:20px; border:2px solid ' + (sel ? '#7e22ce' : '#d8b4fe') + ';' +
+                    'background:' + (sel ? 'linear-gradient(135deg,#a855f7,#7e22ce)' : 'white') + ';' +
+                    'color:' + (sel ? 'white' : '#7e22ce') + ';' +
+                    'font-weight:700; font-size:13px; cursor:pointer; transition:all .15s;';
+                btn.addEventListener('click', function () {
+                    if (_selected.has(tool.id)) _selected.delete(tool.id);
+                    else _selected.add(tool.id);
+                    renderChips();
+                });
+                grid.appendChild(btn);
+            });
+        }
+
+        // ── Add custom tool ─────────────────────────────────────────────────
+        window.htAddCustom = function () {
+            const inp = document.getElementById('htCustomTool');
+            const val = (inp ? inp.value.trim() : '');
+            if (!val) return;
+            const customs = getCustoms();
+            if (!customs.includes(val)) {
+                customs.push(val);
+                saveCustoms(customs);
+            }
+            _selected.add('custom_' + val);
+            if (inp) inp.value = '';
+            renderChips();
+        };
+
+        // ── Log entry ───────────────────────────────────────────────────────
+        window.htLogEntry = function () {
+            if (_selected.size === 0) {
+                alert('Please tap at least one thing that helped you first!');
+                return;
+            }
+            const noteEl = document.getElementById('htNote');
+            const note = noteEl ? noteEl.value.trim() : '';
+            const tools = allTools().filter(function (t) { return _selected.has(t.id); });
+            const entry = {
+                id:    Date.now(),
+                date:  new Date().toLocaleDateString('en-US', { month:'short', day:'numeric', year:'numeric', hour:'numeric', minute:'2-digit' }),
+                tools: tools.map(function (t) { return t.label; }),
+                note:  note
+            };
+            const entries = getEntries();
+            entries.unshift(entry);
+            saveEntries(entries);
+            _selected.clear();
+            if (noteEl) noteEl.value = '';
+            renderChips();
+            renderStats();
+            renderHistory();
+            // Toast
+            if (typeof window._showToast === 'function') window._showToast('💜 Saved! Keep noting what helps — it adds up!');
+        };
+
+        // ── Render stats leaderboard ────────────────────────────────────────
+        function renderStats() {
+            const el = document.getElementById('htStats');
+            if (!el) return;
+            const entries = getEntries();
+            if (!entries.length) {
+                el.innerHTML = '<p style="text-align:center; color:#a855f7; font-size:14px; padding:12px;">No entries yet — start logging what helps you! 💜</p>';
+                return;
+            }
+            // Count frequency per tool label
+            const counts = {};
+            entries.forEach(function (e) {
+                (e.tools || []).forEach(function (t) {
+                    counts[t] = (counts[t] || 0) + 1;
+                });
+            });
+            const sorted = Object.keys(counts).sort(function (a, b) { return counts[b] - counts[a]; });
+            const top = sorted.slice(0, 10);
+            const max = counts[top[0]] || 1;
+            let html =
+                '<div style="background:white; border-radius:14px; padding:16px; border:2px solid #e9d5ff;">' +
+                '<h3 style="color:#7e22ce; font-size:16px; font-weight:800; margin:0 0 12px;">🏆 Your Top Tools — ' + entries.length + ' session' + (entries.length !== 1 ? 's' : '') + ' logged</h3>';
+            top.forEach(function (label) {
+                const pct = Math.round((counts[label] / max) * 100);
+                html +=
+                    '<div style="margin-bottom:10px;">' +
+                    '<div style="display:flex; justify-content:space-between; font-size:13px; font-weight:700; color:#6b21a8; margin-bottom:3px;">' +
+                    '<span>' + label + '</span>' +
+                    '<span style="color:#a855f7;">' + counts[label] + 'x</span>' +
+                    '</div>' +
+                    '<div style="height:10px; background:#f3e8ff; border-radius:6px; overflow:hidden;">' +
+                    '<div style="height:100%; width:' + pct + '%; background:linear-gradient(90deg,#a855f7,#7e22ce); border-radius:6px; transition:width .4s;"></div>' +
+                    '</div>' +
+                    '</div>';
+            });
+            html += '</div>';
+            el.innerHTML = html;
+        }
+
+        // ── Render history ───────────────────────────────────────────────────
+        function renderHistory() {
+            const el = document.getElementById('htHistory');
+            if (!el) return;
+            const entries = getEntries();
+            if (!entries.length) { el.innerHTML = ''; return; }
+            let html =
+                '<div style="background:white; border-radius:14px; padding:16px; border:2px solid #e9d5ff;">' +
+                '<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">' +
+                '<h3 style="color:#7e22ce; font-size:16px; font-weight:800; margin:0;">📜 Recent Sessions</h3>' +
+                '<button onclick="htClearAll()" style="background:transparent; border:1.5px solid #f87171; color:#ef4444; padding:4px 10px; border-radius:8px; font-size:12px; cursor:pointer; font-weight:700;">🗑 Clear All</button>' +
+                '</div>';
+            entries.slice(0, 20).forEach(function (e) {
+                html +=
+                    '<div style="padding:10px 12px; border-radius:10px; background:#faf5ff; margin-bottom:8px; border-left:4px solid #a855f7;">' +
+                    '<p style="font-size:11px; color:#9333ea; margin:0 0 4px; font-weight:700;">' + e.date + '</p>' +
+                    '<p style="font-size:13px; color:#581c87; margin:0 0 4px; font-weight:700;">' + (e.tools || []).join('  ·  ') + '</p>' +
+                    (e.note ? '<p style="font-size:12px; color:#7e22ce; margin:0; font-style:italic;">"' + e.note + '"</p>' : '') +
+                    '</div>';
+            });
+            html += '</div>';
+            el.innerHTML = html;
+        }
+
+        // ── Clear all ────────────────────────────────────────────────────────
+        window.htClearAll = function () {
+            if (!confirm('Clear ALL entries in What Has Helped Me? This cannot be undone.')) return;
+            saveEntries([]);
+            renderStats();
+            renderHistory();
+        };
+
+        // ── Init ─────────────────────────────────────────────────────────────
+        window.initHelpedTracker = function () {
+            _selected.clear();
+            renderChips();
+            renderStats();
+            renderHistory();
+        };
+    })();
+    </script>
+    <!-- ===== END WHAT HAS HELPED ME TRACKER — JS ===== -->
 
 </body>
 </html>
