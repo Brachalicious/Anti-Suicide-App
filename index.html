@@ -2683,7 +2683,7 @@
                             <div style="font-weight:800; font-size:13px; background:linear-gradient(90deg,#22c55e,#06b6d4,#3b82f6,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Divine Affirmations Song</div>
                             <div style="font-size:12px; color:#a7f3d0;">Play daily for your dose of self-love 💗</div>
                         </div>
-                        <button onclick="showSection('affirmation-cards')"
+                        <button onclick="showSection('affirmation-cards'); setTimeout(function(){ var a=document.getElementById('divineAffAudio'); var btn=document.getElementById('divineAffPlayBtn'); if(a && a.paused){ a.play(); if(btn) btn.textContent='⏸️ Pause'; }}, 400);"
                            style="background:linear-gradient(135deg,#22c55e,#06b6d4); color:white; font-weight:700; font-size:13px; padding:8px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;">▶️ Play Now</button>
                     </div>
 
@@ -5541,34 +5541,107 @@
                                 Your daily dose of self-love 💗 &nbsp;·&nbsp; Play <strong style="color:#34d399;">100×</strong> a day or whenever you need it
                             </p>
                             <!-- Big Play Button -->
-                            <a href="https://suno.com/s/B4Tpj7Cjn416wOE5" target="_blank" rel="noopener"
-                               style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6); background-size:200% 200%; animation:sunsetShift 4s ease infinite; color:white; font-weight:800; font-size:18px; padding:16px 36px; border-radius:50px; text-decoration:none; box-shadow:0 4px 24px rgba(34,197,94,0.5); letter-spacing:0.5px;">
-                                <span style="font-size:22px;">▶️</span> Play Song Now
-                            </a>
-                            <p style="margin-top:10px; font-size:11px; color:#64748b;">(opens music player in new tab — free)</p>
+                            <audio id="divineAffAudio" src="/public/divine-affirmations.mp3" preload="metadata" style="display:none;"></audio>
+                            <button onclick="(function(){
+                                var a=document.getElementById('divineAffAudio');
+                                var btn=document.getElementById('divineAffPlayBtn');
+                                if(a.paused){ a.play(); btn.textContent='⏸️ Pause'; }
+                                else { a.pause(); btn.textContent='▶️ Play Song Now'; }
+                                a.onended=function(){ btn.textContent='▶️ Play Song Now'; };
+                            })()" id="divineAffPlayBtn"
+                               style="display:inline-flex; align-items:center; gap:10px; background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6); background-size:200% 200%; animation:sunsetShift 4s ease infinite; color:white; font-weight:800; font-size:18px; padding:16px 36px; border-radius:50px; border:none; cursor:pointer; box-shadow:0 4px 24px rgba(34,197,94,0.5); letter-spacing:0.5px;">
+                                ▶️ Play Song Now
+                            </button>
+                            <p style="margin-top:10px; font-size:11px; color:#64748b;">plays right here in the app 🎵</p>
                         </div>
                         <!-- Lyrics always visible -->
                         <div style="padding:16px 20px 20px; background:rgba(0,0,0,0.35); border-top:1px solid rgba(34,197,94,0.2);">
                             <p style="color:#34d399; font-size:12px; font-weight:700; margin-bottom:12px; letter-spacing:1.5px; text-transform:uppercase; text-align:center;">🎤 Lyrics — read along or say out loud</p>
-                            <div style="color:#e0f2fe; font-size:15px; line-height:2.1; text-align:center; font-style:italic; white-space:pre-line; text-shadow:0 1px 4px rgba(0,0,0,0.5);">I am worthy, I am loved
-I am light from up above
-Every breath I take is grace
-I belong, I have a place
+                            <div style="color:#e0f2fe; font-size:15px; line-height:2.1; text-align:center; font-style:italic; white-space:pre-line; text-shadow:0 1px 4px rgba(0,0,0,0.5);">I am created in God's image — therefore I am holy and divine.
+I am one of a kind.
+I am created exactly as I should be,
+and I am perfectly imperfect!!!
 
-I am strong, I will survive
-Every day I'm more alive
-My soul shines, my spirit glows
-I am more than anyone knows
+It's ok if I am not always strong —
+my value and worth and the care others have for me
+won't change when I struggle.
+If somebody else lacks the ability to understand or support me,
+that is their shortcoming and has nothing to do with me.
 
-I am worthy of good things
-Joy and peace is what life brings
-I forgive myself today
-Love is always here to stay
+I am holy. I am a blessing. I am a light.
+God loves me.
+I was woken up today because I am needed, wanted,
+and the world would not have the same potential without my soul —
+and that is why I am here today,
+given life by my Creator who breathed life into me.
+I have a piece of the divine in me.
+He knit me together in my mother's womb,
+and I am fearfully and wonderfully made — just as I am!!!!
 
-I am needed on this earth
-I have irreplaceable worth
-This unique soul, this one-of-a-kind me —
-Is exactly who the world needs me to be 💗</div>
+You blessed me with life, with love, with everything that I need.
+Thank you God for guiding me this whole time,
+even though I couldn't understand it then.
+And I'm sure I will have my moments of doubt again when things are hard —
+but they always turn out ok, even if it takes a very very long time.
+
+I've come to believe that maybe the trick to life
+is just withstanding the impossible moments
+and believing that God has a plan, even though I can't see it right away.
+
+God is good all the time.
+Please let me always keep my faith.
+Thank you God for every struggle —
+and that is hard to say, but it is true —
+because I can understand now that You were watching and guiding me all along.
+
+In those impossible moments, please God, hold me
+and don't let me go till I am ok again.
+I am not always ok — but I will be again. I am told that. 💗
+
+━━━━━━━━━━━━━━━━━━━━━━━
+
+[Verse 1]
+You gave me life, you gave me spirit,
+You grabbed me out of the darkest place!
+I didn't know then, what I know now —
+Didn't believe in love, you've shown me how...
+
+[Pre-Chorus]
+Maybe the way to get through the impossible, is to:
+Lean on faith, and go crazy like — badadadadle!
+Keeping hope, when the path looks dim,
+Trusting God is still steering the ship... from within!
+God is Good — in the dark, in the day;
+Lord, hold my heart, don't lead me astray.
+
+[Chorus]
+I am holy! I am a blessing! I am a light — God loves me!
+I'm a divine spark that's loved by my Creator... in the day and in the night.
+He woke me with a purpose running through my veins,
+And I'll give the world the best of what You gave me... until my very last day!
+
+[Bridge]
+In the impossible, Lord, hold me tight —
+Don't let me go, till I see the light!
+I'm not always okay... but I always will be
+Held safe beneath the stars above,
+that You masterfully designed for me.
+
+I will look back to my ancestors, for guidance and inspiration,
+And try to remember Your word, in every situation...
+You have commanded that I be strong and courageous! Unafraid! And not discouraged!
+And God, I pray I find the strength to hold You... before I ever plummet.
+For Lord, God... You are with me wherever I may go,
+And this soul — that You've returned to me — is needing to hold You close.
+
+[Outro]
+Fearfully... wonderfully made... from the start!
+Just as I am, with a spark in my heart.
+I am holy.
+I am a blessing.
+I am light — God loves me.
+God, thank you for Your love...
+and please, hold onto me — forever and ever and ever. 🕊️💗</div>
                         </div>
                     </div>
 
