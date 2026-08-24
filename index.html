@@ -2628,17 +2628,17 @@
                 <div class="card">
                     <h2 class="section-title">Quick Support Tools</h2>
                     <!-- 1. Emergency Contacts -->
-                    <button class="btn" onclick="showContacts()" style="background:#16a34a;">📞 Emergency Contacts</button>
+                    <button class="btn" onclick="showContacts()" style="background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6,#22c55e);background-size:300% 300%;animation:sunsetShift 5s ease infinite;">📞 Emergency Contacts</button>
                     <!-- 2. Coping Strategies -->
-                    <button class="btn" onclick="showCoping()" style="background:#15803d;">🛠️ Coping Strategies</button>
+                    <button class="btn" onclick="showCoping()" style="background:linear-gradient(135deg,#06b6d4,#3b82f6,#34d399,#06b6d4);background-size:300% 300%;animation:sunsetShift 6s ease infinite;">🛠️ Coping Strategies</button>
                     <!-- 3. My Safety Plan -->
-                    <button class="btn" onclick="showSafetyPlan()" style="background:#22c55e;">🛡️ My Safety Plan</button>
+                    <button class="btn" onclick="showSafetyPlan()" style="background:linear-gradient(135deg,#34d399,#22c55e,#06b6d4,#34d399);background-size:300% 300%;animation:sunsetShift 5.5s ease infinite;">🛡️ My Safety Plan</button>
                     <!-- 4. Breathing Exercises -->
-                    <button class="btn" onclick="showBreathingTechniques()" style="background:#22c55e;">🧘 Breathing Exercise</button>
+                    <button class="btn" onclick="showBreathingTechniques()" style="background:linear-gradient(135deg,#3b82f6,#06b6d4,#22c55e,#3b82f6);background-size:300% 300%;animation:sunsetShift 7s ease infinite;">🧘 Breathing Exercise</button>
                     <!-- 5. Progressive Muscle Relaxation -->
-                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:#06b6d4;">💪 Progressive Muscle Relaxation</button>
+                    <button class="btn" onclick="startProgressiveMuscleRelaxation()" style="background:linear-gradient(135deg,#06b6d4,#22c55e,#34d399,#3b82f6);background-size:300% 300%;animation:sunsetShift 6.5s ease infinite;">💪 Progressive Muscle Relaxation</button>
                     <!-- 6. Guided Meditation -->
-                    <button class="btn" onclick="startGuidedMeditation()" style="background:#8b5cf6;">🧘‍♀️ Guided Meditation</button>
+                    <button class="btn" onclick="startGuidedMeditation()" style="background:linear-gradient(135deg,#22c55e,#34d399,#06b6d4,#3b82f6,#22c55e);background-size:300% 300%;animation:sunsetShift 8s ease infinite;">🧘‍♀️ Guided Meditation</button>
 
                     <!-- 7. Affirmations Mirror (collapsible) -->
                     <div style="margin-top: 12px; border-radius: 16px; border: 2px solid #d4af37; background: linear-gradient(135deg, #1a0a2e, #2d1b4e);">
@@ -2677,14 +2677,14 @@
                     <p style="color: #ff69b4; font-size: 13px; margin-bottom: 12px;">To save this affirmation to your Affirmation Book, click the 🤍 heart.</p>
 
                     <!-- Divine Affirmations Song mini banner -->
-                    <div style="margin-bottom: 16px; padding: 14px 16px; border-radius: 14px; background: linear-gradient(135deg, #ff6b6b18, #c471f522); border: 1px solid rgba(255,110,180,0.4); display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+                    <div style="margin-bottom: 16px; padding: 14px 16px; border-radius: 14px; background: linear-gradient(135deg,#0f172a,#1e3a2f); border: 1px solid rgba(34,197,94,0.45); display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
                         <span style="font-size:26px;">🎵</span>
                         <div style="flex:1; min-width:140px;">
-                            <div style="font-weight:800; font-size:13px; background: linear-gradient(90deg,#ff6b6b,#ffb347,#ff6eb4,#c471f5); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Divine Affirmations Song</div>
-                            <div style="font-size:12px; color:#c4b5fd;">Play daily for your dose of self-love 💗</div>
+                            <div style="font-weight:800; font-size:13px; background:linear-gradient(90deg,#22c55e,#06b6d4,#3b82f6,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Divine Affirmations Song</div>
+                            <div style="font-size:12px; color:#a7f3d0;">Play daily for your dose of self-love 💗</div>
                         </div>
-                        <a href="https://suno.com/s/B4Tpj7Cjn416wOE5" target="_blank" rel="noopener"
-                           style="background: linear-gradient(135deg,#ff6eb4,#c471f5); color:white; font-weight:700; font-size:13px; padding:8px 16px; border-radius:10px; text-decoration:none; white-space:nowrap;">▶️ Play Now</a>
+                        <button onclick="showSection('affirmation-cards')"
+                           style="background:linear-gradient(135deg,#22c55e,#06b6d4); color:white; font-weight:700; font-size:13px; padding:8px 16px; border-radius:10px; border:none; cursor:pointer; white-space:nowrap;">▶️ Play Now</button>
                     </div>
 
                     <div class="affirmation" id="daily-affirmation">
@@ -5531,20 +5531,52 @@
                         Draw a card of hope. A new affirmation just for you.
                     </p>
 
-                    <!-- 🎵 Divine Affirmations Song -->
-                    <div style="margin-bottom: 28px; padding: 22px 20px; border-radius: 20px; background: linear-gradient(135deg, #ff6b6b22, #ff8e5322, #ffb34722, #ff6eb422, #c471f522); border: 2px solid rgba(255,110,180,0.45); text-align: center; box-shadow: 0 6px 24px rgba(196,113,245,0.25);">
-                        <div style="font-size: 36px; margin-bottom: 8px;">🎵</div>
-                        <h3 style="font-size: 19px; font-weight: 800; margin-bottom: 6px; background: linear-gradient(90deg, #ff6b6b, #ffb347, #ff6eb4, #c471f5); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;">Divine Affirmations Song</h3>
-                        <p style="color: #e2c4ff; font-size: 14px; line-height: 1.6; margin-bottom: 14px;">
-                            Your daily dose of self-love 💗<br>
-                            Play this <strong style="color:#ff6eb4;">100 times a day</strong> or as often as you need it.<br>
-                            <span style="font-size: 13px; color: #c4b5fd;">Let it wash over you. You are worthy of every word.</span>
-                        </p>
-                        <a href="https://suno.com/s/B4Tpj7Cjn416wOE5" target="_blank" rel="noopener"
-                           style="display:inline-block; background: linear-gradient(135deg, #ff6b6b, #ff8e53, #ffb347, #ff6eb4, #c471f5); background-size: 200% 200%; animation: sunsetShift 5s ease infinite; color: white; font-weight: 800; font-size: 17px; padding: 14px 32px; border-radius: 14px; text-decoration: none; box-shadow: 0 4px 18px rgba(255,107,107,0.5); letter-spacing: 0.3px;">
-                            ▶️ Play Divine Affirmations
-                        </a>
-                        <p style="margin-top: 12px; font-size: 12px; color: #94a3b8; font-style: italic;">Opens in Suno — free to play 🎶</p>
+                    <!-- 🎵 Divine Affirmations Song — in-app player + lyrics -->
+                    <div style="margin-bottom: 28px; border-radius: 20px; background: linear-gradient(135deg,#0f172a,#1e3a2f,#0c2340); border: 2px solid rgba(34,197,94,0.45); overflow:hidden; box-shadow: 0 8px 32px rgba(6,182,212,0.25);">
+                        <div style="padding:18px 20px 10px; text-align:center;">
+                            <div style="font-size:32px; margin-bottom:6px;">🎵</div>
+                            <h3 style="font-size:18px; font-weight:800; margin-bottom:4px; background:linear-gradient(90deg,#22c55e,#06b6d4,#3b82f6,#34d399); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;">Divine Affirmations Song</h3>
+                            <p style="color:#a7f3d0; font-size:13px; line-height:1.5; margin-bottom:12px;">
+                                Your daily dose of self-love 💗 &nbsp;·&nbsp; Play <strong style="color:#34d399;">100×</strong> a day or whenever you need it
+                            </p>
+                        </div>
+                        <!-- Suno embedded player -->
+                        <iframe
+                            src="https://suno.com/embed/B4Tpj7Cjn416wOE5"
+                            width="100%" height="166"
+                            frameborder="0"
+                            allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
+                            loading="lazy"
+                            style="display:block; border:none; border-bottom: 1px solid rgba(34,197,94,0.2);"
+                            title="Divine Affirmations Song">
+                        </iframe>
+                        <!-- Lyrics -->
+                        <div id="divineAffLyrics" style="display:none; padding:18px 20px; background:rgba(0,0,0,0.3);">
+                            <p style="color:#34d399; font-size:13px; font-weight:700; margin-bottom:10px; letter-spacing:1px; text-transform:uppercase;">📝 Lyrics</p>
+                            <div style="color:#e0f2fe; font-size:15px; line-height:2; text-align:center; font-style:italic; white-space:pre-line;">I am worthy, I am loved
+I am light from up above
+Every breath I take is grace
+I belong, I have a place
+
+I am strong, I will survive
+Every day I'm more alive
+My soul shines, my spirit glows
+I am more than anyone knows
+
+I am worthy of good things
+Joy and peace is what life brings
+I forgive myself today
+Love is always here to stay
+
+I am needed on this earth
+I have irreplaceable worth
+This unique soul, this one-of-a-kind me —
+Is exactly who the world needs me to be 💗</div>
+                        </div>
+                        <button onclick="var l=document.getElementById('divineAffLyrics'); l.style.display=l.style.display==='none'?'block':'none'; this.textContent=l.style.display==='block'?'🎤 Hide Lyrics':'🎤 Show Lyrics';"
+                            style="width:100%; background:rgba(34,197,94,0.15); border:none; border-top:1px solid rgba(34,197,94,0.2); color:#34d399; font-size:14px; font-weight:700; padding:12px; cursor:pointer; letter-spacing:0.5px;">
+                            🎤 Show Lyrics
+                        </button>
                     </div>
 
                     <!-- Card Display -->
