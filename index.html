@@ -16827,7 +16827,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             setTimeout(function(){ el.remove(); }, 2200);
         }
 
-        function buildHotlineShareUrl(name, phone, note, sectionId) {
+        function buildHotlineShareUrl(name, phone, note, sectionId, website) {
             const base = (location.origin && location.origin.startsWith('http'))
                 ? location.origin
                 : 'https://fightsuicideproject.netlify.app';
@@ -16838,17 +16838,19 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 cat:  'crisis'
             });
             if (sectionId) q.set('section', sectionId);
+            if (website)   q.set('website', website);
             return base + '/share.html?' + q.toString();
         }
 
-        async function shareHotline(name, phone, note, isText, keyword, sectionId) {
+        async function shareHotline(name, phone, note, isText, keyword, sectionId, website) {
             const dialLabel = isText
                 ? (keyword ? 'Text ' + keyword + ' to ' + phone : 'Text ' + phone)
                 : 'Call ' + phone;
-            const shareUrl = buildHotlineShareUrl(name, phone, note, sectionId);
+            const shareUrl = buildHotlineShareUrl(name, phone, note, sectionId, website);
             const text =
                 '📞 ' + name + '\n' + dialLabel +
                 (note ? ('\n\n' + note) : '') +
+                (website ? ('\n🌐 Learn more: ' + website) : '') +
                 '\n\n🔗 View & save this number: ' + shareUrl;
             if (navigator.share) {
                 try { await navigator.share({ title: name, text: text, url: shareUrl }); return; }
@@ -16909,11 +16911,21 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             // Find the parent section so the share link deep-links back to it
             const sectionEl = hotline.closest && hotline.closest('.section[id]');
             const sectionId = sectionEl ? sectionEl.id : '';
+            // Extract a website URL from any external link or window.open button in the card
+            const extLinkEl = hotline.querySelector('a[href^="http"]');
+            const winOpenBtn = !extLinkEl && hotline.querySelector('button[onclick*="window.open"]');
+            let website = '';
+            if (extLinkEl) {
+                website = extLinkEl.href;
+            } else if (winOpenBtn) {
+                const wm = (winOpenBtn.getAttribute('onclick') || '').match(/window\.open\(['"]([^'"]+)['"]/);
+                if (wm) website = wm[1];
+            }
             const wrap = document.createElement('div');
             wrap.className = 'hotline-share-row';
             wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0;margin-top:12px;';
             wrap.appendChild(makeBtn('📤 Share', function () {
-                shareHotline(name, info.phone, note, info.isText, info.keyword, sectionId);
+                shareHotline(name, info.phone, note, info.isText, info.keyword, sectionId, website);
             }, '#0ea5e9', '#fff'));
             wrap.appendChild(makeBtn('📇 Save to Contacts', function () {
                 saveToContacts(name, info.phone, note);

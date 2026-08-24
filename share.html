@@ -222,12 +222,13 @@
         }
 
         // --- Read params ----------------------------------------------
-        const name  = get('name').slice(0, 80);
-        const rawPh = get('tel').slice(0, 30);
-        const phone = normalizePhone(rawPh);
-        const note  = get('note').slice(0, 300);
-        const cat   = get('cat').slice(0, 20);
+        const name    = get('name').slice(0, 80);
+        const rawPh   = get('tel').slice(0, 30);
+        const phone   = normalizePhone(rawPh);
+        const note    = get('note').slice(0, 300);
+        const cat     = get('cat').slice(0, 20);
         const section = get('section').replace(/[^a-z0-9\-_]/gi, '').slice(0, 60);
+        const website = get('website').slice(0, 200); // optional learn-more URL
 
         const target = document.getElementById('content');
         if (!name || !phone) {
@@ -243,24 +244,28 @@
 
         target.innerHTML = `
             <div class="name">${esc(name)}</div>
-            <div class="phone">${esc(rawPh || phone)}</div>
+            <a href="tel:${esc(phone)}" class="phone" style="display:block; text-decoration:none; cursor:pointer;" title="Tap to call">
+                ${esc(rawPh || phone)} <span style="font-size:18px;">📞</span>
+            </a>
             ${note ? `<div class="note">📝 ${esc(note)}</div>` : ''}
-            <div class="warn">
-                <strong>⚠️ Verify before calling.</strong> This number was
-                shared by another person — Fight Suicide Project did not
-                verify it. Always double-check unfamiliar numbers, especially
-                in a crisis.
+
+            <a class="btn btn-call" href="tel:${esc(phone)}" style="font-size:18px; padding:16px;">📞 Call Now — 1 tap</a>
+            <a class="btn btn-text" href="sms:${esc(phone)}">💬 Send a Text</a>
+            <button class="btn btn-save" id="btnSave">💾 Save to Phone Contacts</button>
+            ${website ? `<a class="btn" href="${esc(website)}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;">🌐 Learn More →</a>` : ''}
+            <button class="btn btn-add" id="btnAdd">➕ Add to my Fight Suicide Project list</button>
+            ${section ? `<a class="btn" href="/#${esc(section)}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🔍 View original source in app →</a>` : ''}
+
+            <div class="warn" style="margin-top:16px;">
+                <strong>⚠️ Verify before calling.</strong> Always double-check
+                unfamiliar numbers. Fight Suicide Project cannot guarantee
+                every shared number.
             </div>
-            <a class="btn btn-call" href="tel:${esc(phone)}">📞 Call now</a>
-            <a class="btn btn-text" href="sms:${esc(phone)}">💬 Send a text</a>
-            <button class="btn btn-save" id="btnSave">💾 Save to my Contacts</button>
-            <button class="btn btn-add"  id="btnAdd">➕ Add to my Fight Suicide Project list</button>
-            ${section ? `<a class="btn" id="btnSource" href="/${section ? '#' + section : ''}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🔍 View original source in app →</a>` : ''}
 
             <div class="crisis-strip">
-                🆘 Not sure yet? Free 24/7 crisis help:
-                <a href="tel:988">call 988</a> or
-                <a href="sms:741741?body=HOME">text 741741</a>
+                🆘 Immediate crisis? Free 24/7 help:
+                <a href="tel:988">📞 Call 988</a> &nbsp;|&nbsp;
+                <a href="sms:741741?body=HOME">💬 Text HOME to 741741</a>
             </div>
         `;
 
