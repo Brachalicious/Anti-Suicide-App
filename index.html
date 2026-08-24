@@ -16783,16 +16783,31 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             setTimeout(function(){ el.remove(); }, 2200);
         }
 
-        async function shareHotline(name, phone, note, isText, keyword) {
+        function buildHotlineShareUrl(name, phone, note, sectionId) {
+            const base = (location.origin && location.origin.startsWith('http'))
+                ? location.origin
+                : 'https://fightsuicideproject.netlify.app';
+            const q = new URLSearchParams({
+                name: name || '',
+                tel:  phone || '',
+                note: note  || '',
+                cat:  'crisis'
+            });
+            if (sectionId) q.set('section', sectionId);
+            return base + '/share.html?' + q.toString();
+        }
+
+        async function shareHotline(name, phone, note, isText, keyword, sectionId) {
             const dialLabel = isText
                 ? (keyword ? 'Text ' + keyword + ' to ' + phone : 'Text ' + phone)
                 : 'Call ' + phone;
+            const shareUrl = buildHotlineShareUrl(name, phone, note, sectionId);
             const text =
                 '📞 ' + name + '\n' + dialLabel +
                 (note ? ('\n\n' + note) : '') +
-                '\n\nShared from Fight Suicide Project — a peer-support wellness companion.';
+                '\n\n🔗 View & save this number: ' + shareUrl;
             if (navigator.share) {
-                try { await navigator.share({ title: name, text: text }); return; }
+                try { await navigator.share({ title: name, text: text, url: shareUrl }); return; }
                 catch (e) { if (e && e.name === 'AbortError') return; }
             }
             try {
@@ -16847,11 +16862,14 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (!name || !info.phone) return;
             const descEl = hotline.querySelector('p');
             const note = descEl ? (descEl.textContent || '').trim().slice(0, 300) : '';
+            // Find the parent section so the share link deep-links back to it
+            const sectionEl = hotline.closest && hotline.closest('.section[id]');
+            const sectionId = sectionEl ? sectionEl.id : '';
             const wrap = document.createElement('div');
             wrap.className = 'hotline-share-row';
             wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0;margin-top:12px;';
             wrap.appendChild(makeBtn('📤 Share', function () {
-                shareHotline(name, info.phone, note, info.isText, info.keyword);
+                shareHotline(name, info.phone, note, info.isText, info.keyword, sectionId);
             }, '#0ea5e9', '#fff'));
             wrap.appendChild(makeBtn('📇 Save to Contacts', function () {
                 saveToContacts(name, info.phone, note);

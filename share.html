@@ -227,6 +227,7 @@
         const phone = normalizePhone(rawPh);
         const note  = get('note').slice(0, 300);
         const cat   = get('cat').slice(0, 20);
+        const section = get('section').replace(/[^a-z0-9\-_]/gi, '').slice(0, 60);
 
         const target = document.getElementById('content');
         if (!name || !phone) {
@@ -254,6 +255,7 @@
             <a class="btn btn-text" href="sms:${esc(phone)}">💬 Send a text</a>
             <button class="btn btn-save" id="btnSave">💾 Save to my Contacts</button>
             <button class="btn btn-add"  id="btnAdd">➕ Add to my Fight Suicide Project list</button>
+            ${section ? `<a class="btn" id="btnSource" href="/${section ? '#' + section : ''}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🔍 View original source in app →</a>` : ''}
 
             <div class="crisis-strip">
                 🆘 Not sure yet? Free 24/7 crisis help:
