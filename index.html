@@ -710,7 +710,9 @@
             border-color: #3b82f6;
         }
         .btn {
-            background: linear-gradient(135deg, #40916c, #52b788);
+            background: linear-gradient(135deg, #ff6b6b, #ff8e53, #ffb347, #ff6eb4, #c471f5, #fa71cd);
+            background-size: 200% 200%;
+            animation: sunsetShift 6s ease infinite;
             color: white;
             border: none;
             padding: 16px 28px;
@@ -718,25 +720,37 @@
             cursor: pointer;
             font-weight: 700;
             font-size: 18px;
-            transition: all 0.2s;
+            transition: all 0.3s;
             width: 100%;
             margin: 10px 0;
-            box-shadow: 0 4px 12px rgba(64,145,108,0.3);
+            box-shadow: 0 4px 18px rgba(255,107,107,0.45);
             letter-spacing: 0.3px;
+            text-shadow: 0 1px 4px rgba(0,0,0,0.25);
+        }
+        @keyframes sunsetShift {
+            0%   { background-position: 0% 50%; }
+            50%  { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
         }
         .btn:hover {
-            background: linear-gradient(135deg, #2d6a4f, #40916c);
-            box-shadow: 0 6px 18px rgba(64,145,108,0.4);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #c471f5, #fa71cd, #ff6b6b, #ffb347, #ff8e53);
+            background-size: 200% 200%;
+            box-shadow: 0 8px 28px rgba(196,113,245,0.55);
+            transform: translateY(-2px) scale(1.02);
         }
         .btn-emergency {
-            background: linear-gradient(135deg, #2d6a4f, #40916c);
+            background: linear-gradient(135deg, #ff416c, #ff4b2b, #ff8e53, #ffb347, #ff6eb4);
+            background-size: 200% 200%;
+            animation: sunsetShift 4s ease infinite;
             font-size: 22px;
             padding: 20px 36px;
             font-weight: 800;
+            box-shadow: 0 6px 24px rgba(255,65,108,0.5);
         }
         .btn-emergency:hover {
-            background: linear-gradient(135deg, #1b4332, #2d6a4f);
+            background: linear-gradient(135deg, #c471f5, #ff416c, #ff4b2b, #ffb347);
+            background-size: 200% 200%;
+            box-shadow: 0 8px 32px rgba(255,65,108,0.65);
         }
         .breathing-option {
             background: linear-gradient(135deg, #15803d, #22c55e);
