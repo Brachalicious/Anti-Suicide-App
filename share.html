@@ -228,7 +228,12 @@
         const note    = get('note').slice(0, 300);
         const cat     = get('cat').slice(0, 20);
         const section = get('section').replace(/[^a-z0-9\-_]/gi, '').slice(0, 60);
+        const card    = get('card').replace(/[^a-z0-9\-_]/gi, '').slice(0, 60);  // specific card ID
         const website = get('website').slice(0, 200); // optional learn-more URL
+
+        // The deep-link back into the app: prefer card ID (scrolls to exact hotline),
+        // fall back to section ID (opens the right section), else just the app root.
+        const appDeepLink = card ? ('/#' + card) : section ? ('/#' + section) : '/';
 
         const target = document.getElementById('content');
         if (!name || !phone) {
@@ -254,7 +259,7 @@
             <button class="btn btn-save" id="btnSave">💾 Save to Phone Contacts</button>
             ${website ? `<a class="btn" href="${esc(website)}" target="_blank" rel="noopener" style="background:linear-gradient(135deg,#0ea5e9,#0284c7);color:#fff;">🌐 Learn More →</a>` : ''}
             <button class="btn btn-add" id="btnAdd">➕ Add to my Fight Suicide Project list</button>
-            ${section ? `<a class="btn" href="/#${esc(section)}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🔍 View original source in app →</a>` : ''}
+            <a class="btn" href="${esc(appDeepLink)}" style="background:linear-gradient(135deg,#f59e0b,#d97706);color:#fff;">🔍 View original source in app →</a>
 
             <div class="warn" style="margin-top:16px;">
                 <strong>⚠️ Verify before calling.</strong> Always double-check

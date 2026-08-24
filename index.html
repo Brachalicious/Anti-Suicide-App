@@ -11104,17 +11104,35 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
         }
 
-        // ── Deep-link / hash routing: /#resources, /#crisis etc. ──
+        // ── Deep-link / hash routing: /#resources, /#crisis, /#hc-988 etc. ──
         // Called from share.html "View original source" button and any direct URL with a section hash.
         (function () {
             function handleHash() {
                 const hash = (location.hash || '').replace('#', '').trim();
-                if (hash && document.getElementById(hash)) {
-                    if (typeof showSection === 'function') showSection(hash);
+                if (!hash) return;
+                const el = document.getElementById(hash);
+                if (!el) return;
+
+                // If the element is a hotline card — navigate to its section then scroll/highlight
+                if (el.classList && el.classList.contains('hotline')) {
+                    const sectionEl = el.closest && el.closest('.section[id]');
+                    if (sectionEl && typeof showSection === 'function') {
+                        showSection(sectionEl.id);
+                    }
+                    setTimeout(function () {
+                        el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                        // Pulse highlight so user can see exactly which card was shared
+                        el.style.transition = 'box-shadow 0.4s ease';
+                        el.style.boxShadow = '0 0 0 4px #ff6eb4, 0 0 36px rgba(255,110,180,0.7)';
+                        setTimeout(function () { el.style.boxShadow = ''; }, 3500);
+                    }, 350);
+                    return;
                 }
+
+                // Regular section navigation
+                if (typeof showSection === 'function') showSection(hash);
             }
-            // Run after all JS has initialised (fonts + layout settle at 'load')
-            window.addEventListener('load', function () { setTimeout(handleHash, 200); });
+            window.addEventListener('load', function () { setTimeout(handleHash, 300); });
             window.addEventListener('hashchange', handleHash);
         })();
 
@@ -16939,7 +16957,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             setTimeout(function(){ el.remove(); }, 2200);
         }
 
-        function buildHotlineShareUrl(name, phone, note, sectionId, website) {
+        function buildHotlineShareUrl(name, phone, note, sectionId, website, cardId) {
             const base = (location.origin && location.origin.startsWith('http'))
                 ? location.origin
                 : 'https://fightsuicideproject.netlify.app';
@@ -16951,14 +16969,15 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             });
             if (sectionId) q.set('section', sectionId);
             if (website)   q.set('website', website);
+            if (cardId)    q.set('card', cardId);
             return base + '/share.html?' + q.toString();
         }
 
-        async function shareHotline(name, phone, note, isText, keyword, sectionId, website) {
+        async function shareHotline(name, phone, note, isText, keyword, sectionId, website, cardId) {
             const dialLabel = isText
                 ? (keyword ? 'Text ' + keyword + ' to ' + phone : 'Text ' + phone)
                 : 'Call ' + phone;
-            const shareUrl = buildHotlineShareUrl(name, phone, note, sectionId, website);
+            const shareUrl = buildHotlineShareUrl(name, phone, note, sectionId, website, cardId);
             const text =
                 '📞 ' + name + '\n' + dialLabel +
                 (note ? ('\n\n' + note) : '') +
@@ -17008,6 +17027,24 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             toast('📇 Contact card downloaded — open it to add to your phone.');
         }
 
+        // Known websites for major hotlines, keyed by normalized phone digits
+        var _HOTLINE_WEBSITES = {
+            '988':            'https://988lifeline.org',
+            '18002738255':    'https://988lifeline.org',
+            '741741':         'https://www.crisistextline.org',
+            '18006624357':    'https://www.samhsa.gov/find-help/national-helpline',
+            '18009506264':    'https://www.nami.org',
+            '18006564673':    'https://www.rainn.org',
+            '6022488336':     'https://teenlifeline.org',
+            '7182301000':     'https://hatzalah.org',
+            '9298012301':     'https://www.thehelpline.org',
+            '18884922524':    'https://zaakah.com',
+            '6465170222':     'https://www.ohelfamily.org',
+            '3046072429':     'https://afsp.org',
+            '18001111':       'https://www.samaritans.org',
+            '18334258772':    'https://www.postpartum.net',
+        };
+
         function decorateHotline(hotline) {
             if (!hotline || hotline.dataset.shareDecorated === '1') return;
             // Skip the (hidden) Shared Lifelines section — it has its own controls
@@ -17023,21 +17060,29 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             // Find the parent section so the share link deep-links back to it
             const sectionEl = hotline.closest && hotline.closest('.section[id]');
             const sectionId = sectionEl ? sectionEl.id : '';
-            // Extract a website URL from any external link or window.open button in the card
-            const extLinkEl = hotline.querySelector('a[href^="http"]');
-            const winOpenBtn = !extLinkEl && hotline.querySelector('button[onclick*="window.open"]');
-            let website = '';
-            if (extLinkEl) {
-                website = extLinkEl.href;
-            } else if (winOpenBtn) {
-                const wm = (winOpenBtn.getAttribute('onclick') || '').match(/window\.open\(['"]([^'"]+)['"]/);
-                if (wm) website = wm[1];
+            // Assign a stable ID to this hotline card for precise deep-linking
+            const digits = info.phone.replace(/[^\d]/g, '');
+            const cardId = 'hc-' + digits;
+            if (!hotline.id) hotline.id = cardId;
+            // Look up website: first check known map, then look for http link in card HTML
+            let website = _HOTLINE_WEBSITES[digits] || _HOTLINE_WEBSITES[info.phone] || '';
+            if (!website) {
+                const extLinkEl = hotline.querySelector('a[href^="http"]');
+                if (extLinkEl) {
+                    website = extLinkEl.href;
+                } else {
+                    const winOpenBtn = hotline.querySelector('button[onclick*="window.open"]');
+                    if (winOpenBtn) {
+                        const wm = (winOpenBtn.getAttribute('onclick') || '').match(/window\.open\(['"]([^'"]+)['"]/);
+                        if (wm && wm[1].startsWith('http')) website = wm[1];
+                    }
+                }
             }
             const wrap = document.createElement('div');
             wrap.className = 'hotline-share-row';
             wrap.style.cssText = 'display:flex;flex-wrap:wrap;gap:0;margin-top:12px;';
             wrap.appendChild(makeBtn('📤 Share', function () {
-                shareHotline(name, info.phone, note, info.isText, info.keyword, sectionId, website);
+                shareHotline(name, info.phone, note, info.isText, info.keyword, sectionId, website, cardId);
             }, '#0ea5e9', '#fff'));
             wrap.appendChild(makeBtn('📇 Save to Contacts', function () {
                 saveToContacts(name, info.phone, note);
