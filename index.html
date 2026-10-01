@@ -1211,6 +1211,32 @@
                 opacity: 0;
             }
         }
+
+            // Ensure Scream/General tab buttons also respond to touch on devices
+            // that sometimes suppress inline onclick handlers. This adds resilient
+            // click + touchstart listeners and makes sure panels accept pointer events.
+            document.addEventListener('DOMContentLoaded', function () {
+                try {
+                    var gBtn = document.getElementById('mysticInfoGeneralBtn');
+                    var sBtn = document.getElementById('mysticInfoScreamBtn');
+                    var gPanel = document.getElementById('mysticGeneralSupportPanel');
+                    var sPanel = document.getElementById('mysticScreamTherapyPanel');
+                    if (gPanel) { gPanel.style.pointerEvents = 'auto'; gPanel.style.zIndex = '2'; }
+                    if (sPanel) { sPanel.style.pointerEvents = 'auto'; sPanel.style.zIndex = '2'; }
+
+                    function bind(el, tab) {
+                        if (!el) return;
+                        var cb = function (ev) { ev.preventDefault && ev.preventDefault(); switchMysticBotInfoTab(tab); };
+                        el.addEventListener('click', cb, { passive: false });
+                        el.addEventListener('touchstart', cb, { passive: false });
+                    }
+                    bind(gBtn, 'general');
+                    bind(sBtn, 'scream');
+                } catch (e) {
+                    // swallow — non-critical
+                    console.warn('mystic tab bindings failed', e);
+                }
+            });
         
         @keyframes affirmationPop {
             0% {
@@ -1258,11 +1284,13 @@
         }
         
         .circular-text text {
-            font-size: 9px;
+            font-size: 19px;
             font-weight: 900;
             letter-spacing: 1.5px;
             text-transform: uppercase;
             filter: none;
+            stroke-width: 2.2px;
+            paint-order: stroke fill;
         }
         
         .logo-container img {
@@ -1640,8 +1668,8 @@
                             <!-- r=90: tight against logo, circumference ≈ 565 units -->
                             <path id="ringCircle" d="M 150,60 a 90,90 0 1,1 -0.001,0"/>
                         </defs>
-                        <text font-family="Arial Black, Arial, sans-serif" font-size="13" font-weight="900" stroke-width="0.3" style="paint-order:stroke fill;">
-                            <textPath href="#ringCircle" startOffset="0%" textLength="565" lengthAdjust="spacing"><tspan fill="#e8e4d0" stroke="#e8e4d0">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="#c8d8e8">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="#f0e6c8">PROJECT ✦   </tspan><tspan fill="#e8e4d0" stroke="#e8e4d0">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="#c8d8e8">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="#f0e6c8">PROJECT ✦   </tspan><tspan fill="#e8e4d0" stroke="#e8e4d0">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="#c8d8e8">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="#f0e6c8">PROJECT ✦</tspan></textPath>
+                        <text font-family="Arial Black, Arial, sans-serif" font-size="19" font-weight="900" stroke-width="2.2" style="paint-order:stroke fill;">
+                            <textPath href="#ringCircle" startOffset="0%" textLength="565" lengthAdjust="spacing"><tspan fill="#e8e4d0" stroke="navy">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="navy">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="navy">PROJECT ✦   </tspan><tspan fill="#e8e4d0" stroke="navy">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="navy">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="navy">PROJECT ✦   </tspan><tspan fill="#e8e4d0" stroke="navy">✦ FIGHT </tspan><tspan fill="#c8d8e8" stroke="navy">SUICIDE </tspan><tspan fill="#f0e6c8" stroke="navy">PROJECT ✦</tspan></textPath>
                         </text>
                     </svg>
                     <img src="/my%20logo%20updated.svg" alt="MysticMinded³³ Logo" class="logo-reflection" style="filter: brightness(1.1) saturate(0.7) hue-rotate(200deg) drop-shadow(0 0 8px rgba(180,210,255,0.6));" />
@@ -10185,6 +10213,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             try {
                 const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
                 
+                // Keep the live stream for recording/playback/visualizer
+                screamStream = stream;
+
                 // Start recording audio for download
                 try {
                     if (MediaRecorder.isTypeSupported('audio/webm')) {
@@ -10194,17 +10225,42 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     }
                     
                     circleScreamRecorder.ondataavailable = (event) => {
-                        if (event.data.size > 0) {
+                        if (event.data && event.data.size > 0) {
                             screamAudioChunks.push(event.data);
                         }
                     };
                     
                     circleScreamRecorder.onstop = () => {
                         screamAudioBlob = new Blob(screamAudioChunks, { type: 'audio/webm' });
-                        // Show download option
+                        // Show download + preview option
                         const downloadSection = document.getElementById('screamAudioDownload');
-                        if (downloadSection && screamAudioBlob.size > 0) {
+                        if (downloadSection && screamAudioBlob && screamAudioBlob.size > 0) {
                             downloadSection.style.display = 'block';
+                            // Create or update audio preview
+                            let player = document.getElementById('scream-audio-player');
+                            if (!player) {
+                                player = document.createElement('audio');
+                                player.id = 'scream-audio-player';
+                                player.controls = true;
+                                player.style.width = '100%';
+                                downloadSection.insertBefore(player, downloadSection.firstChild);
+                            }
+                            const url = URL.createObjectURL(screamAudioBlob);
+                            player.src = url;
+
+                            // Update download button href via existing UI
+                            const dlBtn = document.getElementById('downloadScreamBtn');
+                            if (dlBtn) {
+                                dlBtn.onclick = () => {
+                                    const a = document.createElement('a');
+                                    a.href = url;
+                                    const timestamp = new Date().toISOString().slice(0,19).replace(/:/g,'-');
+                                    a.download = `scream-session-${timestamp}.webm`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    document.body.removeChild(a);
+                                };
+                            }
                         }
                     };
                     
@@ -10212,8 +10268,52 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 } catch (recErr) {
                     console.warn('Audio recording not available:', recErr);
                 }
-                
-                stream.getTracks().forEach(t => t.stop()); // just checking permission
+
+                // Setup WebAudio analyser so rings respond to real audio amplitude
+                try {
+                    screamAudioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                    const src = screamAudioCtx.createMediaStreamSource(stream);
+                    screamAnalyser = screamAudioCtx.createAnalyser();
+                    screamAnalyser.fftSize = 1024;
+                    screamAnalyser.smoothingTimeConstant = 0.8;
+                    src.connect(screamAnalyser);
+
+                    const data = new Uint8Array(screamAnalyser.fftSize);
+                    let lastRing = 0;
+                    const analyse = () => {
+                        screamAnalyser.getByteTimeDomainData(data);
+                        // compute normalized RMS (0..1)
+                        let sum = 0;
+                        for (let i = 0; i < data.length; i++) {
+                            const v = (data[i] - 128) / 128;
+                            sum += v * v;
+                        }
+                        const rms = Math.sqrt(sum / data.length);
+                        // Map rms to scale (1..1.8)
+                        const scale = 1 + Math.min(1, rms * 4.5);
+
+                        // update circle visual
+                        const circle = document.getElementById('screamCircle');
+                        if (circle) {
+                            circle.style.transform = `scale(${scale})`;
+                            circle.style.boxShadow = `0 0 ${60 + rms * 200}px rgba(124, 58, 237, ${0.6 + rms})`;
+                        }
+
+                        // Spawn rings when loud enough and with a short cooldown
+                        const now = performance.now();
+                        if (rms > 0.03 && now - lastRing > (rms > 0.18 ? 150 : 350)) {
+                            const intensity = 1 + rms * 3;
+                            spawnScreamRing(intensity, false);
+                            lastRing = now;
+                        }
+
+                        screamAnimId = requestAnimationFrame(analyse);
+                    };
+                    screamAnimId = requestAnimationFrame(analyse);
+                } catch (audioErr) {
+                    console.warn('Visualizer not available:', audioErr);
+                }
+
             } catch (err) {
                 const permDenied = err.name === 'NotAllowedError' || err.name === 'PermissionDeniedError';
                 document.getElementById('screamVolume').textContent = permDenied
@@ -10452,6 +10552,23 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (circleScreamRecorder && circleScreamRecorder.state === 'recording') {
                 circleScreamRecorder.stop();
             }
+
+            // Stop visualiser animation and close audio context
+            if (screamAnimId) {
+                cancelAnimationFrame(screamAnimId);
+                screamAnimId = null;
+            }
+            try { if (screamAudioCtx) { screamAudioCtx.close(); } } catch(e){}
+            screamAudioCtx = null;
+            screamAnalyser = null;
+
+            // Stop tracks from the mic stream
+            try {
+                if (screamStream) {
+                    screamStream.getTracks().forEach(t => t.stop());
+                    screamStream = null;
+                }
+            } catch(e){}
             
             document.getElementById('screamStartBtn').style.display = 'inline-block';
             document.getElementById('screamStopBtn').style.display = 'none';
@@ -10527,12 +10644,13 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
-            URL.revokeObjectURL(url);
+            // don't revoke right away if the player is using it; set a short timeout
+            setTimeout(() => URL.revokeObjectURL(url), 30000);
             
             alert('✅ Recording downloaded! Check your downloads folder.');
         }
 
-        function saveScreamSession() {
+        async function saveScreamSession() {
             const notes = document.getElementById('screamSessionNotes')?.value || '';
             const rating = screamCurrentRating;
             
@@ -10549,8 +10667,23 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 timestamp: new Date().toISOString(),
                 rating: rating,
                 notes: notes,
-                hasAudio: !!screamAudioBlob
+                hasAudio: !!screamAudioBlob,
+                audioData: null
             };
+
+            // If we have an audio blob, convert to data URL for saving in localStorage / diary
+            if (screamAudioBlob) {
+                try {
+                    session.audioData = await new Promise((res, rej) => {
+                        const reader = new FileReader();
+                        reader.onload = () => res(reader.result);
+                        reader.onerror = rej;
+                        reader.readAsDataURL(screamAudioBlob);
+                    });
+                } catch (e) {
+                    console.warn('Failed to encode scream audio for saving:', e);
+                }
+            }
             
             // Add to sessions
             sessions.push(session);
@@ -10562,6 +10695,38 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             
             // Save to localStorage
             localStorage.setItem(_lsKey('scream_sessions'), JSON.stringify(sessions));
+
+            // Also offer to save this session as a diary entry (includes audio if available)
+            try {
+                const diaryEntry = {
+                    id: 'scream-' + Date.now(),
+                    date: session.timestamp.split('T')[0],
+                    time: session.timestamp.slice(11,16),
+                    timestamp: session.timestamp,
+                    mood: rating,
+                    emoji: moodEmojis[rating - 1] || '😐',
+                    feelings: [],
+                    note: `Scream session: ${notes}`,
+                    gif: null,
+                    photo: null,
+                    audio: session.audioData || null,
+                    isDiaryEntry: true
+                };
+
+                const diaryEntries = getDiaryEntries();
+                diaryEntries.unshift(diaryEntry);
+                saveDiaryEntries(diaryEntries);
+                // If signed in, also push to Firestore (keep existing behavior)
+                if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
+                    const id = diaryEntry.id;
+                    setDoc(doc(db, 'users', auth.currentUser.uid, 'diaryEntries', id), { ...diaryEntry, userId: auth.currentUser.uid })
+                        .catch(e => console.error('Firebase diary save error', e));
+                }
+                // Update diary UI
+                try { renderDiaryEntries(); } catch(e){}
+            } catch(e) {
+                console.warn('Could not save session into diary:', e);
+            }
 
             // Also save to Firebase if logged in
             if (typeof auth !== 'undefined' && auth.currentUser && typeof setDoc !== 'undefined' && typeof doc !== 'undefined') {
