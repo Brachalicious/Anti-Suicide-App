@@ -1211,32 +1211,6 @@
                 opacity: 0;
             }
         }
-
-            // Ensure Scream/General tab buttons also respond to touch on devices
-            // that sometimes suppress inline onclick handlers. This adds resilient
-            // click + touchstart listeners and makes sure panels accept pointer events.
-            document.addEventListener('DOMContentLoaded', function () {
-                try {
-                    var gBtn = document.getElementById('mysticInfoGeneralBtn');
-                    var sBtn = document.getElementById('mysticInfoScreamBtn');
-                    var gPanel = document.getElementById('mysticGeneralSupportPanel');
-                    var sPanel = document.getElementById('mysticScreamTherapyPanel');
-                    if (gPanel) { gPanel.style.pointerEvents = 'auto'; gPanel.style.zIndex = '2'; }
-                    if (sPanel) { sPanel.style.pointerEvents = 'auto'; sPanel.style.zIndex = '2'; }
-
-                    function bind(el, tab) {
-                        if (!el) return;
-                        var cb = function (ev) { ev.preventDefault && ev.preventDefault(); switchMysticBotInfoTab(tab); };
-                        el.addEventListener('click', cb, { passive: false });
-                        el.addEventListener('touchstart', cb, { passive: false });
-                    }
-                    bind(gBtn, 'general');
-                    bind(sBtn, 'scream');
-                } catch (e) {
-                    // swallow — non-critical
-                    console.warn('mystic tab bindings failed', e);
-                }
-            });
         
         @keyframes affirmationPop {
             0% {
@@ -1573,6 +1547,33 @@
         }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&display=swap" rel="stylesheet">
+    <script>
+        // Ensure Scream/General tab buttons also respond to touch on devices
+        // that sometimes suppress inline onclick handlers. This adds resilient
+        // click + touchstart listeners and makes sure panels accept pointer events.
+        document.addEventListener('DOMContentLoaded', function () {
+            try {
+                var gBtn = document.getElementById('mysticInfoGeneralBtn');
+                var sBtn = document.getElementById('mysticInfoScreamBtn');
+                var gPanel = document.getElementById('mysticGeneralSupportPanel');
+                var sPanel = document.getElementById('mysticScreamTherapyPanel');
+                if (gPanel) { gPanel.style.pointerEvents = 'auto'; gPanel.style.zIndex = '2'; }
+                if (sPanel) { sPanel.style.pointerEvents = 'auto'; sPanel.style.zIndex = '2'; }
+
+                function bind(el, tab) {
+                    if (!el) return;
+                    var cb = function (ev) { ev.preventDefault && ev.preventDefault(); switchMysticBotInfoTab(tab); };
+                    el.addEventListener('click', cb, { passive: false });
+                    el.addEventListener('touchstart', cb, { passive: false });
+                }
+                bind(gBtn, 'general');
+                bind(sBtn, 'scream');
+            } catch (e) {
+                // swallow — non-critical
+                console.warn('mystic tab bindings failed', e);
+            }
+        });
+    </script>
 </head>
 <body>
 
@@ -5759,6 +5760,32 @@ and please, hold onto me — forever and ever and ever. 🕊️💗</div>
                                 <div style="display:flex; gap:8px; width:100%; max-width:260px;">
                                     <button id="mirrorStartBtn" class="btn" style="flex:1; background:linear-gradient(135deg,#92400e,#d4af37); color:#1a0a2e; font-weight:800; font-size:14px;" onclick="openMirror()">&#128248; Open Mirror</button>
                                     <button id="mirrorStopBtn" class="btn" style="flex:1; background:#374151; font-size:14px; display:none;" onclick="closeMirror()">&#10005; Close</button>
+                                </div>
+
+                                <!-- Record / Stop Recording buttons (shown when camera open) -->
+                                <div id="mirrorRecordRow" style="display:none; gap:8px; width:100%; max-width:260px;">
+                                    <button id="mirrorRecordBtn" class="btn" style="flex:1; background:#dc2626; color:white; font-weight:800; font-size:13px;" onclick="startMirrorRecording()">&#9210; Record Session</button>
+                                    <button id="mirrorRecordStopBtn" class="btn" style="flex:1; background:#7c3aed; color:white; font-weight:800; font-size:13px; display:none;" onclick="stopMirrorRecording()">&#9632; Stop Recording</button>
+                                </div>
+                                <p id="mirrorRecordingIndicator" style="display:none; color:#ff6b6b; font-size:12px; font-weight:700; text-align:center; margin:0;">&#128308; Recording...</p>
+
+                                <!-- Playback preview of the just-recorded session -->
+                                <div id="mirrorPlaybackBox" style="display:none; width:100%; max-width:260px; flex-direction:column; gap:6px; align-items:center;">
+                                    <p style="color:#f5e27a; font-size:12px; font-weight:700; margin:0;">&#9654; Preview your session:</p>
+                                    <video id="mirrorPlaybackVideo" controls style="width:100%; border-radius:12px; border:2px solid #d4af37;"></video>
+                                    <div style="display:flex; gap:8px; width:100%;">
+                                        <button class="btn" style="flex:1; background:#16a34a; color:white; font-size:12px; font-weight:700;" onclick="saveMirrorSession()">&#128190; Save Session</button>
+                                        <button class="btn" style="flex:1; background:#374151; color:white; font-size:12px; font-weight:700;" onclick="discardMirrorRecording()">&#128465; Discard</button>
+                                    </div>
+                                </div>
+
+                                <!-- Saved Sessions sub-section toggle -->
+                                <button id="mirrorSessionsToggleBtn" class="btn" style="width:100%; max-width:260px; background:rgba(212,175,55,0.15); border:1.5px solid #d4af37; color:#f5e27a; font-size:13px; font-weight:700;" onclick="toggleMirrorSessionsPanel()">&#128250; Saved Mirror Sessions (<span id="mirrorSessionsCount">0</span>)</button>
+
+                                <!-- Saved Sessions panel -->
+                                <div id="mirrorSessionsPanel" style="display:none; width:100%; max-width:260px; max-height:260px; overflow-y:auto; flex-direction:column; gap:8px; padding:10px; border-radius:12px; background:rgba(0,0,0,0.25); border:1.5px solid rgba(212,175,55,0.4);">
+                                    <p id="mirrorSessionsEmpty" style="color:#fce7f3; font-size:12px; font-style:italic; text-align:center; margin:4px 0;">No saved sessions yet. Record one above!</p>
+                                    <div id="mirrorSessionsList" style="display:flex; flex-direction:column; gap:8px;"></div>
                                 </div>
 
                                 <!-- Say It button (shown when camera open) -->
@@ -13639,6 +13666,149 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         let mirrorCurrentAff = '';
         let mirrorTabActive = 'list';
         let mirrorSpeechRecog = null;
+        let mirrorRecorder = null;
+        let mirrorRecordedChunks = [];
+        let mirrorRecordedBlob = null;
+        const MIRROR_SESSIONS_KEY = 'mirror_sessions';
+
+        function _mirrorSessions() {
+            try { return JSON.parse(localStorage.getItem(_lsKey(MIRROR_SESSIONS_KEY)) || '[]'); }
+            catch(e) { return []; }
+        }
+        function _saveMirrorSessions(list) {
+            try { localStorage.setItem(_lsKey(MIRROR_SESSIONS_KEY), JSON.stringify(list)); } catch(e) {
+                console.warn('Could not save mirror sessions (storage full?)', e);
+            }
+        }
+
+        function startMirrorRecording() {
+            if (!mirrorStream) return;
+            mirrorRecordedChunks = [];
+            mirrorRecordedBlob = null;
+            let mimeType = 'video/webm';
+            if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm;codecs=vp9,opus')) {
+                mimeType = 'video/webm;codecs=vp9,opus';
+            } else if (window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported('video/webm;codecs=vp8,opus')) {
+                mimeType = 'video/webm;codecs=vp8,opus';
+            }
+            try {
+                mirrorRecorder = new MediaRecorder(mirrorStream, { mimeType });
+            } catch(e) {
+                try { mirrorRecorder = new MediaRecorder(mirrorStream); } catch(e2) {
+                    alert('Recording not supported in this browser.');
+                    return;
+                }
+            }
+            mirrorRecorder.ondataavailable = function(e) {
+                if (e.data && e.data.size > 0) mirrorRecordedChunks.push(e.data);
+            };
+            mirrorRecorder.onstop = function() {
+                mirrorRecordedBlob = new Blob(mirrorRecordedChunks, { type: 'video/webm' });
+                const playbackBox = document.getElementById('mirrorPlaybackBox');
+                const playbackVideo = document.getElementById('mirrorPlaybackVideo');
+                if (playbackVideo) playbackVideo.src = URL.createObjectURL(mirrorRecordedBlob);
+                if (playbackBox) playbackBox.style.display = 'flex';
+                const recordBtn = document.getElementById('mirrorRecordBtn');
+                const recordStopBtn = document.getElementById('mirrorRecordStopBtn');
+                const recIndicator = document.getElementById('mirrorRecordingIndicator');
+                if (recordBtn) recordBtn.style.display = 'inline-block';
+                if (recordStopBtn) recordStopBtn.style.display = 'none';
+                if (recIndicator) recIndicator.style.display = 'none';
+            };
+            mirrorRecorder.start();
+            const recordBtn = document.getElementById('mirrorRecordBtn');
+            const recordStopBtn = document.getElementById('mirrorRecordStopBtn');
+            const recIndicator = document.getElementById('mirrorRecordingIndicator');
+            const playbackBox = document.getElementById('mirrorPlaybackBox');
+            if (recordBtn) recordBtn.style.display = 'none';
+            if (recordStopBtn) recordStopBtn.style.display = 'inline-block';
+            if (recIndicator) recIndicator.style.display = 'block';
+            if (playbackBox) playbackBox.style.display = 'none';
+        }
+
+        function stopMirrorRecording() {
+            if (mirrorRecorder && mirrorRecorder.state === 'recording') {
+                mirrorRecorder.stop();
+            }
+        }
+
+        function discardMirrorRecording() {
+            mirrorRecordedBlob = null;
+            mirrorRecordedChunks = [];
+            const playbackBox = document.getElementById('mirrorPlaybackBox');
+            const playbackVideo = document.getElementById('mirrorPlaybackVideo');
+            if (playbackVideo) { playbackVideo.pause(); playbackVideo.removeAttribute('src'); playbackVideo.load(); }
+            if (playbackBox) playbackBox.style.display = 'none';
+        }
+
+        function saveMirrorSession() {
+            if (!mirrorRecordedBlob) {
+                alert('No recording to save.');
+                return;
+            }
+            const reader = new FileReader();
+            reader.onloadend = function() {
+                const sessions = _mirrorSessions();
+                sessions.unshift({
+                    id: Date.now(),
+                    date: new Date().toISOString(),
+                    affirmation: mirrorCurrentAff || '',
+                    dataUrl: reader.result
+                });
+                // Keep storage sane — cap at 10 most recent sessions
+                const trimmed = sessions.slice(0, 10);
+                _saveMirrorSessions(trimmed);
+                discardMirrorRecording();
+                renderMirrorSessionsList();
+                const status = document.getElementById('mirrorStatus');
+                if (status) status.textContent = '\u2705 Session saved!';
+            };
+            reader.onerror = function() {
+                alert('Could not save this recording — it may be too large for browser storage.');
+            };
+            reader.readAsDataURL(mirrorRecordedBlob);
+        }
+
+        function toggleMirrorSessionsPanel() {
+            const panel = document.getElementById('mirrorSessionsPanel');
+            if (!panel) return;
+            const isOpen = panel.style.display === 'flex';
+            panel.style.display = isOpen ? 'none' : 'flex';
+            if (!isOpen) renderMirrorSessionsList();
+        }
+
+        function renderMirrorSessionsList() {
+            const sessions = _mirrorSessions();
+            const countEl = document.getElementById('mirrorSessionsCount');
+            if (countEl) countEl.textContent = sessions.length;
+            const listEl = document.getElementById('mirrorSessionsList');
+            const emptyEl = document.getElementById('mirrorSessionsEmpty');
+            if (!listEl) return;
+            listEl.innerHTML = '';
+            if (sessions.length === 0) {
+                if (emptyEl) emptyEl.style.display = 'block';
+                return;
+            }
+            if (emptyEl) emptyEl.style.display = 'none';
+            sessions.forEach(function(s) {
+                const card = document.createElement('div');
+                card.style.cssText = 'padding:8px; border-radius:10px; background:rgba(212,175,55,0.1); border:1.5px solid rgba(212,175,55,0.35); display:flex; flex-direction:column; gap:6px;';
+                const dateStr = new Date(s.date).toLocaleString();
+                card.innerHTML = `
+                    <p style="color:#f5e27a; font-size:11px; font-weight:700; margin:0;">${dateStr}</p>
+                    <p style="color:#fce7f3; font-size:11px; font-style:italic; margin:0;">"${(s.affirmation || '').replace(/</g,'&lt;')}"</p>
+                    <video controls style="width:100%; border-radius:8px;" src="${s.dataUrl}"></video>
+                    <button class="btn" style="background:#dc2626; color:white; font-size:11px; font-weight:700; padding:6px;" onclick="deleteMirrorSession(${s.id})">&#128465; Delete</button>
+                `;
+                listEl.appendChild(card);
+            });
+        }
+
+        function deleteMirrorSession(id) {
+            const sessions = _mirrorSessions().filter(function(s) { return s.id !== id; });
+            _saveMirrorSessions(sessions);
+            renderMirrorSessionsList();
+        }
 
         // Populate the built-in list panel on page load
         function initMirrorListPanel() {
@@ -13761,7 +13931,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 alert('Camera not supported on this browser. Try Chrome or Safari.');
                 return;
             }
-            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: true })
                 .then(function(stream) {
                     mirrorStream = stream;
                     const video = document.getElementById('mirrorVideo');
@@ -13772,6 +13942,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     const listenRow = document.getElementById('mirrorListenRow');
                     const repeatBtn = document.getElementById('mirrorRepeatBtn');
                     const status = document.getElementById('mirrorStatus');
+                    const recordRow = document.getElementById('mirrorRecordRow');
                     if (video) video.srcObject = stream;
                     if (frame) frame.style.display = 'block';
                     if (placeholder) placeholder.style.display = 'none';
@@ -13779,12 +13950,14 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     if (stopBtn) stopBtn.style.display = 'block';
                     if (listenRow) listenRow.style.display = 'flex';
                     if (repeatBtn) repeatBtn.style.display = 'block';
+                    if (recordRow) recordRow.style.display = 'flex';
                     if (status) status.textContent = '\ud83d\udc40 Look yourself in the eye and say it!';
                     // Set default affirmation if none selected yet
                     if (!mirrorCurrentAff) {
                         mirrorCurrentAff = guidedAffList[guidedAffIndex] || guidedAffList[0];
                     }
                     animateMirrorText(mirrorCurrentAff);
+                    renderMirrorSessionsList();
                 })
                 .catch(function(err) {
                     const status = document.getElementById('mirrorStatus');
@@ -13794,6 +13967,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function closeMirror() {
             if (mirrorSpeechRecog) { try { mirrorSpeechRecog.abort(); } catch(e){} mirrorSpeechRecog = null; }
+            if (mirrorRecorder && mirrorRecorder.state === 'recording') { try { mirrorRecorder.stop(); } catch(e){} }
             if (mirrorStream) {
                 mirrorStream.getTracks().forEach(function(t) { t.stop(); });
                 mirrorStream = null;
@@ -13809,6 +13983,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const celebration = document.getElementById('mirrorCelebration');
             const badge = document.getElementById('mirrorSpeechBadge');
             const listenBtn = document.getElementById('mirrorListenBtn');
+            const recordRow = document.getElementById('mirrorRecordRow');
+            const recordBtn = document.getElementById('mirrorRecordBtn');
+            const recordStopBtn = document.getElementById('mirrorRecordStopBtn');
+            const recIndicator = document.getElementById('mirrorRecordingIndicator');
             if (video) video.srcObject = null;
             if (frame) frame.style.display = 'none';
             if (placeholder) placeholder.style.display = 'flex';
@@ -13820,6 +13998,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (celebration) celebration.style.display = 'none';
             if (badge) badge.style.display = 'none';
             if (listenBtn) { listenBtn.classList.remove('listening'); listenBtn.disabled = false; }
+            if (recordRow) recordRow.style.display = 'none';
+            if (recordBtn) recordBtn.style.display = 'inline-block';
+            if (recordStopBtn) recordStopBtn.style.display = 'none';
+            if (recIndicator) recIndicator.style.display = 'none';
         }
 
         function startMirrorListening() {
@@ -13943,6 +14125,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         // Init on load
         document.addEventListener('DOMContentLoaded', function() {
             initMirrorListPanel();
+            const countEl = document.getElementById('mirrorSessionsCount');
+            if (countEl) countEl.textContent = _mirrorSessions().length;
         });
 
                 // ===== FREE TALK / FREE ASSOCIATION =====
