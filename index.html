@@ -1749,11 +1749,11 @@
                     <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
                     <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
                     <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
-                    <button onclick="window.location.href='activities.html#color-paint'">🎨 Color & Paint</button>
+                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu(); closeMobileNav()">🎨 Color & Paint</button>
                     <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav();">🎵 My Music &amp; Karaoke</button>
-                    <button onclick="window.location.href='activities.html#release'">😤 Release &amp; Let Go</button>
-                    <button onclick="window.location.href='activities.html#escape-your-head'">🧠 Escape Your Head</button>
-                    <button onclick="window.location.href='activities.html#mushroom-runner'">🍄 Mushroom Runner</button>
+                    <button onclick="showSection('release'); closeCrisisToolsMenu(); closeMobileNav()">😤 Release &amp; Let Go</button>
+                    <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu(); closeMobileNav()">🧠 Escape Your Head</button>
+                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
                     <button onclick="showSection('what-i-tried'); closeCrisisToolsMenu(); closeMobileNav()">📋 What I Tried</button>
                     <button onclick="showSection('helped-tracker'); closeCrisisToolsMenu(); closeMobileNav()">⭐ What Helped Me</button>
                 </div>
@@ -4625,7 +4625,7 @@
                         
                         <!-- Controls -->
                         <div style="margin-top: 20px; text-align: center;">
-                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR or click JUMP button to jump and smash mushrooms!</div>
+                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR (or JUMP) to punch mushrooms in front of you, or jump over ones you can't reach!</div>
                             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                                 <button id="runner-start-btn" onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Start Game</button>
                                 <button id="runner-jump-btn" onclick="runnerJump()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">JUMP!</button>
@@ -12605,8 +12605,95 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
         }
         
+        function spawnMushroom() {
+            if (!runnerGameActive) return;
+            
+            const canvas = document.getElementById('runner-game-canvas');
+            const mushroom = document.createElement('div');
+            
+            const isAbove = Math.random() > 0.5;
+            // Ground mushrooms sit on the floor; "above" mushrooms float at a height
+            // only reachable near the peak of a jump (player peaks around bottom:220px).
+            const mushroomBottom = isAbove ? 150 : 40;
+            const thought = negativeThoughts[Math.floor(Math.random() * negativeThoughts.length)];
+            
+            mushroom.className = 'runner-obstacle';
+            mushroom.style.cssText = `
+                position: absolute;
+                bottom: ${mushroomBottom}px;
+                right: 0;
+                width: 64px;
+                height: 64px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+            `;
+            mushroom.innerHTML = `
+                <div class="runner-thought-label" style="white-space: nowrap; background: rgba(20,20,40,0.85); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; margin-bottom: 3px; max-width: none;">${thought}</div>
+                <div style="font-size: 52px; line-height: 1;">🍄</div>
+            `;
+            mushroom.dataset.position = 'right: 0';
+            mushroom.dataset.isAbove = isAbove;
+            mushroom.dataset.thought = thought;
+            mushroom.dataset.resolved = 'false';
+            
+            canvas.appendChild(mushroom);
+            runnerObstacles.push(mushroom);
+        }
+        
+        function showRunnerMessage(text, color) {
+            const affirmDiv = document.getElementById('runner-affirmation');
+            affirmDiv.querySelector('div').textContent = text;
+            affirmDiv.style.borderColor = color;
+            affirmDiv.style.background = color === '#10b981' ? 'linear-gradient(135deg, #d1fae5, #a7f3d0)' : 'linear-gradient(135deg, #dbeafe, #bfdbfe)';
+            affirmDiv.style.display = 'block';
+            clearTimeout(affirmDiv._hideTimer);
+            affirmDiv._hideTimer = setTimeout(() => {
+                affirmDiv.style.display = 'none';
+            }, 1600);
+        }
+        
+        function showPunchEffect() {
+            const player = document.getElementById('runner-player');
+            const original = player.textContent;
+            player.textContent = '🤛';
+            clearTimeout(player._punchTimer);
+            player._punchTimer = setTimeout(() => {
+                player.textContent = runnerIsJumping ? original : '🧍';
+            }, 180);
+        }
+        
+        function punchNearbyMushrooms() {
+            const player = document.getElementById('runner-player');
+            const playerRect = player.getBoundingClientRect();
+            let punched = false;
+            
+            runnerObstacles.forEach((mushroom, index) => {
+                if (mushroom.dataset.resolved === 'true') return;
+                if (mushroom.dataset.isAbove === 'true') return; // only ground mushrooms are in punch range
+                
+                const mRect = mushroom.getBoundingClientRect();
+                const distance = mRect.left - playerRect.right;
+                const PUNCH_RANGE = 70;
+                
+                if (distance <= PUNCH_RANGE && mRect.right > playerRect.left) {
+                    mushroom.dataset.resolved = 'true';
+                    punched = true;
+                    mushroomDestroyed(mushroom, index, '👊 Punched! You destroyed the thought:');
+                }
+            });
+            
+            if (punched) showPunchEffect();
+        }
+        
         function runnerJump() {
-            if (runnerIsJumping || !runnerGameActive) return;
+            if (!runnerGameActive) return;
+            
+            // Space always throws a punch at anything in range first
+            punchNearbyMushrooms();
+            
+            if (runnerIsJumping) return;
             
             runnerIsJumping = true;
             const player = document.getElementById('runner-player');
@@ -12635,37 +12722,6 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }, 16);
         }
         
-        function spawnMushroom() {
-            if (!runnerGameActive) return;
-            
-            const canvas = document.getElementById('runner-game-canvas');
-            const mushroom = document.createElement('div');
-            
-            const isAbove = Math.random() > 0.5;
-            // Ground mushrooms sit on the floor; "above" mushrooms float at a height
-            // only reachable near the peak of a jump (player peaks around bottom:220px).
-            const mushroomBottom = isAbove ? 150 : 40;
-            
-            mushroom.className = 'runner-obstacle';
-            mushroom.style.cssText = `
-                position: absolute;
-                bottom: ${mushroomBottom}px;
-                right: 0;
-                width: 64px;
-                height: 64px;
-                font-size: 52px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            `;
-            mushroom.textContent = '🍄';
-            mushroom.dataset.position = 'right: 0';
-            mushroom.dataset.isAbove = isAbove;
-            
-            canvas.appendChild(mushroom);
-            runnerObstacles.push(mushroom);
-        }
-        
         function updateRunnerGame() {
             if (!runnerGameActive) return;
             
@@ -12679,6 +12735,15 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 const newRight = currentRight + runnerGameSpeed;
                 
                 mushroom.style.right = newRight + 'px';
+                
+                if (mushroom.dataset.resolved === 'true') {
+                    // Already punched/smashed — just let it drift off and get cleaned up
+                    if (newRight > canvas.offsetWidth + 50) {
+                        mushroom.remove();
+                        runnerObstacles.splice(index, 1);
+                    }
+                    return;
+                }
                 
                 const mushroomRect = mushroom.getBoundingClientRect();
                 
@@ -12698,17 +12763,35 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 
                 if (overlaps) {
                     const isAbove = mushroom.dataset.isAbove === 'true';
+                    mushroom.dataset.resolved = 'true';
                     if (isAbove) {
                         // Floating mushrooms are only hit if the player actually
-                        // reaches them — real overlap means a successful smash!
-                        mushroomSmashed(mushroom, index);
+                        // reaches them while jumping — real overlap means a successful smash!
+                        mushroomDestroyed(mushroom, index, '💥 Jump smash! You destroyed the thought:');
                     } else {
-                        // Ground mushrooms — real overlap means the player didn't
-                        // jump high/soon enough to clear it.
-                        loseLife();
+                        // Ground mushroom touched the player without being punched or
+                        // jumped clear — the thought got through.
+                        loseLife(mushroom.dataset.thought);
                         mushroom.remove();
                         runnerObstacles.splice(index, 1);
                     }
+                    return;
+                }
+                
+                // If the mushroom has safely passed the player without ever resolving,
+                // that means it was successfully jumped over / avoided.
+                if (mushroomRect.right < playerRect.left) {
+                    mushroom.dataset.resolved = 'true';
+                    runnerScore += 10;
+                    document.getElementById('runner-score').textContent = runnerScore;
+                    showRunnerMessage('✅ You avoided the thought: "' + mushroom.dataset.thought + '"', '#3b82f6');
+                    mushroom.style.opacity = '0';
+                    setTimeout(() => {
+                        mushroom.remove();
+                        const i = runnerObstacles.indexOf(mushroom);
+                        if (i > -1) runnerObstacles.splice(i, 1);
+                    }, 200);
+                    return;
                 }
                 
                 // Remove if off screen
@@ -12724,36 +12807,33 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
         }
         
-        function mushroomSmashed(mushroom, index) {
+        function mushroomDestroyed(mushroom, index, label) {
             runnerScore += 20;
             runnerMushrooms++;
             
             document.getElementById('runner-score').textContent = runnerScore;
             document.getElementById('runner-mushrooms').textContent = runnerMushrooms;
             
-            // Show affirmation
-            const affirmation = mushroomAffirmations[Math.floor(Math.random() * mushroomAffirmations.length)];
-            const affirmDiv = document.getElementById('runner-affirmation');
-            affirmDiv.querySelector('div').textContent = '✨ ' + affirmation;
-            affirmDiv.style.display = 'block';
-            
-            setTimeout(() => {
-                affirmDiv.style.display = 'none';
-            }, 2000);
+            // Show destroyed message with the specific bad thought that got smashed
+            showRunnerMessage(label + ' "' + mushroom.dataset.thought + '"', '#10b981');
             
             // Remove mushroom with animation
             mushroom.style.transform = 'scale(1.5) rotate(360deg)';
             mushroom.style.opacity = '0';
             setTimeout(() => {
                 mushroom.remove();
-                runnerObstacles.splice(index, 1);
+                const i = runnerObstacles.indexOf(mushroom);
+                if (i > -1) runnerObstacles.splice(i, 1);
             }, 300);
         }
         
-        function loseLife() {
+        function loseLife(thought) {
             runnerLives--;
             const hearts = ['❤️❤️❤️', '❤️❤️', '❤️', ''];
             document.getElementById('runner-lives').textContent = hearts[3 - runnerLives];
+            if (thought) {
+                showRunnerMessage('😔 The thought got through: "' + thought + '"', '#ef4444');
+            }
             
             if (runnerLives <= 0) {
                 endRunnerGame();
