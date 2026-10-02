@@ -4617,12 +4617,10 @@
                             <!-- Ground -->
                             <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: #78350f; border-top: 3px solid #92400e;"></div>
                             
-                            <!-- Player Character -->
-                            <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 40px; height: 60px; background: linear-gradient(135deg, #ec4899, #f472b6); border: 2px solid #be185d; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 24px; transition: bottom 0.3s;">
-                                🧍
-                            </div>
-                            
-                            <!-- Mushrooms will spawn here -->
+                        <!-- Player Character -->
+                        <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 56px; height: 56px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; font-size: 44px; transition: none;">
+                            🧍
+                        </div>                            <!-- Mushrooms will spawn here -->
                         </div>
                         
                         <!-- Controls -->
@@ -12613,10 +12611,11 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             runnerIsJumping = true;
             const player = document.getElementById('runner-player');
             
-            // Jump up
+            // Jump up — higher arc for a more satisfying, easier-to-time jump
+            const JUMP_PEAK = 180;
             let jumpHeight = 0;
             const jumpUp = setInterval(() => {
-                if (jumpHeight >= 120) {
+                if (jumpHeight >= JUMP_PEAK) {
                     clearInterval(jumpUp);
                     // Fall down
                     const jumpDown = setInterval(() => {
@@ -12625,15 +12624,15 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                             runnerIsJumping = false;
                             player.style.bottom = '40px';
                         } else {
-                            jumpHeight -= 8;
+                            jumpHeight -= 10;
                             player.style.bottom = (40 + jumpHeight) + 'px';
                         }
-                    }, 20);
+                    }, 16);
                 } else {
-                    jumpHeight += 8;
+                    jumpHeight += 10;
                     player.style.bottom = (40 + jumpHeight) + 'px';
                 }
-            }, 20);
+            }, 16);
         }
         
         function spawnMushroom() {
@@ -12643,15 +12642,18 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const mushroom = document.createElement('div');
             
             const isAbove = Math.random() > 0.5;
+            // Ground mushrooms sit on the floor; "above" mushrooms float at a height
+            // only reachable near the peak of a jump (player peaks around bottom:220px).
+            const mushroomBottom = isAbove ? 150 : 40;
             
             mushroom.className = 'runner-obstacle';
             mushroom.style.cssText = `
                 position: absolute;
-                ${isAbove ? 'top: 100px;' : 'bottom: 40px;'}
+                bottom: ${mushroomBottom}px;
                 right: 0;
-                width: 40px;
-                height: 40px;
-                font-size: 32px;
+                width: 64px;
+                height: 64px;
+                font-size: 52px;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -12680,27 +12682,29 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 
                 const mushroomRect = mushroom.getBoundingClientRect();
                 
-                // Check collision
-                if (!(playerRect.right < mushroomRect.left || 
-                      playerRect.left > mushroomRect.right || 
-                      playerRect.bottom < mushroomRect.top || 
-                      playerRect.top > mushroomRect.bottom)) {
-                    
+                // Precise AABB collision using real rendered hitboxes — no more
+                // guesswork based on fixed jump-height thresholds. A small inset
+                // on the player's hitbox makes the jump timing feel fair/precise.
+                const inset = 8;
+                const pLeft = playerRect.left + inset;
+                const pRight = playerRect.right - inset;
+                const pTop = playerRect.top + inset;
+                const pBottom = playerRect.bottom - inset;
+                
+                const overlaps = !(pRight < mushroomRect.left ||
+                                    pLeft > mushroomRect.right ||
+                                    pBottom < mushroomRect.top ||
+                                    pTop > mushroomRect.bottom);
+                
+                if (overlaps) {
                     const isAbove = mushroom.dataset.isAbove === 'true';
-                    const playerTop = parseFloat(player.style.bottom);
-                    
-                    // If mushroom is above and player jumped to hit it - SUCCESS!
-                    if (isAbove && playerTop > 80) {
+                    if (isAbove) {
+                        // Floating mushrooms are only hit if the player actually
+                        // reaches them — real overlap means a successful smash!
                         mushroomSmashed(mushroom, index);
-                    }
-                    // If mushroom is on ground and player is on ground - COLLISION!
-                    else if (!isAbove && playerTop <= 40) {
-                        loseLife();
-                        mushroom.remove();
-                        runnerObstacles.splice(index, 1);
-                    }
-                    // If mushroom is above and player didn't jump high enough - COLLISION!
-                    else if (isAbove && playerTop <= 80) {
+                    } else {
+                        // Ground mushrooms — real overlap means the player didn't
+                        // jump high/soon enough to clear it.
                         loseLife();
                         mushroom.remove();
                         runnerObstacles.splice(index, 1);
