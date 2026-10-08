@@ -13566,8 +13566,30 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 });
             }
             document.getElementById('musicPlaylistModalTitle').textContent = '🎵 ' + title;
-            document.getElementById('musicPlaylistFrame').src = `https://www.youtube.com/embed/videoseries?listType=search&list=${encodeURIComponent(searchQuery)}&autoplay=1`;
+            const frame = document.getElementById('musicPlaylistFrame');
+            frame.src = '';
+            // Show a loading state while we resolve a real, embeddable video ID
+            // server-side. The old `videoseries?listType=search&list=...` embed
+            // param was deprecated by YouTube and rendered a blank player.
+            let loadingEl = document.getElementById('musicPlaylistLoading');
+            if (!loadingEl) {
+                loadingEl = document.createElement('div');
+                loadingEl.id = 'musicPlaylistLoading';
+                loadingEl.style.cssText = 'color:#ff69b4; text-align:center; padding:20px; font-size:14px;';
+                frame.parentElement.appendChild(loadingEl);
+            }
+            loadingEl.style.display = 'block';
+            loadingEl.textContent = '🔎 Finding a video…';
             modal.style.display = 'flex';
+
+            _resolveYouTubeVideoId(searchQuery.replace(/\+/g, ' '))
+                .then(({ videoId }) => {
+                    loadingEl.style.display = 'none';
+                    frame.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                })
+                .catch(() => {
+                    loadingEl.innerHTML = `😕 Couldn't load that playlist right here.<br><a href="https://www.youtube.com/results?search_query=${encodeURIComponent(searchQuery.replace(/\+/g,' '))}" target="_blank" rel="noopener" style="color:#ff1493; font-weight:700; text-decoration:underline;">🔗 Search it on YouTube instead</a>`;
+                });
         }
 
         function closeMusicPlaylistModal() {
@@ -15506,19 +15528,51 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             karaokeQuickSearch(query, raw);
         }
 
-        function karaokeQuickSearch(query, label) {
+        // Resolve a free-text search into a real, embeddable YouTube video ID
+        // via our server-side proxy (netlify/functions/youtube-search.js).
+        // The old `embed?listType=search&list=...` trick Google deprecated
+        // years ago — it rendered a blank player, which looked like "the
+        // video isn't showing". Embedding a real videoId always works.
+        async function _resolveYouTubeVideoId(query) {
+            const resp = await fetch('/api/youtube-search?q=' + encodeURIComponent(query));
+            const contentType = resp.headers.get('content-type') || '';
+            if (!resp.ok || !contentType.includes('application/json')) {
+                throw new Error('youtube_search_unavailable');
+            }
+            const data = await resp.json();
+            if (!data || !data.videoId) throw new Error('youtube_no_results');
+            return data;
+        }
+
+        async function karaokeQuickSearch(query, label) {
             const iframe = document.getElementById('karaokeYtFrame');
             const wrap = document.getElementById('karaokeYtWrap');
             const placeholder = document.getElementById('karaokePlaceholder');
             const closeBtn = document.getElementById('karaokeCloseBtn');
             if (!iframe || !wrap) return;
-            const encoded = encodeURIComponent(query);
-            iframe.src = 'https://www.youtube.com/embed?listType=search&list=' + encoded + '&autoplay=1&rel=0';
-            wrap.style.display = 'block';
-            if (placeholder) placeholder.style.display = 'none';
-            if (closeBtn) closeBtn.style.display = 'block';
-            _lastKaraokeSearch = query;
-            _lastKaraokeLabel = label || query.replace(/ karaoke with lyrics$/i, '');
+
+            if (placeholder) {
+                placeholder.style.display = 'block';
+                placeholder.textContent = '🔎 Finding a karaoke video…';
+            }
+            wrap.style.display = 'none';
+
+            try {
+                const { videoId } = await _resolveYouTubeVideoId(query);
+                iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                wrap.style.display = 'block';
+                if (placeholder) placeholder.style.display = 'none';
+                if (closeBtn) closeBtn.style.display = 'block';
+                _lastKaraokeSearch = query;
+                _lastKaraokeLabel = label || query.replace(/ karaoke with lyrics$/i, '');
+            } catch (err) {
+                wrap.style.display = 'none';
+                if (placeholder) {
+                    placeholder.style.display = 'block';
+                    placeholder.innerHTML = `😕 Couldn't load that song right here.<br><a href="https://www.youtube.com/results?search_query=${encodeURIComponent(query)}" target="_blank" rel="noopener" style="color:#ff1493; font-weight:700; text-decoration:underline;">🔗 Search it on YouTube instead</a>`;
+                }
+                if (closeBtn) closeBtn.style.display = 'none';
+            }
         }
 
         function karaokeSurpriseMe() {
