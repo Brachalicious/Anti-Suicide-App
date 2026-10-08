@@ -6189,10 +6189,10 @@ and please, hold onto me — forever and ever and ever. 🕊️💗</div>
                 <h2 class="section-title">🎵 Healing Music Playlists</h2>
                 <p style="margin-bottom: 12px; color: #ff69b4;">Curated playlists for emotional support and calm.</p>
                 <div class="hotline">
-                    <button class="btn" style="margin-top:4px;" onclick="window.open('https://www.youtube.com/results?search_query=healing+meditation+music', '_blank')">🎵 Healing Meditation Music</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=jewish+healing+niggunim', '_blank')">🎵 Jewish Healing Niggunim</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=calming+piano+music+for+anxiety', '_blank')">🎵 Calming Piano for Anxiety</button>
-                    <button class="btn" style="margin-top:8px;" onclick="window.open('https://www.youtube.com/results?search_query=binaural+beats+anxiety+relief', '_blank')">🎵 Binaural Beats for Anxiety Relief</button>
+                    <button class="btn" style="margin-top:4px;" onclick="openMusicPlaylistModal('healing+meditation+music', 'Healing Meditation Music')">🎵 Healing Meditation Music</button>
+                    <button class="btn" style="margin-top:8px;" onclick="openMusicPlaylistModal('jewish+healing+niggunim', 'Jewish Healing Niggunim')">🎵 Jewish Healing Niggunim</button>
+                    <button class="btn" style="margin-top:8px;" onclick="openMusicPlaylistModal('calming+piano+music+for+anxiety', 'Calming Piano for Anxiety')">🎵 Calming Piano for Anxiety</button>
+                    <button class="btn" style="margin-top:8px;" onclick="openMusicPlaylistModal('binaural+beats+anxiety+relief', 'Binaural Beats for Anxiety Relief')">🎵 Binaural Beats for Anxiety Relief</button>
                 </div>
             </div>
             <div class="card">
@@ -13541,6 +13541,42 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         let binauralGain = null;
         let binauralOscs = [];
         let binauralPlaying = false;
+
+        // ─── In-app music playlist modal (keeps users inside the app instead
+        // of opening a new YouTube tab) ──────────────────────────────────
+        function openMusicPlaylistModal(searchQuery, title) {
+            let modal = document.getElementById('musicPlaylistModal');
+            if (!modal) {
+                modal = document.createElement('div');
+                modal.id = 'musicPlaylistModal';
+                modal.style.cssText = 'display:none; position:fixed; inset:0; z-index:100005; background:rgba(0,0,0,0.92); align-items:center; justify-content:center; padding:20px; box-sizing:border-box;';
+                modal.innerHTML = `
+                    <div style="width:100%; max-width:640px; background:#1e293b; border-radius:16px; padding:16px; box-shadow:0 8px 40px rgba(0,0,0,0.6); position:relative;">
+                        <button onclick="closeMusicPlaylistModal()" style="position:absolute; top:10px; right:14px; background:none; border:none; color:#fff; font-size:28px; cursor:pointer; line-height:1; z-index:1;">&times;</button>
+                        <h3 id="musicPlaylistModalTitle" style="color:#ff69b4; margin:0 0 12px 0; padding-right:30px;"></h3>
+                        <div style="position:relative; width:100%; padding-bottom:56.25%; border-radius:12px; overflow:hidden; background:#000;">
+                            <iframe id="musicPlaylistFrame" src="" style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) closeMusicPlaylistModal();
+                });
+            }
+            document.getElementById('musicPlaylistModalTitle').textContent = '🎵 ' + title;
+            document.getElementById('musicPlaylistFrame').src = `https://www.youtube.com/embed/videoseries?listType=search&list=${encodeURIComponent(searchQuery)}&autoplay=1`;
+            modal.style.display = 'flex';
+        }
+
+        function closeMusicPlaylistModal() {
+            const modal = document.getElementById('musicPlaylistModal');
+            if (!modal) return;
+            modal.style.display = 'none';
+            // Stop playback by clearing the iframe src
+            const frame = document.getElementById('musicPlaylistFrame');
+            if (frame) frame.src = '';
+        }
 
         const binauralPresets = {
             theta: { base: 200, beat: 6, label: 'Theta — Deep Calm' },
