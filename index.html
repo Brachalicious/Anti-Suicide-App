@@ -5285,6 +5285,56 @@
                         </div>
                     </div>
 
+                    <!-- Practice Speaking Back (Roleplay Confidence Builder) -->
+                    <div style="background: linear-gradient(135deg, #e0f2fe, #bae6fd); padding: 24px; border-radius: 16px; border-left: 5px solid #0284c7; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
+                        <h3 style="color: #0369a1; font-size: 22px; margin-bottom: 8px;">🎙️ Practice Speaking Back</h3>
+                        <p style="color: #ff1493; font-size: 14px; margin-bottom: 18px; line-height: 1.6;">
+                            Build your confidence in a safe space. Read the bully's line, say your comeback out loud, record yourself answering — then play it back and hear how strong you sound. The more you practice, the more natural it feels in real life.
+                        </p>
+
+                        <div id="bully-practice-card" style="background: white; border-radius: 14px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px;">
+                                <span id="bully-practice-progress" style="font-size:13px; color:#0369a1; font-weight:700;">Scenario 1 of 10</span>
+                                <span id="bully-practice-streak" style="font-size:13px; color:#22c55e; font-weight:700;">✅ 0 practiced</span>
+                            </div>
+
+                            <div style="background:#fee2e2; border-left:4px solid #ef4444; border-radius:8px; padding:14px; margin-bottom:14px;">
+                                <p style="font-size:12px; color:#991b1b; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">😠 The Bully Says:</p>
+                                <p id="bully-practice-line" style="color:#7f1d1d; font-size:16px; font-weight:600; line-height:1.5;"></p>
+                            </div>
+
+                            <div style="background:#dcfce7; border-left:4px solid #22c55e; border-radius:8px; padding:14px; margin-bottom:16px;">
+                                <p style="font-size:12px; color:#15803d; font-weight:700; margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">💪 Your Suggested Comeback:</p>
+                                <p id="bully-practice-comeback" style="color:#14532d; font-size:16px; font-weight:600; line-height:1.5; margin-bottom:6px;"></p>
+                                <p id="bully-practice-tip" style="color:#15803d; font-size:13px; font-style:italic;"></p>
+                            </div>
+
+                            <p style="color:#64748b; font-size:13px; margin-bottom:10px; text-align:center;">
+                                Now YOU say it out loud — in your own words or theirs. Hit record when ready.
+                            </p>
+
+                            <div style="display:flex; gap:10px; justify-content:center; margin-bottom:12px; flex-wrap:wrap;">
+                                <button id="bully-record-btn" class="btn" onclick="toggleBullyRecording()" style="background:#22c55e; color:white; font-weight:700;">🎤 Start Recording</button>
+                                <span id="bully-recording-time" style="display:none; align-self:center; color:#ef4444; font-weight:700;">0:00</span>
+                            </div>
+
+                            <div id="bully-audio-preview" style="display:none; margin-bottom:14px;">
+                                <audio id="bully-audio-player" controls style="width:100%;"></audio>
+                                <button class="btn" onclick="clearBullyAudio()" style="background:#94a3b8; color:white; margin-top:8px; width:100%; font-size:13px;">🗑️ Clear & Re-record</button>
+                            </div>
+
+                            <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                                <button class="btn" onclick="prevBullyScenario()" style="flex:1; background:#e2e8f0; color:#1e293b; font-weight:700;">⬅ Previous</button>
+                                <button class="btn" onclick="markBullyScenarioPracticed()" style="flex:1; background:#0284c7; color:white; font-weight:700;">✅ I Practiced This</button>
+                                <button class="btn" onclick="nextBullyScenario()" style="flex:1; background:#e2e8f0; color:#1e293b; font-weight:700;">Next ➡</button>
+                            </div>
+                        </div>
+
+                        <p style="margin-top:14px; font-style:italic; color:#0369a1; font-size:13px; text-align:center;">
+                            🔒 Your recordings stay on YOUR device only — nothing is uploaded or shared. Practice as many times as you need.
+                        </p>
+                    </div>
+
                     <!-- For Cyberbullying -->
                     <div style="background: linear-gradient(135deg, #fae8ff, #f3e8ff); padding: 24px; border-radius: 16px; border-left: 5px solid #a855f7; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
                         <h3 style="color: #ff1493; font-size: 22px; margin-bottom: 16px;">📱 For Cyberbullying Specifically</h3>
@@ -7980,6 +8030,211 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         function getDiaryEntries() {
             return JSON.parse(localStorage.getItem(_lsKey('diaryEntries')) || '[]');
         }
+
+        // ─── Bullying Support: "Practice Speaking Back" roleplay ──────────
+        // Lets the user read a common bully line + a suggested confident
+        // comeback, then record THEMSELVES saying it out loud and play it
+        // back. Pure confidence-building rehearsal — audio never leaves the
+        // device (stored only in-memory / localStorage as a data URL, same
+        // privacy model as the diary voice notes above).
+        const BULLY_PRACTICE_SCENARIOS = [
+            {
+                line: "\u201cYou're so stupid, how do you not get this?\u201d",
+                comeback: "\u201cMaybe. Still doesn't make what you said okay.\u201d",
+                tip: "Tip: Stay calm and flat. You're not arguing — you're just not giving them a reaction to feed on."
+            },
+            {
+                line: "\u201cNobody even likes you.\u201d",
+                comeback: "\u201cOkay. That's your opinion.\u201d",
+                tip: "Tip: Short, bored-sounding replies take all the power out of an insult."
+            },
+            {
+                line: "\u201cWhy are you even here? Nobody wants you around.\u201d",
+                comeback: "\u201cI'm here because I want to be. That's enough.\u201d",
+                tip: "Tip: Say it like a fact, not a plea. You don't need their permission to exist in a space."
+            },
+            {
+                line: "\u201cYou look so weird today.\u201d",
+                comeback: "\u201cCool, thanks for noticing.\u201d",
+                tip: "Tip: Sarcasm delivered calmly shows you're unbothered — the opposite of what they want."
+            },
+            {
+                line: "\u201cYou're never going to be good enough.\u201d",
+                comeback: "\u201cGood enough for who? Not you — doesn't matter.\u201d",
+                tip: "Tip: Remind yourself out loud: their opinion is not a fact about your worth."
+            },
+            {
+                line: "\u201cEveryone's talking about you behind your back.\u201d",
+                comeback: "\u201cThat sounds like a them problem, not a me problem.\u201d",
+                tip: "Tip: Rumors feed on reaction. A calm, dismissive tone shuts that down fast."
+            },
+            {
+                line: "\u201cYou always mess everything up.\u201d",
+                comeback: "\u201cI make mistakes sometimes. So does everyone. Moving on.\u201d",
+                tip: "Tip: Owning small mistakes calmly removes the sting — perfection was never the goal."
+            },
+            {
+                line: "\u201cJust leave, no one wants you here.\u201d",
+                comeback: "\u201cI'll decide where I go. Not you.\u201d",
+                tip: "Tip: Firm and short. You're reclaiming the choice, not asking for it."
+            },
+            {
+                line: "\u201cYou think you're so special?\u201d",
+                comeback: "\u201cI think I'm a person. That's enough reason to be treated with respect.\u201d",
+                tip: "Tip: This reframes the question — respect isn't something you have to earn by being 'special'."
+            },
+            {
+                line: "\u201c(Online) Everyone agrees you're the worst.\u201d",
+                comeback: "\u201cI'm not reading this anymore.\u201d (then block & report)",
+                tip: "Tip: Out loud, practice saying this and then actually mime closing the app. The habit matters as much as the words."
+            }
+        ];
+        let bullyPracticeIndex = 0;
+        let bullyMediaRecorder = null;
+        let bullyAudioChunks = [];
+        let bullyAudioData = null;
+        let bullyRecordingInterval = null;
+        let bullyRecordingSeconds = 0;
+
+        function _bullyPracticedKey() {
+            return _lsKey('bullyPracticeDone');
+        }
+
+        function _getBullyPracticedSet() {
+            try {
+                return new Set(JSON.parse(localStorage.getItem(_bullyPracticedKey()) || '[]'));
+            } catch (e) {
+                return new Set();
+            }
+        }
+
+        function renderBullyScenario() {
+            const scenario = BULLY_PRACTICE_SCENARIOS[bullyPracticeIndex];
+            const lineEl = document.getElementById('bully-practice-line');
+            const comebackEl = document.getElementById('bully-practice-comeback');
+            const tipEl = document.getElementById('bully-practice-tip');
+            const progressEl = document.getElementById('bully-practice-progress');
+            const streakEl = document.getElementById('bully-practice-streak');
+            if (!lineEl) return; // section not in DOM yet
+
+            lineEl.textContent = scenario.line;
+            comebackEl.textContent = scenario.comeback;
+            tipEl.textContent = scenario.tip;
+            progressEl.textContent = `Scenario ${bullyPracticeIndex + 1} of ${BULLY_PRACTICE_SCENARIOS.length}`;
+
+            const practicedSet = _getBullyPracticedSet();
+            streakEl.textContent = `✅ ${practicedSet.size} practiced`;
+
+            // Clear any in-progress recording UI when switching scenarios
+            clearBullyAudio(true);
+        }
+
+        function nextBullyScenario() {
+            bullyPracticeIndex = (bullyPracticeIndex + 1) % BULLY_PRACTICE_SCENARIOS.length;
+            renderBullyScenario();
+        }
+
+        function prevBullyScenario() {
+            bullyPracticeIndex = (bullyPracticeIndex - 1 + BULLY_PRACTICE_SCENARIOS.length) % BULLY_PRACTICE_SCENARIOS.length;
+            renderBullyScenario();
+        }
+
+        function markBullyScenarioPracticed() {
+            const practicedSet = _getBullyPracticedSet();
+            practicedSet.add(bullyPracticeIndex);
+            localStorage.setItem(_bullyPracticedKey(), JSON.stringify([...practicedSet]));
+            document.getElementById('bully-practice-streak').textContent = `✅ ${practicedSet.size} practiced`;
+
+            if (practicedSet.size === BULLY_PRACTICE_SCENARIOS.length) {
+                alert('🎉 Amazing work! You\'ve practiced every scenario. You\'re building real confidence — keep coming back anytime you want to rehearse again.');
+            } else {
+                nextBullyScenario();
+            }
+        }
+
+        async function toggleBullyRecording() {
+            const btn = document.getElementById('bully-record-btn');
+            const timeDisplay = document.getElementById('bully-recording-time');
+
+            if (!bullyMediaRecorder || bullyMediaRecorder.state === 'inactive') {
+                // Start recording
+                try {
+                    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                    bullyMediaRecorder = new MediaRecorder(stream);
+                    bullyAudioChunks = [];
+
+                    bullyMediaRecorder.ondataavailable = (event) => {
+                        bullyAudioChunks.push(event.data);
+                    };
+
+                    bullyMediaRecorder.onstop = () => {
+                        const audioBlob = new Blob(bullyAudioChunks, { type: 'audio/webm' });
+                        const reader = new FileReader();
+                        reader.onload = function(e) {
+                            bullyAudioData = e.target.result;
+                            const audioPlayer = document.getElementById('bully-audio-player');
+                            audioPlayer.src = bullyAudioData;
+                            document.getElementById('bully-audio-preview').style.display = 'block';
+                        };
+                        reader.readAsDataURL(audioBlob);
+
+                        // Stop all tracks
+                        stream.getTracks().forEach(track => track.stop());
+                    };
+
+                    bullyMediaRecorder.start();
+                    btn.textContent = '⏹️ Stop Recording';
+                    btn.style.background = '#ef4444';
+                    timeDisplay.style.display = 'inline';
+                    bullyRecordingSeconds = 0;
+
+                    bullyRecordingInterval = setInterval(() => {
+                        bullyRecordingSeconds++;
+                        const mins = Math.floor(bullyRecordingSeconds / 60);
+                        const secs = bullyRecordingSeconds % 60;
+                        timeDisplay.textContent = `${mins}:${secs.toString().padStart(2, '0')}`;
+                    }, 1000);
+
+                } catch (err) {
+                    alert('Unable to access microphone. Please check your browser permissions.');
+                    console.error('Microphone access error:', err);
+                }
+            } else {
+                // Stop recording
+                bullyMediaRecorder.stop();
+                btn.textContent = '🎤 Start Recording';
+                btn.style.background = '#22c55e';
+                timeDisplay.style.display = 'none';
+                clearInterval(bullyRecordingInterval);
+            }
+        }
+
+        function clearBullyAudio(silent) {
+            bullyAudioData = null;
+            const preview = document.getElementById('bully-audio-preview');
+            const player = document.getElementById('bully-audio-player');
+            if (preview) preview.style.display = 'none';
+            if (player) player.src = '';
+
+            if (bullyMediaRecorder && bullyMediaRecorder.state === 'recording') {
+                bullyMediaRecorder.stop();
+            }
+            const btn = document.getElementById('bully-record-btn');
+            const timeDisplay = document.getElementById('bully-recording-time');
+            if (btn) {
+                btn.textContent = '🎤 Start Recording';
+                btn.style.background = '#22c55e';
+            }
+            if (timeDisplay) timeDisplay.style.display = 'none';
+            clearInterval(bullyRecordingInterval);
+            bullyRecordingSeconds = 0;
+        }
+
+        // Render the first scenario once the DOM is ready (section may be
+        // hidden at load, but elements still exist in the page).
+        document.addEventListener('DOMContentLoaded', () => {
+            renderBullyScenario();
+        });
 
         function saveDiaryEntries(entries) {
             localStorage.setItem(_lsKey('diaryEntries'), JSON.stringify(entries));
@@ -13340,11 +13595,20 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const iframe = document.getElementById('rage-yt-iframe');
             const player = document.getElementById('rage-yt-player');
             const closeBtn = document.getElementById('rage-music-close');
-            const encoded = encodeURIComponent(query);
-            iframe.src = `https://www.youtube.com/embed?listType=search&list=${encoded}&autoplay=1`;
             player.style.display = 'block';
             closeBtn.style.display = 'block';
             document.getElementById('rage-yt-input').value = query;
+            iframe.src = '';
+            // The old `embed?listType=search&list=...` param is deprecated by
+            // YouTube and renders a blank player. Resolve a real video ID
+            // server-side instead (see netlify/functions/youtube-search.js).
+            _resolveYouTubeVideoId(query)
+                .then(({ videoId }) => {
+                    iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1&rel=0`;
+                })
+                .catch(() => {
+                    window.open(`https://www.youtube.com/results?search_query=${encodeURIComponent(query)}`, '_blank', 'noopener');
+                });
         }
 
         function closeRageMusic() {
