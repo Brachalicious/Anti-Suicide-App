@@ -25,7 +25,7 @@
 // MysticMinded³³". Bumping the version prefix here forces the activate
 // handler to purge every old `hi-self-*` cache on the user's next visit,
 // so nothing stale sticks around with the previous branding.
-const CACHE_VERSION = 'v1.1.0';
+const CACHE_VERSION = 'v1.1.1';
 const STATIC_CACHE = `fsp-static-${CACHE_VERSION}`;
 const RUNTIME_CACHE = `fsp-runtime-${CACHE_VERSION}`;
 
