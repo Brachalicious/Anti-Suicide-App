@@ -1237,6 +1237,38 @@
         }
 
         /* (Flying birds animation removed) */
+
+        /* ───── Mushroom Runner: colorful background + obstacle FX ───── */
+        @keyframes runnerSkyShift {
+            0%, 100% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+        }
+        @keyframes runnerSunPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 25px 8px rgba(251,191,36,0.6); }
+            50% { transform: scale(1.15); box-shadow: 0 0 35px 14px rgba(251,191,36,0.85); }
+        }
+        @keyframes runnerCloudDrift {
+            0% { left: -60px; }
+            100% { left: 110%; }
+        }
+        @keyframes runnerGroundShift {
+            0% { background-position: 0% 0%; }
+            100% { background-position: -80px 0%; }
+        }
+        @keyframes runnerObstacleBob {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        @keyframes runnerSparkleSpin {
+            0% { transform: rotate(0deg) scale(1); filter: drop-shadow(0 0 6px gold); }
+            50% { transform: rotate(180deg) scale(1.2); filter: drop-shadow(0 0 14px gold); }
+            100% { transform: rotate(360deg) scale(1); filter: drop-shadow(0 0 6px gold); }
+        }
+        @keyframes runnerComboPop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.5); }
+            100% { transform: scale(1); }
+        }
         
         /* Circular text around logo */
         .logo-container {
@@ -4580,31 +4612,40 @@
                 <div class="card">
                     <h2 class="section-title">🍄 Mushroom Runner</h2>
                     <p style="margin-bottom: 24px; color: #ff69b4; line-height: 1.6;">
-                        Run and jump to smash negative thoughts disguised as mushrooms! Each mushroom you smash releases a positive affirmation.
+                        Run and jump to smash negative thoughts disguised as mushrooms (and worse)! Each one you defeat releases a positive affirmation.
                     </p>
                     
                     <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 20px; padding: 30px; border: 3px solid #f59e0b; box-shadow: 0 4px 20px rgba(245,158,11,0.3);">
                         <!-- Game Info -->
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #b45309;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #b45309; flex-wrap:wrap; gap:8px;">
                             <div>Score: <span id="runner-score">0</span></div>
-                            <div>Mushrooms Smashed: <span id="runner-mushrooms">0</span></div>
+                            <div>Smashed: <span id="runner-mushrooms">0</span></div>
+                            <div>Combo: <span id="runner-combo" style="color:#ec4899;">x1</span></div>
                             <div>Lives: <span id="runner-lives">❤️❤️❤️</span></div>
                         </div>
                         
                         <!-- Game Canvas -->
-                        <div id="runner-game-canvas" style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; background: linear-gradient(180deg, #87ceeb, #98d8c8); border-radius: 16px; border: 3px solid #059669; overflow: hidden;">
+                        <div id="runner-game-canvas" style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; background: linear-gradient(180deg, #7dd3fc 0%, #c4b5fd 35%, #fbcfe8 65%, #bbf7d0 100%); background-size: 200% 200%; animation: runnerSkyShift 10s ease-in-out infinite; border-radius: 16px; border: 4px solid; border-image: linear-gradient(90deg, #f43f5e, #f59e0b, #22c55e, #06b6d4, #8b5cf6, #f43f5e) 1; overflow: hidden;">
+                            <!-- Decorative sun -->
+                            <div style="position:absolute; top:14px; right:20px; width:38px; height:38px; border-radius:50%; background: radial-gradient(circle, #fef08a, #fbbf24); box-shadow: 0 0 25px 8px rgba(251,191,36,0.6); animation: runnerSunPulse 3s ease-in-out infinite;"></div>
+                            <!-- Decorative floating clouds -->
+                            <div class="runner-cloud" style="position:absolute; top:24px; left:-60px; font-size:34px; opacity:0.85; animation: runnerCloudDrift 14s linear infinite;">☁️</div>
+                            <div class="runner-cloud" style="position:absolute; top:60px; left:-120px; font-size:24px; opacity:0.7; animation: runnerCloudDrift 20s linear infinite; animation-delay: -6s;">☁️</div>
+                            <div class="runner-cloud" style="position:absolute; top:10px; left:-180px; font-size:20px; opacity:0.6; animation: runnerCloudDrift 17s linear infinite; animation-delay: -11s;">☁️</div>
+                            <!-- Rainbow arc -->
+                            <div style="position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:220px; height:110px; border-radius:50%; border:8px solid transparent; border-top-color:#f43f5e; border-right-color:#f59e0b; opacity:0.5;"></div>
                             <!-- Ground -->
-                            <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: #78350f; border-top: 3px solid #92400e;"></div>
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: linear-gradient(90deg, #78350f, #92400e, #78350f); background-size: 200% 100%; animation: runnerGroundShift 2s linear infinite; border-top: 3px solid #fbbf24;"></div>
                             
                         <!-- Player Character -->
-                        <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 56px; height: 56px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; font-size: 44px; transition: none;">
+                        <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 56px; height: 56px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; font-size: 44px; transition: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
                             🧍
                         </div>                            <!-- Mushrooms will spawn here -->
                         </div>
                         
                         <!-- Controls -->
                         <div style="margin-top: 20px; text-align: center;">
-                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR (or JUMP) to punch mushrooms in front of you, or jump over ones you can't reach!</div>
+                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR (or JUMP) to punch obstacles in front of you, or jump over ones you can't reach!</div>
                             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
                                 <button id="runner-start-btn" onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Start Game</button>
                                 <button id="runner-jump-btn" onclick="runnerJump()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">JUMP!</button>
@@ -12858,6 +12899,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         let runnerGameLoop = null;
         let runnerSpawnLoop = null;
         let runnerGameSpeed = 5;
+        let runnerCombo = 0;
         
         const mushroomAffirmations = [
             "I am capable!", "I am strong!", "I matter!", "I am loved!", "I am enough!",
@@ -12865,6 +12907,32 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             "I choose peace!", "I am growing!", "I am supported!", "I have value!", "I am important!",
             "I deserve joy!", "I am powerful!", "I am beautiful!", "I am unique!", "I am hope!"
         ];
+
+        // A colorful cast of obstacle "types" so the game isn't just one
+        // brown mushroom over and over. Each has its own emoji + accent
+        // color (used for the thought-bubble label and glow) and a point
+        // value. Rarer/flashier types are weighted lower via `weight`.
+        const runnerObstacleTypes = [
+            { emoji: '🍄', color: '#ef4444', points: 20, weight: 6 },
+            { emoji: '🟣', color: '#a855f7', points: 20, weight: 4, isBlob: true },
+            { emoji: '🕷️', color: '#1f2937', points: 25, weight: 3 },
+            { emoji: '👻', color: '#60a5fa', points: 25, weight: 3 },
+            { emoji: '🦠', color: '#22c55e', points: 25, weight: 3 },
+            { emoji: '💢', color: '#f97316', points: 25, weight: 3 },
+            { emoji: '⚡', color: '#eab308', points: 30, weight: 2, fast: true },
+            { emoji: '🌩️', color: '#38bdf8', points: 30, weight: 2, fast: true },
+            { emoji: '⭐', color: '#fbbf24', points: 60, weight: 1, golden: true }
+        ];
+
+        function pickRunnerObstacleType() {
+            const totalWeight = runnerObstacleTypes.reduce((sum, t) => sum + t.weight, 0);
+            let roll = Math.random() * totalWeight;
+            for (const type of runnerObstacleTypes) {
+                roll -= type.weight;
+                if (roll <= 0) return type;
+            }
+            return runnerObstacleTypes[0];
+        }
         
         function startRunnerGame() {
             runnerGameActive = true;
@@ -12875,10 +12943,13 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             runnerIsJumping = false;
             runnerObstacles = [];
             runnerGameSpeed = 5;
+            runnerCombo = 0;
             
             document.getElementById('runner-score').textContent = '0';
             document.getElementById('runner-mushrooms').textContent = '0';
             document.getElementById('runner-lives').textContent = '❤️❤️❤️';
+            const comboEl = document.getElementById('runner-combo');
+            if (comboEl) comboEl.textContent = 'x1';
             document.getElementById('runner-start-btn').style.display = 'none';
             document.getElementById('runner-jump-btn').style.display = 'inline-block';
             document.getElementById('runner-pause-btn').style.display = 'inline-block';
@@ -12896,7 +12967,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             
             // Start game loops
             runnerGameLoop = setInterval(updateRunnerGame, 50);
-            runnerSpawnLoop = setInterval(spawnMushroom, 2000);
+            runnerSpawnLoop = setInterval(spawnMushroom, 1500);
             
             // Add keyboard listener
             document.addEventListener('keydown', runnerKeyHandler);
@@ -12920,6 +12991,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             // only reachable near the peak of a jump (player peaks around bottom:220px).
             const mushroomBottom = isAbove ? 150 : 40;
             const thought = negativeThoughts[Math.floor(Math.random() * negativeThoughts.length)];
+            const type = pickRunnerObstacleType();
             
             mushroom.className = 'runner-obstacle';
             mushroom.style.cssText = `
@@ -12932,15 +13004,19 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 flex-direction: column;
                 align-items: center;
                 justify-content: flex-end;
+                ${isAbove ? 'animation: runnerObstacleBob 1s ease-in-out infinite;' : ''}
             `;
+            const glow = type.golden ? `drop-shadow(0 0 12px ${type.color}) drop-shadow(0 0 24px gold)` : `drop-shadow(0 0 6px ${type.color})`;
             mushroom.innerHTML = `
-                <div class="runner-thought-label" style="white-space: nowrap; background: rgba(20,20,40,0.85); color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; margin-bottom: 3px; max-width: none;">${thought}</div>
-                <div style="font-size: 52px; line-height: 1;">🍄</div>
+                <div class="runner-thought-label" style="white-space: nowrap; background: ${type.color}; color: #fff; font-size: 10px; font-weight: 700; padding: 2px 6px; border-radius: 8px; margin-bottom: 3px; max-width: none; box-shadow: 0 2px 6px rgba(0,0,0,0.3);">${thought}</div>
+                <div style="font-size: 52px; line-height: 1; filter: ${glow};">${type.emoji}</div>
             `;
             mushroom.dataset.position = 'right: 0';
             mushroom.dataset.isAbove = isAbove;
             mushroom.dataset.thought = thought;
             mushroom.dataset.resolved = 'false';
+            mushroom.dataset.points = type.points;
+            mushroom.dataset.speedMult = type.fast ? '1.6' : '1';
             
             canvas.appendChild(mushroom);
             runnerObstacles.push(mushroom);
@@ -13036,7 +13112,8 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             
             runnerObstacles.forEach((mushroom, index) => {
                 const currentRight = parseFloat(mushroom.style.right);
-                const newRight = currentRight + runnerGameSpeed;
+                const speedMult = parseFloat(mushroom.dataset.speedMult || '1');
+                const newRight = currentRight + (runnerGameSpeed * speedMult);
                 
                 mushroom.style.right = newRight + 'px';
                 
@@ -13112,18 +13189,34 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
         
         function mushroomDestroyed(mushroom, index, label) {
-            runnerScore += 20;
+            const points = parseInt(mushroom.dataset.points || '20', 10);
+            runnerScore += points;
             runnerMushrooms++;
+            runnerCombo++;
             
             document.getElementById('runner-score').textContent = runnerScore;
             document.getElementById('runner-mushrooms').textContent = runnerMushrooms;
+            const comboEl = document.getElementById('runner-combo');
+            if (comboEl) {
+                comboEl.textContent = 'x' + runnerCombo;
+                comboEl.style.animation = 'none';
+                void comboEl.offsetWidth; // restart animation
+                comboEl.style.animation = 'runnerComboPop 0.4s ease';
+            }
             
-            // Show destroyed message with the specific bad thought that got smashed
-            showRunnerMessage(label + ' "' + mushroom.dataset.thought + '"', '#10b981');
+            // Every 5-combo streak, celebrate with a positive affirmation instead
+            // of just naming the thought that was destroyed.
+            let message = label + ' "' + mushroom.dataset.thought + '"';
+            if (runnerCombo > 0 && runnerCombo % 5 === 0) {
+                const affirmation = mushroomAffirmations[Math.floor(Math.random() * mushroomAffirmations.length)];
+                message = '🔥 x' + runnerCombo + ' combo! ' + affirmation;
+            }
+            showRunnerMessage(message, '#10b981');
             
             // Remove mushroom with animation
             mushroom.style.transform = 'scale(1.5) rotate(360deg)';
             mushroom.style.opacity = '0';
+            mushroom.style.animation = 'runnerSparkleSpin 0.3s ease';
             setTimeout(() => {
                 mushroom.remove();
                 const i = runnerObstacles.indexOf(mushroom);
@@ -13133,6 +13226,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         
         function loseLife(thought) {
             runnerLives--;
+            runnerCombo = 0;
+            const comboEl = document.getElementById('runner-combo');
+            if (comboEl) comboEl.textContent = 'x1';
             const hearts = ['❤️❤️❤️', '❤️❤️', '❤️', ''];
             document.getElementById('runner-lives').textContent = hearts[3 - runnerLives];
             if (thought) {
