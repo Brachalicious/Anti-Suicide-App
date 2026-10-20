@@ -3360,7 +3360,7 @@
                                 <li>Other means specific to your situation</li>
                             </ul>
                         </div>
-                        <textarea id="safety-environment-notes" placeholder="Write your plan for making your environment safe (Who will help? Where will items be stored?)..." style="width:100%; min-height:90px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="localStorage.setItem(_lsKey('safety-environment-notes'), this.value)"></textarea>
+                        <textarea id="safety-safer-notes" placeholder="Write your plan for making your environment safe (Who will help? Where will items be stored?)..." style="width:100%; min-height:90px; border-radius:12px; padding:10px; border:1px solid #475569; background:rgba(2,6,23,0.6); color:white;" oninput="updateSafetyNotes('safer')"></textarea>
                     </div>
 
                     <div style="background: linear-gradient(135deg, #065f46, #047857); border:2px solid #10b981; border-radius:16px; padding:20px; text-align:center;">
@@ -9383,6 +9383,19 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         async function initSafetyPlan() {
             // Load saved data from Firebase or localStorage
             await loadSafetyPlan();
+
+            // One-time migration: the "Making My Environment Safe" textarea
+            // used to save to its own disconnected localStorage key (before
+            // this was wired into the main safetyPlanNotes/persist system),
+            // so anything typed there never made it into saves/shares/
+            // downloads. Pull it in once if the new field is still empty.
+            if (!safetyPlanNotes['safer']) {
+                const legacy = localStorage.getItem(_lsKey('safety-environment-notes'));
+                if (legacy) {
+                    safetyPlanNotes['safer'] = legacy;
+                    persistSafetyPlan();
+                }
+            }
             
             // Restore name field
             const nameInput = document.getElementById('safety-plan-name');
