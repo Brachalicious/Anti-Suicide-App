@@ -114,10 +114,10 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             min-height: 100vh;
             color: #ff1493;
-            padding-bottom: calc(260px + env(safe-area-inset-bottom, 0px));
+            padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
             box-sizing: border-box;
             /* Anchor-jump / scrollIntoView also needs to clear the footer. */
-            scroll-padding-bottom: calc(var(--site-footer-h, 320px) + 24px);
+            scroll-padding-bottom: calc(var(--site-footer-h, 70px) + 10px);
         }
         /* (Animated sky clouds removed) */
         /* Scream circle expanding energy rings */
@@ -386,7 +386,7 @@
             /* Extra safety margin on top of body's padding-bottom, so any
                floated / absolutely-positioned children stay above the
                fixed footer even before JS measures its real height. */
-            padding-bottom: calc(var(--site-footer-h, 320px) + 40px);
+            padding-bottom: calc(var(--site-footer-h, 70px) + 20px);
         }
         .crisis-banner {
             background: linear-gradient(135deg, #2d6a4f, #40916c);
@@ -1345,7 +1345,7 @@
             }
             .container {
                 padding: 10px;
-                padding-bottom: calc(var(--site-footer-h, 360px) + 32px);
+                padding-bottom: calc(var(--site-footer-h, 80px) + 20px);
                 max-width: 100%;
             }
 
@@ -1462,7 +1462,7 @@
             }
             .container {
                 padding: 8px;
-                padding-bottom: calc(var(--site-footer-h, 400px) + 24px);
+                padding-bottom: calc(var(--site-footer-h, 90px) + 16px);
             }
             .nav {
                 padding: 8px;
