@@ -9504,6 +9504,12 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         async function persistSafetyPlan() {
+            // Never save before we actually know whether the user is logged
+            // in — saving too early could write blank/partial data under the
+            // wrong key (anonymous) or, worse, overwrite a real account's
+            // saved plan once auth catches up. See window.authReadyPromise.
+            if (window.authReadyPromise) { try { await window.authReadyPromise; } catch (e) {} }
+
             const data = {
                 selections: Object.fromEntries(Object.entries(safetyPlanSelections).map(([key, set]) => [key, Array.from(set)])),
                 notes: safetyPlanNotes,
@@ -9530,6 +9536,13 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
 
         async function loadSafetyPlan() {
+            // Wait until Firebase has confirmed the real signed-in state
+            // before deciding which data to load — otherwise a logged-in
+            // user opening Safety Plan during the brief startup window could
+            // get treated as anonymous, see a blank plan, and then have their
+            // real saved plan overwritten the moment they typed anything.
+            if (window.authReadyPromise) { try { await window.authReadyPromise; } catch (e) {} }
+
             // ── Always wipe in-memory state first so no previous user's data leaks ──
             Object.keys(safetyPlanSelections).forEach(k => safetyPlanSelections[k] = new Set());
             Object.keys(safetyPlanNotes).forEach(k => safetyPlanNotes[k] = '');
@@ -15138,6 +15151,22 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         let currentUser = null;
 
+        // Resolves once Firebase has told us the real signed-in state (or that
+        // nobody is signed in). Anything that reads/writes per-user data keyed
+        // off auth.currentUser (like the Safety Plan) MUST await this first —
+        // otherwise, if it runs during the brief window before Firebase
+        // restores the session, auth.currentUser is still null even though the
+        // user IS logged in, which made Safety Plan wrongly treat them as
+        // anonymous: it would load/display an empty plan and then silently
+        // overwrite (delete) their real saved plan the next time they typed.
+        let _authStateResolved = false;
+        window.authReadyPromise = new Promise((resolve) => { window._resolveAuthReady = resolve; });
+        // Safety net: if Firebase init/auth listener ever fails to fire (e.g.
+        // init error, offline, blocked script), don't leave Safety Plan (or
+        // anything else awaiting this) stuck forever — fall back to treating
+        // the user as "state known" after a few seconds so saves can proceed.
+        setTimeout(() => { if (!_authStateResolved) { _authStateResolved = true; window._resolveAuthReady(); } }, 4000);
+
         // If we returned from a redirect sign-in (popup-blocked browsers), pick up the result.
         if (auth) {
             getRedirectResult(auth)
@@ -15471,6 +15500,15 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         onAuthStateChanged(auth, async (user) => {
             currentUser = user;
             window._currentUser = user; // used by per-user localStorage keys
+
+            // Signal that we now know the real auth state (signed in or out).
+            // Safety Plan (and anything else keyed off auth.currentUser) waits
+            // on this before loading/saving so it never mistakes "Firebase
+            // hasn't finished restoring the session yet" for "not logged in".
+            if (!_authStateResolved) {
+                _authStateResolved = true;
+                window._resolveAuthReady();
+            }
 
             // Refresh any personalized DOM (greeting banner, parent welcome,
             // .js-user-name elements) for the now-active account. Has to run on
