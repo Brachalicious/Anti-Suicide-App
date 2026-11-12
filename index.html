@@ -17641,6 +17641,198 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             document.getElementById('tabArticlesBtn').style.color = isVideos ? '#16a34a' : 'white';
         }
 
+        /* ===== MY INSPIRATIONAL LIBRARY (user-saved videos & articles) =====
+           Lets a user paste a link (YouTube video OR article URL), give it a
+           title + optional note, and save it to their own personal library.
+           Persisted in localStorage per-browser (key: myInspirationalLibrary_v1). */
+        const LIB_STORAGE_KEY = 'myInspirationalLibrary_v1';
+        let currentAddType = 'video';
+        let currentLibFilter = 'all';
+
+        function getLibraryItems() {
+            try {
+                const raw = localStorage.getItem(LIB_STORAGE_KEY);
+                return raw ? JSON.parse(raw) : [];
+            } catch (e) {
+                console.warn('Could not read library from storage', e);
+                return [];
+            }
+        }
+
+        function saveLibraryItems(items) {
+            try {
+                localStorage.setItem(LIB_STORAGE_KEY, JSON.stringify(items));
+            } catch (e) {
+                console.warn('Could not save library to storage', e);
+            }
+        }
+
+        // Toggle between "Video" and "Article" add-type buttons (purely visual —
+        // determines which icon/type is stored when the user saves the item).
+        function setAddType(type) {
+            currentAddType = type;
+            const videoBtn = document.getElementById('addTypeVideo');
+            const articleBtn = document.getElementById('addTypeArticle');
+            if (!videoBtn || !articleBtn) return;
+            if (type === 'video') {
+                videoBtn.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
+                videoBtn.style.color = 'white';
+                videoBtn.style.border = 'none';
+                articleBtn.style.background = 'white';
+                articleBtn.style.color = '#c0527e';
+                articleBtn.style.border = '2px solid #c084fc';
+            } else {
+                articleBtn.style.background = 'linear-gradient(135deg, #7c3aed, #6d28d9)';
+                articleBtn.style.color = 'white';
+                articleBtn.style.border = 'none';
+                videoBtn.style.background = 'white';
+                videoBtn.style.color = '#c0527e';
+                videoBtn.style.border = '2px solid #c084fc';
+            }
+        }
+
+        // Pull a YouTube video ID out of common YouTube URL formats so we can
+        // embed it; returns null if the URL isn't recognized as YouTube.
+        function extractYouTubeId(url) {
+            try {
+                const u = new URL(url);
+                if (u.hostname.includes('youtu.be')) {
+                    return u.pathname.slice(1);
+                }
+                if (u.hostname.includes('youtube.com')) {
+                    if (u.pathname === '/watch') return u.searchParams.get('v');
+                    if (u.pathname.startsWith('/embed/')) return u.pathname.split('/embed/')[1];
+                    if (u.pathname.startsWith('/shorts/')) return u.pathname.split('/shorts/')[1];
+                }
+            } catch (e) { /* not a valid URL — ignore */ }
+            return null;
+        }
+
+        function addToLibrary() {
+            const titleEl = document.getElementById('libTitle');
+            const urlEl = document.getElementById('libUrl');
+            const noteEl = document.getElementById('libNote');
+            const msgEl = document.getElementById('libSaveMsg');
+
+            const title = (titleEl.value || '').trim();
+            const url = (urlEl.value || '').trim();
+            const note = (noteEl.value || '').trim();
+
+            if (!title || !url) {
+                alert('Please add both a title and a link before saving.');
+                return;
+            }
+            // Basic sanity check so we don't save garbage non-URLs.
+            try { new URL(url); } catch (e) {
+                alert('That link doesn\'t look like a valid URL. Please include https:// and try again.');
+                return;
+            }
+
+            const items = getLibraryItems();
+            items.unshift({
+                id: Date.now().toString(36) + Math.random().toString(36).slice(2, 7),
+                type: currentAddType,
+                title: title,
+                url: url,
+                note: note,
+                youTubeId: currentAddType === 'video' ? extractYouTubeId(url) : null,
+                savedAt: new Date().toISOString()
+            });
+            saveLibraryItems(items);
+
+            // Clear the form
+            titleEl.value = '';
+            urlEl.value = '';
+            noteEl.value = '';
+
+            if (msgEl) {
+                msgEl.style.display = 'block';
+                setTimeout(() => { msgEl.style.display = 'none'; }, 2500);
+            }
+
+            renderLibrary();
+        }
+
+        function deleteLibraryItem(id) {
+            const items = getLibraryItems().filter(it => it.id !== id);
+            saveLibraryItems(items);
+            renderLibrary();
+        }
+
+        function filterLibrary(type) {
+            currentLibFilter = type;
+            const btnAll = document.getElementById('libFilterAll');
+            const btnVideo = document.getElementById('libFilterVideo');
+            const btnArticle = document.getElementById('libFilterArticle');
+            [btnAll, btnVideo, btnArticle].forEach(btn => {
+                if (!btn) return;
+                btn.style.background = 'white';
+                btn.style.color = '#c0527e';
+                btn.style.border = '2px solid #c084fc';
+            });
+            const active = type === 'all' ? btnAll : (type === 'video' ? btnVideo : btnArticle);
+            if (active) {
+                active.style.background = 'linear-gradient(135deg, #a855f7, #7c3aed)';
+                active.style.color = 'white';
+                active.style.border = 'none';
+            }
+            renderLibrary();
+        }
+
+        function renderLibrary() {
+            const grid = document.getElementById('myLibraryGrid');
+            const emptyMsg = document.getElementById('emptyLibMsg');
+            if (!grid) return;
+
+            let items = getLibraryItems();
+            if (currentLibFilter !== 'all') {
+                items = items.filter(it => it.type === currentLibFilter);
+            }
+
+            if (items.length === 0) {
+                grid.innerHTML = '';
+                if (emptyMsg) emptyMsg.style.display = 'block';
+                return;
+            }
+            if (emptyMsg) emptyMsg.style.display = 'none';
+
+            grid.innerHTML = items.map(it => {
+                const safeTitle = (it.title || '').replace(/</g, '&lt;');
+                const safeNote = (it.note || '').replace(/</g, '&lt;');
+                const safeUrl = (it.url || '').replace(/"/g, '&quot;');
+                let mediaHtml;
+                if (it.type === 'video' && it.youTubeId) {
+                    mediaHtml = `
+                        <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; border-radius:12px 12px 0 0;">
+                            <iframe style="position:absolute;top:0;left:0;width:100%;height:100%;border:none;" src="https://www.youtube.com/embed/${it.youTubeId}" allowfullscreen allow="encrypted-media" loading="lazy"></iframe>
+                        </div>`;
+                } else {
+                    mediaHtml = `
+                        <a href="${safeUrl}" target="_blank" rel="noopener" style="display:block; padding:18px; text-decoration:none; background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border-radius:12px 12px 0 0; text-align:center;">
+                            <span style="font-size:28px;">${it.type === 'video' ? '🎬' : '📰'}</span>
+                            <div style="color:#7c3aed; font-size:12px; font-weight:700; margin-top:6px; word-break:break-all;">${safeUrl}</div>
+                        </a>`;
+                }
+                return `
+                <div style="background: white; border-radius: 16px; overflow:hidden; box-shadow: 0 4px 14px rgba(168,85,247,0.18); border:1.5px solid #e9d5ff;">
+                    ${mediaHtml}
+                    <div style="padding:14px;">
+                        <p style="color:#7c3aed; font-weight:700; font-size:14px; margin:0 0 4px 0;">${it.type === 'video' ? '🎬' : '📰'} ${safeTitle}</p>
+                        ${safeNote ? `<p style="color:#6b7280; font-size:12px; margin:0 0 8px 0;">${safeNote}</p>` : ''}
+                        <div style="display:flex; gap:8px;">
+                            <a href="${safeUrl}" target="_blank" rel="noopener" style="flex:1; text-align:center; background:#f3e8ff; color:#7c3aed; font-size:12px; font-weight:700; padding:8px; border-radius:8px; text-decoration:none;">Open Link</a>
+                            <button onclick="deleteLibraryItem('${it.id}')" style="background:#fef2f2; color:#dc2626; border:1.5px solid #fecaca; font-size:12px; font-weight:700; padding:8px 12px; border-radius:8px; cursor:pointer;">🗑️ Remove</button>
+                        </div>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        // Render the saved library on page load so items persist across visits.
+        document.addEventListener('DOMContentLoaded', function() {
+            renderLibrary();
+        });
+
         function newChizuk() {
             let idx;
             do { idx = Math.floor(Math.random() * allChizuk.length); } 
