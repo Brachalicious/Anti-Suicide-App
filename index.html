@@ -2539,6 +2539,8 @@
                 <div style="display:flex; flex-direction:column; gap:10px;">
                 <div class="card collapsed">
                     <h2 class="section-title collapsible" onclick="toggleDashboardCard(this)">Quick Crisis Support <span class="card-toggle-arrow">▾</span></h2>
+
+                    <div style="font-size:13px; font-weight:800; color:#be185d; text-transform:uppercase; letter-spacing:0.5px; margin:4px 0 10px; padding-bottom:5px; border-bottom:2px solid rgba(190,24,93,0.25);">💬 Talk to Someone</div>
                     <div class="hotline">
                         <h3>988 Suicide & Crisis Lifeline</h3>
                         <div class="phone">📞 988</div>
@@ -2547,7 +2549,7 @@
                     </div>
                     <details style="margin-top:10px;">
                         <summary style="cursor:pointer; font-weight:700; color:#be185d; padding:8px 4px; list-style:none; display:flex; align-items:center; gap:6px;">
-                            <span style="font-size:13px;">▼ More hotlines &amp; crisis tools</span>
+                            <span style="font-size:13px;">▼ More hotlines</span>
                         </summary>
                     <div class="hotline">
                         <h3>National Suicide Prevention LifeLine</h3>
@@ -2583,10 +2585,8 @@
                         <button class="btn" style="background: #f59e0b; color: #064e3b; font-weight: 700;" onclick="window.open('tel:9298012301')">Call the.helpline Now</button>
                     </div>
                     </details>
-                </div>
 
-                <div class="card collapsed">
-                    <h2 class="section-title collapsible" onclick="toggleDashboardCard(this)">Quick Crisis Tools <span class="card-toggle-arrow">▾</span></h2>
+                    <div style="font-size:13px; font-weight:800; color:#0f766e; text-transform:uppercase; letter-spacing:0.5px; margin:18px 0 10px; padding-bottom:5px; border-bottom:2px solid rgba(15,118,110,0.25);">🛠️ Tools</div>
                     <div onclick="activateStopButton()" style="display: block; text-decoration: none; margin: 8px auto; cursor: pointer;">
                         <div id="stopSignContainer" style="width: 120px; height: 120px; margin: 0 auto; position: relative; cursor: pointer; transition: transform 0.2s, filter 0.5s; filter: drop-shadow(0 6px 20px rgba(34, 197, 94, 0.5));">
                             <svg viewBox="0 0 200 200" style="width: 100%; height: 100%;">
@@ -2624,6 +2624,9 @@
                             <button id="guideNextBtn" onclick="nextGuideStep()" style="background:#22c55e; color:white; border:none; padding:14px 36px; border-radius:12px; font-size:16px; font-weight:600; cursor:pointer; transition: background 0.2s;">Continue</button>
                         </div>
                     </div>
+
+                    <div style="font-size:13px; font-weight:800; color:#15803d; text-transform:uppercase; letter-spacing:0.5px; margin:18px 0 10px; padding-bottom:5px; border-bottom:2px solid rgba(21,128,61,0.25);">🛡️ Safety Plan</div>
+                    <button class="btn" onclick="showSafetyPlan()" style="background:linear-gradient(135deg,#34d399,#22c55e,#06b6d4,#34d399);background-size:300% 300%;animation:sunsetShift 5.5s ease infinite;">🛡️ My Safety Plan</button>
                 </div>
                 </div>
 
@@ -2708,8 +2711,7 @@
                     <button class="btn" onclick="showContacts()" style="background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6,#22c55e);background-size:300% 300%;animation:sunsetShift 5s ease infinite;">📞 Emergency Contacts</button>
                     <!-- 2. Coping Strategies -->
                     <button class="btn" onclick="showCoping()" style="background:linear-gradient(135deg,#06b6d4,#3b82f6,#34d399,#06b6d4);background-size:300% 300%;animation:sunsetShift 6s ease infinite;">🛠️ Coping Strategies</button>
-                    <!-- 3. My Safety Plan -->
-                    <button class="btn" onclick="showSafetyPlan()" style="background:linear-gradient(135deg,#34d399,#22c55e,#06b6d4,#34d399);background-size:300% 300%;animation:sunsetShift 5.5s ease infinite;">🛡️ My Safety Plan</button>
+                    <!-- My Safety Plan now lives in the "Quick Crisis Support" card above (under its own 🛡️ Safety Plan category) to keep related crisis resources together. -->
                     <!-- 4. Breathing Exercises -->
                     <button class="btn" onclick="showBreathingTechniques()" style="background:linear-gradient(135deg,#3b82f6,#06b6d4,#22c55e,#3b82f6);background-size:300% 300%;animation:sunsetShift 7s ease infinite;">🧘 Breathing Exercise</button>
                     <!-- 5. Progressive Muscle Relaxation -->
