@@ -963,6 +963,21 @@
         .nav-dropdown-menu button:hover {
             background: rgba(190,24,93,0.08);
         }
+        /* Narrower variants used by the "Crisis Support" dropdown (per request
+           to make these particular nav boxes less wide than the default). */
+        .nav-dropdown-btn-narrow {
+            padding: 12px 18px;
+            font-size: 15px;
+        }
+        .nav-dropdown-menu-narrow {
+            min-width: 150px;
+            max-width: 190px;
+        }
+        .nav-dropdown-menu-narrow button {
+            padding: 8px 10px;
+            font-size: 12.5px;
+            white-space: normal;
+        }
         .section.hidden { display: none; }
         /* Universal scrollable class for any dynamic content container */
         .card-content {
@@ -1448,6 +1463,9 @@
                 border-radius: 12px;
                 margin-top: 6px;
             }
+            .nav-dropdown-menu-narrow {
+                max-width: 100%;
+            }
             .card {
                 padding: 10px;
                 border-radius: 12px;
@@ -1767,26 +1785,27 @@
           </button>
         <nav class="nav" id="mainNav">
             <button class="nav-item active" onclick="showSection('dashboard'); closeMobileNav()">Dashboard</button>
-            <button class="nav-item" onclick="showSection('crisis'); closeMobileNav()">Crisis Support</button>
-            <button class="nav-item" onclick="showSection('crisis-skills'); closeMobileNav()">🛟 Crisis Skills</button>
 
-            <!-- Crisis Tools Dropdown -->
-            <div class="nav-dropdown" id="crisisToolsDropdown" style="margin-left:0;">
-                <button class="nav-dropdown-btn" onclick="toggleCrisisToolsMenu(event)" id="crisisToolsBtn">🛠️ Emotional Support Tools ▾</button>
-                <div class="nav-dropdown-menu" id="crisisToolsMenu">
-                    <button onclick="showSection('mood'); closeCrisisToolsMenu(); closeMobileNav()">📓 My Diary</button>
-                    <button onclick="showSection('talk-to-god'); closeCrisisToolsMenu(); closeMobileNav()">🙏 Talk to ה'</button>
-                    <button onclick="showBreathingTechniques(); closeCrisisToolsMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
-                    <button onclick="showSection('affirmation-cards'); closeCrisisToolsMenu(); closeMobileNav()">💫 Affirmation Cards</button>
-                    <button onclick="showSection('crush-stigma'); closeCrisisToolsMenu(); closeMobileNav()">💪 Crush the Stigma</button>
-                    <button onclick="showSection('bullying-support'); closeCrisisToolsMenu(); closeMobileNav()">🛡️ Bullying Support</button>
-                    <button onclick="showSection('color-paint'); closeCrisisToolsMenu(); closeMobileNav()">🎨 Color & Paint</button>
-                    <button onclick="showSection('music'); closeCrisisToolsMenu(); closeMobileNav();">🎵 My Music &amp; Karaoke</button>
-                    <button onclick="showSection('release'); closeCrisisToolsMenu(); closeMobileNav()">😤 Release &amp; Let Go</button>
-                    <button onclick="showSection('escape-your-head'); closeCrisisToolsMenu(); closeMobileNav()">🧠 Escape Your Head</button>
-                    <button onclick="showSection('mushroom-runner'); closeCrisisToolsMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
-                    <button onclick="showSection('what-i-tried'); closeCrisisToolsMenu(); closeMobileNav()">📋 What I Tried</button>
-                    <button onclick="showSection('helped-tracker'); closeCrisisToolsMenu(); closeMobileNav()">⭐ What Helped Me</button>
+            <!-- Crisis Support Dropdown (now contains Crisis Skills + Crisis Tools as sub-items) -->
+            <div class="nav-dropdown" id="crisisSupportDropdown" style="margin-left:0;">
+                <button class="nav-dropdown-btn nav-dropdown-btn-narrow" onclick="toggleCrisisSupportMenu(event)" id="crisisSupportBtn">🆘 Crisis Support ▾</button>
+                <div class="nav-dropdown-menu nav-dropdown-menu-narrow" id="crisisSupportMenu">
+                    <button onclick="showSection('crisis'); closeCrisisSupportMenu(); closeMobileNav()">🆘 Crisis Support</button>
+                    <button onclick="showSection('crisis-skills'); closeCrisisSupportMenu(); closeMobileNav()">🛟 Crisis Skills</button>
+                    <div style="height:1px; background:rgba(190,24,93,0.2); margin:4px 2px;"></div>
+                    <button onclick="showSection('mood'); closeCrisisSupportMenu(); closeMobileNav()">📓 My Diary</button>
+                    <button onclick="showSection('talk-to-god'); closeCrisisSupportMenu(); closeMobileNav()">🙏 Talk to ה'</button>
+                    <button onclick="showBreathingTechniques(); closeCrisisSupportMenu(); closeMobileNav()">🧘 Guided Breathing Exercise</button>
+                    <button onclick="showSection('affirmation-cards'); closeCrisisSupportMenu(); closeMobileNav()">💫 Affirmation Cards</button>
+                    <button onclick="showSection('crush-stigma'); closeCrisisSupportMenu(); closeMobileNav()">💪 Crush the Stigma</button>
+                    <button onclick="showSection('bullying-support'); closeCrisisSupportMenu(); closeMobileNav()">🛡️ Bullying Support</button>
+                    <button onclick="showSection('color-paint'); closeCrisisSupportMenu(); closeMobileNav()">🎨 Color & Paint</button>
+                    <button onclick="showSection('music'); closeCrisisSupportMenu(); closeMobileNav();">🎵 My Music &amp; Karaoke</button>
+                    <button onclick="showSection('release'); closeCrisisSupportMenu(); closeMobileNav()">😤 Release &amp; Let Go</button>
+                    <button onclick="showSection('escape-your-head'); closeCrisisSupportMenu(); closeMobileNav()">🧠 Escape Your Head</button>
+                    <button onclick="showSection('mushroom-runner'); closeCrisisSupportMenu(); closeMobileNav()">🍄 Mushroom Runner</button>
+                    <button onclick="showSection('what-i-tried'); closeCrisisSupportMenu(); closeMobileNav()">📋 What I Tried</button>
+                    <button onclick="showSection('helped-tracker'); closeCrisisSupportMenu(); closeMobileNav()">⭐ What Helped Me</button>
                 </div>
             </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
@@ -11765,13 +11784,14 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
         }
         // ===== END WHAT I TRIED =====
 
-        // Sections that live inside the Crisis Tools dropdown
-        const crisisToolsSections = ['mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards', 'what-i-tried', 'helped-tracker'];
+        // Sections that live inside the Crisis Support dropdown (includes Crisis
+        // Support itself, Crisis Skills, and all the former "Crisis Tools" items)
+        const crisisToolsSections = ['crisis', 'crisis-skills', 'mystic-bot', 'talk-to-god', 'crush-stigma', 'bullying-support', 'learning-disabilities', 'color-paint', 'music', 'release', 'mood', 'hope-wall', 'affirmation-book', 'jar-of-hearts', 'escape-your-head', 'mushroom-runner', 'affirmation-cards', 'what-i-tried', 'helped-tracker'];
 
         function showSection(section) {
             document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
             // Mark dropdown btn active if the section belongs to it
-            const dropBtn = document.getElementById('crisisToolsBtn');
+            const dropBtn = document.getElementById('crisisSupportBtn');
             const isDropdownSection = crisisToolsSections.includes(section);
             if (isDropdownSection) {
                 dropBtn && dropBtn.classList.add('active');
@@ -11845,6 +11865,15 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
         function closeCrisisToolsMenu() {
             document.getElementById('crisisToolsMenu').classList.remove('open');
+        }
+
+        function toggleCrisisSupportMenu(e) {
+            e.stopPropagation();
+            document.getElementById('crisisSupportMenu').classList.toggle('open');
+        }
+
+        function closeCrisisSupportMenu() {
+            document.getElementById('crisisSupportMenu').classList.remove('open');
         }
 
         // ── Mobile hamburger nav ──
@@ -12204,9 +12233,9 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
 
                 // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
-            const dropdown = document.getElementById('crisisToolsDropdown');
+            const dropdown = document.getElementById('crisisSupportDropdown');
             if (dropdown && !dropdown.contains(e.target)) {
-                closeCrisisToolsMenu();
+                closeCrisisSupportMenu();
             }
         });
 
