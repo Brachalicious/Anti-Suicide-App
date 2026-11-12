@@ -418,6 +418,30 @@
             border: 2px solid rgba(180,160,120,0.35);
             backdrop-filter: blur(4px);
             -webkit-backdrop-filter: blur(4px);
+            max-height: 520px;
+            overflow-y: auto;
+            scrollbar-width: thin;
+            scrollbar-color: #c0527e rgba(0,0,0,0.12);
+        }
+        .card::-webkit-scrollbar {
+            width: 8px;
+        }
+        .card::-webkit-scrollbar-track {
+            background: rgba(0,0,0,0.06);
+            border-radius: 8px;
+        }
+        .card::-webkit-scrollbar-thumb {
+            background: #c0527e;
+            border-radius: 8px;
+        }
+        .card::-webkit-scrollbar-thumb:hover {
+            background: #a3375f;
+        }
+        /* Collapsed cards shouldn't show a scrollbar for the hidden content,
+           and should shrink back down to just the title's height. */
+        .card.collapsed {
+            max-height: none;
+            overflow-y: visible;
         }
         /* Collapsible dashboard cards: clicking the title hides everything in
            the card except the title itself + its toggle arrow. */
@@ -1469,6 +1493,7 @@
             .card {
                 padding: 10px;
                 border-radius: 12px;
+                max-height: 420px;
             }
             .section-title {
                 font-size: 24px;
