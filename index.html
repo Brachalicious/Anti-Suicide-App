@@ -5680,6 +5680,30 @@
                             <div id="tehillimVerses" style="color:#fce7f3; font-size:15px; line-height:2.2; font-family:Georgia,'Times New Roman',serif;"></div>
                         </div>
                     </div>
+
+                    <!-- Full Torah: Book of Genesis Reader -->
+                    <div style="margin-top: 28px; background: linear-gradient(135deg, #1a0a2e, #2d1b4e); padding: 28px; border-radius: 20px; border: 2px solid rgba(168,85,247,0.5);">
+                        <h3 style="color:#ffd700; font-size:22px; margin:0 0 4px 0; text-align:center;">📖 ספר בראשית — Book of Genesis</h3>
+                        <p style="color:#d8b4fe; font-size:13px; text-align:center; margin:0 0 18px 0;">All 50 chapters • tap a chapter to read</p>
+
+                        <!-- Chapter grid — built by JS -->
+                        <div id="genesisChapterGrid" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(44px,1fr)); gap:7px; margin-bottom:20px;">
+                            <p style="color:#a78bfa;grid-column:1/-1;text-align:center;font-size:13px;">Loading chapters…</p>
+                        </div>
+
+                        <!-- Chapter viewer -->
+                        <div id="genesisViewer" style="display:none; background:rgba(255,255,255,0.05); border-radius:14px; padding:20px; border:1px solid rgba(168,85,247,0.3);">
+                            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:8px;">
+                                <h4 id="genesisChapterTitle" style="color:#ffd700; font-size:18px; margin:0;"></h4>
+                                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                                    <button onclick="genesisNav(-1)" style="background:rgba(168,85,247,0.3);border:1px solid #a855f7;color:#d8b4fe;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">← Prev</button>
+                                    <button onclick="genesisNav(1)" style="background:rgba(168,85,247,0.3);border:1px solid #a855f7;color:#d8b4fe;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">Next →</button>
+                                    <button onclick="document.getElementById('genesisViewer').style.display='none';document.getElementById('genesisChapterGrid').style.display='grid';" style="background:rgba(255,20,147,0.2);border:1px solid #c0527e;color:#d98fb6;border-radius:8px;padding:6px 14px;cursor:pointer;font-size:14px;">✕ Close</button>
+                                </div>
+                            </div>
+                            <div id="genesisVerses" style="color:#fce7f3; font-size:15px; line-height:2.2; font-family:Georgia,'Times New Roman',serif;"></div>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -11838,7 +11862,7 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 document.getElementById('dashboard').classList.remove('hidden');
             }
             console.log(`Navigating to: ${section}`);
-            if (section === 'talk-to-god') { setTimeout(initTehillim, 100); }
+            if (section === 'talk-to-god') { setTimeout(initTehillim, 100); setTimeout(initGenesisReader, 100); }
             if (section === 'what-i-tried') { setTimeout(initWhatITried, 100); }
             if (section === 'crisis-skills') { setTimeout(initCrisisSkillPanels, 100); }
             if (section === 'crisis') { setTimeout(initHotlineShareButtons, 100); }
@@ -15133,6 +15157,79 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             if (next < 1)   next = 150;
             if (next > 150) next = 1;
             openTehillimChapter(next);
+        }
+
+        // ===== GENESIS (BOOK OF בראשית) READER =====
+        var genesisCurrentChapter = 1;
+
+        function initGenesisReader() {
+            var grid = document.getElementById('genesisChapterGrid');
+            if (!grid) return;
+            if (grid.dataset.built === '1') return; // already built
+            grid.dataset.built = '1';
+            grid.innerHTML = '';
+            for (var i = 1; i <= 50; i++) {
+                (function(ch){
+                    var btn = document.createElement('button');
+                    btn.textContent = ch;
+                    btn.style.cssText = 'background:rgba(168,85,247,0.2);border:1px solid rgba(168,85,247,0.4);color:#d8b4fe;border-radius:8px;padding:6px 2px;cursor:pointer;font-size:13px;font-weight:700;';
+                    btn.onmouseover = function(){ this.style.background='rgba(168,85,247,0.5)'; };
+                    btn.onmouseout  = function(){ this.style.background='rgba(168,85,247,0.2)'; };
+                    btn.onclick = function(){ openGenesisChapter(ch); };
+                    grid.appendChild(btn);
+                })(i);
+            }
+        }
+
+        function openGenesisChapter(ch) {
+            genesisCurrentChapter = ch;
+            var grid   = document.getElementById('genesisChapterGrid');
+            var viewer = document.getElementById('genesisViewer');
+            var title  = document.getElementById('genesisChapterTitle');
+            var body   = document.getElementById('genesisVerses');
+            if (!viewer || !title || !body) return;
+            title.textContent = 'Genesis ' + ch + ' — loading…';
+            grid.style.display = 'none';
+            viewer.style.display = 'block';
+            body.innerHTML = '<p style="color:#a78bfa;font-style:italic;text-align:center;">Loading…</p>';
+
+            fetch('https://www.sefaria.org/api/texts/Genesis.' + ch + '?context=0&pad=0&commentary=0&lang=en&version=Tanakh%3A+The+Holy+Scriptures%2C+by+JPS')
+                .then(function(r){ return r.json(); })
+                .then(function(data){
+                    var heTitle = data.heRef || ('בראשית ' + ch);
+                    title.textContent = 'Genesis ' + ch + ' · ' + heTitle;
+                    var eng = Array.isArray(data.text) ? data.text : [];
+                    var heb = Array.isArray(data.he)   ? data.he   : [];
+                    var len = Math.max(eng.length, heb.length);
+                    if (len === 0) {
+                        body.innerHTML = '<p style="color:#a78bfa;font-style:italic;">No text available.</p>';
+                        return;
+                    }
+                    var html = '';
+                    for (var i = 0; i < len; i++) {
+                        var heVerse  = heb[i] || '';
+                        var enVerse  = eng[i] || '';
+                        html += '<div style="margin-bottom:18px;border-bottom:1px solid rgba(168,85,247,0.2);padding-bottom:14px;">'
+                              + '<div style="display:flex;align-items:baseline;gap:6px;margin-bottom:6px;">'
+                              +   '<span style="color:#ffd700;font-weight:700;font-size:13px;min-width:22px;">' + (i+1) + '</span>'
+                              +   '<span style="direction:rtl;text-align:right;font-size:18px;line-height:1.8;color:#fde68a;font-family:\'SBL Hebrew\',\'Ezra SIL\',\'Times New Roman\',serif;flex:1;">' + heVerse + '</span>'
+                              + '</div>'
+                              + (enVerse ? '<div style="color:#fce7f3;font-size:14px;line-height:1.7;padding-left:28px;font-style:italic;">' + enVerse + '</div>' : '')
+                              + '</div>';
+                    }
+                    body.innerHTML = html;
+                    viewer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                })
+                .catch(function(){
+                    body.innerHTML = '<p style="color:#f87171;">Could not load chapter — please check your internet connection.</p>';
+                });
+        }
+
+        function genesisNav(dir) {
+            var next = (genesisCurrentChapter || 1) + dir;
+            if (next < 1)  next = 50;
+            if (next > 50) next = 1;
+            openGenesisChapter(next);
         }
 
         // Auto-init Tehillim when Talk to Hashem section opens
