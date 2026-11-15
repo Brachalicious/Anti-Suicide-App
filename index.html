@@ -2847,6 +2847,45 @@
                 <div id="chizukGrid" style="display: grid; gap: 14px;"></div>
             </div>
 
+            <!-- ✦ TELL ME A STORY ✦ -->
+            <div class="card" style="background: linear-gradient(135deg, #eff6ff, #dbeafe); border: 2px solid #93c5fd; margin-top: 18px;">
+                <h2 class="section-title" style="color: #c0527e; font-family: Georgia, serif; font-size: 26px;">📜 Tell Me a Story</h2>
+                <p style="color: #1e40af; font-size: 15px; margin-bottom: 20px; line-height: 1.7; text-align: center;">
+                    Real people in the Torah felt despair, fear, and loneliness too. Their stories were written down so that you'd
+                    know you're not the first to feel this way — and you won't be the last to find your way back to hope.
+                </p>
+
+                <!-- Story display -->
+                <div id="torahStoryDisplay" style="background: white; border-radius: 16px; padding: 28px; margin-bottom: 20px; border-left: 5px solid #3b82f6; box-shadow: 0 4px 16px rgba(59,130,246,0.15);">
+                    <div id="torahStoryEmoji" style="font-size: 36px; text-align: center; margin-bottom: 10px;">📖</div>
+                    <h3 id="torahStoryTitle" style="color: #1e3a8a; font-size: 20px; font-family: Georgia, serif; text-align: center; margin-bottom: 4px;"></h3>
+                    <p id="torahStorySource" style="color: #3b82f6; font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 18px;"></p>
+                    <div id="torahStoryText" style="color: #1e3a8a; font-size: 16px; line-height: 1.85; font-family: Georgia, serif;"></div>
+                    <div id="torahStoryLesson" style="margin-top: 18px; padding: 16px; background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 12px; border: 2px solid #f59e0b; color: #92400e; font-size: 15px; font-weight: 600; line-height: 1.6;"></div>
+                </div>
+
+                <div style="text-align: center; margin-bottom: 24px;">
+                    <button onclick="newTorahStory()" style="background: linear-gradient(135deg, #3b82f6, #1d4ed8); color: white; border: none; padding: 12px 28px; border-radius: 12px; font-size: 16px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 12px rgba(59,130,246,0.4);" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                        🔄 Tell Me Another Story
+                    </button>
+                </div>
+
+                <!-- Categories -->
+                <div style="margin-bottom: 20px;">
+                    <h3 style="color: #c0527e; font-size: 17px; margin-bottom: 12px; text-align: center;">Browse by Feeling:</h3>
+                    <div style="display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;">
+                        <button onclick="showTorahStoryCategory('all')" style="background: linear-gradient(135deg, #dbeafe, #bfdbfe); color: #1e3a8a; border: 2px solid #93c5fd; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">📚 All Stories</button>
+                        <button onclick="showTorahStoryCategory('despair')" style="background: linear-gradient(135deg, #fee2e2, #fecaca); color: #991b1b; border: 2px solid #fca5a5; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">😔 Rock Bottom</button>
+                        <button onclick="showTorahStoryCategory('loneliness')" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); color: #6b21a8; border: 2px solid #c084fc; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">💔 Feeling Alone</button>
+                        <button onclick="showTorahStoryCategory('faith')" style="background: linear-gradient(135deg, #dcfce7, #bbf7d0); color: #166534; border: 2px solid #86efac; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">🙏 Losing Faith</button>
+                        <button onclick="showTorahStoryCategory('purpose')" style="background: linear-gradient(135deg, #fef9c3, #fef08a); color: #854d0e; border: 2px solid #fde047; padding: 10px 18px; border-radius: 20px; font-size: 14px; font-weight: 700; cursor: pointer;">⭐ Feeling Worthless</button>
+                    </div>
+                </div>
+
+                <!-- Story title list for chosen category -->
+                <div id="torahStoryGrid" style="display: grid; gap: 10px;"></div>
+            </div>
+
             <!-- ✦ VIDEOS & ARTICLES ✦ -->
             <div class="card" style="background: linear-gradient(135deg, #f0fdf4, #dcfce7); border: 2px solid #86efac; margin-top: 18px;">
                 <h2 class="section-title" style="color: #c0527e; font-family: Georgia, serif; font-size: 24px;">🎬 Inspirational Videos &amp; Articles</h2>
@@ -4689,54 +4728,54 @@
                         Run and jump to smash negative thoughts disguised as mushrooms (and worse)! Each one you defeat releases a positive affirmation.
                     </p>
                     
-                    <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-radius: 20px; padding: 30px; border: 3px solid #f59e0b; box-shadow: 0 4px 20px rgba(245,158,11,0.3);">
+                    <div style="background: linear-gradient(135deg, #1e1b4b, #4c1d95, #831843); border-radius: 24px; padding: 30px; border: 3px solid transparent; background-clip: padding-box; box-shadow: 0 8px 32px rgba(131,24,99,0.45), 0 0 0 3px rgba(236,72,153,0.5); position: relative;">
                         <!-- Game Info -->
-                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 700; color: #b45309; flex-wrap:wrap; gap:8px;">
-                            <div>Score: <span id="runner-score">0</span></div>
-                            <div>Smashed: <span id="runner-mushrooms">0</span></div>
-                            <div>Combo: <span id="runner-combo" style="color:#ec4899;">x1</span></div>
-                            <div>Lives: <span id="runner-lives">❤️❤️❤️</span></div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 20px; font-weight: 800; color: #fff; flex-wrap:wrap; gap:10px; font-family: 'Trebuchet MS', sans-serif;">
+                            <div style="background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.25);">Score: <span id="runner-score" style="color:#fde047;">0</span></div>
+                            <div style="background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.25);">Smashed: <span id="runner-mushrooms" style="color:#4ade80;">0</span></div>
+                            <div style="background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.25);">Combo: <span id="runner-combo" style="color:#f472b6;">x1</span></div>
+                            <div style="background:rgba(255,255,255,0.12); padding:6px 14px; border-radius:20px; border:1px solid rgba(255,255,255,0.25);">Lives: <span id="runner-lives">❤️❤️❤️</span></div>
                         </div>
                         
                         <!-- Game Canvas -->
-                        <div id="runner-game-canvas" style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; background: linear-gradient(180deg, #7dd3fc 0%, #c4b5fd 35%, #fbcfe8 65%, #bbf7d0 100%); background-size: 200% 200%; animation: runnerSkyShift 10s ease-in-out infinite; border-radius: 16px; border: 4px solid; border-image: linear-gradient(90deg, #f43f5e, #f59e0b, #22c55e, #06b6d4, #8b5cf6, #f43f5e) 1; overflow: hidden;">
+                        <div id="runner-game-canvas" style="position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; background: linear-gradient(180deg, #38bdf8 0%, #818cf8 35%, #e879f9 65%, #34d399 100%); background-size: 200% 200%; animation: runnerSkyShift 10s ease-in-out infinite; border-radius: 18px; border: 4px solid; border-image: linear-gradient(90deg, #ec4899, #f59e0b, #22d3ee, #a78bfa, #ec4899) 1; overflow: hidden; box-shadow: inset 0 0 40px rgba(255,255,255,0.15);">
                             <!-- Decorative sun -->
-                            <div style="position:absolute; top:14px; right:20px; width:38px; height:38px; border-radius:50%; background: radial-gradient(circle, #fef08a, #fbbf24); box-shadow: 0 0 25px 8px rgba(251,191,36,0.6); animation: runnerSunPulse 3s ease-in-out infinite;"></div>
+                            <div style="position:absolute; top:14px; right:20px; width:38px; height:38px; border-radius:50%; background: radial-gradient(circle, #fff9c4, #fbbf24); box-shadow: 0 0 25px 8px rgba(251,191,36,0.6); animation: runnerSunPulse 3s ease-in-out infinite;"></div>
                             <!-- Decorative floating clouds -->
                             <div class="runner-cloud" style="position:absolute; top:24px; left:-60px; font-size:34px; opacity:0.85; animation: runnerCloudDrift 14s linear infinite;">☁️</div>
                             <div class="runner-cloud" style="position:absolute; top:60px; left:-120px; font-size:24px; opacity:0.7; animation: runnerCloudDrift 20s linear infinite; animation-delay: -6s;">☁️</div>
                             <div class="runner-cloud" style="position:absolute; top:10px; left:-180px; font-size:20px; opacity:0.6; animation: runnerCloudDrift 17s linear infinite; animation-delay: -11s;">☁️</div>
                             <!-- Rainbow arc -->
-                            <div style="position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:220px; height:110px; border-radius:50%; border:8px solid transparent; border-top-color:#f43f5e; border-right-color:#f59e0b; opacity:0.5;"></div>
+                            <div style="position:absolute; top:-30px; left:50%; transform:translateX(-50%); width:220px; height:110px; border-radius:50%; border:8px solid transparent; border-top-color:#ec4899; border-right-color:#22d3ee; opacity:0.6;"></div>
                             <!-- Ground -->
-                            <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: linear-gradient(90deg, #78350f, #92400e, #78350f); background-size: 200% 100%; animation: runnerGroundShift 2s linear infinite; border-top: 3px solid #fbbf24;"></div>
+                            <div style="position: absolute; bottom: 0; width: 100%; height: 40px; background: linear-gradient(90deg, #7c3aed, #ec4899, #7c3aed); background-size: 200% 100%; animation: runnerGroundShift 2s linear infinite; border-top: 3px solid #fde047; box-shadow: 0 -4px 16px rgba(236,72,153,0.5);"></div>
                             
                         <!-- Player Character -->
-                        <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 56px; height: 56px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; font-size: 44px; transition: none; filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));">
+                        <div id="runner-player" style="position: absolute; bottom: 40px; left: 80px; width: 56px; height: 56px; background: transparent; border: none; display: flex; align-items: center; justify-content: center; font-size: 44px; transition: none; filter: drop-shadow(0 4px 10px rgba(0,0,0,0.4));">
                             🧍
                         </div>                            <!-- Mushrooms will spawn here -->
                         </div>
                         
                         <!-- Controls -->
                         <div style="margin-top: 20px; text-align: center;">
-                            <div style="color: #b45309; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR (or JUMP) to punch obstacles in front of you, or jump over ones you can't reach!</div>
+                            <div style="color: #f5d0fe; font-size: 14px; margin-bottom: 12px; font-weight: 600;">Press SPACEBAR (or JUMP) to punch obstacles in front of you, or jump over ones you can't reach!</div>
                             <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
-                                <button id="runner-start-btn" onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Start Game</button>
-                                <button id="runner-jump-btn" onclick="runnerJump()" class="btn" style="background: #f59e0b; color: white; font-weight: 700; display: none;">JUMP!</button>
-                                <button id="runner-pause-btn" onclick="pauseRunnerGame()" class="btn" style="background: #ef4444; color: white; font-weight: 700; display: none;">Pause</button>
+                                <button id="runner-start-btn" onclick="startRunnerGame()" style="background: linear-gradient(135deg, #22d3ee, #3b82f6); color: white; font-weight: 800; border: none; padding: 12px 26px; border-radius: 14px; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(59,130,246,0.5);">Start Game</button>
+                                <button id="runner-jump-btn" onclick="runnerJump()" style="background: linear-gradient(135deg, #f59e0b, #ec4899); color: white; font-weight: 800; border: none; padding: 12px 26px; border-radius: 14px; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(236,72,153,0.5); display: none;">JUMP!</button>
+                                <button id="runner-pause-btn" onclick="pauseRunnerGame()" style="background: linear-gradient(135deg, #f43f5e, #be123c); color: white; font-weight: 800; border: none; padding: 12px 26px; border-radius: 14px; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(244,63,94,0.5); display: none;">Pause</button>
                             </div>
                         </div>
                         
                         <!-- Affirmation Display -->
-                        <div id="runner-affirmation" style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #d1fae5, #a7f3d0); border-radius: 12px; border: 2px solid #10b981; text-align: center; display: none;">
-                            <div style="font-size: 16px; color: #065f46; font-weight: 600; line-height: 1.6;"></div>
+                        <div id="runner-affirmation" style="margin-top: 20px; padding: 16px; background: linear-gradient(135deg, #22c55e, #15803d); border-radius: 14px; border: 2px solid #4ade80; text-align: center; display: none; box-shadow: 0 4px 16px rgba(34,197,94,0.4);">
+                            <div style="font-size: 16px; color: #fff; font-weight: 700; line-height: 1.6;"></div>
                         </div>
                         
                         <!-- Game Over Message -->
-                        <div id="runner-game-over" style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #fecaca, #fca5a5); border-radius: 16px; border: 2px solid #dc2626; text-align: center; display: none;">
-                            <div style="font-size: 20px; color: #991b1b; font-weight: 700; margin-bottom: 12px;">Game Over!</div>
-                            <div style="font-size: 16px; color: #7f1d1d; margin-bottom: 16px;">You smashed <span id="runner-final-mushrooms">0</span> negative thoughts! 🎉</div>
-                            <button onclick="startRunnerGame()" class="btn" style="background: #10b981; color: white; font-weight: 700;">Play Again</button>
+                        <div id="runner-game-over" style="margin-top: 20px; padding: 20px; background: linear-gradient(135deg, #be123c, #7c2d12); border-radius: 18px; border: 2px solid #f43f5e; text-align: center; display: none; box-shadow: 0 4px 16px rgba(190,18,60,0.45);">
+                            <div style="font-size: 20px; color: #fff; font-weight: 800; margin-bottom: 12px;">Game Over!</div>
+                            <div style="font-size: 16px; color: #fecdd3; margin-bottom: 16px;">You smashed <span id="runner-final-mushrooms">0</span> negative thoughts! 🎉</div>
+                            <button onclick="startRunnerGame()" style="background: linear-gradient(135deg, #22d3ee, #3b82f6); color: white; font-weight: 800; border: none; padding: 12px 26px; border-radius: 14px; font-size: 15px; cursor: pointer; box-shadow: 0 4px 16px rgba(59,130,246,0.5);">Play Again</button>
                         </div>
                     </div>
                 </div>
@@ -13294,13 +13333,16 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                     mushroom.dataset.resolved = 'true';
                     runnerScore += 10;
                     document.getElementById('runner-score').textContent = runnerScore;
+                    flipMushroomLabelToPositive(mushroom);
                     showRunnerMessage('✅ You avoided the thought: "' + mushroom.dataset.thought + '"', '#3b82f6');
-                    mushroom.style.opacity = '0';
+                    setTimeout(() => {
+                        mushroom.style.opacity = '0';
+                    }, 500);
                     setTimeout(() => {
                         mushroom.remove();
                         const i = runnerObstacles.indexOf(mushroom);
                         if (i > -1) runnerObstacles.splice(i, 1);
-                    }, 200);
+                    }, 700);
                     return;
                 }
                 
@@ -13317,6 +13359,21 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             }
         }
         
+        // Swaps a mushroom's negative-thought label for a random positive
+        // affirmation with a little color-pop animation — used whenever the
+        // player successfully jumps over, smashes, or punches an obstacle,
+        // so the negative thought visibly "becomes" something positive.
+        function flipMushroomLabelToPositive(mushroom) {
+            const label = mushroom.querySelector('.runner-thought-label');
+            if (!label) return;
+            const positive = mushroomAffirmations[Math.floor(Math.random() * mushroomAffirmations.length)];
+            label.textContent = '✨ ' + positive;
+            label.style.background = 'linear-gradient(135deg, #22c55e, #16a34a)';
+            label.style.transform = 'scale(1.2)';
+            label.style.transition = 'all 0.25s ease';
+            label.style.boxShadow = '0 0 14px rgba(34,197,94,0.7)';
+        }
+
         function mushroomDestroyed(mushroom, index, label) {
             const points = parseInt(mushroom.dataset.points || '20', 10);
             runnerScore += points;
@@ -13333,19 +13390,25 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
                 comboEl.style.animation = 'runnerComboPop 0.4s ease';
             }
             
+            // Flip the negative-thought label into a positive affirmation first,
+            // so the player visibly sees the thought "transform" before it fades.
+            flipMushroomLabelToPositive(mushroom);
+
             // Show the plain destroyed message naming the thought that was smashed
             const message = label + ' "' + mushroom.dataset.thought + '"';
             showRunnerMessage(message, '#10b981');
             
             // Remove mushroom with animation
             mushroom.style.transform = 'scale(1.5) rotate(360deg)';
-            mushroom.style.opacity = '0';
             mushroom.style.animation = 'runnerSparkleSpin 0.3s ease';
+            setTimeout(() => {
+                mushroom.style.opacity = '0';
+            }, 350);
             setTimeout(() => {
                 mushroom.remove();
                 const i = runnerObstacles.indexOf(mushroom);
                 if (i > -1) runnerObstacles.splice(i, 1);
-            }, 300);
+            }, 600);
         }
         
         function loseLife(thought) {
@@ -18015,6 +18078,117 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             `).join('');
             grid.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
+
+        /* ===== TELL ME A STORY — Torah stories of struggle, faith & finding meaning =====
+           Short, true-to-text narratives of people in Tanach who hit rock bottom,
+           felt alone, or lost faith — each paired with a modern-day lesson of
+           comfort for someone struggling right now. */
+        const torahStories = [
+            {
+                id: 'eliyahu', category: 'despair', emoji: '🪨',
+                title: "Eliyahu HaNavi: \"I Have Had Enough\"",
+                source: 'Melachim Alef (I Kings) 19',
+                story: "After one of the greatest victories of his life — defeating the prophets of Baal on Har Carmel — Eliyahu was told that Queen Izevel wanted him dead. He ran for his life into the desert, sat under a lone tree, and asked Hashem to let him die: \"It is enough; now, O Hashem, take away my life.\" This wasn't a weak moment from a weak man — it was the greatest prophet of his generation, utterly exhausted, utterly alone, convinced it was all for nothing.<br><br>Hashem didn't scold him. He didn't tell him to snap out of it. He sent an angel — twice — simply to let him sleep and to feed him warm bread and water. Only after Eliyahu had rested and eaten did Hashem gently ask him, \"Mah lecha poh, Eliyahu?\" — \"What are you doing here, Eliyahu?\" And then Hashem didn't appear in the wind, or the earthquake, or the fire — but in a still, small voice.",
+                lesson: "💛 Even the greatest prophet reached a point of 'I can't do this anymore.' Hashem's first response wasn't a lecture — it was rest and food. Sometimes the most spiritual thing you can do is sleep, eat something, and let someone take care of you before anything else. The still small voice is still there, waiting for you, even in the silence."
+            },
+            {
+                id: 'yosef', category: 'purpose', emoji: '🧥',
+                title: 'Yosef: Thrown Into the Pit',
+                source: 'Bereishit (Genesis) 37–50',
+                story: "Yosef was thrown into a pit by his own brothers, sold into slavery, falsely accused, and left forgotten in an Egyptian prison for years — years where it would have been easy to believe his life had no purpose left at all. Yet the same Yosef who sat in that dark pit became the one who saved an entire region from famine, including the very brothers who betrayed him.<br><br>When he finally revealed himself to them, he didn't say 'you did this to me.' He said: 'Hashem sent me ahead of you to preserve life.' He was able to look back at the pit, the slavery, and the prison and see that none of it was wasted.",
+                lesson: "⭐ The chapter you're living in right now — the pit, the dark room, the place that feels pointless — is not the end of your story. You may not be able to see the purpose from inside the pit. Yosef couldn't either. But it was there."
+            },
+            {
+                id: 'chana', category: 'loneliness', emoji: '🕊️',
+                title: "Chana: Praying From a Broken Heart",
+                source: 'Shmuel Alef (I Samuel) 1',
+                story: "Chana was childless for years, mocked by Peninah for it, and so overwhelmed with grief that when she finally stood up to pray at the Mishkan, her lips moved but no sound came out — she was crying too hard to even form words. The Kohen Gadol Eli saw her and assumed she was drunk. She had to explain through tears: 'I am a woman deeply troubled... I have been pouring out my soul.'<br><br>Our Sages learn the very laws of how we pray today from Chana's broken, silent, tearful prayer — not from a calm, composed one.",
+                lesson: "🤍 Chana's prayer became the model for all of our prayer precisely because it was raw and wordless. You don't need the right words. You don't need to be composed. Hashem hears the prayer you can't even say out loud — the one that's just tears."
+            },
+            {
+                id: 'dovid', category: 'despair', emoji: '👑',
+                title: "Dovid HaMelech: Hiding in Caves",
+                source: 'Tehillim (Psalms) & Shmuel',
+                story: "Before he was a king, Dovid spent years running for his life from King Shaul, hiding in caves, sleeping in the wilderness, never knowing if today was the day he'd be found and killed. Many of Tehillim's rawest, darkest chapters — 'My God, my God, why have You forsaken me?' — were written during these years, not after everything got better.",
+                lesson: "💧 Dovid didn't wait until he felt okay to talk to Hashem — he brought the fear, the exhaustion, and the 'why me' straight into his words to Hashem, from inside the cave. That became Tehillim. Your honest, unfiltered pain is allowed to be your prayer too."
+            },
+            {
+                id: 'iyov', category: 'faith', emoji: '🌪️',
+                title: 'Iyov: When Friends Don\'t Understand',
+                source: 'Iyov (Job) 1–42',
+                story: "Iyov lost his children, his health, and his wealth in a single day, through no fault of his own. His friends came to comfort him — and then spent chapters insisting he must have deserved it. Iyov never stopped protesting that his suffering made no sense, and the Torah never says he was wrong for feeling that. In the end, Hashem rebukes the friends, not Iyov, for the way they responded to his pain.",
+                lesson: "🌧️ Suffering that makes no sense to you does not mean you did something wrong, and it does not mean Hashem has abandoned you. Iyov's confusion and pain were real, valid, and heard — and so is yours."
+            },
+            {
+                id: 'rus', category: 'loneliness', emoji: '🌾',
+                title: 'Rus: Starting Over With Nothing',
+                source: 'Megillat Rus (Ruth) 1–4',
+                story: "Rus was widowed young, far from home, with nothing — not even a clear future in the nation she chose to join. She and her mother-in-law Naomi arrived in Beit Lechem with no money, no plan, gleaning leftover grain in other people's fields just to eat. From that place of total loss, Rus became the great-grandmother of Dovid HaMelech, and the ancestor of Mashiach.",
+                lesson: "🌾 Rus's lowest, most uncertain moment — arriving with nothing, no idea what came next — became the beginning of the royal line of Israel. You don't have to see the whole path. You just have to take the next small step, like gleaning one field at a time."
+            },
+            {
+                id: 'moshe', category: 'purpose', emoji: '🔥',
+                title: 'Moshe: "Who Am I?"',
+                source: 'Shemot (Exodus) 3–4',
+                story: "When Hashem first spoke to Moshe at the burning bush and told him he would lead the Jewish people out of Egypt, Moshe's first response wasn't excitement — it was 'Who am I, that I should go?' He described himself as 'heavy of mouth and heavy of tongue,' doubting he was capable of the very thing Hashem was asking of him. He argued with Hashem for an entire conversation, trying to get out of it.",
+                lesson: "🕯️ The person Hashem chose to be the greatest leader in Jewish history didn't feel ready, qualified, or confident. Feeling unworthy of your own purpose doesn't disqualify you from it — Moshe felt exactly that, and he still became Moshe Rabbeinu."
+            },
+            {
+                id: 'yonah', category: 'faith', emoji: '🐳',
+                title: "Yonah: Swallowed by Darkness",
+                source: 'Sefer Yonah (Jonah)',
+                story: "Yonah ran from the mission Hashem gave him, ended up thrown overboard in a storm, and was swallowed by a giant fish — sitting in complete darkness in its belly for three days. It would be easy to imagine that as the end. Instead, from inside the fish, Yonah prayed: 'Out of the belly of the netherworld I cried, and You heard my voice.' And then — he was brought back out, given a second chance, and the mission continued.",
+                lesson: "🌊 Even from the deepest, darkest, most hopeless-feeling place he could physically be in, Yonah's cry was still heard. There is no place too dark, no moment too far gone, for your voice to still reach out and be heard."
+            }
+        ];
+
+        let lastTorahStoryIndex = -1;
+
+        function renderTorahStory(story) {
+            document.getElementById('torahStoryEmoji').textContent = story.emoji;
+            document.getElementById('torahStoryTitle').textContent = story.title;
+            document.getElementById('torahStorySource').textContent = story.source;
+            document.getElementById('torahStoryText').innerHTML = story.story;
+            document.getElementById('torahStoryLesson').innerHTML = story.lesson;
+            const display = document.getElementById('torahStoryDisplay');
+            if (display) display.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
+
+        function newTorahStory() {
+            let idx;
+            do { idx = Math.floor(Math.random() * torahStories.length); }
+            while (idx === lastTorahStoryIndex && torahStories.length > 1);
+            lastTorahStoryIndex = idx;
+            renderTorahStory(torahStories[idx]);
+        }
+
+        function openTorahStory(id) {
+            const story = torahStories.find(s => s.id === id);
+            if (story) {
+                lastTorahStoryIndex = torahStories.indexOf(story);
+                renderTorahStory(story);
+            }
+        }
+
+        function showTorahStoryCategory(cat) {
+            const grid = document.getElementById('torahStoryGrid');
+            const list = cat === 'all' ? torahStories : torahStories.filter(s => s.category === cat);
+            grid.innerHTML = list.map(s => `
+                <button onclick="openTorahStory('${s.id}')" style="text-align:left; background: white; border: 2px solid #bfdbfe; border-radius: 12px; padding: 14px 18px; cursor: pointer; display:flex; align-items:center; gap:12px; transition: all 0.2s;" onmouseover="this.style.borderColor='#3b82f6'" onmouseout="this.style.borderColor='#bfdbfe'">
+                    <span style="font-size: 26px;">${s.emoji}</span>
+                    <span>
+                        <span style="display:block; color:#1e3a8a; font-weight:700; font-size:15px;">${s.title}</span>
+                        <span style="display:block; color:#3b82f6; font-size:12px; font-weight:600;">${s.source}</span>
+                    </span>
+                </button>
+            `).join('');
+        }
+
+        // Show a random story on load (also populates the "All Stories" list)
+        document.addEventListener('DOMContentLoaded', function() {
+            newTorahStory();
+            showTorahStoryCategory('all');
+        });
 
         // Show a random chizuk on load
         document.addEventListener('DOMContentLoaded', function() {
