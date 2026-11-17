@@ -2590,26 +2590,6 @@
                             <span style="font-size:13px;">▼ More hotlines</span>
                         </summary>
                     <div class="hotline">
-                        <h3>National Suicide Prevention LifeLine</h3>
-                        <div class="phone">📞 1-800-273-8255</div>
-                        <p>Free, confidential crisis support 24/7. Talk to a trained counselor who cares.</p>
-                        <button class="btn btn-emergency" onclick="window.open('tel:18002738255')">Call Now</button>
-                    </div>
-                    <div class="hotline">
-                        <h3>Teen Life Line</h3>
-                        <div class="phone">📞 Call/Text 602-248-8336</div>
-                        <p>24/7 crisis peer hotline for teens. Teen-to-teen support — trained teen volunteers are here to listen anytime, day or night.</p>
-                        <p style="color:#f59e0b; font-size:13px; font-weight:600;">⏰ Available 24/7</p>
-                        <button class="btn btn-emergency" onclick="window.open('tel:6022488336')">Call Now</button>
-                        <button class="btn" style="margin-top:8px;" onclick="window.open('sms:6022488336')">💬 Text Now</button>
-                    </div>
-                    <div class="hotline">
-                        <h3>Crisis Text Line</h3>
-                        <div class="phone">📱 Text HOME to 741741</div>
-                        <p>Free, 24/7 crisis support via text message. Available anywhere in the US.</p>
-                        <button class="btn" onclick="window.open('sms:741741?body=HOME')">Text Now</button>
-                    </div>
-                    <div class="hotline">
                         <h3>Hatzoloh Emergency</h3>
                         <div class="phone">🚑 EMERGENCY: 718-230-1000</div>
                         <p>Emergency medical response and assistance.</p>
@@ -2623,6 +2603,11 @@
                         <button class="btn" style="background: #f59e0b; color: #064e3b; font-weight: 700;" onclick="window.open('tel:9298012301')">Call the.helpline Now</button>
                     </div>
                     </details>
+                    <!-- Everything else (Teen Life Line, Crisis Text Line, Veterans Line,
+                         NAMI, SAMHSA, Chazkeinu, Frum community warmlines, and more) now
+                         lives in the full Crisis Support tool — no need to duplicate the
+                         entire hotline directory here on the dashboard. -->
+                    <button class="btn" style="margin-top:10px; width:100%; background:linear-gradient(135deg,#ec4899,#be185d);" onclick="showSection('crisis')">🆘 View All Crisis Resources</button>
 
                     <div style="font-size:13px; font-weight:800; color:#0f766e; text-transform:uppercase; letter-spacing:0.5px; margin:18px 0 10px; padding-bottom:5px; border-bottom:2px solid rgba(15,118,110,0.25);">🛠️ Tools</div>
                     <div onclick="activateStopButton()" style="display: block; text-decoration: none; margin: 8px auto; cursor: pointer;">
