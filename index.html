@@ -3007,6 +3007,13 @@
                     <span class="arrow">▼</span>
                 </div>
                 <div class="collapse-body open">
+                    <!-- Hotlines broken down into smaller, scannable sub-categories
+                         instead of one giant flat list of 13+ cards. -->
+                    <div class="collapse-header open" onclick="toggleCollapse(this)" style="margin-left:6px; font-size:14px;">
+                        <span>🚨 Immediate Crisis Lines</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="collapse-body open" style="margin-left:6px;">
                     <div class="hotline" style="text-align: center; border: 3px solid #f59e0b; background: linear-gradient(135deg, #422006, #713f12); box-shadow: 0 0 20px rgba(245, 158, 11, 0.3);">
                         <h3 style="color: #fbbf24; font-size: 22px; text-shadow: 0 0 10px rgba(251, 191, 36, 0.5);">the.helpline</h3>
                         <p style="color: #fcd34d; font-size: 14px; margin-bottom: 8px; font-weight: 600;">100% Anonymous | 24/7 | 365</p>
@@ -3029,6 +3036,25 @@
                         <button class="btn btn-emergency" onclick="window.open('tel:18002738255')">Call Now</button>
                     </div>
                     <div class="hotline">
+                        <h3>🚑 Hatzoloh Emergency</h3>
+                        <div class="phone">📞 718-230-1000</div>
+                        <p>Emergency medical response and assistance.</p>
+                        <button class="btn btn-emergency" onclick="window.open('tel:718-230-1000')" style="background: #f97316;">Call Hatzoloh Now</button>
+                    </div>
+                    </div>
+
+                    <div class="collapse-header" onclick="toggleCollapse(this)" style="margin-left:6px; font-size:14px; margin-top:10px;">
+                        <span>💬 Text & Peer Support</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="collapse-body" style="margin-left:6px;">
+                    <div class="hotline">
+                        <h3>Crisis Text Line</h3>
+                        <div class="phone">📱 Text HOME to 741741</div>
+                        <p>Free, 24/7 crisis support via text message. Trained crisis counselors available anytime.</p>
+                        <button class="btn" onclick="window.open('sms:741741?body=HOME')">Text Now</button>
+                    </div>
+                    <div class="hotline">
                         <h3>Teen Life Line</h3>
                         <div class="phone">📞 Call/Text 602-248-8336</div>
                         <p>24/7 crisis peer hotline for teens. Teen-to-teen support — trained teen volunteers are here to listen anytime, day or night.</p>
@@ -3037,17 +3063,40 @@
                         <button class="btn" style="margin-top:8px;" onclick="window.open('sms:6022488336')">💬 Text Now</button>
                     </div>
                     <div class="hotline">
-                        <h3>Crisis Text Line</h3>
-                        <div class="phone">📱 Text HOME to 741741</div>
-                        <p>Free, 24/7 crisis support via text message. Trained crisis counselors available anytime.</p>
-                        <button class="btn" onclick="window.open('sms:741741?body=HOME')">Text Now</button>
+                        <h3>Suicide Anonymous — Virtual Meetings</h3>
+                        <div class="phone">💬 Online Peer Support Meetings</div>
+                        <p>Suicide Anonymous is a fellowship of people who share their experience, strength, and hope with each other to recover from suicidal ideation and behavior. Join virtual meetings from anywhere to connect with others who understand what you're going through in a safe, non-judgmental space.</p>
+                        <p style="color: #0891b2; font-size: 16px; font-weight: 600; margin-top: 10px;">✨ Multiple meetings daily — find one that works for your schedule</p>
+                        <button class="btn" onclick="window.open('https://suicideanonymous.net/virtual-meeting-list', '_blank')">View Virtual Meeting Schedule</button>
+                        <button class="btn" style="margin-top: 8px;" onclick="window.open('https://suicideanonymous.net/', '_blank')">Learn About Suicide Anonymous</button>
                     </div>
+                    </div>
+
+                    <div class="collapse-header" onclick="toggleCollapse(this)" style="margin-left:6px; font-size:14px; margin-top:10px;">
+                        <span>🎖️ Veterans & Specialized Support</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="collapse-body" style="margin-left:6px;">
                     <div class="hotline">
                         <h3>Veterans Crisis Line</h3>
                         <div class="phone">📞 Call 988, then Press 1</div>
                         <p>Specialized support for veterans, service members, and their families.</p>
                         <button class="btn" onclick="window.open('tel:988')">Call Now</button>
                     </div>
+                    <div class="hotline">
+                        <h3>RAINN — Sexual Violence Hotline</h3>
+                        <div class="phone">📞 1-800-656-4673 (HOPE)</div>
+                        <p>The nation's largest anti-sexual violence organization. Free, confidential, 24/7 support for survivors of sexual violence and their loved ones.</p>
+                        <button class="btn btn-emergency" onclick="window.open('tel:18006564673')">Call RAINN Hotline</button>
+                        <button class="btn" style="margin-top: 8px;" onclick="window.open('https://hotline.rainn.org/online', '_blank')">Chat Online with RAINN</button>
+                    </div>
+                    </div>
+
+                    <div class="collapse-header" onclick="toggleCollapse(this)" style="margin-left:6px; font-size:14px; margin-top:10px;">
+                        <span>🧠 Mental Health & Family Resources</span>
+                        <span class="arrow">▼</span>
+                    </div>
+                    <div class="collapse-body" style="margin-left:6px;">
                     <div class="hotline">
                         <h3>SAMHSA National Helpline</h3>
                         <div class="phone">📞 1-800-662-4357</div>
@@ -3084,26 +3133,6 @@
                         <button class="btn" style="margin-top: 8px;" onclick="window.open('https://chazkeinu.org/', '_blank')">Visit Chazkeinu.org</button>
                         <button class="btn" style="margin-top: 8px;" onclick="window.open('tel:3046072429')">📞 Call Empowered Hotline</button>
                     </div>
-                    <div class="hotline">
-                        <h3>Suicide Anonymous — Virtual Meetings</h3>
-                        <div class="phone">💬 Online Peer Support Meetings</div>
-                        <p>Suicide Anonymous is a fellowship of people who share their experience, strength, and hope with each other to recover from suicidal ideation and behavior. Join virtual meetings from anywhere to connect with others who understand what you're going through in a safe, non-judgmental space.</p>
-                        <p style="color: #0891b2; font-size: 16px; font-weight: 600; margin-top: 10px;">✨ Multiple meetings daily — find one that works for your schedule</p>
-                        <button class="btn" onclick="window.open('https://suicideanonymous.net/virtual-meeting-list', '_blank')">View Virtual Meeting Schedule</button>
-                        <button class="btn" style="margin-top: 8px;" onclick="window.open('https://suicideanonymous.net/', '_blank')">Learn About Suicide Anonymous</button>
-                    </div>
-                    <div class="hotline">
-                        <h3>🚑 Hatzoloh Emergency</h3>
-                        <div class="phone">📞 718-230-1000</div>
-                        <p>Emergency medical response and assistance.</p>
-                        <button class="btn btn-emergency" onclick="window.open('tel:718-230-1000')" style="background: #f97316;">Call Hatzoloh Now</button>
-                    </div>
-                    <div class="hotline">
-                        <h3>RAINN — Sexual Violence Hotline</h3>
-                        <div class="phone">📞 1-800-656-4673 (HOPE)</div>
-                        <p>The nation's largest anti-sexual violence organization. Free, confidential, 24/7 support for survivors of sexual violence and their loved ones.</p>
-                        <button class="btn btn-emergency" onclick="window.open('tel:18006564673')">Call RAINN Hotline</button>
-                        <button class="btn" style="margin-top: 8px;" onclick="window.open('https://hotline.rainn.org/online', '_blank')">Chat Online with RAINN</button>
                     </div>
                 </div>
 
