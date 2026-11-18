@@ -1846,6 +1846,22 @@
                     <button onclick="showSection('helped-tracker'); closeCrisisSupportMenu(); closeMobileNav()">⭐ What Helped Me</button>
                 </div>
             </div>
+            <!-- Quick Support dropdown: surfaces the dashboard's "Daily Check-in"
+                 and "Quick Support Tools" cards directly in the nav row, styled
+                 identically to the Crisis Support dropdown beside it. -->
+            <div class="nav-dropdown" id="quickSupportDropdown" style="margin-left:0;">
+                <button class="nav-dropdown-btn nav-dropdown-btn-narrow" onclick="toggleQuickSupportMenu(event)" id="quickSupportBtn">🛠️ Quick Support ▾</button>
+                <div class="nav-dropdown-menu nav-dropdown-menu-narrow" id="quickSupportMenu">
+                    <button onclick="jumpToDashboardCard('daily-checkin-card'); closeQuickSupportMenu(); closeMobileNav()">📋 Daily Check-in</button>
+                    <div style="height:1px; background:rgba(190,24,93,0.2); margin:4px 2px;"></div>
+                    <button onclick="showContacts(); closeQuickSupportMenu(); closeMobileNav()">📞 Emergency Contacts</button>
+                    <button onclick="showCoping(); closeQuickSupportMenu(); closeMobileNav()">🛠️ Coping Strategies</button>
+                    <button onclick="showBreathingTechniques(); closeQuickSupportMenu(); closeMobileNav()">🧘 Breathing Exercise</button>
+                    <button onclick="startProgressiveMuscleRelaxation(); closeQuickSupportMenu(); closeMobileNav()">💪 Progressive Muscle Relaxation</button>
+                    <button onclick="startGuidedMeditation(); closeQuickSupportMenu(); closeMobileNav()">🧘‍♀️ Guided Meditation</button>
+                    <button onclick="jumpToDashboardCard('quick-support-tools-card'); closeQuickSupportMenu(); closeMobileNav()">🪞 Affirmation Mirror</button>
+                </div>
+            </div>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showSection('chizuk'); closeMobileNav()">✨ Chizuk</button>
             <button class="nav-item" style="font-size:12px;padding:6px 10px;" onclick="showGiveBackModal(); closeMobileNav()">🤝 Give Back</button>
             <!-- 📇 Shared Lifelines nav removed — sharing + save-to-contacts is now available on EVERY hotline card via the auto-decorator (see decorateHotlinesWithShareButtons). Section HTML + JS helpers kept intact below because the vCard/share machinery is reused. -->
@@ -2579,7 +2595,7 @@
                      tool (#crisis section, "⚡ Quick Crisis Tools" subsection) so
                      all crisis-related content lives together in one organized
                      place instead of being split across the dashboard too. -->
-                <div class="card collapsed">
+                <div class="card collapsed" id="daily-checkin-card">
                     <h2 class="section-title collapsible" onclick="toggleDashboardCard(this)">Daily Check-in <span class="card-toggle-arrow">▾</span></h2>
                     <p>How are you feeling today? Pick an emoji:</p>
                     <div class="mood-scale">
@@ -2654,7 +2670,7 @@
                     <button class="btn" onclick="saveMoodHome()">Save Check-in</button>
                 </div>
 
-                <div class="card collapsed">
+                <div class="card collapsed" id="quick-support-tools-card">
                     <h2 class="section-title collapsible" onclick="toggleDashboardCard(this)">Quick Support Tools <span class="card-toggle-arrow">▾</span></h2>
                     <!-- 1. Emergency Contacts -->
                     <button class="btn" onclick="showContacts()" style="background:linear-gradient(135deg,#22c55e,#06b6d4,#3b82f6,#22c55e);background-size:300% 300%;animation:sunsetShift 5s ease infinite;">📞 Emergency Contacts</button>
@@ -12032,6 +12048,30 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             document.getElementById('crisisSupportMenu').classList.remove('open');
         }
 
+        function toggleQuickSupportMenu(e) {
+            e.stopPropagation();
+            document.getElementById('quickSupportMenu').classList.toggle('open');
+        }
+
+        function closeQuickSupportMenu() {
+            document.getElementById('quickSupportMenu').classList.remove('open');
+        }
+
+        // Jumps to the dashboard and expands + scrolls to a specific
+        // collapsible dashboard card (used by the "🛠️ Quick Support" nav
+        // dropdown so items like "Daily Check-in" open their real card
+        // instead of duplicating that UI inside the dropdown itself).
+        function jumpToDashboardCard(cardId) {
+            showSection('dashboard');
+            setTimeout(() => {
+                const card = document.getElementById(cardId);
+                if (card) {
+                    card.classList.remove('collapsed');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                }
+            }, 150);
+        }
+
         // ── Mobile hamburger nav ──
         function toggleMobileNav() {
             const nav = document.getElementById('mainNav');
@@ -12392,6 +12432,10 @@ Remember: Your goal is to be a supportive presence, not to fix everything. Somet
             const dropdown = document.getElementById('crisisSupportDropdown');
             if (dropdown && !dropdown.contains(e.target)) {
                 closeCrisisSupportMenu();
+            }
+            const quickSupportDropdown = document.getElementById('quickSupportDropdown');
+            if (quickSupportDropdown && !quickSupportDropdown.contains(e.target)) {
+                closeQuickSupportMenu();
             }
         });
 
